@@ -1,215 +1,78 @@
 import json
+import logging
 import os
-import re
-import subprocess
-from pathlib import Path
 from typing import Any, Callable, Generator
 
 import anthropic
 from dotenv import load_dotenv
+
+from compact import (
+    MAX_CONTEXT_TOKENS,
+    llm_compact_messages,
+)
+from tools import (
+    ALLOWED_BASE_DIR,
+    TOOL_DEFINITIONS,
+    _truncate_for_context,
+    dispatcher,
+    execute_tool,
+)
+from todo_write import (
+    TodoManager
+)
 
 load_dotenv()
 MODEL_ID = os.getenv("MODEL_ID")
 API_KEY = os.getenv("API_KEY")
 BASE_URL = os.getenv("BASE_URL")
 
-ALLOWED_BASE_DIR = Path(os.getcwd()).resolve()
-
-DANGEROUS_COMMANDS = [
-    r"\brm\s+-rf\s+/",
-    r"\brm\s+-rf\s+~",
-    r"\brm\s+-rf\s+\$HOME",
-    r"\bmkfs\.",
-    r"\bdd\s+if=.*of=/dev/",
-    r"\b:(){ :|:& };:",
-    r"\bchmod\s+-R\s+777\s+/",
-    r"\bchown\s+-R\s+.*\s+/",
-    r"\bsudo\s+rm\s+-rf",
-    r"\bsu\s+-",
-    r"\bpasswd\b",
-    r"\buseradd\b",
-    r"\busermod\b",
-    r"\bgroupadd\b",
-    r"\bshutdown\b",
-    r"\breboot\b",
-    r"\binit\s+0",
-    r"\bsystemctl\s+(stop|restart)\s+(ssh|network|systemd)",
-    r"\bkubectl\s+delete\s+.*--all",
-    r"\bdocker\s+(rm|kill)\s+.*\*",
-    r"\bcurl\s+.*\|\s*sh",
-    r"\bwget\s+.*\|\s*sh",
-    r"\beval\s*\$",
-    r"\bexec\s*\$",
-    r">\s*/etc/passwd",
-    r">\s*/etc/shadow",
-    r">\s+/dev/(sda|nvme|hd)",
-]
-
-DANGEROUS_PATTERNS = [re.compile(pattern, re.IGNORECASE) for pattern in DANGEROUS_COMMANDS]
-
 SYSTEM_PROMPT = f"""You are a helpful coding assistant at {ALLOWED_BASE_DIR}. You can help users with software engineering tasks.
 When writing code, always provide complete and correct implementations.
 Think step by step and explain your reasoning clearly."""
 
-TOOL_DEFINITIONS = [
-    {
-        "name": "read_file",
-        "description": "Read the contents of a file",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to the file to read",
-                }
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "write_file",
-        "description": "Write content to a file",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to the file to write",
-                },
-                "content": {
-                    "type": "string",
-                    "description": "Content to write to the file",
-                },
-            },
-            "required": ["path", "content"],
-        },
-    },
-    {
-        "name": "run_command",
-        "description": "Run a shell command and return its output",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "command": {
-                    "type": "string",
-                    "description": "The shell command to execute",
-                }
-            },
-            "required": ["command"],
-        },
-    },
-]
+logger = logging.getLogger("penguin")
 
+# Callback type aliases
+ContentCallback = Callable[[str], None]
+ToolStartCallback = Callable[[str, dict], None]
+ToolResultCallback = Callable[[str, str], None]
 
-class ToolDispatcher:
-    _registry: dict[str, Callable[..., str]] = {}
+MAX_API_RETRIES = 3
+RETRY_BASE_DELAY = 1.0  # seconds
+KEEP_RECENT_TOOLS = 5
+PRESERVE_RESULT_TOOLS = []
+TODO = TodoManager()
 
-    @classmethod
-    def register(cls, name: str) -> Callable[[Callable[..., str]], Callable[..., str]]:
-        def decorator(func: Callable[..., str]) -> Callable[..., str]:
-            cls._registry[name] = func
-            return func
-
-        return decorator
-
-    @classmethod
-    def dispatch(cls, name: str, args: dict[str, Any]) -> str:
-        if name not in cls._registry:
-            return f"Unknown tool: {name}"
-        return cls._registry[name](**args)
-
-    @classmethod
-    def list_tools(cls) -> list[str]:
-        return list(cls._registry.keys())
-
-
-def resolve_and_validate_path(path: str) -> Path:
-    try:
-        resolved = (ALLOWED_BASE_DIR / path).resolve()
-        resolved.relative_to(ALLOWED_BASE_DIR)
-        return resolved
-    except (ValueError, RuntimeError):
-        raise PermissionError(
-            f"Path '{path}' is outside the allowed directory: {ALLOWED_BASE_DIR}"
+def _validate_config() -> None:
+    missing = []
+    if not MODEL_ID:
+        missing.append("MODEL_ID")
+    if not API_KEY:
+        missing.append("API_KEY")
+    if missing:
+        raise EnvironmentError(
+            f"Missing required environment variables: {', '.join(missing)}. "
+            "Set them in .env or export them before running."
         )
 
-
-def check_dangerous_command(command: str) -> str | None:
-    for pattern in DANGEROUS_PATTERNS:
-        if pattern.search(command):
-            return f"Dangerous command detected and blocked: pattern '{pattern.pattern}'"
-    return None
-
-
-@ToolDispatcher.register("read_file")
-def read_file(path: str) -> str:
-    try:
-        resolved_path = resolve_and_validate_path(path)
-        with open(resolved_path, "r", encoding="utf-8") as f:
-            return f.read()
-    except PermissionError as e:
-        return f"Error: {e}"
-    except FileNotFoundError:
-        return f"Error: File not found: {path}"
-    except UnicodeDecodeError:
-        return f"Error: Cannot read binary file: {path}"
-    except Exception as e:
-        return f"Error reading file: {e}"
-
-
-@ToolDispatcher.register("write_file")
-def write_file(path: str, content: str) -> str:
-    try:
-        resolved_path = resolve_and_validate_path(path)
-        resolved_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(resolved_path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return f"Successfully wrote to {path}"
-    except PermissionError as e:
-        return f"Error: {e}"
-    except Exception as e:
-        return f"Error writing file: {e}"
-
-
-@ToolDispatcher.register("run_command")
-def run_command(command: str) -> str:
-    danger_check = check_dangerous_command(command)
-    if danger_check:
-        return f"Error: {danger_check}"
-
-    try:
-        result = subprocess.run(
-            command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=60,
-            cwd=ALLOWED_BASE_DIR,
-        )
-        output = result.stdout
-        if result.stderr:
-            output += f"\nSTDERR:\n{result.stderr}"
-        if result.returncode != 0:
-            output += f"\nExit code: {result.returncode}"
-        return output or "(no output)"
-    except subprocess.TimeoutExpired:
-        return "Error: Command timed out after 60 seconds"
-    except Exception as e:
-        return f"Error running command: {e}"
-
-
-def execute_tool(name: str, args: dict[str, Any]) -> str:
-    return ToolDispatcher.dispatch(name, args)
-
+MAX_OUTPUT_TOKENS = 16384
 
 def stream_response(
     client: anthropic.Anthropic, messages: list[dict[str, Any]]
 ) -> Generator[tuple[str, Any], None, None]:
+    """逐 token 流式消费 API 响应，实时 yield 事件。
+
+    事件类型：
+      ("text_delta", str)   — 文本增量，逐 token 产出，可用于打字机输出
+      ("truncated", bool)   — 是否因 max_tokens 截断
+      ("tool_calls", list)  — 完整的工具调用列表（流结束后一次性 yield）
+    """
     tool_use_blocks: dict[int, dict[str, Any]] = {}
+    was_truncated = False
 
     with client.messages.stream(
         model=MODEL_ID,
-        max_tokens=4096,
+        max_tokens=MAX_OUTPUT_TOKENS,
         system=SYSTEM_PROMPT,
         messages=messages,
         tools=TOOL_DEFINITIONS,
@@ -217,14 +80,14 @@ def stream_response(
         for event in stream:
             if event.type == "content_block_delta":
                 if event.delta.type == "text_delta":
-                    yield ("content", event.delta.text)
+                    yield ("text_delta", event.delta.text)
 
                 elif event.delta.type == "input_json_delta":
-                    for idx in tool_use_blocks:
-                        if not tool_use_blocks[idx].get("_complete"):
-                            tool_use_blocks[idx]["_partial_json"] += (
-                                event.delta.partial_json
-                            )
+                    idx = event.index
+                    if idx in tool_use_blocks and not tool_use_blocks[idx].get("_complete"):
+                        tool_use_blocks[idx]["_partial_json"] += (
+                            event.delta.partial_json
+                        )
 
             elif event.type == "content_block_start":
                 if event.content_block.type == "tool_use":
@@ -239,13 +102,20 @@ def stream_response(
                 if event.index in tool_use_blocks:
                     block = tool_use_blocks[event.index]
                     block["_complete"] = True
-                    block["input"] = (
-                        json.loads(block["_partial_json"])
-                        if block["_partial_json"]
-                        else {}
-                    )
+                    raw_json = block["_partial_json"]
+                    if raw_json:
+                        try:
+                            block["input"] = json.loads(raw_json)
+                        except json.JSONDecodeError:
+                            logger.warning("Failed to parse tool input JSON, attempting repair")
+                            block["input"] = _repair_json(raw_json)
+                    else:
+                        block["input"] = {}
 
-        final_message = stream.get_final_message()
+        final_msg = stream.get_final_message()
+        if final_msg.stop_reason == "max_tokens":
+            was_truncated = True
+            logger.warning("Response truncated at max_tokens=%d", MAX_OUTPUT_TOKENS)
 
     tool_calls_list = []
     for idx in sorted(tool_use_blocks):
@@ -258,36 +128,79 @@ def stream_response(
             }
         )
 
+    if was_truncated:
+        yield ("truncated", True)
     if tool_calls_list:
         yield ("tool_calls", tool_calls_list)
+
+
+def _repair_json(raw: str) -> dict[str, Any]:
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        pass
+    repaired = raw.strip()
+    if not repaired.startswith("{"):
+        repaired = "{" + repaired
+    if not repaired.endswith("}"):
+        repaired += "}"
+    try:
+        return json.loads(repaired)
+    except json.JSONDecodeError:
+        pass
+    for pos in range(len(repaired) - 1, 0, -1):
+        if repaired[pos] in (",", ":"):
+            try:
+                return json.loads(repaired[:pos] + repaired[pos + 1:])
+            except json.JSONDecodeError:
+                continue
+    logger.error("Could not repair JSON, falling back to empty dict: %s", raw[:100])
+    return {}
 
 
 def agent_loop(
     client: anthropic.Anthropic,
     user_message: str,
     max_iterations: int = 10,
-    on_content: Any = None,
-    on_tool_start: Any = None,
-    on_tool_result: Any = None,
-) -> str:
-    messages: list[dict[str, Any]] = [
-        {"role": "user", "content": user_message},
-    ]
+    on_content: ContentCallback | None = None,
+    on_tool_start: ToolStartCallback | None = None,
+    on_tool_result: ToolResultCallback | None = None,
+    messages: list[dict[str, Any]] | None = None,
+    rounds_since_todo: int = 0
+) -> tuple[str, list[dict[str, Any]]]:
+    if messages is None:
+        messages = []
+    messages.append({"role": "user", "content": user_message})
 
     for iteration in range(max_iterations):
+        messages[:] = llm_compact_messages(
+            messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
+        )
+
         collected_content = ""
         has_tool_calls = False
+        was_truncated = False
         tool_calls_list = []
 
-        for event_type, data in stream_response(client, messages):
-            if event_type == "content":
-                collected_content += data
-                if on_content:
-                    on_content(data)
-
-            elif event_type == "tool_calls":
-                has_tool_calls = True
-                tool_calls_list = data
+        try:
+            for event_type, data in stream_response(client, messages):
+                if event_type == "text_delta":
+                    collected_content += data
+                    if on_content:
+                        on_content(data)
+                elif event_type == "truncated":
+                    was_truncated = True
+                elif event_type == "tool_calls":
+                    has_tool_calls = True
+                    tool_calls_list = data
+        except anthropic.APIStatusError as e:
+            error_msg = f"API error (status {e.status_code}): {e.message}"
+            logger.error(error_msg)
+            return error_msg, messages
+        except anthropic.APIConnectionError as e:
+            error_msg = f"API connection error after retries: {e}"
+            logger.error(error_msg)
+            return error_msg, messages
 
         assistant_content: list[dict[str, Any]] = []
         if collected_content:
@@ -304,14 +217,28 @@ def agent_loop(
 
         messages.append({"role": "assistant", "content": assistant_content})
 
-        if not has_tool_calls:
-            return collected_content
+        # 输出被截断时，跳过不完整的 tool_calls，提示模型继续
+        if was_truncated:
+            truncate_hint = (
+                "[System: Your previous response was truncated due to output length limit. "
+                "Please continue. If you were writing a file, try again with smaller chunks "
+                "or split the content across multiple write_file calls.]"
+            )
+            messages.append({"role": "user", "content": truncate_hint})
+            continue
 
+        if not has_tool_calls:
+            return collected_content, messages
+
+        used_todo = False
         tool_results: list[dict[str, Any]] = []
         for tc in tool_calls_list:
             fn_name = tc["name"]
             fn_args = tc["input"]
 
+            if fn_name == "todo":
+                used_todo = True
+            rounds_since_todo = 0 if used_todo else rounds_since_todo + 1
             if on_tool_start:
                 on_tool_start(fn_name, fn_args)
 
@@ -324,16 +251,24 @@ def agent_loop(
                 {
                     "type": "tool_result",
                     "tool_use_id": tc["id"],
-                    "content": result,
+                    "content": _truncate_for_context(result),
                 }
             )
-
+        if rounds_since_todo >= 3:
+            messages.append({"type": "text", "text": "<reminder>Update your todos.</reminder>"})
         messages.append({"role": "user", "content": tool_results})
 
-    return "Agent reached maximum iterations without completing the task."
+    return "Agent reached maximum iterations without completing the task.", messages
 
 
 def main():
+    _validate_config()
+
+    logging.basicConfig(
+        level=logging.WARNING,
+        format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    )
+
     client = anthropic.Anthropic(
         api_key=API_KEY,
         base_url=BASE_URL,
@@ -341,9 +276,12 @@ def main():
 
     print(f"Penguin Coding Agent (working directory: {ALLOWED_BASE_DIR})")
     print("-" * 50)
-    print(f"Available tools: {', '.join(ToolDispatcher.list_tools())}")
+    print(f"Available tools: {', '.join(dispatcher.list_tools())}")
+    print(f"Context budget: ~{MAX_CONTEXT_TOKENS} tokens")
     print("-" * 50)
 
+    conversation_history: list[dict[str, Any]] = []
+    rounds_since_todo = 0
     while True:
         try:
             user_input = input("\nYou: ").strip()
@@ -372,13 +310,15 @@ def main():
             print(f"[Result: {preview}]", flush=True)
             print("\nAgent: ", end="", flush=True)
 
-        final_response = agent_loop(
+        final_response, conversation_history = agent_loop(
             client,
             user_input,
             max_iterations=10,
             on_content=on_content,
             on_tool_start=on_tool_start,
             on_tool_result=on_tool_result,
+            messages=conversation_history,
+            rounds_since_todo=rounds_since_todo
         )
 
         print()
