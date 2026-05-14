@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import time
 from typing import Any, Callable, Generator
 
 import anthropic
@@ -17,8 +18,8 @@ from tools import (
     dispatcher,
     execute_tool,
 )
-from todo_write import (
-    TodoManager
+from task_system import (
+    task_manager
 )
 
 load_dotenv()
@@ -27,8 +28,16 @@ API_KEY = os.getenv("API_KEY")
 BASE_URL = os.getenv("BASE_URL")
 
 SYSTEM_PROMPT = f"""You are a helpful coding assistant at {ALLOWED_BASE_DIR}. You can help users with software engineering tasks.
-When writing code, always provide complete and correct implementations.
-Think step by step and explain your reasoning clearly."""
+
+Core principles:
+- COMPLETE every task you start. Never stop mid-work to summarize or explain unless the user asks.
+- When you encounter errors, fix them. Do not just report the error and stop.
+- Prefer action over exploration. Read only what you need, then start writing code immediately.
+- Use the task tool to track progress. Break large work into sub-tasks.
+- Batch related tool calls in a single response when possible (e.g., read multiple files at once).
+- If a task has multiple steps, complete ALL steps before responding to the user.
+
+When writing code, always provide complete and correct implementations."""
 
 logger = logging.getLogger("penguin")
 
@@ -41,7 +50,7 @@ MAX_API_RETRIES = 3
 RETRY_BASE_DELAY = 1.0  # seconds
 KEEP_RECENT_TOOLS = 5
 PRESERVE_RESULT_TOOLS = []
-TODO = TodoManager()
+TODO = task_manager
 
 def _validate_config() -> None:
     missing = []
@@ -161,7 +170,7 @@ def _repair_json(raw: str) -> dict[str, Any]:
 def agent_loop(
     client: anthropic.Anthropic,
     user_message: str,
-    max_iterations: int = 10,
+    max_iterations: int = 500,
     on_content: ContentCallback | None = None,
     on_tool_start: ToolStartCallback | None = None,
     on_tool_result: ToolResultCallback | None = None,
@@ -177,30 +186,49 @@ def agent_loop(
             messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
         )
 
+        remaining = max_iterations - iteration
+        iteration_system = (
+            f"[System: Iteration {iteration + 1}/{max_iterations}. "
+            f"You have {remaining} iterations remaining. "
+            f"{'Keep working — do not stop until the task is complete.' if remaining <= 5 else ''}]"
+        )
+
         collected_content = ""
         has_tool_calls = False
         was_truncated = False
         tool_calls_list = []
 
-        try:
-            for event_type, data in stream_response(client, messages):
-                if event_type == "text_delta":
-                    collected_content += data
-                    if on_content:
-                        on_content(data)
-                elif event_type == "truncated":
-                    was_truncated = True
-                elif event_type == "tool_calls":
-                    has_tool_calls = True
-                    tool_calls_list = data
-        except anthropic.APIStatusError as e:
-            error_msg = f"API error (status {e.status_code}): {e.message}"
-            logger.error(error_msg)
-            return error_msg, messages
-        except anthropic.APIConnectionError as e:
-            error_msg = f"API connection error after retries: {e}"
-            logger.error(error_msg)
-            return error_msg, messages
+        for retry in range(MAX_API_RETRIES):
+            try:
+                for event_type, data in stream_response(client, messages):
+                    if event_type == "text_delta":
+                        collected_content += data
+                        if on_content:
+                            on_content(data)
+                    elif event_type == "truncated":
+                        was_truncated = True
+                    elif event_type == "tool_calls":
+                        has_tool_calls = True
+                        tool_calls_list = data
+                break
+            except anthropic.APIStatusError as e:
+                if e.status_code in (429, 503, 529) and retry < MAX_API_RETRIES - 1:
+                    delay = RETRY_BASE_DELAY * (2 ** retry)
+                    logger.warning("API rate limit/error (status %d), retrying in %.1fs", e.status_code, delay)
+                    time.sleep(delay)
+                    continue
+                error_msg = f"API error (status {e.status_code}): {e.message}"
+                logger.error(error_msg)
+                return error_msg, messages
+            except anthropic.APIConnectionError as e:
+                if retry < MAX_API_RETRIES - 1:
+                    delay = RETRY_BASE_DELAY * (2 ** retry)
+                    logger.warning("API connection error, retrying in %.1fs", delay)
+                    time.sleep(delay)
+                    continue
+                error_msg = f"API connection error after retries: {e}"
+                logger.error(error_msg)
+                return error_msg, messages
 
         assistant_content: list[dict[str, Any]] = []
         if collected_content:
@@ -232,11 +260,20 @@ def agent_loop(
 
         used_todo = False
         tool_results: list[dict[str, Any]] = []
+
+        # Inject iteration awareness so the model can plan its work
+        tool_results.append(
+            {
+                "type": "text",
+                "text": iteration_system,
+            }
+        )
+
         for tc in tool_calls_list:
             fn_name = tc["name"]
             fn_args = tc["input"]
 
-            if fn_name == "todo":
+            if fn_name == "task":
                 used_todo = True
             rounds_since_todo = 0 if used_todo else rounds_since_todo + 1
             if on_tool_start:
@@ -255,7 +292,14 @@ def agent_loop(
                 }
             )
         if rounds_since_todo >= 3:
-            messages.append({"type": "text", "text": "<reminder>Update your todos.</reminder>"})
+            current_tasks = task_manager.list_all()
+            reminder = f"\n\n<reminder>Update your task list. Current tasks:\n{current_tasks}</reminder>"
+            tool_results.append(
+                {
+                    "type": "text",
+                    "text": reminder,
+                }
+            )
         messages.append({"role": "user", "content": tool_results})
 
     return "Agent reached maximum iterations without completing the task.", messages
@@ -313,13 +357,16 @@ def main():
         final_response, conversation_history = agent_loop(
             client,
             user_input,
-            max_iterations=10,
+            max_iterations=500,
             on_content=on_content,
             on_tool_start=on_tool_start,
             on_tool_result=on_tool_result,
             messages=conversation_history,
             rounds_since_todo=rounds_since_todo
         )
+
+        if final_response == "Agent reached maximum iterations without completing the task.":
+            print(f"\n[Warning: Reached iteration limit. Task may be incomplete.]", flush=True)
 
         print()
 

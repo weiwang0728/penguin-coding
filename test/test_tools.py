@@ -21,6 +21,7 @@ from tools import (
     _truncate_output,
     _truncate_for_context,
 )
+from task_system import TaskManager
 
 
 # --- resolve_and_validate_path ---
@@ -127,6 +128,7 @@ class TestToolDispatcher:
         assert "list_directory" in names
         assert "search_files" in names
         assert "edit_file" in names
+        assert "task" in names
 
     def test_unknown_tool(self):
         result = dispatcher.dispatch("nonexistent_tool", {})
@@ -332,3 +334,162 @@ class TestTruncation:
         result = _truncate_for_context(long_text)
         assert len(result) < len(long_text)
         assert "truncated" in result
+
+
+# --- TaskManager ---
+
+class TestTaskManager:
+    @pytest.fixture
+    def tm(self, tmp_path):
+        return TaskManager(tmp_path / "tasks")
+
+    def test_create_task(self, tm):
+        result = tm.create("Fix bug")
+        assert "[ ]" in result
+        assert "Fix bug" in result
+
+    def test_create_task_with_description(self, tm):
+        result = tm.create("Fix bug", description="Details here")
+        task = tm._load(1)
+        assert task["description"] == "Details here"
+
+    def test_update_status_to_in_progress(self, tm):
+        tm.create("Task A")
+        result = tm.update(1, status="in_progress")
+        assert "[>]" in result
+
+    def test_update_status_to_completed(self, tm):
+        tm.create("Task A")
+        tm.update(1, status="in_progress")
+        result = tm.update(1, status="completed")
+        assert "[x]" in result
+
+    def test_invalid_status_rejected(self, tm):
+        tm.create("Task A")
+        with pytest.raises(ValueError, match="Invalid status"):
+            tm.update(1, status="doing")
+
+    def test_one_in_progress_constraint(self, tm):
+        tm.create("Task A")
+        tm.create("Task B")
+        tm.update(1, status="in_progress")
+        with pytest.raises(ValueError, match="Only one task can be in_progress"):
+            tm.update(2, status="in_progress")
+
+    def test_create_with_dependency_sets_blocked(self, tm):
+        tm.create("Task A")
+        result = tm.create("Task B", add_blocked_by=[1])
+        assert "[!]" in result
+        task = tm._load(2)
+        assert task["status"] == "blocked"
+        assert task["blockedBy"] == [1]
+
+    def test_complete_auto_unblocks_dependent(self, tm):
+        tm.create("Task A")
+        tm.create("Task B", add_blocked_by=[1])
+        tm.update(1, status="in_progress")
+        result = tm.update(1, status="completed")
+        assert "[x]" in result
+        assert "[ ]" in result
+        task_b = tm._load(2)
+        assert task_b["status"] == "pending"
+        assert task_b["blockedBy"] == []
+
+    def test_dependency_on_nonexistent_task_rejected(self, tm):
+        with pytest.raises(ValueError, match="not found"):
+            tm.create("Task A", add_blocked_by=[99])
+
+    def test_dependency_on_completed_task_rejected(self, tm):
+        tm.create("Task A")
+        tm.update(1, status="in_progress")
+        tm.update(1, status="completed")
+        with pytest.raises(ValueError, match="already completed"):
+            tm.create("Task B", add_blocked_by=[1])
+
+    def test_list_empty(self, tm):
+        result = tm.list_all()
+        assert result == "No tasks."
+
+    def test_list_with_tasks(self, tm):
+        tm.create("Task A")
+        tm.create("Task B")
+        result = tm.list_all()
+        assert "Task A" in result
+        assert "Task B" in result
+
+    def test_update_nonexistent_task(self, tm):
+        with pytest.raises(ValueError, match="not found"):
+            tm.update(99, status="in_progress")
+
+    def test_remove_blocked_by(self, tm):
+        tm.create("Task A")
+        tm.create("Task B", add_blocked_by=[1])
+        result = tm.update(2, remove_blocked_by=[1])
+        assert "[ ]" in result
+        task_b = tm._load(2)
+        assert task_b["blockedBy"] == []
+        assert task_b["status"] == "pending"
+
+    def test_get_task(self, tm):
+        tm.create("Fix bug", description="Details")
+        result = tm.get(1)
+        assert "Fix bug" in result
+        assert "Details" in result
+
+    def test_completion_count(self, tm):
+        tm.create("Task A")
+        tm.create("Task B")
+        result = tm.update(1, status="in_progress")
+        result = tm.update(1, status="completed")
+        assert "1/2 completed" in result
+
+    def test_update_subject_and_description(self, tm):
+        tm.create("Old subject")
+        tm.update(1, subject="New subject", description="New desc")
+        task = tm._load(1)
+        assert task["subject"] == "New subject"
+        assert task["description"] == "New desc"
+
+    def test_add_blocked_by_to_existing_task(self, tm):
+        tm.create("Task A")
+        tm.create("Task B")
+        result = tm.update(2, add_blocked_by=[1])
+        assert "[!]" in result
+        task_b = tm._load(2)
+        assert task_b["blockedBy"] == [1]
+        assert task_b["status"] == "blocked"
+
+
+# --- task tool dispatch ---
+
+class TestTaskTool:
+    def test_create_via_execute_tool(self, tmp_path, monkeypatch):
+        from task_system import task_manager
+        from tools import task_manager as tools_tm
+        test_tm = TaskManager(tmp_path / "tasks")
+        monkeypatch.setattr("tools.task_manager", test_tm)
+        result = execute_tool("task", {"action": "create", "subject": "Hello"})
+        assert "[ ]" in result
+        assert "Hello" in result
+
+    def test_update_via_execute_tool(self, tmp_path, monkeypatch):
+        from tools import task_manager as tools_tm
+        test_tm = TaskManager(tmp_path / "tasks")
+        monkeypatch.setattr("tools.task_manager", test_tm)
+        execute_tool("task", {"action": "create", "subject": "Task A"})
+        result = execute_tool("task", {"action": "update", "task_id": 1, "status": "in_progress"})
+        assert "[>]" in result
+
+    def test_list_via_execute_tool(self, tmp_path, monkeypatch):
+        from tools import task_manager as tools_tm
+        test_tm = TaskManager(tmp_path / "tasks")
+        monkeypatch.setattr("tools.task_manager", test_tm)
+        result = execute_tool("task", {"action": "list"})
+        assert "No tasks" in result
+
+    def test_update_missing_task_id(self, tmp_path, monkeypatch):
+        from tools import task_manager as tools_tm
+        test_tm = TaskManager(tmp_path / "tasks")
+        monkeypatch.setattr("tools.task_manager", test_tm)
+        result = execute_tool("task", {"action": "update", "status": "in_progress"})
+        assert "task_id is required" in result

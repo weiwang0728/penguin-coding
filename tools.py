@@ -5,8 +5,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Callable
 
-from todo_write import TodoManager
-from agent_loop import TODO
+from task_system import task_manager
 ALLOWED_BASE_DIR = Path(os.getcwd()).resolve()
 MAX_READ_SIZE = 100 * 1024  # 100KB
 MAX_OUTPUT_LENGTH = 30_000  # ~30K chars for command output
@@ -101,14 +100,18 @@ TOOL_DEFINITIONS = [
     },
     {
         "name": "run_command",
-        "description": "Run a shell command and return its output",
+        "description": "Run a shell command and return its output. Use longer timeouts for install/build commands.",
         "input_schema": {
             "type": "object",
             "properties": {
                 "command": {
                     "type": "string",
                     "description": "The shell command to execute",
-                }
+                },
+                "timeout": {
+                    "type": "integer",
+                    "description": "Timeout in seconds. Default 60. Use 300 for installs/builds, 600 for heavy builds.",
+                },
             },
             "required": ["command"],
         },
@@ -172,33 +175,46 @@ TOOL_DEFINITIONS = [
         },
     },
     {
-        "name": "todo",
-        "description": "Update task list. Track progress on multi-step tasks.",
-        "input_schema":{
+        "name": "task",
+        "description": "Manage tasks with dependencies. Use 'create' to add tasks, 'update' to modify status/dependencies, 'list' to see all tasks.",
+        "input_schema": {
             "type": "object",
             "properties": {
-                "item": {
+                "action": {
+                    "type": "string",
+                    "enum": ["create", "update", "list"],
+                    "description": "Action to perform",
+                },
+                "task_id": {
+                    "type": "integer",
+                    "description": "Task ID (required for update)",
+                },
+                "subject": {
+                    "type": "string",
+                    "description": "Task title (required for create)",
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Task description (optional for create/update)",
+                },
+                "status": {
+                    "type": "string",
+                    "enum": ["pending", "in_progress", "completed"],
+                    "description": "New status (for update). 'blocked' is set automatically.",
+                },
+                "add_blocked_by": {
                     "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type":"string"
-                            },
-                            "text": {
-                                "type": "string",
-                            },
-                            "status": {
-                                "type": "string",
-                                "enum": ["pending", "in_progress", "completed"]
-                            }
-                        },
-                        "required": ["id", "text", "status"]
-                    }
-                }
+                    "items": {"type": "integer"},
+                    "description": "Task IDs this task depends on (for create/update)",
+                },
+                "remove_blocked_by": {
+                    "type": "array",
+                    "items": {"type": "integer"},
+                    "description": "Task IDs to remove from dependencies (for update)",
+                },
             },
-            "required": ["items"]
-        }
+            "required": ["action"],
+        },
     }
 ]
 
@@ -253,6 +269,8 @@ class ToolDispatcher:
                 errors.append(f"field '{key}' must be a string")
             elif expected_type == "integer" and not isinstance(value, int):
                 errors.append(f"field '{key}' must be an integer")
+            elif expected_type == "array" and not isinstance(value, list):
+                errors.append(f"field '{key}' must be an array")
         return errors
 
 
@@ -340,10 +358,12 @@ def write_file(path: str, content: str) -> str:
 
 
 @dispatcher.register("run_command", TOOL_DEFINITIONS[2])
-def run_command(command: str) -> str:
+def run_command(command: str, timeout: int = 300) -> str:
     danger_check = check_dangerous_command(command)
     if danger_check:
         return f"Error: {danger_check}"
+
+    timeout = max(10, min(timeout, 600))
 
     try:
         result = subprocess.run(
@@ -351,7 +371,7 @@ def run_command(command: str) -> str:
             shell=True,
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=timeout,
             cwd=ALLOWED_BASE_DIR,
         )
         output = result.stdout
@@ -361,7 +381,7 @@ def run_command(command: str) -> str:
             output += f"\nExit code: {result.returncode}"
         return _truncate_output(output) or "(no output)"
     except subprocess.TimeoutExpired:
-        return "Error: Command timed out after 60 seconds"
+        return f"Error: Command timed out after {timeout} seconds"
     except Exception as e:
         return f"Error running command: {e}"
 
@@ -443,9 +463,24 @@ def edit_file(path: str, old_string: str, new_string: str) -> str:
     except Exception as e:
         return f"Error editing file: {e}"
 
-@dispatcher.register("todo", TOOL_DEFINITIONS[6])
-def update_todo(items:list)->str:
-    return TODO.update(items)
+@dispatcher.register("task", TOOL_DEFINITIONS[6])
+def handle_task(action: str, task_id: int = None, subject: str = "",
+                description: str = "", status: str = None,
+                add_blocked_by: list = None, remove_blocked_by: list = None) -> str:
+    try:
+        if action == "create":
+            return task_manager.create(subject, description, add_blocked_by)
+        elif action == "update":
+            if task_id is None:
+                return "Error: task_id is required for update action"
+            return task_manager.update(task_id, status, subject, description,
+                                       add_blocked_by, remove_blocked_by)
+        elif action == "list":
+            return task_manager.list_all()
+        else:
+            return f"Error: unknown action '{action}'"
+    except (ValueError, PermissionError) as e:
+        return f"Error: {e}"
 
 def execute_tool(name: str, args: dict[str, Any]) -> str:
     return dispatcher.dispatch(name, args)
