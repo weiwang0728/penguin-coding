@@ -53,7 +53,8 @@ class SkillLoader:
         skill = self.skills.get(name)
         if not skill:
             return f"Error: Unknown skill '{name}'. Available: {', '.join(self.skills.keys())}"
-        return f"<skill name=\"{name}\">\n{skill['body']}\n</skill>"
+        skill_dir = str(Path(skill['path']).parent)
+        return f"<skill name=\"{name}\" dir=\"{skill_dir}\">\n{skill['body']}\n</skill>"
 
 
 SKILL_LOADER = SkillLoader(SKILLS_DIR)

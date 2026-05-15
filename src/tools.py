@@ -5,8 +5,9 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .task_system import task_manager
-from .skill_loader import SKILL_LOADER
+from .skill_loader import SKILL_LOADER, SKILLS_DIR
 ALLOWED_BASE_DIR = Path(__file__).resolve().parent.parent / "workspace"
+ALLOWED_DIRS = [ALLOWED_BASE_DIR, SKILLS_DIR]
 MAX_READ_SIZE = 100 * 1024  # 100KB
 MAX_OUTPUT_LENGTH = 30_000  # ~30K chars for command output
 MAX_TOOL_RESULT_CHARS = 10_000  # Max chars per tool result in context
@@ -310,12 +311,27 @@ dispatcher = ToolDispatcher()
 
 
 def resolve_and_validate_path(path: str) -> Path:
+    # Absolute path: validate against all allowed directories
+    abs_path = Path(path)
+    if abs_path.is_absolute():
+        for allowed_dir in ALLOWED_DIRS:
+            try:
+                abs_path.relative_to(allowed_dir)
+                if abs_path.is_symlink():
+                    abs_path.resolve().relative_to(allowed_dir)
+                return abs_path
+            except (ValueError, RuntimeError):
+                continue
+        raise PermissionError(
+            f"Path '{path}' is outside the allowed directories: {ALLOWED_DIRS}"
+        )
+
+    # Relative path: resolve against workspace only
+    resolved = (ALLOWED_BASE_DIR / path).resolve()
     try:
-        resolved = (ALLOWED_BASE_DIR / path).resolve()
         resolved.relative_to(ALLOWED_BASE_DIR)
         if resolved.is_symlink():
-            real_target = resolved.resolve()
-            real_target.relative_to(ALLOWED_BASE_DIR)
+            resolved.resolve().relative_to(ALLOWED_BASE_DIR)
         return resolved
     except (ValueError, RuntimeError):
         raise PermissionError(
