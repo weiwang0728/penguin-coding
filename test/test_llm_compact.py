@@ -2,7 +2,7 @@
 
 import pytest
 
-from compact import (
+from src.compact import (
     COMPACT_SYSTEM_PROMPT,
     _serialize_messages,
     estimate_messages_tokens,

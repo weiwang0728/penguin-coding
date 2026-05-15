@@ -6,7 +6,7 @@ import tempfile
 import pytest
 
 
-from tools import (
+from src.tools import (
     ALLOWED_BASE_DIR,
     check_dangerous_command,
     dispatcher,
@@ -21,7 +21,7 @@ from tools import (
     _truncate_output,
     _truncate_for_context,
 )
-from task_system import TaskManager
+from src.task_system import TaskManager
 
 
 # --- resolve_and_validate_path ---
@@ -129,6 +129,7 @@ class TestToolDispatcher:
         assert "search_files" in names
         assert "edit_file" in names
         assert "task" in names
+        assert "load_skill" in names
 
     def test_unknown_tool(self):
         result = dispatcher.dispatch("nonexistent_tool", {})
@@ -230,7 +231,7 @@ class TestRunCommand:
         assert "blocked" in result.lower()
 
     def test_command_timeout(self):
-        result = run_command("sleep 120")
+        result = run_command("sleep 120", timeout=5)
         assert "timed out" in result.lower()
 
 
@@ -239,7 +240,7 @@ class TestRunCommand:
 class TestListDirectory:
     def test_list_root(self):
         result = list_directory(".")
-        assert "test" in result or "tools.py" in result
+        assert "test" in result
 
     def test_list_subdir(self):
         result = list_directory("test")
@@ -464,32 +465,32 @@ class TestTaskManager:
 
 class TestTaskTool:
     def test_create_via_execute_tool(self, tmp_path, monkeypatch):
-        from task_system import task_manager
-        from tools import task_manager as tools_tm
+        from src.task_system import task_manager
+        from src.tools import task_manager as tools_tm
         test_tm = TaskManager(tmp_path / "tasks")
-        monkeypatch.setattr("tools.task_manager", test_tm)
+        monkeypatch.setattr("src.tools.task_manager", test_tm)
         result = execute_tool("task", {"action": "create", "subject": "Hello"})
         assert "[ ]" in result
         assert "Hello" in result
 
     def test_update_via_execute_tool(self, tmp_path, monkeypatch):
-        from tools import task_manager as tools_tm
+        from src.tools import task_manager as tools_tm
         test_tm = TaskManager(tmp_path / "tasks")
-        monkeypatch.setattr("tools.task_manager", test_tm)
+        monkeypatch.setattr("src.tools.task_manager", test_tm)
         execute_tool("task", {"action": "create", "subject": "Task A"})
         result = execute_tool("task", {"action": "update", "task_id": 1, "status": "in_progress"})
         assert "[>]" in result
 
     def test_list_via_execute_tool(self, tmp_path, monkeypatch):
-        from tools import task_manager as tools_tm
+        from src.tools import task_manager as tools_tm
         test_tm = TaskManager(tmp_path / "tasks")
-        monkeypatch.setattr("tools.task_manager", test_tm)
+        monkeypatch.setattr("src.tools.task_manager", test_tm)
         result = execute_tool("task", {"action": "list"})
         assert "No tasks" in result
 
     def test_update_missing_task_id(self, tmp_path, monkeypatch):
-        from tools import task_manager as tools_tm
+        from src.tools import task_manager as tools_tm
         test_tm = TaskManager(tmp_path / "tasks")
-        monkeypatch.setattr("tools.task_manager", test_tm)
+        monkeypatch.setattr("src.tools.task_manager", test_tm)
         result = execute_tool("task", {"action": "update", "status": "in_progress"})
         assert "task_id is required" in result

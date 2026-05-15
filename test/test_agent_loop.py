@@ -2,8 +2,8 @@
 
 import pytest
 
-import agent_loop
-from compact import (
+import src.agent_loop as agent_loop_module
+from src.compact import (
     _compact_oversized_blocks,
     _compact_tool_round,
     _is_error_result,
@@ -12,7 +12,7 @@ from compact import (
     estimate_tokens,
     trim_messages,
 )
-from agent_loop import _repair_json
+from src.agent_loop import _repair_json
 
 
 # --- estimate_tokens ---
@@ -502,24 +502,24 @@ class TestRepairJson:
 
 class TestValidateConfig:
     def test_missing_model_id(self, monkeypatch):
-        monkeypatch.setattr(agent_loop, "MODEL_ID", None)
-        monkeypatch.setattr(agent_loop, "API_KEY", "test-key")
+        monkeypatch.setattr(agent_loop_module, "MODEL_ID", None)
+        monkeypatch.setattr(agent_loop_module, "API_KEY", "test-key")
         with pytest.raises(EnvironmentError, match="MODEL_ID"):
-            agent_loop._validate_config()
+            agent_loop_module._validate_config()
 
     def test_missing_api_key(self, monkeypatch):
-        monkeypatch.setattr(agent_loop, "MODEL_ID", "test-model")
-        monkeypatch.setattr(agent_loop, "API_KEY", None)
+        monkeypatch.setattr(agent_loop_module, "MODEL_ID", "test-model")
+        monkeypatch.setattr(agent_loop_module, "API_KEY", None)
         with pytest.raises(EnvironmentError, match="API_KEY"):
-            agent_loop._validate_config()
+            agent_loop_module._validate_config()
 
     def test_both_missing(self, monkeypatch):
-        monkeypatch.setattr(agent_loop, "MODEL_ID", None)
-        monkeypatch.setattr(agent_loop, "API_KEY", None)
+        monkeypatch.setattr(agent_loop_module, "MODEL_ID", None)
+        monkeypatch.setattr(agent_loop_module, "API_KEY", None)
         with pytest.raises(EnvironmentError, match="MODEL_ID"):
-            agent_loop._validate_config()
+            agent_loop_module._validate_config()
 
     def test_valid_config(self, monkeypatch):
-        monkeypatch.setattr(agent_loop, "MODEL_ID", "test-model")
-        monkeypatch.setattr(agent_loop, "API_KEY", "test-key")
-        agent_loop._validate_config()  # should not raise
+        monkeypatch.setattr(agent_loop_module, "MODEL_ID", "test-model")
+        monkeypatch.setattr(agent_loop_module, "API_KEY", "test-key")
+        agent_loop_module._validate_config()  # should not raise
