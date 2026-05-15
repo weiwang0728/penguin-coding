@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "weather": {
+      "command": "python3",
+      "args": ["/root/my-cluade-code/skill/weather-mcp-server/weather_server.py"],
+      "env": {}
+    }
+  }
+}
