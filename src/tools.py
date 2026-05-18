@@ -1,70 +1,22 @@
 import json
-import re
 import subprocess
 from pathlib import Path
 from typing import Any, Callable
 
+from ._constants import (
+    ALLOWED_BASE_DIR,
+    MAX_READ_SIZE,
+    MAX_OUTPUT_LENGTH,
+    MAX_TOOL_RESULT_CHARS,
+    check_dangerous_command,
+    _truncate_output,
+    _truncate_for_context,
+)
 from .task_system import task_manager
 from .skill_loader import SKILL_LOADER, SKILLS_DIR
-ALLOWED_BASE_DIR = Path(__file__).resolve().parent.parent / "workspace"
+from .background_tasks import BG
+
 ALLOWED_DIRS = [ALLOWED_BASE_DIR, SKILLS_DIR]
-MAX_READ_SIZE = 100 * 1024  # 100KB
-MAX_OUTPUT_LENGTH = 30_000  # ~30K chars for command output
-MAX_TOOL_RESULT_CHARS = 10_000  # Max chars per tool result in context
-
-DANGEROUS_COMMANDS = [
-    # Destructive file operations
-    r"\brm\s+-rf\s+/",
-    r"\brm\s+-rf\s+~",
-    r"\brm\s+-rf\s+\$HOME",
-    r"\bmkfs\.",
-    r"\bdd\s+if=.*of=/dev/",
-    r">\s*/etc/passwd",
-    r">\s*/etc/shadow",
-    r">\s+/dev/(sda|nvme|hd)",
-    # Fork bomb
-    r"\b:(){ :|:& };:",
-    # Permission escalation
-    r"\bchmod\s+-R\s+777\s+/",
-    r"\bchown\s+-R\s+.*\s+/",
-    # Privilege escalation
-    r"\bsudo\s+rm\s+-rf",
-    r"\bsu\s+-",
-    r"\bpasswd\b",
-    r"\buseradd\b",
-    r"\busermod\b",
-    r"\bgroupadd\b",
-    # System disruption
-    r"\bshutdown\b",
-    r"\breboot\b",
-    r"\binit\s+0",
-    r"\bsystemctl\s+(stop|restart)\s+(ssh|network|systemd)",
-    # Cluster/container destruction
-    r"\bkubectl\s+delete\s+.*--all",
-    r"\bdocker\s+(rm|kill)\s+.*\*",
-    # Remote code execution
-    r"\bcurl\s+.*\|\s*sh",
-    r"\bwget\s+.*\|\s*sh",
-    r"\beval\s*\$",
-    r"\bexec\s*\$",
-    # Shell injection via command substitution
-    r"\$\(",
-    r"`",
-    # Pipe to shell variants
-    r"\|\s*(ba)?sh\b",
-    # Environment/credential exfiltration
-    r"\bexport\s+\w*(KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)",
-    # Overwrite critical files
-    r"\btee\s+/etc/(passwd|shadow|sudoers|hosts)",
-    # Kill critical processes
-    r"\bkill\s+-9\s+1\b",
-    r"\bkillall\s+(init|systemd|sshd)",
-]
-
-SHELL_INJECTION_PATTERNS = [re.compile(p, re.IGNORECASE) for p in [r"\$\(", r"`"]]
-DANGEROUS_PATTERNS = [
-    re.compile(p, re.IGNORECASE) for p in DANGEROUS_COMMANDS if p not in [r"\$\(", r"`"]
-]
 
 TOOL_DEFINITIONS = [
     {
@@ -248,7 +200,24 @@ TOOL_DEFINITIONS = [
             },
             "required": ["name"],
         },
-    }
+    },
+    {
+        "name": "background_run",
+        "description": "Run command in background thread. Returns task_id immediately.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"command": {"type": "string"}},
+            "required": ["command"],
+        },
+    },
+    {
+        "name": "check_background",
+        "description": "Check background task status. Omit task_id to list all.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"task_id": {"type": "string"}},
+        },
+    },
 ]
 
 
@@ -339,38 +308,6 @@ def resolve_and_validate_path(path: str) -> Path:
         )
 
 
-def check_dangerous_command(command: str) -> str | None:
-    for pattern in SHELL_INJECTION_PATTERNS:
-        if pattern.search(command):
-            return f"Shell command substitution blocked for safety (matched '{pattern.pattern}'). Use direct commands instead of $() or backtick substitution."
-    for pattern in DANGEROUS_PATTERNS:
-        if pattern.search(command):
-            return f"Dangerous command detected and blocked: pattern '{pattern.pattern}'"
-    return None
-
-
-def _truncate_output(output: str, max_length: int = MAX_OUTPUT_LENGTH) -> str:
-    if len(output) <= max_length:
-        return output
-    half = max_length // 2
-    return (
-        output[:half]
-        + f"\n\n... [Output truncated: {len(output)} chars total, showing first and last {half} chars] ...\n\n"
-        + output[-half:]
-    )
-
-
-def _truncate_for_context(text: str, max_chars: int = MAX_TOOL_RESULT_CHARS) -> str:
-    if len(text) <= max_chars:
-        return text
-    half = max_chars // 2
-    return (
-        text[:half]
-        + f"\n... [Result truncated for context: {len(text)} chars total] ...\n"
-        + text[-half:]
-    )
-
-
 @dispatcher.register("read_file", TOOL_DEFINITIONS[0])
 def read_file(path: str) -> str:
     try:
@@ -440,7 +377,9 @@ def list_directory(path: str = ".") -> str:
         resolved = resolve_and_validate_path(path)
         if not resolved.is_dir():
             return f"Error: '{path}' is not a directory"
-        entries = sorted(resolved.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower()))
+        entries = sorted(
+            resolved.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower())
+        )
         lines = []
         for entry in entries:
             prefix = "[DIR]  " if entry.is_dir() else "[FILE] "
@@ -481,7 +420,9 @@ def search_files(pattern: str, path: str = ".", file_pattern: str = "") -> str:
         if result.returncode == 1:
             return "No matches found."
         if result.returncode != 0:
-            return f"Error: {result.stderr.strip()}" if result.stderr else "Search failed."
+            return (
+                f"Error: {result.stderr.strip()}" if result.stderr else "Search failed."
+            )
         return _truncate_output(result.stdout)
     except subprocess.TimeoutExpired:
         return "Error: Search timed out after 30 seconds"
@@ -511,18 +452,26 @@ def edit_file(path: str, old_string: str, new_string: str) -> str:
     except Exception as e:
         return f"Error editing file: {e}"
 
+
 @dispatcher.register("task", TOOL_DEFINITIONS[6])
-def handle_task(action: str, task_id: int = None, subject: str = "",
-                description: str = "", status: str = None,
-                add_blocked_by: list = None, remove_blocked_by: list = None) -> str:
+def handle_task(
+    action: str,
+    task_id: int = None,
+    subject: str = "",
+    description: str = "",
+    status: str = None,
+    add_blocked_by: list = None,
+    remove_blocked_by: list = None,
+) -> str:
     try:
         if action == "create":
             return task_manager.create(subject, description, add_blocked_by)
         elif action == "update":
             if task_id is None:
                 return "Error: task_id is required for update action"
-            return task_manager.update(task_id, status, subject, description,
-                                       add_blocked_by, remove_blocked_by)
+            return task_manager.update(
+                task_id, status, subject, description, add_blocked_by, remove_blocked_by
+            )
         elif action == "list":
             return task_manager.list_all()
         else:
@@ -530,9 +479,18 @@ def handle_task(action: str, task_id: int = None, subject: str = "",
     except (ValueError, PermissionError) as e:
         return f"Error: {e}"
 
+
 @dispatcher.register("load_skill", TOOL_DEFINITIONS[8])
 def load_skill(name: str) -> str:
     return SKILL_LOADER.get_content(name)
+
+@dispatcher.register("background_run", TOOL_DEFINITIONS[9])
+def background_run(command:str)->str:
+    return BG.run(command)
+
+@dispatcher.register("check_background", TOOL_DEFINITIONS[10])
+def check_background(task_id: str = None) -> str:
+    return BG.check(task_id)
 
 def execute_tool(name: str, args: dict[str, Any]) -> str:
     return dispatcher.dispatch(name, args)

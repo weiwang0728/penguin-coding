@@ -3,7 +3,7 @@ import logging
 import os
 import time
 from typing import Any, Callable, Generator
-
+from .background_tasks import BG
 import anthropic
 from dotenv import load_dotenv
 
@@ -413,6 +413,17 @@ def agent_loop(
                     "content": _truncate_for_context(result),
                 }
             )
+
+        # Inject background task completions into this iteration's context
+        bg_notifs = BG.drain_notifications()
+        if bg_notifs:
+            notif_lines = []
+            for n in bg_notifs:
+                notif_lines.append(f"[bg:{n['task_id']}] {n['status']}: {n['result']}")
+            tool_results.append({
+                "type": "text",
+                "text": f"<background-results>\n" + "\n".join(notif_lines) + "\n</background-results>",
+            })
         if rounds_since_todo >= 3:
             current_tasks = task_manager.list_all()
             reminder = f"\n\n<reminder>Update your task list. Current tasks:\n{current_tasks}</reminder>"
