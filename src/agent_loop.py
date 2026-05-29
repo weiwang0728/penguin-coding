@@ -22,6 +22,7 @@ from .task_system import (
     task_manager
 )
 from .skill_loader import SKILL_LOADER
+from ._constants import client
 
 load_dotenv()
 MODEL_ID = os.getenv("MODEL_ID")
@@ -38,6 +39,7 @@ Core principles:
 - Batch related tool calls in a single response when possible (e.g., read multiple files at once).
 - If a task has multiple steps, complete ALL steps before responding to the user.
 - Use load_skill when a task needs specialized instructions before you act.
+- For parallel work, use team_spawn to create teammate agents. Use team_send/team_broadcast to coordinate. Use team_shutdown when done.
 
 Skills available:
 {SKILL_LOADER.get_descriptions()}
@@ -446,11 +448,6 @@ def main():
         format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
     )
 
-    client = anthropic.Anthropic(
-        api_key=API_KEY,
-        base_url=BASE_URL,
-    )
-
     register_delegate_tool(client)
 
     print(f"Penguin Coding Agent (working directory: {ALLOWED_BASE_DIR})")
@@ -473,7 +470,7 @@ def main():
         if user_input.lower() == "exit":
             print("Goodbye!")
             break
-
+        
         print("\nAgent: ", end="", flush=True)
 
         def on_content(text: str):

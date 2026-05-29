@@ -15,6 +15,7 @@ from ._constants import (
 from .task_system import task_manager
 from .skill_loader import SKILL_LOADER, SKILLS_DIR
 from .background_tasks import BG
+from .agent_teams import TEAM_MANAGER
 
 ALLOWED_DIRS = [ALLOWED_BASE_DIR, SKILLS_DIR]
 
@@ -216,6 +217,82 @@ TOOL_DEFINITIONS = [
         "input_schema": {
             "type": "object",
             "properties": {"task_id": {"type": "string"}},
+        },
+    },
+    {
+        "name": "team_spawn",
+        "description": "Spawn a new teammate agent that runs in a background thread. The teammate can use tools and communicate via messages.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Unique name for the teammate",
+                },
+                "role": {
+                    "type": "string",
+                    "description": "Role description (e.g. 'tester', 'code reviewer')",
+                },
+                "prompt": {
+                    "type": "string",
+                    "description": "The task description for the teammate",
+                },
+            },
+            "required": ["name", "role", "prompt"],
+        },
+    },
+    {
+        "name": "team_list",
+        "description": "List all team members and their current status.",
+        "input_schema": {
+            "type": "object",
+            "properties": {},
+        },
+    },
+    {
+        "name": "team_shutdown",
+        "description": "Send a shutdown request to a teammate agent.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the teammate to shut down",
+                },
+            },
+            "required": ["name"],
+        },
+    },
+    {
+        "name": "team_send",
+        "description": "Send a message to a specific teammate.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "to": {
+                    "type": "string",
+                    "description": "Name of the teammate to send to",
+                },
+                "content": {
+                    "type": "string",
+                    "description": "Message content",
+                },
+            },
+            "required": ["to", "content"],
+        },
+    },
+    {
+        "name": "team_broadcast",
+        "description": "Broadcast a message to all teammates.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "description": "Message content to broadcast",
+                },
+            },
+            "required": ["content"],
         },
     },
 ]
@@ -491,6 +568,26 @@ def background_run(command:str)->str:
 @dispatcher.register("check_background", TOOL_DEFINITIONS[10])
 def check_background(task_id: str = None) -> str:
     return BG.check(task_id)
+
+@dispatcher.register("team_spawn", TOOL_DEFINITIONS[11])
+def team_spawn(name: str, role: str, prompt: str) -> str:
+    return TEAM_MANAGER.spawn(name, role, prompt)
+
+@dispatcher.register("team_list", TOOL_DEFINITIONS[12])
+def team_list() -> str:
+    return TEAM_MANAGER.list_members()
+
+@dispatcher.register("team_shutdown", TOOL_DEFINITIONS[13])
+def team_shutdown(name: str) -> str:
+    return TEAM_MANAGER.shutdown(name)
+
+@dispatcher.register("team_send", TOOL_DEFINITIONS[14])
+def team_send(to: str, content: str) -> str:
+    return TEAM_MANAGER.send_message("coordinator", to, content)
+
+@dispatcher.register("team_broadcast", TOOL_DEFINITIONS[15])
+def team_broadcast(content: str) -> str:
+    return TEAM_MANAGER.broadcast_message("coordinator", content)
 
 def execute_tool(name: str, args: dict[str, Any]) -> str:
     return dispatcher.dispatch(name, args)

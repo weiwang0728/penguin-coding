@@ -1,13 +1,24 @@
 """Shared constants and utilities — no intra-package imports, so other modules can safely import from here."""
 from pathlib import Path
 import re
-
+from anthropic import Anthropic
+from dotenv import load_dotenv
+import os
 ALLOWED_BASE_DIR = Path(__file__).resolve().parent.parent / "workspace"
 
 MAX_OUTPUT_LENGTH = 30_000
 MAX_READ_SIZE = 100 * 1024  # 100KB
 MAX_TOOL_RESULT_CHARS = 10_000
-
+TEAM_DIR = ALLOWED_BASE_DIR / ".team"
+INBOX_DIR = ALLOWED_BASE_DIR / ".inbox"
+load_dotenv()
+MODEL_ID = os.getenv("MODEL_ID")
+API_KEY = os.getenv("API_KEY")
+BASE_URL = os.getenv("BASE_URL")
+client = Anthropic(
+    api_key=API_KEY,
+    base_url=BASE_URL,
+)
 DANGEROUS_COMMANDS = [
     r"\brm\s+-rf\s+/",
     r"\brm\s+-rf\s+~",
