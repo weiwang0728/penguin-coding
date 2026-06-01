@@ -59,6 +59,8 @@ KEEP_RECENT_TOOLS = 5
 PRESERVE_RESULT_TOOLS = []
 TODO = task_manager
 
+usage_stats = {"prompt_tokens": 0, "completion_tokens": 0}
+
 def _validate_config() -> None:
     missing = []
     if not MODEL_ID:
@@ -163,6 +165,10 @@ def stream_response(
         yield ("truncated", True)
     if tool_calls_list:
         yield ("tool_calls", tool_calls_list)
+
+    usage = final_msg.usage
+    usage_stats["prompt_tokens"] += usage.input_tokens
+    usage_stats["completion_tokens"] += usage.output_tokens
 
 
 def _repair_json(raw: str) -> dict[str, Any]:
@@ -306,7 +312,7 @@ def agent_loop(
     messages.append({"role": "user", "content": user_message})
 
     for iteration in range(max_iterations):
-        messages[:] = llm_compact_messages(
+        messages[:] = llm_compact_messages( 
             messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
         )
 
@@ -438,70 +444,3 @@ def agent_loop(
         messages.append({"role": "user", "content": tool_results})
 
     return "Agent reached maximum iterations without completing the task.", messages
-
-
-def main():
-    _validate_config()
-
-    logging.basicConfig(
-        level=logging.WARNING,
-        format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
-    )
-
-    register_delegate_tool(client)
-
-    print(f"Penguin Coding Agent (working directory: {ALLOWED_BASE_DIR})")
-    print("-" * 50)
-    print(f"Available tools: {', '.join(dispatcher.list_tools())}")
-    print(f"Context budget: ~{MAX_CONTEXT_TOKENS} tokens")
-    print("-" * 50)
-
-    conversation_history: list[dict[str, Any]] = []
-    rounds_since_todo = 0
-    while True:
-        try:
-            user_input = input("\nYou: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            print("\nGoodbye!")
-            break
-
-        if not user_input:
-            continue
-        if user_input.lower() == "exit":
-            print("Goodbye!")
-            break
-        
-        print("\nAgent: ", end="", flush=True)
-
-        def on_content(text: str):
-            print(text, end="", flush=True)
-
-        def on_tool_start(name: str, args: dict):
-            print(
-                f"\n[Tool: {name}({json.dumps(args, ensure_ascii=False)})]", flush=True
-            )
-
-        def on_tool_result(name: str, result: str):
-            preview = result[:200] + "..." if len(result) > 200 else result
-            print(f"[Result: {preview}]", flush=True)
-            print("\nAgent: ", end="", flush=True)
-
-        final_response, conversation_history = agent_loop(
-            client,
-            user_input,
-            max_iterations=500,
-            on_content=on_content,
-            on_tool_start=on_tool_start,
-            on_tool_result=on_tool_result,
-            messages=conversation_history,
-            rounds_since_todo=rounds_since_todo
-        )
-
-        if final_response == "Agent reached maximum iterations without completing the task.":
-            print(f"\n[Warning: Reached iteration limit. Task may be incomplete.]", flush=True)
-
-        print()
-
-
-if __name__ == "__main__":
-    main()

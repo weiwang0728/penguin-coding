@@ -19,6 +19,8 @@ from .agent_teams import TEAM_MANAGER
 
 ALLOWED_DIRS = [ALLOWED_BASE_DIR, SKILLS_DIR]
 
+_changed_files: set[str] = set()
+
 TOOL_DEFINITIONS = [
     {
         "name": "read_file",
@@ -412,6 +414,7 @@ def write_file(path: str, content: str) -> str:
         resolved_path.parent.mkdir(parents=True, exist_ok=True)
         with open(resolved_path, "w", encoding="utf-8") as f:
             f.write(content)
+        _changed_files.add(path)
         return f"Successfully wrote to {path}"
     except PermissionError as e:
         return f"Error: {e}"
@@ -523,6 +526,7 @@ def edit_file(path: str, old_string: str, new_string: str) -> str:
 
         new_content = content.replace(old_string, new_string, 1)
         resolved_path.write_text(new_content, encoding="utf-8")
+        _changed_files.add(path)
         return f"Successfully edited {path} (replaced 1 occurrence)"
     except PermissionError as e:
         return f"Error: {e}"
