@@ -284,7 +284,7 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
         try:
             response, conversation_history = agent_loop(
                 client, user_input,
-                max_iterations=500,
+                max_iterations=100,
                 on_content=on_content,
                 on_tool_start=on_tool_start,
                 on_tool_result=on_tool_result,

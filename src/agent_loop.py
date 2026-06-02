@@ -300,7 +300,7 @@ def register_delegate_tool(client: anthropic.Anthropic) -> None:
 def agent_loop(
     client: anthropic.Anthropic,
     user_message: str,
-    max_iterations: int = 500,
+    max_iterations: int = 100,
     on_content: ContentCallback | None = None,
     on_tool_start: ToolStartCallback | None = None,
     on_tool_result: ToolResultCallback | None = None,
