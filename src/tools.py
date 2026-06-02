@@ -1,3 +1,4 @@
+import difflib
 import json
 import subprocess
 from pathlib import Path
@@ -407,15 +408,37 @@ def read_file(path: str) -> str:
         return f"Error reading file: {e}"
 
 
+def _unified_diff(old: str, new: str, filename: str, context: int = 3) -> str:
+    old_lines = old.splitlines(keepends=True)
+    new_lines = new.splitlines(keepends=True)
+    diff = difflib.unified_diff(
+        old_lines, new_lines,
+        fromfile=f"a/{filename}", tofile=f"b/{filename}",
+        n=context,
+    )
+    result = "".join(diff)
+    if len(result) > 3000:
+        result = result[:2500] + "\n... (diff truncated)\n"
+    return result
+
+
 @dispatcher.register("write_file", TOOL_DEFINITIONS[1])
 def write_file(path: str, content: str) -> str:
     try:
         resolved_path = resolve_and_validate_path(path)
         resolved_path.parent.mkdir(parents=True, exist_ok=True)
+        old_content = ""
+        if resolved_path.is_file():
+            old_content = resolved_path.read_text(encoding="utf-8")
         with open(resolved_path, "w", encoding="utf-8") as f:
             f.write(content)
         _changed_files.add(path)
-        return f"Successfully wrote to {path}"
+        result = f"Successfully wrote to {path}"
+        if old_content != content:
+            diff = _unified_diff(old_content, content, path)
+            if diff:
+                result += f"\n\n{diff}"
+        return result
     except PermissionError as e:
         return f"Error: {e}"
     except Exception as e:
@@ -527,7 +550,11 @@ def edit_file(path: str, old_string: str, new_string: str) -> str:
         new_content = content.replace(old_string, new_string, 1)
         resolved_path.write_text(new_content, encoding="utf-8")
         _changed_files.add(path)
-        return f"Successfully edited {path} (replaced 1 occurrence)"
+        result = f"Successfully edited {path} (replaced 1 occurrence)"
+        diff = _unified_diff(content, new_content, path)
+        if diff:
+            result += f"\n\n{diff}"
+        return result
     except PermissionError as e:
         return f"Error: {e}"
     except Exception as e:

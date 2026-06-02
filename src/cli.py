@@ -250,12 +250,36 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
             streamed.append(text)
             print(text, end="", flush=True)
 
+        def _render_diff(text: str) -> str:
+            lines = text.split("\n")
+            rendered = []
+            for line in lines:
+                if line.startswith("---") or line.startswith("+++"):
+                    rendered.append(f"[bold]{line}[/bold]")
+                elif line.startswith("@@"):
+                    rendered.append(f"[cyan]{line}[/cyan]")
+                elif line.startswith("-"):
+                    rendered.append(f"[red]{line}[/red]")
+                elif line.startswith("+"):
+                    rendered.append(f"[green]{line}[/green]")
+                else:
+                    rendered.append(line)
+            return "\n".join(rendered)
+
         def on_tool_start(name: str, kwargs: dict):
-            console.print(f"\n[dim]> {name}({_brief(kwargs)})[/dim]")
+            console.print(f"\n> {name}({_brief(kwargs)})")
 
         def on_tool_result(name: str, result: str):
-            preview = result[:200] + "..." if len(result) > 200 else result
-            console.print(f"[dim][Result: {preview}][/dim]")
+            if name in ("write_file", "edit_file"):
+                if "\n\n--- " in result:
+                    summary, diff_part = result.split("\n\n", 1)
+                    console.print(f"[Result: {summary}]")
+                    console.print(_render_diff(diff_part))
+                else:
+                    console.print(f"[Result: {result}]")
+            else:
+                preview = result[:200] + "..." if len(result) > 200 else result
+                console.print(f"[Result: {preview}]")
 
         try:
             response, conversation_history = agent_loop(
