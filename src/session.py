@@ -6,12 +6,36 @@ from pathlib import Path
 
 SESSION_DIR = Path.home() / ".penguin_sessions"
 
+_current_session_file: str | None = None
+
+
+def _extract_session_name(messages: list) -> str:
+    for msg in reversed(messages):
+        if msg.get("role") != "user":
+            continue
+        content = msg.get("content", "")
+        if isinstance(content, str):
+            text = content.strip()
+        elif isinstance(content, list):
+            text = ""
+            for block in content:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    text = block.get("text", "").strip()
+                    break
+        else:
+            continue
+        if text:
+            return text[:60]
+    return "untitled"
+
 
 def save_session(messages: list, model: str) -> str:
     SESSION_DIR.mkdir(parents=True, exist_ok=True)
     session_id = time.strftime("%Y%m%d_%H%M%S")
+    name = _extract_session_name(messages)
     data = {
         "id": session_id,
+        "name": name,
         "model": model,
         "messages": messages,
         "saved_at": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -21,11 +45,44 @@ def save_session(messages: list, model: str) -> str:
     return session_id
 
 
+def autosave_session(messages: list, model: str) -> str:
+    global _current_session_file
+    name = _extract_session_name(messages)
+
+    if _current_session_file:
+        path = SESSION_DIR / _current_session_file
+        data = json.loads(path.read_text())
+        data["messages"] = messages
+        data["name"] = name
+        data["saved_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        data["model"] = model
+        path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+        return data["id"]
+
+    SESSION_DIR.mkdir(parents=True, exist_ok=True)
+    session_id = time.strftime("%Y%m%d_%H%M%S")
+    filename = f"{session_id}.json"
+    data = {
+        "id": session_id,
+        "name": name,
+        "model": model,
+        "messages": messages,
+        "saved_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    path = SESSION_DIR / filename
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    _current_session_file = filename
+    return session_id
+
+
 def load_session(session_id: str) -> tuple | None:
-    path = SESSION_DIR / f"{session_id}.json"
+    global _current_session_file
+    filename = f"{session_id}.json"
+    path = SESSION_DIR / filename
     if not path.exists():
         return None
     data = json.loads(path.read_text())
+    _current_session_file = filename
     return data["messages"], data["model"]
 
 
@@ -36,24 +93,11 @@ def list_sessions() -> list[dict]:
     for path in sorted(SESSION_DIR.glob("*.json"), reverse=True):
         try:
             data = json.loads(path.read_text())
-            preview = ""
-            for msg in data["messages"][:3]:
-                content = msg.get("content", "")
-                if isinstance(content, str):
-                    preview = content[:60]
-                    break
-                elif isinstance(content, list):
-                    for block in content:
-                        if isinstance(block, dict) and block.get("type") == "text":
-                            preview = block.get("text", "")[:60]
-                            break
-                    if preview:
-                        break
             sessions.append({
                 "id": data["id"],
+                "name": data.get("name", ""),
                 "model": data["model"],
                 "saved_at": data["saved_at"],
-                "preview": preview,
             })
         except (json.JSONDecodeError, KeyError):
             continue

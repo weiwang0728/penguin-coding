@@ -21,7 +21,7 @@ from .agent_loop import agent_loop, register_delegate_tool, usage_stats
 from .compact import llm_compact_messages, estimate_tokens, MAX_CONTEXT_TOKENS
 from .tools import dispatcher, _changed_files
 from ._constants import ALLOWED_BASE_DIR
-from .session import save_session, load_session, list_sessions
+from .session import load_session, list_sessions, autosave_session
 from . import __version__
 
 console = Console()
@@ -157,7 +157,10 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 prompt_continuation="...  ",
             ).strip()
         except (EOFError, KeyboardInterrupt):
-            console.print("\nBye!")
+            if conversation_history:
+                sid = autosave_session(conversation_history, model_id)
+                console.print(f"\n[dim]Session auto-saved: {sid}[/dim]")
+            console.print("Bye!")
             break
 
         if not user_input:
@@ -165,6 +168,9 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
 
         # Built-in commands
         if user_input.lower() in ("quit", "exit", "/quit", "/exit"):
+            if conversation_history:
+                sid = autosave_session(conversation_history, model_id)
+                console.print(f"[dim]Session auto-saved: {sid}[/dim]")
             break
         if user_input == "/help":
             _show_help()
@@ -210,18 +216,26 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 for f in sorted(_changed_files):
                     console.print(f"  [cyan]{f}[/cyan]")
             continue
-        if user_input == "/save":
-            sid = save_session(conversation_history, model_id)
-            console.print(f"[green]Session saved: {sid}[/green]")
-            console.print(f"Resume with: penguin -r {sid}")
-            continue
-        if user_input == "/sessions":
+        if user_input.startswith("/resume"):
+            target = user_input[7:].strip()
             sessions = list_sessions()
             if not sessions:
                 console.print("[dim]No saved sessions.[/dim]")
-            else:
+                continue
+            if not target:
                 for s in sessions:
-                    console.print(f"  [cyan]{s['id']}[/cyan] ({s['model']}, {s['saved_at']}) {s['preview']}")
+                    console.print(f"  [cyan]{s['id']}[/cyan] {s['name']} ({s['model']}, {s['saved_at']})")
+                console.print("\nUsage: /resume <session_id>")
+                continue
+            loaded = load_session(target)
+            if loaded:
+                conversation_history.clear()
+                conversation_history.extend(loaded[0])
+                model_id = loaded[1]
+                _al.MODEL_ID = model_id
+                console.print(f"[green]Resumed session: {target} (model: {model_id})[/green]")
+            else:
+                console.print(f"[red]Session '{target}' not found.[/red]")
             continue
 
         # Unknown slash command
@@ -252,6 +266,8 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 on_tool_result=on_tool_result,
                 messages=conversation_history,
             )
+            if conversation_history:
+                autosave_session(conversation_history, model_id)
             if streamed:
                 print()
             else:
@@ -272,8 +288,8 @@ def _show_help():
         "  /tokens        Show token usage\n"
         "  /compact       Compress conversation context\n"
         "  /diff          Show files modified this session\n"
-        "  /save          Save session to disk\n"
-        "  /sessions      List saved sessions\n"
+        "  /resume        List saved sessions\n"
+        "  /resume <id>   Resume a saved session\n"
         "  quit           Exit Penguin\n"
         "\n"
         "[bold]Input:[/bold]\n"
