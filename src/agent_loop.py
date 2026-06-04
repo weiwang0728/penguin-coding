@@ -17,6 +17,7 @@ from .tools import (
     _truncate_for_context,
     dispatcher,
     execute_tool,
+    register_delegate_tool,
 )
 from .task_system import (
     task_manager
@@ -286,15 +287,8 @@ def run_subagent(
     )
 
 
-def register_delegate_tool(client: anthropic.Anthropic) -> None:
-    """Register the delegate tool handler. Must be called after client creation."""
-    delegate_schema = next(
-        (t for t in TOOL_DEFINITIONS if t["name"] == "delegate"), None
-    )
-
-    @dispatcher.register("delegate", delegate_schema)
-    def handle_delegate(prompt: str, max_iterations: int = 20) -> str:
-        return run_subagent(client, prompt, max_iterations)
+# Re-export for backward compatibility — cli.py imports this from agent_loop
+__all__ = ["register_delegate_tool"]
 
 
 def agent_loop(
