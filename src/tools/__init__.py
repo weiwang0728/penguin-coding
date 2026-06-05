@@ -95,8 +95,14 @@ def list_directory(path: str = ".") -> str:
 def search_files(pattern: str, path: str = ".", file_pattern: str = "") -> str:
     return _tools[4].execute(pattern=pattern, path=path, file_pattern=file_pattern)
 
-def edit_file(path: str, old_string: str, new_string: str) -> str:
-    return _tools[5].execute(path=path, old_string=old_string, new_string=new_string)
+def edit_file(path: str, old_string: str = "", new_string: str = "", edits: list | None = None) -> str:
+    kwargs = {"path": path}
+    if edits is not None:
+        kwargs["edits"] = edits
+    else:
+        kwargs["old_string"] = old_string
+        kwargs["new_string"] = new_string
+    return _tools[5].execute(**kwargs)
 
 __all__ = [
     "dispatcher",
