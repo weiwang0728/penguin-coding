@@ -6,6 +6,7 @@ from .utils import resolve_and_validate_path
 
 
 class SearchFilesTool(Tool):
+    default_permission_level = "allow"
     name = "search_files"
     description = "Search for a text pattern in files using grep"
     parameters = {

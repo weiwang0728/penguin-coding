@@ -56,6 +56,33 @@ DANGEROUS_COMMANDS = [
     r"\bkillall\s+(init|systemd|sshd)",
 ]
 
+RISKY_COMMANDS = [
+    r"\brm\s+",
+    r"\bmv\s+",
+    r"\bkill\s+",
+    r"\bpip\s+uninstall",
+    r"\bnpm\s+uninstall",
+    r"\bgit\s+push\s+.*--force",
+    r"\bgit\s+reset\s+--hard",
+    r"\bgit\s+clean",
+    r"\bdocker\s+rm\s+",
+    r"\bdocker\s+rmi\b",
+    r"\bdocker\s+system\s+prune",
+    r"\bchmod\s+",
+    r"\bchown\s+",
+]
+
+RISKY_PATTERNS = [re.compile(p, re.IGNORECASE) for p in RISKY_COMMANDS]
+
+
+def check_risky_command(command: str) -> str | None:
+    """Check if command is risky (not dangerous, but destructive). Returns reason or None."""
+    for pattern in RISKY_PATTERNS:
+        if pattern.search(command):
+            return f"Risky command requires confirmation: matched '{pattern.pattern}'"
+    return None
+
+
 SHELL_INJECTION_PATTERNS = [re.compile(p, re.IGNORECASE) for p in [r"\$\(", r"`"]]
 DANGEROUS_PATTERNS = [
     re.compile(p, re.IGNORECASE) for p in DANGEROUS_COMMANDS if p not in [r"\$\(", r"`"]

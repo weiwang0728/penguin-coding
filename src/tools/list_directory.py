@@ -3,6 +3,7 @@ from .utils import resolve_and_validate_path
 
 
 class ListDirectoryTool(Tool):
+    default_permission_level = "allow"
     name = "list_directory"
     description = "List files and directories at the given path"
     parameters = {

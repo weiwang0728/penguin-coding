@@ -4,6 +4,7 @@ from .utils import resolve_and_validate_path, unified_diff, _changed_files, fuzz
 
 class EditFileTool(Tool):
     name = "edit_file"
+    default_permission_level = "confirm"
     description = """Replace text in an existing file. Use this instead of write_file for editing — it's more token-efficient.
 Rules:
 - old_string must match the file content exactly (including whitespace/indentation). If the match fails, the system retries with normalization (ignoring trailing whitespace and blank lines).

@@ -292,7 +292,7 @@ def run_subagent(
         # Execute tools
         tool_results: list[dict[str, Any]] = []
         for tc in tool_calls_list:
-            result = execute_tool(tc["name"], tc["input"])
+            result = execute_tool(tc["name"], tc["input"], skip_permission_check=True)
             tool_results.append({
                 "type": "tool_result",
                 "tool_use_id": tc["id"],
@@ -320,11 +320,13 @@ def agent_loop(
     on_content: ContentCallback | None = None,
     on_tool_start: ToolStartCallback | None = None,
     on_tool_result: ToolResultCallback | None = None,
+    confirm_callback: Callable[[str, dict, str], bool] | None = None,
     messages: list[dict[str, Any]] | None = None,
     rounds_since_todo: int = 0
 ) -> tuple[str, list[dict[str, Any]]]:
     if messages is None:
         messages = []
+    dispatcher.set_confirm_callback(confirm_callback)
     user_msg = {"role": "user", "content": user_message}
     messages.append(user_msg)
     usage_stats["pending_delta"] += estimate_messages_tokens([user_msg])

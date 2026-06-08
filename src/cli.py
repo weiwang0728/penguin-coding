@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from . import agent_loop as _al
 from .agent_loop import agent_loop, register_delegate_tool, usage_stats
 from .compact import llm_compact_messages, estimate_tokens, MAX_CONTEXT_TOKENS
-from .tools import dispatcher, _changed_files
+from .tools import dispatcher, _changed_files, permission_manager
 from ._constants import ALLOWED_BASE_DIR
 from .session import load_session, list_sessions, autosave_session
 from . import __version__
@@ -38,6 +38,8 @@ def _parse_args():
     p.add_argument("-p", "--prompt", help="One-shot prompt (non-interactive mode)")
     p.add_argument("-r", "--resume", metavar="ID", help="Resume a saved session")
     p.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    p.add_argument("--permissions", choices=["permissive", "standard", "strict"],
+                   default=None, help="Permission profile (default: standard)")
     return p.parse_args()
 
 
@@ -66,6 +68,10 @@ def main():
     client = Anthropic(api_key=api_key, base_url=base_url)
     register_delegate_tool(client)
     _al.MODEL_ID = model_id
+
+    # Apply permission profile
+    if args.permissions:
+        permission_manager.profile = args.permissions
 
     logging.basicConfig(
         level=logging.WARNING,
@@ -111,11 +117,18 @@ def _run_once(client: Anthropic, model_id: str, prompt: str, messages: list[dict
     def on_tool_result(name: str, result: str):
         pass
 
+    # Non-interactive: permissive profile allows all, otherwise deny confirm-tier tools
+    if permission_manager.profile == "permissive":
+        confirm_cb = lambda name, args, reason: True
+    else:
+        confirm_cb = lambda name, args, reason: False
+
     response, messages = agent_loop(
         client, prompt,
         on_content=on_content,
         on_tool_start=on_tool_start,
         on_tool_result=on_tool_result,
+        confirm_callback=confirm_cb,
         messages=messages,
     )
 
@@ -201,6 +214,22 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 f"Tokens: [cyan]{p}[/cyan] prompt + [cyan]{c}[/cyan] completion = [bold]{p+c}[/bold] total\n"
                 f"Context: [cyan]{last_in}[/cyan] last API input + [cyan]{pending}[/cyan] pending delta ≈ [bold]{est_total}[/bold]"
             )
+            continue
+        if user_input == "/permissions" or user_input.startswith("/permissions "):
+            new_profile = user_input[13:].strip() if user_input.startswith("/permissions ") else ""
+            if new_profile:
+                if new_profile in ("permissive", "standard", "strict"):
+                    permission_manager.profile = new_profile
+                    permission_manager.reset_session_allowlist()
+                    console.print(f"Switched to [cyan]{new_profile}[/cyan] permission profile")
+                else:
+                    console.print("[red]Invalid profile. Choose: permissive, standard, strict[/red]")
+            else:
+                console.print(
+                    f"Permission profile: [cyan]{permission_manager.profile}[/cyan]\n"
+                    f"Session allowlist: {permission_manager._session_allowlist or '(none)'}\n\n"
+                    f"Usage: /permissions <permissive|standard|strict>"
+                )
             continue
         if user_input == "/compact":
             before = estimate_tokens(str(conversation_history))
@@ -297,6 +326,7 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 on_content=on_content,
                 on_tool_start=on_tool_start,
                 on_tool_result=on_tool_result,
+                confirm_callback=_confirm_tool,
                 messages=conversation_history,
             )
             if conversation_history:
@@ -311,6 +341,26 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
             console.print(f"\n[red]Error: {e}[/red]")
 
 
+def _confirm_tool(name: str, args: dict, reason: str) -> bool:
+    """Prompt the user for tool confirmation. Returns True if approved."""
+    console.print(Panel(
+        f"[bold yellow]Permission Required[/bold yellow]\n\n"
+        f"Tool: [cyan]{name}[/cyan]\n"
+        f"Args: {_brief(args, maxlen=200)}\n"
+        f"Reason: {reason}\n\n"
+        f"[dim]Press Enter to allow, 'n' to deny, 'a' to always allow this tool[/dim]",
+        border_style="yellow",
+    ))
+    try:
+        response = pt_prompt("Allow? [Y/n/a] ").strip().lower()
+        if response in ("a", "always"):
+            permission_manager.allow_for_session(name)
+            return True
+        return response in ("", "y", "yes")
+    except (EOFError, KeyboardInterrupt):
+        return False
+
+
 def _show_help():
     console.print(Panel(
         "[bold]Commands:[/bold]\n"
@@ -321,6 +371,8 @@ def _show_help():
         "  /tokens        Show token usage\n"
         "  /compact       Compress conversation context\n"
         "  /diff          Show files modified this session\n"
+        "  /permissions   Show current permission profile\n"
+        "  /permissions <profile>  Switch profile (permissive|standard|strict)\n"
         "  /resume        List saved sessions\n"
         "  /resume <id>   Resume a saved session\n"
         "  quit           Exit Penguin\n"

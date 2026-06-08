@@ -2,6 +2,7 @@ from .base import Tool
 
 
 class TeamSendTool(Tool):
+    default_permission_level = "allow"
     name = "team_send"
     description = "Send a message to a specific teammate."
     parameters = {

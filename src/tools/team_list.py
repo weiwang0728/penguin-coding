@@ -2,6 +2,7 @@ from .base import Tool
 
 
 class TeamListTool(Tool):
+    default_permission_level = "allow"
     name = "team_list"
     description = "List all team members and their current status."
     parameters = {

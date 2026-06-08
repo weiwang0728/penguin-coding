@@ -3,8 +3,10 @@
 from .._constants import ALLOWED_BASE_DIR
 from .dispatcher import dispatcher, execute_tool
 from .utils import _changed_files, resolve_and_validate_path, unified_diff
-from .._constants import check_dangerous_command, _truncate_output, _truncate_for_context
+from .._constants import check_dangerous_command, check_risky_command, _truncate_output, _truncate_for_context
 from ..agent_teams import TEAM_MANAGER
+from ..permissions import PermissionManager
+from ..permissions_config import load_permissions_config
 
 # Import all tool implementations
 from .read_file import ReadFileTool
@@ -44,6 +46,12 @@ _tools = [
 
 for _tool in _tools:
     dispatcher.register(_tool)
+
+# Initialize permission manager
+_permissions_config = load_permissions_config()
+permission_manager = PermissionManager(_permissions_config)
+permission_manager.set_registry(dispatcher._registry)
+dispatcher.set_permission_manager(permission_manager)
 
 TOOL_DEFINITIONS = dispatcher.get_tool_definitions()
 
@@ -112,6 +120,7 @@ __all__ = [
     "register_delegate_tool",
     "resolve_and_validate_path",
     "check_dangerous_command",
+    "check_risky_command",
     "_truncate_output",
     "_truncate_for_context",
     "read_file",
@@ -120,5 +129,6 @@ __all__ = [
     "list_directory",
     "search_files",
     "edit_file",
+    "permission_manager",
     "TEAM_MANAGER",
 ]

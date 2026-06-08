@@ -2,6 +2,7 @@ from .base import Tool
 
 
 class TeamSpawnTool(Tool):
+    default_permission_level = "confirm"
     name = "team_spawn"
     description = "Spawn a new teammate agent that runs in a background thread. The teammate can use tools and communicate via messages."
     parameters = {

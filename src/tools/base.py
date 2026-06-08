@@ -9,6 +9,7 @@ class Tool(ABC):
     name: str
     description: str
     parameters: dict  # JSON Schema for the function args
+    default_permission_level: str = "confirm"
 
     @abstractmethod
     def execute(self, **kwargs) -> str:

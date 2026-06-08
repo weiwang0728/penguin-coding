@@ -3,6 +3,7 @@ from .base import Tool
 
 
 class BackgroundRunTool(Tool):
+    default_permission_level = "confirm"
     name = "background_run"
     description = "Run command in background thread. Returns task_id immediately."
     parameters = {

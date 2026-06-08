@@ -7,6 +7,7 @@ from .base import Tool
 class RunCommandTool(Tool):
     name = "run_command"
     description = "Run a shell command and return its output. Use longer timeouts for install/build commands."
+    default_permission_level = "confirm"
     parameters = {
         "type": "object",
         "properties": {

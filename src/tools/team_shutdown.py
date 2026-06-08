@@ -2,6 +2,7 @@ from .base import Tool
 
 
 class TeamShutdownTool(Tool):
+    default_permission_level = "confirm"
     name = "team_shutdown"
     description = "Send a shutdown request to a teammate agent."
     parameters = {

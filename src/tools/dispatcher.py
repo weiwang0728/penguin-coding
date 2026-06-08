@@ -9,6 +9,14 @@ class ToolDispatcher:
     def __init__(self) -> None:
         self._registry: dict[str, Tool] = {}
         self._dynamic_handlers: dict[str, Callable[..., str]] = {}
+        self.permission_manager = None
+        self.confirm_callback: Callable[[str, dict, str], bool] | None = None
+
+    def set_permission_manager(self, manager) -> None:
+        self.permission_manager = manager
+
+    def set_confirm_callback(self, callback: Callable[[str, dict, str], bool] | None) -> None:
+        self.confirm_callback = callback
 
     def register(self, tool: Tool) -> None:
         """Register a Tool instance."""
@@ -20,9 +28,21 @@ class ToolDispatcher:
         if schema:
             self._dynamic_handlers[f"__schema__{name}"] = schema  # type: ignore[assignment]
 
-    def dispatch(self, name: str, args: dict[str, Any]) -> str:
+    def dispatch(self, name: str, args: dict[str, Any], skip_permission_check: bool = False) -> str:
         # Check dynamic handlers first (e.g. delegate)
         if name in self._dynamic_handlers:
+            if not skip_permission_check and self.permission_manager:
+                from ..permissions import PermissionLevel
+                result = self.permission_manager.check(name, args)
+                if result.level == PermissionLevel.DENY:
+                    return f"Error: Permission denied — {result.reason}"
+                if result.level == PermissionLevel.CONFIRM:
+                    if self.confirm_callback:
+                        approved = self.confirm_callback(name, args, result.reason)
+                        if not approved:
+                            return f"Permission denied by user: {name}"
+                    else:
+                        return f"Error: Permission denied — {result.reason} (no confirmation callback)"
             try:
                 return self._dynamic_handlers[name](**args)
             except TypeError as e:
@@ -34,6 +54,21 @@ class ToolDispatcher:
         errors = self._validate_args(name, args)
         if errors:
             return f"Error: invalid arguments for '{name}': {'; '.join(errors)}"
+
+        # Permission check
+        if not skip_permission_check and self.permission_manager:
+            from ..permissions import PermissionLevel
+            result = self.permission_manager.check(name, args)
+            if result.level == PermissionLevel.DENY:
+                return f"Error: Permission denied — {result.reason}"
+            if result.level == PermissionLevel.CONFIRM:
+                if self.confirm_callback:
+                    approved = self.confirm_callback(name, args, result.reason)
+                    if not approved:
+                        return f"Permission denied by user: {name}"
+                else:
+                    return f"Error: Permission denied — {result.reason} (no confirmation callback)"
+
         try:
             return tool.execute(**args)
         except TypeError as e:
@@ -82,5 +117,5 @@ class ToolDispatcher:
 dispatcher = ToolDispatcher()
 
 
-def execute_tool(name: str, args: dict[str, Any]) -> str:
-    return dispatcher.dispatch(name, args)
+def execute_tool(name: str, args: dict[str, Any], skip_permission_check: bool = False) -> str:
+    return dispatcher.dispatch(name, args, skip_permission_check)

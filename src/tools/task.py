@@ -3,6 +3,7 @@ from .base import Tool
 
 
 class TaskTool(Tool):
+    default_permission_level = "allow"
     name = "task"
     description = "Manage tasks with dependencies. Use 'create' to add tasks, 'update' to modify status/dependencies, 'list' to see all tasks."
     parameters = {

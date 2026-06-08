@@ -2,6 +2,7 @@ from .base import Tool
 
 
 class TeamBroadcastTool(Tool):
+    default_permission_level = "allow"
     name = "team_broadcast"
     description = "Broadcast a message to all teammates."
     parameters = {

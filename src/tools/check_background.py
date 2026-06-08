@@ -3,6 +3,7 @@ from .base import Tool
 
 
 class CheckBackgroundTool(Tool):
+    default_permission_level = "allow"
     name = "check_background"
     description = "Check background task status. Omit task_id to list all."
     parameters = {

@@ -6,6 +6,7 @@ from .utils import resolve_and_validate_path
 class ReadFileTool(Tool):
     name = "read_file"
     description = "Read the contents of a file"
+    default_permission_level = "allow"
     parameters = {
         "type": "object",
         "properties": {

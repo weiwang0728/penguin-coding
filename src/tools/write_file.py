@@ -5,6 +5,7 @@ from .utils import resolve_and_validate_path, unified_diff, _changed_files
 class WriteFileTool(Tool):
     name = "write_file"
     description = "Write content to a file"
+    default_permission_level = "confirm"
     parameters = {
         "type": "object",
         "properties": {
