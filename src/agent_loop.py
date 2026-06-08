@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from .compact import (
     MAX_CONTEXT_TOKENS,
     llm_compact_messages,
+    needs_compaction,
+    estimate_messages_tokens,
 )
 from .tools import (
     ALLOWED_BASE_DIR,
@@ -60,7 +62,12 @@ KEEP_RECENT_TOOLS = 5
 PRESERVE_RESULT_TOOLS = []
 TODO = task_manager
 
-usage_stats = {"prompt_tokens": 0, "completion_tokens": 0}
+usage_stats = {
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "last_input_tokens": 0,
+    "pending_delta": 0,
+}
 
 def _validate_config() -> None:
     missing = []
@@ -162,14 +169,15 @@ def stream_response(
             }
         )
 
+    usage = final_msg.usage
+    usage_stats["prompt_tokens"] += usage.input_tokens
+    usage_stats["completion_tokens"] += usage.output_tokens
+
     if was_truncated:
         yield ("truncated", True)
     if tool_calls_list:
         yield ("tool_calls", tool_calls_list)
-
-    usage = final_msg.usage
-    usage_stats["prompt_tokens"] += usage.input_tokens
-    usage_stats["completion_tokens"] += usage.output_tokens
+    yield ("usage", usage.input_tokens)
 
 
 def _repair_json(raw: str) -> dict[str, Any]:
@@ -210,11 +218,16 @@ def run_subagent(
     - Only the final text response is returned
     """
     messages: list[dict[str, Any]] = [{"role": "user", "content": prompt}]
+    sub_last_input_tokens = 0
+    sub_pending_delta = estimate_messages_tokens(messages)
 
     for iteration in range(max_iterations):
-        messages[:] = llm_compact_messages(
-            messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
-        )
+        if needs_compaction(sub_last_input_tokens, sub_pending_delta):
+            messages[:] = llm_compact_messages(
+                messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
+            )
+            sub_last_input_tokens = estimate_messages_tokens(messages)
+            sub_pending_delta = 0
 
         collected_content = ""
         has_tool_calls = False
@@ -235,6 +248,9 @@ def run_subagent(
                     elif event_type == "tool_calls":
                         has_tool_calls = True
                         tool_calls_list = data
+                    elif event_type == "usage":
+                        sub_last_input_tokens = data
+                        sub_pending_delta = 0
                 break
             except anthropic.APIStatusError as e:
                 if e.status_code in (429, 503, 529) and retry < MAX_API_RETRIES - 1:
@@ -257,13 +273,17 @@ def run_subagent(
                 "name": tc["name"],
                 "input": tc["input"],
             })
-        messages.append({"role": "assistant", "content": assistant_content})
+        assistant_msg = {"role": "assistant", "content": assistant_content}
+        messages.append(assistant_msg)
+        sub_pending_delta += estimate_messages_tokens([assistant_msg])
 
         if was_truncated:
-            messages.append({
+            trunc_msg = {
                 "role": "user",
                 "content": "[System: Response truncated. Continue from where you left off.]"
-            })
+            }
+            messages.append(trunc_msg)
+            sub_pending_delta += estimate_messages_tokens([trunc_msg])
             continue
 
         if not has_tool_calls:
@@ -278,7 +298,9 @@ def run_subagent(
                 "tool_use_id": tc["id"],
                 "content": _truncate_for_context(result),
             })
-        messages.append({"role": "user", "content": tool_results})
+        user_msg = {"role": "user", "content": tool_results}
+        messages.append(user_msg)
+        sub_pending_delta += estimate_messages_tokens([user_msg])
 
     partial = collected_content[:500]
     return (
@@ -303,12 +325,19 @@ def agent_loop(
 ) -> tuple[str, list[dict[str, Any]]]:
     if messages is None:
         messages = []
-    messages.append({"role": "user", "content": user_message})
+    user_msg = {"role": "user", "content": user_message}
+    messages.append(user_msg)
+    usage_stats["pending_delta"] += estimate_messages_tokens([user_msg])
 
     for iteration in range(max_iterations):
-        messages[:] = llm_compact_messages( 
-            messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
-        )
+        if needs_compaction(
+            usage_stats["last_input_tokens"], usage_stats["pending_delta"]
+        ):
+            messages[:] = llm_compact_messages(
+                messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
+            )
+            usage_stats["last_input_tokens"] = estimate_messages_tokens(messages)
+            usage_stats["pending_delta"] = 0
 
         remaining = max_iterations - iteration
         iteration_system = (
@@ -334,6 +363,9 @@ def agent_loop(
                     elif event_type == "tool_calls":
                         has_tool_calls = True
                         tool_calls_list = data
+                    elif event_type == "usage":
+                        usage_stats["last_input_tokens"] = data
+                        usage_stats["pending_delta"] = 0
                 break
             except anthropic.APIStatusError as e:
                 if e.status_code in (429, 503, 529) and retry < MAX_API_RETRIES - 1:
@@ -367,7 +399,9 @@ def agent_loop(
                 }
             )
 
-        messages.append({"role": "assistant", "content": assistant_content})
+        assistant_msg = {"role": "assistant", "content": assistant_content}
+        messages.append(assistant_msg)
+        usage_stats["pending_delta"] += estimate_messages_tokens([assistant_msg])
 
         # 输出被截断时，跳过不完整的 tool_calls，提示模型继续
         if was_truncated:
@@ -376,7 +410,9 @@ def agent_loop(
                 "Please continue. If you were writing a file, try again with smaller chunks "
                 "or split the content across multiple write_file calls.]"
             )
-            messages.append({"role": "user", "content": truncate_hint})
+            trunc_msg = {"role": "user", "content": truncate_hint}
+            messages.append(trunc_msg)
+            usage_stats["pending_delta"] += estimate_messages_tokens([trunc_msg])
             continue
 
         if not has_tool_calls:
@@ -435,6 +471,8 @@ def agent_loop(
                     "text": reminder,
                 }
             )
-        messages.append({"role": "user", "content": tool_results})
+        user_msg = {"role": "user", "content": tool_results}
+        messages.append(user_msg)
+        usage_stats["pending_delta"] += estimate_messages_tokens([user_msg])
 
     return "Agent reached maximum iterations without completing the task.", messages

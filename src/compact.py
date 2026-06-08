@@ -4,8 +4,33 @@ from typing import Any
 
 MAX_CONTEXT_TOKENS = 100_000
 MAX_SINGLE_MESSAGE_TOKENS = 5_000
+COMPACT_THRESHOLD = 0.80
 
 logger = logging.getLogger("penguin")
+
+def needs_compaction(
+    last_input_tokens: int,
+    pending_delta: int,
+    max_tokens: int = MAX_CONTEXT_TOKENS,
+) -> bool:
+    """Fast check whether to run the full compaction pipeline.
+
+    Uses the API-reported input_tokens as the exact baseline and adds
+    an estimate of tokens appended since the last API call.  When no
+    API data is available (new / resumed session without persisted
+    usage), falls back to a full estimate of all messages.
+
+    Args:
+        last_input_tokens: input_tokens from the most recent API response.
+        pending_delta:     estimated tokens of messages added since that
+                           API call (assistant turn + tool results).
+        max_tokens:        context window budget.
+    """
+    if last_input_tokens <= 0:
+        return True
+    estimated = last_input_tokens + pending_delta
+    return estimated > max_tokens * COMPACT_THRESHOLD
+
 
 COMPACT_SYSTEM_PROMPT = """You are a conversation compactor. Summarize the conversation history between a user and a coding assistant.
 

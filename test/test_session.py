@@ -157,7 +157,7 @@ class TestLoadSessionAutosave:
 
         loaded = load_session(sid)
         assert loaded is not None
-        loaded_msgs, loaded_model = loaded
+        loaded_msgs, loaded_model, loaded_usage = loaded
 
         loaded_msgs.append({"role": "assistant", "content": "Reply"})
         loaded_msgs.append({"role": "user", "content": "Follow-up"})
@@ -235,3 +235,63 @@ class TestSaveSession:
         sid = save_session([{"role": "user", "content": "Hello"}], "m1")
         data = json.loads((tmp_session_dir / f"{sid}.json").read_text())
         assert data["name"] == "Hello"
+
+
+# ── usage persistence ──────────────────────────────────────────────────
+
+class TestUsagePersistence:
+    def test_save_session_with_usage(self, tmp_session_dir):
+        usage = {"last_input_tokens": 45000, "pending_delta": 1200}
+        sid = save_session([{"role": "user", "content": "Hi"}], "m1", usage=usage)
+        data = json.loads((tmp_session_dir / f"{sid}.json").read_text())
+        assert data["usage"] == usage
+
+    def test_save_session_without_usage(self, tmp_session_dir):
+        sid = save_session([{"role": "user", "content": "Hi"}], "m1")
+        data = json.loads((tmp_session_dir / f"{sid}.json").read_text())
+        assert "usage" not in data
+
+    def test_load_session_returns_usage(self, tmp_session_dir):
+        usage = {"last_input_tokens": 30000, "pending_delta": 500}
+        sid = save_session([{"role": "user", "content": "Hi"}], "m1", usage=usage)
+        loaded = load_session(sid)
+        assert loaded is not None
+        _, _, loaded_usage = loaded
+        assert loaded_usage == usage
+
+    def test_load_session_without_usage_returns_none(self, tmp_session_dir):
+        sid = save_session([{"role": "user", "content": "Hi"}], "m1")
+        loaded = load_session(sid)
+        assert loaded is not None
+        _, _, loaded_usage = loaded
+        assert loaded_usage is None
+
+    def test_autosave_preserves_usage(self, tmp_session_dir):
+        msgs = [{"role": "user", "content": "Hello"}]
+        sid = autosave_session(msgs, "m1", usage={"last_input_tokens": 20000, "pending_delta": 0})
+        data = json.loads((tmp_session_dir / f"{sid}.json").read_text())
+        assert data["usage"]["last_input_tokens"] == 20000
+
+    def test_autosave_updates_usage(self, tmp_session_dir):
+        msgs = [{"role": "user", "content": "Hello"}]
+        sid = autosave_session(msgs, "m1", usage={"last_input_tokens": 10000, "pending_delta": 0})
+        autosave_session(msgs, "m1", usage={"last_input_tokens": 50000, "pending_delta": 300})
+        data = json.loads((tmp_session_dir / f"{sid}.json").read_text())
+        assert data["usage"]["last_input_tokens"] == 50000
+        assert data["usage"]["pending_delta"] == 300
+
+    def test_backward_compat_old_session_no_usage(self, tmp_session_dir):
+        """Old session files without 'usage' field still load correctly."""
+        old_data = {
+            "id": "20260101_000000",
+            "name": "Old session",
+            "model": "m1",
+            "messages": [{"role": "user", "content": "Legacy"}],
+            "saved_at": "2026-01-01 00:00:00",
+        }
+        (tmp_session_dir / "20260101_000000.json").write_text(json.dumps(old_data))
+        loaded = load_session("20260101_000000")
+        assert loaded is not None
+        msgs, model, usage = loaded
+        assert msgs == old_data["messages"]
+        assert usage is None

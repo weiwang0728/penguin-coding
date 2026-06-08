@@ -78,10 +78,12 @@ def main():
     if args.resume:
         loaded = load_session(args.resume)
         if loaded:
-            conversation_history, loaded_model = loaded
+            conversation_history, loaded_model, loaded_usage = loaded
             if not args.model:
                 model_id = loaded_model
                 _al.MODEL_ID = model_id
+            if loaded_usage:
+                usage_stats.update(loaded_usage)
             console.print(f"[green]Resumed session: {args.resume} (model: {model_id})[/green]")
         else:
             console.print(f"[red]Session '{args.resume}' not found.[/red]")
@@ -158,7 +160,7 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
             ).strip()
         except (EOFError, KeyboardInterrupt):
             if conversation_history:
-                sid = autosave_session(conversation_history, model_id)
+                sid = autosave_session(conversation_history, model_id, usage_stats)
                 console.print(f"\n[dim]Session auto-saved: {sid}[/dim]")
             console.print("Bye!")
             break
@@ -169,7 +171,7 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
         # Built-in commands
         if user_input.lower() in ("quit", "exit", "/quit", "/exit"):
             if conversation_history:
-                sid = autosave_session(conversation_history, model_id)
+                sid = autosave_session(conversation_history, model_id, usage_stats)
                 console.print(f"[dim]Session auto-saved: {sid}[/dim]")
             break
         if user_input == "/help":
@@ -192,8 +194,12 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
         if user_input == "/tokens":
             p = usage_stats["prompt_tokens"]
             c = usage_stats["completion_tokens"]
+            last_in = usage_stats.get("last_input_tokens", 0)
+            pending = usage_stats.get("pending_delta", 0)
+            est_total = last_in + pending
             console.print(
-                f"Tokens: [cyan]{p}[/cyan] prompt + [cyan]{c}[/cyan] completion = [bold]{p+c}[/bold] total"
+                f"Tokens: [cyan]{p}[/cyan] prompt + [cyan]{c}[/cyan] completion = [bold]{p+c}[/bold] total\n"
+                f"Context: [cyan]{last_in}[/cyan] last API input + [cyan]{pending}[/cyan] pending delta ≈ [bold]{est_total}[/bold]"
             )
             continue
         if user_input == "/compact":
@@ -233,6 +239,9 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 conversation_history.extend(loaded[0])
                 model_id = loaded[1]
                 _al.MODEL_ID = model_id
+                loaded_usage = loaded[2]
+                if loaded_usage:
+                    usage_stats.update(loaded_usage)
                 console.print(f"[green]Resumed session: {target} (model: {model_id})[/green]")
             else:
                 console.print(f"[red]Session '{target}' not found.[/red]")
@@ -291,7 +300,7 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 messages=conversation_history,
             )
             if conversation_history:
-                autosave_session(conversation_history, model_id)
+                autosave_session(conversation_history, model_id, usage_stats)
             if streamed:
                 print()
             else:

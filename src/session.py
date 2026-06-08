@@ -29,7 +29,7 @@ def _extract_session_name(messages: list) -> str:
     return "untitled"
 
 
-def save_session(messages: list, model: str) -> str:
+def save_session(messages: list, model: str, usage: dict | None = None) -> str:
     SESSION_DIR.mkdir(parents=True, exist_ok=True)
     session_id = time.strftime("%Y%m%d_%H%M%S")
     name = _extract_session_name(messages)
@@ -40,12 +40,14 @@ def save_session(messages: list, model: str) -> str:
         "messages": messages,
         "saved_at": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
+    if usage:
+        data["usage"] = usage
     path = SESSION_DIR / f"{session_id}.json"
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
     return session_id
 
 
-def autosave_session(messages: list, model: str) -> str:
+def autosave_session(messages: list, model: str, usage: dict | None = None) -> str:
     global _current_session_file
     name = _extract_session_name(messages)
 
@@ -56,6 +58,8 @@ def autosave_session(messages: list, model: str) -> str:
         data["name"] = name
         data["saved_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
         data["model"] = model
+        if usage:
+            data["usage"] = usage
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
         return data["id"]
 
@@ -69,6 +73,8 @@ def autosave_session(messages: list, model: str) -> str:
         "messages": messages,
         "saved_at": time.strftime("%Y-%m-%d %H:%M:%S"),
     }
+    if usage:
+        data["usage"] = usage
     path = SESSION_DIR / filename
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2))
     _current_session_file = filename
@@ -83,7 +89,8 @@ def load_session(session_id: str) -> tuple | None:
         return None
     data = json.loads(path.read_text())
     _current_session_file = filename
-    return data["messages"], data["model"]
+    usage = data.get("usage")
+    return data["messages"], data["model"], usage
 
 
 def list_sessions() -> list[dict]:
