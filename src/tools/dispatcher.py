@@ -112,10 +112,3 @@ class ToolDispatcher:
             elif expected_type == "array" and not isinstance(value, list):
                 errors.append(f"field '{key}' must be an array")
         return errors
-
-
-dispatcher = ToolDispatcher()
-
-
-def execute_tool(name: str, args: dict[str, Any], skip_permission_check: bool = False) -> str:
-    return dispatcher.dispatch(name, args, skip_permission_check)

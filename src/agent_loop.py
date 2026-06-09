@@ -309,6 +309,110 @@ def run_subagent(
     )
 
 
+def run_subagent_with_tools(
+    client: anthropic.Anthropic,
+    prompt: str,
+    max_iterations: int = 20,
+    tools: list[dict] | None = None,
+    system_prompt: str | None = None,
+    tool_dispatcher=None,
+) -> str:
+    """Run a subagent with explicit tools/prompt/dispatcher (used by Agent class)."""
+    _tools = tools or SUBAGENT_TOOLS
+    _system_prompt = system_prompt or SUBAGENT_SYSTEM_PROMPT
+    _dispatcher = tool_dispatcher or dispatcher
+
+    messages: list[dict[str, Any]] = [{"role": "user", "content": prompt}]
+    sub_last_input_tokens = 0
+    sub_pending_delta = estimate_messages_tokens(messages)
+
+    for iteration in range(max_iterations):
+        if needs_compaction(sub_last_input_tokens, sub_pending_delta):
+            messages[:] = llm_compact_messages(
+                messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
+            )
+            sub_last_input_tokens = estimate_messages_tokens(messages)
+            sub_pending_delta = 0
+
+        collected_content = ""
+        has_tool_calls = False
+        was_truncated = False
+        tool_calls_list = []
+
+        for retry in range(MAX_API_RETRIES):
+            try:
+                for event_type, data in stream_response(
+                    client, messages,
+                    system_prompt=_system_prompt,
+                    tools=_tools,
+                ):
+                    if event_type == "text_delta":
+                        collected_content += data
+                    elif event_type == "truncated":
+                        was_truncated = True
+                    elif event_type == "tool_calls":
+                        has_tool_calls = True
+                        tool_calls_list = data
+                    elif event_type == "usage":
+                        sub_last_input_tokens = data
+                        sub_pending_delta = 0
+                break
+            except anthropic.APIStatusError as e:
+                if e.status_code in (429, 503, 529) and retry < MAX_API_RETRIES - 1:
+                    time.sleep(RETRY_BASE_DELAY * (2 ** retry))
+                    continue
+                return f"[Subagent error] API status {e.status_code}: {e.message}"
+            except anthropic.APIConnectionError as e:
+                if retry < MAX_API_RETRIES - 1:
+                    time.sleep(RETRY_BASE_DELAY * (2 ** retry))
+                    continue
+                return f"[Subagent error] Connection failed: {e}"
+
+        assistant_content: list[dict[str, Any]] = []
+        if collected_content:
+            assistant_content.append({"type": "text", "text": collected_content})
+        for tc in tool_calls_list:
+            assistant_content.append({
+                "type": "tool_use",
+                "id": tc["id"],
+                "name": tc["name"],
+                "input": tc["input"],
+            })
+        assistant_msg = {"role": "assistant", "content": assistant_content}
+        messages.append(assistant_msg)
+        sub_pending_delta += estimate_messages_tokens([assistant_msg])
+
+        if was_truncated:
+            trunc_msg = {
+                "role": "user",
+                "content": "[System: Response truncated. Continue from where you left off.]"
+            }
+            messages.append(trunc_msg)
+            sub_pending_delta += estimate_messages_tokens([trunc_msg])
+            continue
+
+        if not has_tool_calls:
+            return collected_content or "(subagent completed with no output)"
+
+        tool_results: list[dict[str, Any]] = []
+        for tc in tool_calls_list:
+            result = _dispatcher.dispatch(tc["name"], tc["input"], skip_permission_check=True)
+            tool_results.append({
+                "type": "tool_result",
+                "tool_use_id": tc["id"],
+                "content": _truncate_for_context(result),
+            })
+        user_msg = {"role": "user", "content": tool_results}
+        messages.append(user_msg)
+        sub_pending_delta += estimate_messages_tokens([user_msg])
+
+    partial = collected_content[:500]
+    return (
+        f"[Subagent hit iteration limit ({max_iterations}). "
+        f"Partial result: {partial}]"
+    )
+
+
 # Re-export for backward compatibility — cli.py imports this from agent_loop
 __all__ = ["register_delegate_tool"]
 
@@ -322,11 +426,19 @@ def agent_loop(
     on_tool_result: ToolResultCallback | None = None,
     confirm_callback: Callable[[str, dict, str], bool] | None = None,
     messages: list[dict[str, Any]] | None = None,
-    rounds_since_todo: int = 0
+    rounds_since_todo: int = 0,
+    tools: list[dict] | None = None,
+    system_prompt: str | None = None,
+    tool_dispatcher=None,
 ) -> tuple[str, list[dict[str, Any]]]:
     if messages is None:
         messages = []
-    dispatcher.set_confirm_callback(confirm_callback)
+
+    # Use provided dispatcher or fall back to global
+    _dispatcher = tool_dispatcher or dispatcher
+    _tools = tools or TOOL_DEFINITIONS
+    _system_prompt = system_prompt or SYSTEM_PROMPT
+    _dispatcher.set_confirm_callback(confirm_callback)
     user_msg = {"role": "user", "content": user_message}
     messages.append(user_msg)
     usage_stats["pending_delta"] += estimate_messages_tokens([user_msg])
@@ -355,7 +467,7 @@ def agent_loop(
 
         for retry in range(MAX_API_RETRIES):
             try:
-                for event_type, data in stream_response(client, messages):
+                for event_type, data in stream_response(client, messages, system_prompt=_system_prompt, tools=_tools):
                     if event_type == "text_delta":
                         collected_content += data
                         if on_content:
@@ -441,7 +553,7 @@ def agent_loop(
             if on_tool_start:
                 on_tool_start(fn_name, fn_args)
 
-            result = execute_tool(fn_name, fn_args)
+            result = _dispatcher.dispatch(fn_name, fn_args)
 
             if on_tool_result:
                 on_tool_result(fn_name, result)

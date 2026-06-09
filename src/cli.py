@@ -2,7 +2,6 @@
 
 import sys
 import os
-import json
 import argparse
 import logging
 
@@ -19,8 +18,9 @@ from dotenv import load_dotenv
 from . import agent_loop as _al
 from .agent_loop import agent_loop, register_delegate_tool, usage_stats
 from .compact import llm_compact_messages, estimate_tokens, MAX_CONTEXT_TOKENS
-from .tools import dispatcher, _changed_files, permission_manager
+from .tools import _changed_files
 from ._constants import ALLOWED_BASE_DIR
+from .agent import Agent
 from .session import load_session, list_sessions, autosave_session
 from . import __version__
 
@@ -40,6 +40,10 @@ def _parse_args():
     p.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
     p.add_argument("--permissions", choices=["permissive", "standard", "strict"],
                    default=None, help="Permission profile (default: standard)")
+    p.add_argument("--tools", nargs="+", default=None,
+                   help="Tool names to enable (default: all)")
+    p.add_argument("--skills", nargs="+", default=None,
+                   help="Initial skills to activate (default: all)")
     return p.parse_args()
 
 
@@ -66,12 +70,28 @@ def main():
         model_id = "claude-sonnet-4-20250514"
 
     client = Anthropic(api_key=api_key, base_url=base_url)
-    register_delegate_tool(client)
     _al.MODEL_ID = model_id
 
-    # Apply permission profile
-    if args.permissions:
-        permission_manager.profile = args.permissions
+    # Create Agent instance
+    agent = Agent(
+        name="penguin",
+        tools=args.tools,
+        skills=args.skills,
+        permission_profile=args.permissions or "standard",
+    )
+
+    # Register delegate tool on the agent's dispatcher
+    from .tools import DELEGATE_SCHEMA
+    def _make_delegate_handler(client):
+        from .agent_loop import run_subagent
+        def handle_delegate(prompt: str, max_iterations: int = 20) -> str:
+            return run_subagent(client, prompt, max_iterations)
+        return handle_delegate
+
+    agent.register_dynamic_tool("delegate", _make_delegate_handler(client), DELEGATE_SCHEMA)
+
+    # Also register on the global dispatcher for backward compat
+    register_delegate_tool(client)
 
     logging.basicConfig(
         level=logging.WARNING,
@@ -97,14 +117,14 @@ def main():
 
     # One-shot mode
     if args.prompt:
-        _run_once(client, model_id, args.prompt, conversation_history)
+        _run_once(agent, args.prompt, conversation_history)
         return
 
     # Interactive REPL
-    _repl(client, model_id, conversation_history)
+    _repl(agent, model_id, conversation_history)
 
 
-def _run_once(client: Anthropic, model_id: str, prompt: str, messages: list[dict]):
+def _run_once(agent: Agent, prompt: str, messages: list[dict]):
     streamed: list[str] = []
 
     def on_content(text: str):
@@ -118,13 +138,14 @@ def _run_once(client: Anthropic, model_id: str, prompt: str, messages: list[dict
         pass
 
     # Non-interactive: permissive profile allows all, otherwise deny confirm-tier tools
-    if permission_manager.profile == "permissive":
+    if agent.permission_manager.profile == "permissive":
         confirm_cb = lambda name, args, reason: True
     else:
         confirm_cb = lambda name, args, reason: False
 
-    response, messages = agent_loop(
-        client, prompt,
+    response, messages = agent.run(
+        client=None,  # will be set by agent_loop via module-level client
+        user_message=prompt,
         on_content=on_content,
         on_tool_start=on_tool_start,
         on_tool_result=on_tool_result,
@@ -137,13 +158,17 @@ def _run_once(client: Anthropic, model_id: str, prompt: str, messages: list[dict
     else:
         console.print(Markdown(response))
 
-def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
+
+def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
     """Interactive read-eval-print loop."""
     console.print(Panel(
         f"[bold]Penguin Coding Agent[/bold] v{__version__}\n"
         f"Model: [cyan]{model_id}[/cyan]"
-        + (f"  Base: [dim]{client.base_url}[/dim]" if getattr(client, "base_url", None) else "")
-        + f"\nWorkspace: [dim]{ALLOWED_BASE_DIR}[/dim]"
+        + "\n"
+        + f"Tools: [dim]{', '.join(agent.active_tools)}[/dim]"
+        + "\n"
+        + f"Skills: [dim]{', '.join(sorted(agent.active_skills)) if agent.active_skills else 'none'}[/dim]"
+        + "\nWorkspace: [dim]{ALLOWED_BASE_DIR}[/dim]"
         + "\nType [bold]/help[/bold] for commands, [bold]Ctrl+C[/bold] to cancel, [bold]quit[/bold] to exit.",
         border_style="blue",
     ))
@@ -219,22 +244,48 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
             new_profile = user_input[13:].strip() if user_input.startswith("/permissions ") else ""
             if new_profile:
                 if new_profile in ("permissive", "standard", "strict"):
-                    permission_manager.profile = new_profile
-                    permission_manager.reset_session_allowlist()
+                    agent.permission_manager.profile = new_profile
+                    agent.permission_manager.reset_session_allowlist()
                     console.print(f"Switched to [cyan]{new_profile}[/cyan] permission profile")
                 else:
                     console.print("[red]Invalid profile. Choose: permissive, standard, strict[/red]")
             else:
                 console.print(
-                    f"Permission profile: [cyan]{permission_manager.profile}[/cyan]\n"
-                    f"Session allowlist: {permission_manager._session_allowlist or '(none)'}\n\n"
+                    f"Permission profile: [cyan]{agent.permission_manager.profile}[/cyan]\n"
+                    f"Session allowlist: {agent.permission_manager._session_allowlist or '(none)'}\n\n"
                     f"Usage: /permissions <permissive|standard|strict>"
                 )
+            continue
+        if user_input == "/tools":
+            console.print(
+                f"[bold]Active tools ({len(agent.active_tools)}):[/bold]\n"
+                + "\n".join(f"  [cyan]{t}[/cyan]" for t in agent.active_tools)
+            )
+            continue
+        if user_input.startswith("/add_tool "):
+            tool_name = user_input[10:].strip()
+            result = agent.add_tool(tool_name)
+            console.print(result)
+            continue
+        if user_input.startswith("/remove_tool "):
+            tool_name = user_input[13:].strip()
+            result = agent.remove_tool(tool_name)
+            console.print(result)
+            continue
+        if user_input.startswith("/load_skill "):
+            skill_name = user_input[12:].strip()
+            result = agent.load_skill(skill_name)
+            console.print(result)
+            continue
+        if user_input.startswith("/unload_skill "):
+            skill_name = user_input[14:].strip()
+            result = agent.unload_skill(skill_name)
+            console.print(result)
             continue
         if user_input == "/compact":
             before = estimate_tokens(str(conversation_history))
             compressed = llm_compact_messages(
-                conversation_history, client, model_id, max_tokens=MAX_CONTEXT_TOKENS
+                conversation_history, client=None, model_id=model_id, max_tokens=MAX_CONTEXT_TOKENS
             )
             conversation_history[:] = compressed
             after = estimate_tokens(str(conversation_history))
@@ -320,9 +371,9 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
                 console.print(f"[Result: {preview}]")
 
         try:
-            response, conversation_history = agent_loop(
-                client, user_input,
-                max_iterations=100,
+            response, conversation_history = agent.run(
+                client=None,  # agent_loop uses module-level client
+                user_message=user_input,
                 on_content=on_content,
                 on_tool_start=on_tool_start,
                 on_tool_result=on_tool_result,
@@ -343,6 +394,7 @@ def _repl(client: Anthropic, model_id: str, conversation_history: list[dict]):
 
 def _confirm_tool(name: str, args: dict, reason: str) -> bool:
     """Prompt the user for tool confirmation. Returns True if approved."""
+    from .tools import permission_manager
     console.print(Panel(
         f"[bold yellow]Permission Required[/bold yellow]\n\n"
         f"Tool: [cyan]{name}[/cyan]\n"
@@ -371,6 +423,11 @@ def _show_help():
         "  /tokens        Show token usage\n"
         "  /compact       Compress conversation context\n"
         "  /diff          Show files modified this session\n"
+        "  /tools         Show active tools\n"
+        "  /add_tool <name>       Add a tool at runtime\n"
+        "  /remove_tool <name>    Remove a tool at runtime\n"
+        "  /load_skill <name>     Activate a skill\n"
+        "  /unload_skill <name>   Deactivate a skill\n"
         "  /permissions   Show current permission profile\n"
         "  /permissions <profile>  Switch profile (permissive|standard|strict)\n"
         "  /resume        List saved sessions\n"
