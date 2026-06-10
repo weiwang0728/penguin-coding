@@ -11,7 +11,7 @@ from ..permissions import PermissionManager
 from ..permissions_config import load_permissions_config
 from ..tool_registry import ToolRegistry
 
-# Import all tool implementations
+# Import all tool implementations — triggers __init_subclass__ auto-registration
 from .read_file import ReadFileTool
 from .write_file import WriteFileTool
 from .run_command import RunCommandTool
@@ -27,17 +27,6 @@ from .team_list import TeamListTool
 from .team_shutdown import TeamShutdownTool
 from .team_send import TeamSendTool
 from .team_broadcast import TeamBroadcastTool
-
-# Register all tool classes in the global ToolRegistry
-_TOOL_CLASSES = [
-    ReadFileTool, WriteFileTool, RunCommandTool, ListDirectoryTool,
-    SearchFilesTool, EditFileTool, TaskTool, LoadSkillTool,
-    BackgroundRunTool, CheckBackgroundTool, TeamSpawnTool, TeamListTool,
-    TeamShutdownTool, TeamSendTool, TeamBroadcastTool,
-]
-
-for _cls in _TOOL_CLASSES:
-    ToolRegistry.register(_cls)
 
 # ── Default global dispatcher (backward compatibility) ──
 # Creates a dispatcher with ALL tools registered, for existing code
@@ -96,19 +85,19 @@ def register_delegate_tool(client) -> None:
 
 # Convenience functions — allow direct calls like read_file("path")
 def read_file(path: str) -> str:
-    return _TOOL_CLASSES[0]().execute(path=path)
+    return ToolRegistry.create_instance("read_file").execute(path=path)
 
 def write_file(path: str, content: str) -> str:
-    return _TOOL_CLASSES[1]().execute(path=path, content=content)
+    return ToolRegistry.create_instance("write_file").execute(path=path, content=content)
 
 def run_command(command: str, timeout: int = 300) -> str:
-    return _TOOL_CLASSES[2]().execute(command=command, timeout=timeout)
+    return ToolRegistry.create_instance("run_command").execute(command=command, timeout=timeout)
 
 def list_directory(path: str = ".") -> str:
-    return _TOOL_CLASSES[3]().execute(path=path)
+    return ToolRegistry.create_instance("list_directory").execute(path=path)
 
 def search_files(pattern: str, path: str = ".", file_pattern: str = "") -> str:
-    return _TOOL_CLASSES[4]().execute(pattern=pattern, path=path, file_pattern=file_pattern)
+    return ToolRegistry.create_instance("search_files").execute(pattern=pattern, path=path, file_pattern=file_pattern)
 
 def edit_file(path: str, old_string: str = "", new_string: str = "", edits: list | None = None) -> str:
     kwargs = {"path": path}
@@ -117,7 +106,7 @@ def edit_file(path: str, old_string: str = "", new_string: str = "", edits: list
     else:
         kwargs["old_string"] = old_string
         kwargs["new_string"] = new_string
-    return _TOOL_CLASSES[5]().execute(**kwargs)
+    return ToolRegistry.create_instance("edit_file").execute(**kwargs)
 
 __all__ = [
     "dispatcher",

@@ -355,7 +355,7 @@ class TestAgentExecuteTool:
 
     def test_read_file_path_rewritten(self, team_mgr, monkeypatch):
         captured = {}
-        def fake_execute_tool(name, args):
+        def fake_execute_tool(name, args, **kwargs):
             captured.update(args)
             return "file content"
         monkeypatch.setattr("src.tools.execute_tool", fake_execute_tool)
@@ -364,7 +364,7 @@ class TestAgentExecuteTool:
 
     def test_write_file_path_rewritten(self, team_mgr, monkeypatch):
         captured = {}
-        def fake_execute_tool(name, args):
+        def fake_execute_tool(name, args, **kwargs):
             captured.update(args)
             return "ok"
         monkeypatch.setattr("src.tools.execute_tool", fake_execute_tool)
@@ -372,12 +372,12 @@ class TestAgentExecuteTool:
         assert ".agent/alice/out.txt" in captured["path"]
 
     def test_write_acquires_and_releases_lock(self, team_mgr, monkeypatch):
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "ok")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "ok")
         team_mgr._agent_execute_tool("alice", "write_file", {"path": "f.py", "content": "x"})
         assert team_mgr.lock_mgr.is_locked("f.py") is False
 
     def test_write_blocked_by_lock(self, team_mgr, monkeypatch):
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "ok")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "ok")
         # Lock is checked on the REWRITTEN path (workspace.resolve)
         rewritten_path = team_mgr.workspace.resolve("f.py", "alice")
         team_mgr.lock_mgr.acquire("bob", rewritten_path)
@@ -394,7 +394,7 @@ class TestAgentExecuteTool:
         team_mgr.version_tracker.record_read("alice", rewritten_path)
         time.sleep(0.01)
         f.write_text("v2")
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "ok")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "ok")
         result = team_mgr._agent_execute_tool("alice", "write_file", {"path": "f.py", "content": "x"})
         assert "CONFLICT" in result
 
@@ -403,12 +403,12 @@ class TestAgentExecuteTool:
         rewritten_path = team_mgr.workspace.resolve("main.py", "alice")
         Path(rewritten_path).parent.mkdir(parents=True, exist_ok=True)
         Path(rewritten_path).write_text("v1")
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "content")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "content")
         team_mgr._agent_execute_tool("alice", "read_file", {"path": "main.py"})
         assert rewritten_path in team_mgr.version_tracker._versions.get("alice", {})
 
     def test_lock_released_on_tool_error(self, team_mgr, monkeypatch):
-        def failing_tool(name, args):
+        def failing_tool(name, args, **kwargs):
             raise RuntimeError("boom")
         monkeypatch.setattr("src.tools.execute_tool", failing_tool)
         try:
@@ -419,7 +419,7 @@ class TestAgentExecuteTool:
 
     def test_non_path_tool_not_rewritten(self, team_mgr, monkeypatch):
         captured = {}
-        def fake_execute_tool(name, args):
+        def fake_execute_tool(name, args, **kwargs):
             captured.update(args)
             return "output"
         monkeypatch.setattr("src.tools.execute_tool", fake_execute_tool)
@@ -642,7 +642,7 @@ class TestConcurrency:
         mgr = TeamManager(tmp_workspace / ".team")
 
         calls = []
-        def fake_execute_tool(name, args):
+        def fake_execute_tool(name, args, **kwargs):
             calls.append((name, dict(args)))
             return "ok"
         monkeypatch.setattr("src.tools.execute_tool", fake_execute_tool)
@@ -659,7 +659,7 @@ class TestConcurrency:
         monkeypatch.setattr("src.agent_teams.MODEL_ID", "test-model")
         mgr = TeamManager(tmp_workspace / ".team")
 
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "content")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "content")
         r1 = mgr._agent_execute_tool("alice", "read_file", {"path": "shared.py"})
         r2 = mgr._agent_execute_tool("bob", "read_file", {"path": "shared.py"})
         assert r1 == "content"
@@ -671,7 +671,7 @@ class TestConcurrency:
         mgr = TeamManager(tmp_workspace / ".team")
 
         # Alice reads
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "v1")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "v1")
         mgr._agent_execute_tool("alice", "read_file", {"path": "shared/data.py"})
 
         # Simulate Bob modifying the file externally
@@ -686,7 +686,7 @@ class TestConcurrency:
         time.sleep(0.01)
         shared_data.write_text("v2_modified_by_bob")
 
-        monkeypatch.setattr("src.tools.execute_tool", lambda n, a: "ok")
+        monkeypatch.setattr("src.tools.execute_tool", lambda n, a, **kw: "ok")
         result = mgr._agent_execute_tool("alice", "write_file", {"path": real_path, "content": "alice_v2"})
         assert "CONFLICT" in result
 
@@ -696,7 +696,7 @@ class TestConcurrency:
         mgr = TeamManager(tmp_workspace / ".team")
 
         captured = []
-        def capture_tool(name, args):
+        def capture_tool(name, args, **kwargs):
             captured.append(args.get("path", ""))
             return "ok"
         monkeypatch.setattr("src.tools.execute_tool", capture_tool)
@@ -723,12 +723,13 @@ class TestTeamToolDispatch:
         monkeypatch.setattr("src.agent_teams.MODEL_ID", "test-model")
         monkeypatch.setattr("src.agent_teams.llm_compact_messages", lambda msgs, *a, **kw: msgs)
         mgr = TeamManager(tmp_workspace / ".team")
+        monkeypatch.setattr("src.agent_teams.TEAM_MANAGER", mgr)
         monkeypatch.setattr("src.tools.TEAM_MANAGER", mgr)
         return mgr
 
     def test_team_spawn_via_tool(self, fake_team_mgr):
         from src.tools import execute_tool
-        result = execute_tool("team_spawn", {"name": "alice", "role": "coder", "prompt": "Write code"})
+        result = execute_tool("team_spawn", {"name": "alice", "role": "coder", "prompt": "Write code"}, skip_permission_check=True)
         assert "Spawned" in result
         member = fake_team_mgr._find_member("alice")
         assert member is not None
@@ -737,14 +738,14 @@ class TestTeamToolDispatch:
 
     def test_team_list_via_tool(self, fake_team_mgr):
         from src.tools import execute_tool
-        result = execute_tool("team_list", {})
+        result = execute_tool("team_list", {}, skip_permission_check=True)
         assert "No team members" in result
 
     def test_team_shutdown_via_tool(self, fake_team_mgr):
         from src.tools import execute_tool
         fake_team_mgr.config["members"].append({"name": "bob", "role": "dev", "status": "idle"})
         fake_team_mgr._save_config()
-        result = execute_tool("team_shutdown", {"name": "bob"})
+        result = execute_tool("team_shutdown", {"name": "bob"}, skip_permission_check=True)
         assert "Shutdown" in result
 
     def test_team_broadcast_via_tool(self, fake_team_mgr):

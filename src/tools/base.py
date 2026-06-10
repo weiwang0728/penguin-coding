@@ -1,5 +1,6 @@
 """Base class for all tools."""
 
+import inspect
 from abc import ABC, abstractmethod
 
 
@@ -10,6 +11,13 @@ class Tool(ABC):
     description: str
     parameters: dict  # JSON Schema for the function args
     default_permission_level: str = "confirm"
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not getattr(cls, "name", None) or inspect.isabstract(cls):
+            return
+        from ..tool_registry import ToolRegistry
+        ToolRegistry.register(cls)
 
     @abstractmethod
     def execute(self, **kwargs) -> str:

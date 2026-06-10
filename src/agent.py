@@ -37,6 +37,7 @@ class Agent:
         parallel_enabled: bool = True,
         parallel_max_workers: int = 4,
     ):
+        from . import tools as _tools  # noqa: F401 — ensures Tool subclasses are loaded & auto-registered
         self.name = name
         self.max_iterations = max_iterations
         self.parallel_enabled = parallel_enabled
