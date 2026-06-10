@@ -303,7 +303,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
                 console.print("[dim]No files modified this session.[/dim]")
             else:
                 console.print(f"[bold]Files modified this session ({len(_changed_files)}):[/bold]")
-                for f in sorted(_changed_files):
+                for f in _changed_files.sorted_items():
                     console.print(f"  [cyan]{f}[/cyan]")
             continue
         if user_input.startswith("/resume"):

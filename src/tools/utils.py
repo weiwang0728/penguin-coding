@@ -1,6 +1,7 @@
 """Shared utilities for tool implementations."""
 
 import difflib
+import threading
 from pathlib import Path
 
 from .._constants import ALLOWED_BASE_DIR
@@ -8,7 +9,40 @@ from ..skill_loader import SKILLS_DIR
 
 ALLOWED_DIRS = [ALLOWED_BASE_DIR, SKILLS_DIR]
 
-_changed_files: set[str] = set()
+
+class _ThreadSafeSet:
+    """A set wrapper with a lock for safe concurrent access."""
+
+    def __init__(self) -> None:
+        self._set: set[str] = set()
+        self._lock = threading.Lock()
+
+    def add(self, item: str) -> None:
+        with self._lock:
+            self._set.add(item)
+
+    def clear(self) -> None:
+        with self._lock:
+            self._set.clear()
+
+    def __bool__(self) -> bool:
+        with self._lock:
+            return bool(self._set)
+
+    def __len__(self) -> int:
+        with self._lock:
+            return len(self._set)
+
+    def __contains__(self, item: str) -> bool:
+        with self._lock:
+            return item in self._set
+
+    def sorted_items(self) -> list[str]:
+        with self._lock:
+            return sorted(self._set)
+
+
+_changed_files: _ThreadSafeSet = _ThreadSafeSet()
 
 
 def normalize(text: str) -> str:

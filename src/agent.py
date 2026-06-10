@@ -34,9 +34,13 @@ class Agent:
         system_prompt: str | None = None,
         permission_profile: str = "standard",
         max_iterations: int = 100,
+        parallel_enabled: bool = True,
+        parallel_max_workers: int = 4,
     ):
         self.name = name
         self.max_iterations = max_iterations
+        self.parallel_enabled = parallel_enabled
+        self.parallel_max_workers = parallel_max_workers
 
         # Independent dispatcher
         self.dispatcher = ToolDispatcher()
@@ -164,6 +168,8 @@ class Agent:
             tool_dispatcher=self.dispatcher,
             tools=self.tool_definitions,
             system_prompt=self._build_system_prompt(),
+            parallel_enabled=self.parallel_enabled,
+            parallel_max_workers=self.parallel_max_workers,
         )
 
     def run_subagent(

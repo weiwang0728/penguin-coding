@@ -21,6 +21,7 @@ from .tools import (
     execute_tool,
     register_delegate_tool,
 )
+from .parallel_executor import execute_tools_parallel
 from .task_system import (
     task_manager
 )
@@ -290,14 +291,10 @@ def run_subagent(
             return collected_content or "(subagent completed with no output)"
 
         # Execute tools
-        tool_results: list[dict[str, Any]] = []
-        for tc in tool_calls_list:
-            result = execute_tool(tc["name"], tc["input"], skip_permission_check=True)
-            tool_results.append({
-                "type": "tool_result",
-                "tool_use_id": tc["id"],
-                "content": _truncate_for_context(result),
-            })
+        tool_results = execute_tools_parallel(
+            tool_calls_list=tool_calls_list,
+            dispatch_fn=lambda name, args: execute_tool(name, args, skip_permission_check=True),
+        )
         user_msg = {"role": "user", "content": tool_results}
         messages.append(user_msg)
         sub_pending_delta += estimate_messages_tokens([user_msg])
@@ -394,14 +391,10 @@ def run_subagent_with_tools(
         if not has_tool_calls:
             return collected_content or "(subagent completed with no output)"
 
-        tool_results: list[dict[str, Any]] = []
-        for tc in tool_calls_list:
-            result = _dispatcher.dispatch(tc["name"], tc["input"], skip_permission_check=True)
-            tool_results.append({
-                "type": "tool_result",
-                "tool_use_id": tc["id"],
-                "content": _truncate_for_context(result),
-            })
+        tool_results = execute_tools_parallel(
+            tool_calls_list=tool_calls_list,
+            dispatch_fn=lambda name, args: _dispatcher.dispatch(name, args, skip_permission_check=True),
+        )
         user_msg = {"role": "user", "content": tool_results}
         messages.append(user_msg)
         sub_pending_delta += estimate_messages_tokens([user_msg])
@@ -430,6 +423,8 @@ def agent_loop(
     tools: list[dict] | None = None,
     system_prompt: str | None = None,
     tool_dispatcher=None,
+    parallel_enabled: bool = True,
+    parallel_max_workers: int = 4,
 ) -> tuple[str, list[dict[str, Any]]]:
     if messages is None:
         messages = []
@@ -532,7 +527,10 @@ def agent_loop(
         if not has_tool_calls:
             return collected_content, messages
 
-        used_todo = False
+        has_task = any(tc["name"] == "task" for tc in tool_calls_list)
+        used_todo = has_task
+        rounds_since_todo = 0 if has_task else rounds_since_todo + len(tool_calls_list)
+
         tool_results: list[dict[str, Any]] = []
 
         # Inject iteration awareness so the model can plan its work
@@ -543,28 +541,16 @@ def agent_loop(
             }
         )
 
-        for tc in tool_calls_list:
-            fn_name = tc["name"]
-            fn_args = tc["input"]
-
-            if fn_name == "task":
-                used_todo = True
-            rounds_since_todo = 0 if used_todo else rounds_since_todo + 1
-            if on_tool_start:
-                on_tool_start(fn_name, fn_args)
-
-            result = _dispatcher.dispatch(fn_name, fn_args)
-
-            if on_tool_result:
-                on_tool_result(fn_name, result)
-
-            tool_results.append(
-                {
-                    "type": "tool_result",
-                    "tool_use_id": tc["id"],
-                    "content": _truncate_for_context(result),
-                }
+        tool_results.extend(
+            execute_tools_parallel(
+                tool_calls_list=tool_calls_list,
+                dispatch_fn=lambda name, args: _dispatcher.dispatch(name, args),
+                on_tool_start=on_tool_start,
+                on_tool_result=on_tool_result,
+                max_workers=parallel_max_workers,
+                enabled=parallel_enabled,
             )
+        )
 
         # Inject background task completions into this iteration's context
         bg_notifs = BG.drain_notifications()
