@@ -109,7 +109,11 @@ def main():
                 model_id = loaded_model
                 _al.MODEL_ID = model_id
             if loaded_usage:
-                usage_stats.update(loaded_usage)
+                usage_stats["prompt_tokens"] = loaded_usage.get("prompt_tokens", 0)
+                usage_stats["completion_tokens"] = loaded_usage.get("completion_tokens", 0)
+            # Recalculate from actual messages — pending_delta from old session is stale
+            usage_stats["last_input_tokens"] = _al.estimate_messages_tokens(conversation_history)
+            usage_stats["pending_delta"] = 0
             console.print(f"[green]Resumed session: {args.resume} (model: {model_id})[/green]")
         else:
             console.print(f"[red]Session '{args.resume}' not found.[/red]")
@@ -321,7 +325,10 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
                 _al.MODEL_ID = model_id
                 loaded_usage = loaded[2]
                 if loaded_usage:
-                    usage_stats.update(loaded_usage)
+                    usage_stats["prompt_tokens"] = loaded_usage.get("prompt_tokens", 0)
+                    usage_stats["completion_tokens"] = loaded_usage.get("completion_tokens", 0)
+                usage_stats["last_input_tokens"] = _al.estimate_messages_tokens(conversation_history)
+                usage_stats["pending_delta"] = 0
                 console.print(f"[green]Resumed session: {target} (model: {model_id})[/green]")
             else:
                 console.print(f"[red]Session '{target}' not found.[/red]")
