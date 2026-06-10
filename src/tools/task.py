@@ -1,7 +1,9 @@
 from ..task_system import task_manager
+from ..tool_registry import register_tool
 from .base import Tool
 
 
+@register_tool
 class TaskTool(Tool):
     default_permission_level = "allow"
     name = "task"

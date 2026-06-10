@@ -1,7 +1,9 @@
 from ..background_tasks import BG
+from ..tool_registry import register_tool
 from .base import Tool
 
 
+@register_tool
 class BackgroundRunTool(Tool):
     default_permission_level = "confirm"
     name = "background_run"

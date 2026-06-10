@@ -31,3 +31,11 @@ class ToolRegistry:
     @classmethod
     def has(cls, name: str) -> bool:
         return name in cls._tools
+
+
+def register_tool(cls):
+    """Decorator: explicitly register a Tool subclass into the global registry."""
+    if not getattr(cls, "name", None):
+        raise ValueError(f"Tool class {cls.__name__} must define a 'name' attribute")
+    ToolRegistry.register(cls)
+    return cls

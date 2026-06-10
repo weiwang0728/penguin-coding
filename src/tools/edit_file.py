@@ -1,7 +1,9 @@
+from ..tool_registry import register_tool
 from .base import Tool
 from .utils import resolve_and_validate_path, unified_diff, _changed_files, fuzzy_replace
 
 
+@register_tool
 class EditFileTool(Tool):
     name = "edit_file"
     default_permission_level = "confirm"

@@ -1,7 +1,9 @@
+from ..tool_registry import register_tool
 from .base import Tool
 from .utils import resolve_and_validate_path
 
 
+@register_tool
 class ListDirectoryTool(Tool):
     default_permission_level = "allow"
     name = "list_directory"

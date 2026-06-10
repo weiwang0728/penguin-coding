@@ -1,9 +1,11 @@
 import subprocess
 
 from .._constants import ALLOWED_BASE_DIR, check_dangerous_command, _truncate_output
+from ..tool_registry import register_tool
 from .base import Tool
 
 
+@register_tool
 class RunCommandTool(Tool):
     name = "run_command"
     description = "Run a shell command and return its output. Use longer timeouts for install/build commands."

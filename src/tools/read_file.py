@@ -1,8 +1,10 @@
 from .._constants import MAX_READ_SIZE
+from ..tool_registry import register_tool
 from .base import Tool
 from .utils import resolve_and_validate_path
 
 
+@register_tool
 class ReadFileTool(Tool):
     name = "read_file"
     description = "Read the contents of a file"

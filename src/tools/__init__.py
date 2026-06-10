@@ -11,22 +11,10 @@ from ..permissions import PermissionManager
 from ..permissions_config import load_permissions_config
 from ..tool_registry import ToolRegistry
 
-# Import all tool implementations — triggers __init_subclass__ auto-registration
-from .read_file import ReadFileTool
-from .write_file import WriteFileTool
-from .run_command import RunCommandTool
-from .list_directory import ListDirectoryTool
-from .search_files import SearchFilesTool
-from .edit_file import EditFileTool
-from .task import TaskTool
-from .load_skill import LoadSkillTool
-from .background_run import BackgroundRunTool
-from .check_background import CheckBackgroundTool
-from .team_spawn import TeamSpawnTool
-from .team_list import TeamListTool
-from .team_shutdown import TeamShutdownTool
-from .team_send import TeamSendTool
-from .team_broadcast import TeamBroadcastTool
+# Import tool modules to trigger @register_tool decorators
+from . import read_file, write_file, run_command, list_directory, search_files
+from . import edit_file, task, load_skill, background_run, check_background
+from . import team_spawn, team_list, team_shutdown, team_send, team_broadcast
 
 # ── Default global dispatcher (backward compatibility) ──
 # Creates a dispatcher with ALL tools registered, for existing code

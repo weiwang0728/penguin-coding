@@ -1,7 +1,9 @@
+from ..tool_registry import register_tool
 from .base import Tool
 from .utils import resolve_and_validate_path, unified_diff, _changed_files
 
 
+@register_tool
 class WriteFileTool(Tool):
     name = "write_file"
     description = "Write content to a file"

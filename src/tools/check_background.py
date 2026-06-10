@@ -1,7 +1,9 @@
 from ..background_tasks import BG
+from ..tool_registry import register_tool
 from .base import Tool
 
 
+@register_tool
 class CheckBackgroundTool(Tool):
     default_permission_level = "allow"
     name = "check_background"

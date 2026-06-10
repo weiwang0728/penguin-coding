@@ -1,10 +1,12 @@
 import subprocess
 
 from .._constants import ALLOWED_BASE_DIR, _truncate_output
+from ..tool_registry import register_tool
 from .base import Tool
 from .utils import resolve_and_validate_path
 
 
+@register_tool
 class SearchFilesTool(Tool):
     default_permission_level = "allow"
     name = "search_files"

@@ -1,7 +1,9 @@
 from ..skill_loader import SKILL_LOADER
+from ..tool_registry import register_tool
 from .base import Tool
 
 
+@register_tool
 class LoadSkillTool(Tool):
     default_permission_level = "allow"
     name = "load_skill"
