@@ -306,6 +306,9 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
                 for f in _changed_files.sorted_items():
                     console.print(f"  [cyan]{f}[/cyan]")
             continue
+        if user_input == "/memory" or user_input.startswith("/memory "):
+            _handle_memory_command(user_input)
+            continue
         if user_input.startswith("/resume"):
             target = user_input[7:].strip()
             sessions = list_sessions()
@@ -399,6 +402,63 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
             console.print(f"\n[red]Error: {e}[/red]")
 
 
+def _handle_memory_command(user_input: str):
+    """Handle /memory CLI commands."""
+    from .memory import memory_store
+
+    parts = user_input.split(maxsplit=2)
+    subcmd = parts[1] if len(parts) > 1 else "list"
+
+    if subcmd == "list":
+        scope_filter = parts[2] if len(parts) > 2 else None
+        result = memory_store.list_memories(scope=scope_filter)
+        console.print(result)
+    elif subcmd == "search":
+        if len(parts) < 3:
+            console.print("Usage: /memory search <query>")
+            return
+        result = memory_store.search(parts[2])
+        console.print(result)
+    elif subcmd == "recall":
+        if len(parts) < 3:
+            console.print("Usage: /memory recall <id>")
+            return
+        result = memory_store.recall(parts[2])
+        console.print(Markdown(result))
+    elif subcmd == "delete":
+        if len(parts) < 3:
+            console.print("Usage: /memory delete <id>")
+            return
+        result = memory_store.delete(parts[2])
+        console.print(result)
+    elif subcmd == "context":
+        from .compact import estimate_tokens
+        index = memory_store.build_system_index()
+        ctx = memory_store.build_iteration_context([])
+        console.print(Panel(
+            f"[bold]System Index[/bold] ({estimate_tokens(index)} tokens):\n{index}\n\n"
+            f"[bold]Iteration Context[/bold] ({estimate_tokens(ctx)} tokens):\n{ctx or '(empty)'}",
+            title="Memory Context",
+            border_style="cyan",
+        ))
+    elif subcmd == "consolidate":
+        from ._constants import client as _client
+        console.print("[dim]Running memory consolidation...[/dim]")
+        result = memory_store.consolidate(_client, _al.MODEL_ID)
+        console.print(result)
+    else:
+        console.print(
+            "[yellow]Unknown /memory subcommand.[/yellow]\n"
+            "Usage:\n"
+            "  /memory list [scope]    List memories\n"
+            "  /memory search <query>  Search memories\n"
+            "  /memory recall <id>     Show full memory\n"
+            "  /memory delete <id>     Delete a memory\n"
+            "  /memory context         Show injected memory context\n"
+            "  /memory consolidate     Trigger memory consolidation"
+        )
+
+
 def _confirm_tool(name: str, args: dict, reason: str) -> bool:
     """Prompt the user for tool confirmation. Returns True if approved."""
     from .tools import permission_manager
@@ -430,6 +490,12 @@ def _show_help():
         "  /tokens        Show token usage\n"
         "  /compact       Compress conversation context\n"
         "  /diff          Show files modified this session\n"
+        "  /memory list [scope]    List memories\n"
+        "  /memory search <query>  Search memories\n"
+        "  /memory recall <id>     Show full memory\n"
+        "  /memory delete <id>     Delete a memory\n"
+        "  /memory context         Show injected memory context\n"
+        "  /memory consolidate     Trigger memory consolidation\n"
         "  /tools         Show active tools\n"
         "  /add_tool <name>       Add a tool at runtime\n"
         "  /remove_tool <name>    Remove a tool at runtime\n"

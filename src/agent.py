@@ -9,6 +9,7 @@ from .tools.dispatcher import ToolDispatcher
 from .permissions import PermissionManager
 from .permissions_config import load_permissions_config
 from .skill_loader import SkillLoader, SKILLS_DIR
+from .memory import memory_store
 
 logger = logging.getLogger("penguin")
 
@@ -63,6 +64,9 @@ class Agent:
         # Independent skill loader
         self.skill_loader = SkillLoader(SKILLS_DIR, initial_skills=skills)
 
+        # Memory store
+        self.memory_store = memory_store
+
         # System prompt
         self._custom_system_prompt = system_prompt
 
@@ -82,9 +86,11 @@ class Agent:
         if self._custom_system_prompt:
             return self._custom_system_prompt
         skill_descs = self.skill_loader.get_descriptions()
+        memory_index = self.memory_store.build_system_index()
         return (
             f"You are a helpful coding assistant at {ALLOWED_BASE_DIR}. "
             f"You can help users with software engineering tasks.\n\n"
+            f"<memory_index>\n{memory_index}\n</memory_index>\n\n"
             f"Core principles:\n"
             f"- COMPLETE every task you start. Never stop mid-work to summarize or explain unless the user asks.\n"
             f"- When you encounter errors, fix them. Do not just report the error and stop.\n"

@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import threading
 import time
 from typing import Any, Callable, Generator
 from .background_tasks import BG
@@ -27,6 +28,7 @@ from .task_system import (
     task_manager
 )
 from .skill_loader import SKILL_LOADER
+from .memory import memory_store
 from ._constants import client
 
 load_dotenv()
@@ -480,6 +482,14 @@ def agent_loop(
             f"{'Keep working — do not stop until the task is complete.' if remaining <= 5 else ''}]"
         )
 
+        # ── Memory hook 1: inject relevant memories into system prompt ──
+        # Do this BEFORE the LLM call so the model can use memories for its decision
+        memory_context = memory_store.build_iteration_context(messages)
+        if memory_context:
+            _iter_system_prompt = _system_prompt + f"\n\n<active_memories>\n{memory_context}\n</active_memories>"
+        else:
+            _iter_system_prompt = _system_prompt
+
         # Inner loop: truncation escalation / reactive-compact recovery
         while True:
             collected_content = ""
@@ -492,7 +502,7 @@ def agent_loop(
                 try:
                     for event_type, data in stream_response(
                         client, messages,
-                        system_prompt=_system_prompt, tools=_tools,
+                        system_prompt=_iter_system_prompt, tools=_tools,
                         max_tokens=current_max_tokens,
                     ):
                         if event_type == "text_delta":
@@ -611,10 +621,6 @@ def agent_loop(
         if not has_tool_calls:
             return collected_content, messages
 
-        has_task = any(tc["name"] == "task" for tc in tool_calls_list)
-        used_todo = has_task
-        rounds_since_todo = 0 if has_task else rounds_since_todo + len(tool_calls_list)
-
         tool_results: list[dict[str, Any]] = []
 
         # Inject iteration awareness so the model can plan its work
@@ -658,5 +664,37 @@ def agent_loop(
         user_msg = {"role": "user", "content": tool_results}
         messages.append(user_msg)
         usage_stats["pending_delta"] += estimate_messages_tokens([user_msg])
+
+        # ── Memory hook 2: extract memories from this turn (async) ──
+        if iteration > 0:
+            try:
+                _last_assistant = None
+                _last_user = None
+                for m in reversed(messages):
+                    if m.get("role") == "assistant" and _last_assistant is None:
+                        _last_assistant = m
+                    elif m.get("role") == "user" and _last_user is None:
+                        _last_user = m
+                    if _last_assistant and _last_user:
+                        break
+                if _last_assistant and _last_user:
+                    _la, _lu = _last_assistant, _last_user
+                    def _extract_worker():
+                        try:
+                            memory_store.extract_from_turn(_lu, _la, client, MODEL_ID)
+                        except Exception:
+                            logger.warning("Async memory extraction failed (non-critical)")
+                    threading.Thread(target=_extract_worker, daemon=True).start()
+            except Exception:
+                pass
+
+        # ── Memory hook 3: threshold check → consolidate ──
+        if memory_store.count() > memory_store.CONSOLIDATE_THRESHOLD:
+            def _consolidate_worker():
+                try:
+                    memory_store.consolidate(client, MODEL_ID)
+                except Exception:
+                    logger.warning("Async memory consolidation failed (non-critical)")
+            threading.Thread(target=_consolidate_worker, daemon=True).start()
 
     return "Agent reached maximum iterations without completing the task.", messages

@@ -18,6 +18,7 @@ PARALLEL_MAX_WORKERS = int(os.getenv("PENGUIN_PARALLEL_WORKERS", "4"))
 READ_ONLY_TOOLS = frozenset({
     "read_file", "list_directory", "search_files",
     "check_background", "team_list", "load_skill",
+    "memory",
 })
 
 WRITE_TOOLS = frozenset({
