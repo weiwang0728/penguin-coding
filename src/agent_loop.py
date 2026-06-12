@@ -12,6 +12,7 @@ from .compact import (
     llm_compact_messages,
     needs_compaction,
     estimate_messages_tokens,
+    reactive_compact,
 )
 from .tools import (
     ALLOWED_BASE_DIR,
@@ -83,6 +84,26 @@ def _validate_config() -> None:
         )
 
 MAX_OUTPUT_TOKENS = 16384
+ESCALATED_MAX_TOKENS = 65536  # 64K — escalation when default output limit is insufficient
+MAX_RECOVERY_RETRIES = 3
+
+
+class _RecoveryState:
+    """Tracks truncation escalation and reactive compact state across iterations."""
+    __slots__ = ("has_escalated", "recovery_count", "has_attempted_reactive_compact")
+
+    def __init__(self) -> None:
+        self.has_escalated = False
+        self.recovery_count = 0
+        self.has_attempted_reactive_compact = False
+
+
+def _is_prompt_too_long_error(e: anthropic.APIStatusError) -> bool:
+    """Check if the API error is specifically about prompt/context being too long."""
+    if e.status_code != 400:
+        return False
+    msg = (e.message or "").lower()
+    return "too long" in msg
 
 SUBAGENT_SYSTEM_PROMPT = f"""You are a focused coding sub-agent at {ALLOWED_BASE_DIR}. Complete the given task thoroughly.
 When finished, provide a concise summary of:
@@ -101,6 +122,7 @@ def stream_response(
     messages: list[dict[str, Any]],
     system_prompt: str | None = None,
     tools: list[dict] | None = None,
+    max_tokens: int = MAX_OUTPUT_TOKENS,
 ) -> Generator[tuple[str, Any], None, None]:
     """逐 token 流式消费 API 响应，实时 yield 事件。
 
@@ -114,7 +136,7 @@ def stream_response(
 
     with client.messages.stream(
         model=MODEL_ID,
-        max_tokens=MAX_OUTPUT_TOKENS,
+        max_tokens=max_tokens,
         system=system_prompt or SYSTEM_PROMPT,
         messages=messages,
         tools=tools or TOOL_DEFINITIONS,
@@ -438,6 +460,9 @@ def agent_loop(
     messages.append(user_msg)
     usage_stats["pending_delta"] += estimate_messages_tokens([user_msg])
 
+    recovery_state = _RecoveryState()
+    current_max_tokens = MAX_OUTPUT_TOKENS
+
     for iteration in range(max_iterations):
         if needs_compaction(
             usage_stats["last_input_tokens"], usage_stats["pending_delta"]
@@ -455,46 +480,117 @@ def agent_loop(
             f"{'Keep working — do not stop until the task is complete.' if remaining <= 5 else ''}]"
         )
 
-        collected_content = ""
-        has_tool_calls = False
-        was_truncated = False
-        tool_calls_list = []
+        # Inner loop: truncation escalation / reactive-compact recovery
+        while True:
+            collected_content = ""
+            has_tool_calls = False
+            was_truncated = False
+            tool_calls_list = []
+            prompt_too_long = False
 
-        for retry in range(MAX_API_RETRIES):
-            try:
-                for event_type, data in stream_response(client, messages, system_prompt=_system_prompt, tools=_tools):
-                    if event_type == "text_delta":
-                        collected_content += data
-                        if on_content:
-                            on_content(data)
-                    elif event_type == "truncated":
-                        was_truncated = True
-                    elif event_type == "tool_calls":
-                        has_tool_calls = True
-                        tool_calls_list = data
-                    elif event_type == "usage":
-                        usage_stats["last_input_tokens"] = data
-                        usage_stats["pending_delta"] = 0
-                break
-            except anthropic.APIStatusError as e:
-                if e.status_code in (429, 503, 529) and retry < MAX_API_RETRIES - 1:
-                    delay = RETRY_BASE_DELAY * (2 ** retry)
-                    logger.warning("API rate limit/error (status %d), retrying in %.1fs", e.status_code, delay)
-                    time.sleep(delay)
-                    continue
-                error_msg = f"API error (status {e.status_code}): {e.message}"
-                logger.error(error_msg)
-                return error_msg, messages
-            except anthropic.APIConnectionError as e:
-                if retry < MAX_API_RETRIES - 1:
-                    delay = RETRY_BASE_DELAY * (2 ** retry)
-                    logger.warning("API connection error, retrying in %.1fs", delay)
-                    time.sleep(delay)
-                    continue
-                error_msg = f"API connection error after retries: {e}"
-                logger.error(error_msg)
-                return error_msg, messages
+            for retry in range(MAX_API_RETRIES):
+                try:
+                    for event_type, data in stream_response(
+                        client, messages,
+                        system_prompt=_system_prompt, tools=_tools,
+                        max_tokens=current_max_tokens,
+                    ):
+                        if event_type == "text_delta":
+                            collected_content += data
+                            if on_content:
+                                on_content(data)
+                        elif event_type == "truncated":
+                            was_truncated = True
+                        elif event_type == "tool_calls":
+                            has_tool_calls = True
+                            tool_calls_list = data
+                        elif event_type == "usage":
+                            usage_stats["last_input_tokens"] = data
+                            usage_stats["pending_delta"] = 0
+                    break
+                except anthropic.APIStatusError as e:
+                    # Path 2: context too long — reactive compact
+                    if _is_prompt_too_long_error(e):
+                        if not recovery_state.has_attempted_reactive_compact:
+                            logger.warning("Prompt too long, triggering reactive compact")
+                            messages[:] = reactive_compact(messages)
+                            recovery_state.has_attempted_reactive_compact = True
+                            prompt_too_long = True
+                            break
+                        logger.error("Context too long even after reactive compact")
+                        return "Context too long even after reactive compact.", messages
+                    if e.status_code in (429, 503, 529) and retry < MAX_API_RETRIES - 1:
+                        delay = RETRY_BASE_DELAY * (2 ** retry)
+                        logger.warning("API rate limit/error (status %d), retrying in %.1fs", e.status_code, delay)
+                        time.sleep(delay)
+                        continue
+                    error_msg = f"API error (status {e.status_code}): {e.message}"
+                    logger.error(error_msg)
+                    return error_msg, messages
+                except anthropic.APIConnectionError as e:
+                    if retry < MAX_API_RETRIES - 1:
+                        delay = RETRY_BASE_DELAY * (2 ** retry)
+                        logger.warning("API connection error, retrying in %.1fs", delay)
+                        time.sleep(delay)
+                        continue
+                    error_msg = f"API connection error after retries: {e}"
+                    logger.error(error_msg)
+                    return error_msg, messages
 
+            if prompt_too_long:
+                continue  # retry after reactive compact
+
+            # Path 1: output truncated — escalate or continuation
+            if was_truncated:
+                if not recovery_state.has_escalated:
+                    current_max_tokens = ESCALATED_MAX_TOKENS
+                    recovery_state.has_escalated = True
+                    logger.warning(
+                        "Response truncated at %d tokens, escalating to %d",
+                        MAX_OUTPUT_TOKENS, ESCALATED_MAX_TOKENS,
+                    )
+                    continue  # messages unchanged, retry same request with more tokens
+
+                # Already escalated: append truncated output + continuation prompt
+                assistant_content: list[dict[str, Any]] = []
+                if collected_content:
+                    assistant_content.append({"type": "text", "text": collected_content})
+                for tc in tool_calls_list:
+                    assistant_content.append({
+                        "type": "tool_use",
+                        "id": tc["id"],
+                        "name": tc["name"],
+                        "input": tc["input"],
+                    })
+                messages.append({"role": "assistant", "content": assistant_content})
+
+                if recovery_state.recovery_count < MAX_RECOVERY_RETRIES:
+                    cont_msg = {
+                        "role": "user",
+                        "content": (
+                            "Output token limit hit. Resume directly — "
+                            "no apology, no recap. Pick up mid-thought."
+                        ),
+                    }
+                    messages.append(cont_msg)
+                    recovery_state.recovery_count += 1
+                    logger.warning(
+                        "Still truncated at %d tokens, continuation %d/%d",
+                        ESCALATED_MAX_TOKENS,
+                        recovery_state.recovery_count, MAX_RECOVERY_RETRIES,
+                    )
+                    continue  # retry with continuation
+
+                # Max continuations exceeded
+                logger.error(
+                    "Still truncated after %d continuations, giving up",
+                    MAX_RECOVERY_RETRIES,
+                )
+                return collected_content, messages
+
+            break  # success — not truncated, exit inner loop
+
+        # Normal: append complete assistant message
         assistant_content: list[dict[str, Any]] = []
         if collected_content:
             assistant_content.append({"type": "text", "text": collected_content})
@@ -511,18 +607,6 @@ def agent_loop(
         assistant_msg = {"role": "assistant", "content": assistant_content}
         messages.append(assistant_msg)
         usage_stats["pending_delta"] += estimate_messages_tokens([assistant_msg])
-
-        # 输出被截断时，跳过不完整的 tool_calls，提示模型继续
-        if was_truncated:
-            truncate_hint = (
-                "[System: Your previous response was truncated due to output length limit. "
-                "Please continue. If you were writing a file, try again with smaller chunks "
-                "or split the content across multiple write_file calls.]"
-            )
-            trunc_msg = {"role": "user", "content": truncate_hint}
-            messages.append(trunc_msg)
-            usage_stats["pending_delta"] += estimate_messages_tokens([trunc_msg])
-            continue
 
         if not has_tool_calls:
             return collected_content, messages

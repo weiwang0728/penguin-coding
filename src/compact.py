@@ -442,3 +442,29 @@ def trim_messages(
     # Over budget after preprocessing — return preprocessed, caller handles full compaction
     logger.warning("trim_messages: still over budget after preprocessing")
     return normalized
+
+
+def reactive_compact(
+    messages: list[dict[str, Any]],
+    keep_recent: int = 5,
+) -> list[dict[str, Any]]:
+    """Aggressive reactive compact: keep only the last N messages.
+
+    Used when the LLM rejects the request due to context overflow even after
+    the normal (proactive) compaction pipeline has run.  This is a teaching
+    implementation — a production version would call the LLM to generate a
+    compact summary instead of simply discarding older messages.
+    """
+    kept = messages if len(messages) <= keep_recent else messages[-keep_recent:]
+    # Ensure the first kept message is a user message (API requires user-first)
+    if kept and kept[0].get("role") != "user":
+        for i, msg in enumerate(kept):
+            if msg.get("role") == "user":
+                kept = kept[i:]
+                break
+        else:
+            kept.insert(0, {
+                "role": "user",
+                "content": "[Earlier context removed due to length.]",
+            })
+    return kept
