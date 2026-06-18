@@ -1,0 +1,198 @@
+# ═══════════════════════════════════════════════════════════════════
+# 04 — 技能系统与后台任务测试案例
+# 覆盖: load_skill (code-review, agent-builder, mcp-builder, pdf),
+#        background_run, check_background, 技能激活/停用
+# ═══════════════════════════════════════════════════════════════════
+
+- id: "SB-001"
+  name: "加载并使用 code-review 技能审查代码"
+  description: |
+    请完成以下步骤：
+    1. 加载 code-review 技能
+    2. 读取 workspace/src/permissions.py 文件
+    3. 使用 code-review 技能对该文件进行代码审查
+    4. 审查应包含：安全性、性能、可读性、可维护性等维度
+    5. 给出评分和改进建议
+  features:
+    - load_skill
+    - code_review_skill
+    - read_file
+  category: skills_background
+  difficulty: medium
+  expected_behavior: |
+    1. 技能加载成功
+    2. 文件读取成功
+    3. 审查报告结构化，覆盖多个维度
+    4. 给出具体改进建议
+  verification:
+    - "load_skill 返回激活成功"
+    - "审查报告包含安全/性能/可读性等维度"
+    - "报告给出 1-10 评分或类似量化评价"
+    - "改进建议具体可操作"
+  edge_cases:
+    - "加载不存在的技能：应返回 Unknown skill"
+
+- id: "SB-002"
+  name: "加载 agent-builder 技能设计代理"
+  description: |
+    请完成以下步骤：
+    1. 加载 agent-builder 技能
+    2. 请求设计一个"客服问答代理"：该代理能理解用户问题、查询知识库、给出回答
+    3. 输出应包含：代理架构设计、工具定义、系统提示词、工作流程
+  features:
+    - load_skill
+    - agent_builder_skill
+  category: skills_background
+  difficulty: medium
+  expected_behavior: |
+    技能加载成功
+    agent-builder 提供结构化的代理设计方案
+    包含架构、工具、提示词、工作流
+  verification:
+    - "load_skill 返回激活成功"
+    - "设计方案包含架构描述"
+    - "设计方案包含工具定义"
+    - "设计方案包含系统提示词"
+    - "设计方案包含工作流程图或步骤"
+  edge_cases: []
+
+- id: "SB-003"
+  name: "加载 mcp-builder 技能设计 MCP 服务器"
+  description: |
+    请完成以下步骤：
+    1. 加载 mcp-builder 技能
+    2. 请求设计一个"天气查询 MCP 服务器"：提供 get_weather 工具，输入城市名返回天气信息
+    3. 输出应包含：服务器代码框架、工具 Schema、启动方式
+  features:
+    - load_skill
+    - mcp_builder_skill
+  category: skills_background
+  difficulty: medium
+  expected_behavior: |
+    技能加载成功
+    mcp-builder 提供完整的 MCP 服务器设计方案
+    包含代码框架和工具定义
+  verification:
+    - "load_skill 返回激活成功"
+    - "设计包含 Python/TypeScript 代码框架"
+    - "设计包含 get_weather 工具的 JSON Schema"
+    - "设计包含启动/测试方式"
+  edge_cases: []
+
+- id: "SB-004"
+  name: "加载 pdf 技能处理文档"
+  description: |
+    请完成以下步骤：
+    1. 加载 pdf 技能
+    2. 请求创建一个简单的 PDF 文档，内容为"项目技术栈总结"：
+       - Python 3.12
+       - Anthropic Claude API
+       - Rich 终端库
+       - prompt_toolkit
+    3. 将 PDF 保存到 workspace/tech_stack.pdf
+  features:
+    - load_skill
+    - pdf_skill
+    - write_file
+  category: skills_background
+  difficulty: medium
+  expected_behavior: |
+    技能加载成功
+    pdf 技能指导创建 PDF 文件
+    PDF 文件成功保存
+  verification:
+    - "load_skill 返回激活成功"
+    - "workspace/tech_stack.pdf 文件存在"
+    - "文件大小 > 0"
+  edge_cases:
+    - "无 PyMuPDF/ReportLab 时：应给出安装建议"
+
+- id: "SB-005"
+  name: "技能激活与停用切换"
+  description: |
+    请完成以下操作序列：
+    1. 加载 code-review 技能，确认激活
+    2. 加载 agent-builder 技能，确认激活
+    3. 查看当前已加载技能列表
+    4. 停用 code-review 技能
+    5. 再次查看技能列表，确认只有 agent-builder
+    6. 重新加载 code-review 技能
+    7. 最终查看技能列表，确认两个技能都在
+  features:
+    - load_skill
+    - skill_activation
+    - skill_deactivation
+  category: skills_background
+  difficulty: easy
+  expected_behavior: |
+    技能加载/停用操作正确
+    技能列表反映当前状态
+  verification:
+    - "步骤1-2: 两个技能均激活成功"
+    - "步骤3: 列表包含 code-review 和 agent-builder"
+    - "步骤4: 停用成功"
+    - "步骤5: 列表仅包含 agent-builder"
+    - "步骤6: 重新加载成功"
+    - "步骤7: 列表包含两个技能"
+  edge_cases:
+    - "停用未加载的技能：应幂等处理"
+    - "重复加载同一技能：应幂等处理"
+
+- id: "SB-006"
+  name: "后台任务执行与监控"
+  description: |
+    请完成以下步骤：
+    1. 使用 background_run 在后台执行一个耗时命令：
+       python -c "import time; time.sleep(3); print('Background task completed')"
+    2. 立即使用 check_background 检查任务状态（应显示运行中）
+    3. 等待几秒后再次 check_background（应显示已完成）
+    4. 获取任务输出结果
+  features:
+    - background_run
+    - check_background
+  category: skills_background
+  difficulty: medium
+  expected_behavior: |
+    1. 后台任务创建成功，返回 task_id
+    2. 任务状态为 running/pending
+    3. 任务状态变为 completed
+    4. 输出包含 "Background task completed"
+  verification:
+    - "background_run 返回有效 task_id"
+    - "早期 check_background 显示任务未完成"
+    - "最终 check_background 显示任务已完成"
+    - "任务输出包含预期文本"
+  edge_cases:
+    - "后台执行危险命令：应被权限系统拦截"
+    - "任务超时：超过 300s 应被标记为 timeout"
+
+- id: "SB-007"
+  name: "后台任务错误处理"
+  description: |
+    请完成以下测试：
+    1. 使用 background_run 执行一个会失败的命令：
+       python -c "raise RuntimeError('intentional error')"
+    2. 使用 check_background 等待任务完成
+    3. 检查错误信息是否正确返回
+    4. 再执行一个正常命令作为对比：
+       python -c "print('success')"
+    5. 检查第二个任务结果
+  features:
+    - background_run
+    - check_background
+    - error_handling
+  category: skills_background
+  difficulty: medium
+  expected_behavior: |
+    1. 失败任务创建成功
+    2. 任务状态为 error/failed
+    3. 错误信息包含 "RuntimeError" 或 "intentional error"
+    4. 成功任务正常运行
+    5. 成功任务输出 "success"
+  verification:
+    - "失败任务状态为 error"
+    - "错误信息可读"
+    - "成功任务状态为 completed"
+    - "成功任务输出包含 'success'"
+  edge_cases:
+    - "多个后台任务并行：每个任务独立追踪"

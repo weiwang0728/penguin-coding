@@ -1,0 +1,294 @@
+# ═══════════════════════════════════════════════════════════════════
+# 06 — 端到端集成测试案例
+# 覆盖: 多功能联动、错误恢复、大项目构建、完整工作流
+# ═══════════════════════════════════════════════════════════════════
+
+- id: "E2E-001"
+  name: "全功能 Web 应用项目构建"
+  description: |
+    请从零开始构建一个完整的 Python Web 应用项目，要求：
+
+    项目名：task_manager
+    功能：任务管理 REST API
+
+    第一步 — 规划（使用 task 工具）：
+    1. 创建任务"设计数据模型"
+    2. 创建任务"实现 API 路由"，依赖任务1
+    3. 创建任务"编写单元测试"，依赖任务2
+    4. 创建任务"代码审查"，依赖任务3
+
+    第二步 — 数据模型（完成任务1）：
+    5. 创建 workspace/task_manager/models.py，定义 Task 数据类（id, title, description, status, created_at）
+    6. 创建 workspace/task_manager/__init__.py
+
+    第三步 — API 路由（完成任务2）：
+    7. 创建 workspace/task_manager/api.py，实现 CRUD 操作（使用纯 Python dict 模拟数据库）
+    8. 包含：create_task, get_task, list_tasks, update_task, delete_task
+
+    第四步 — 测试（完成任务3）：
+    9. 创建 workspace/task_manager/test_api.py，测试所有 CRUD 操作
+    10. 运行测试确保通过
+
+    第五步 — 审查（完成任务4）：
+    11. 使用 code-review 技能审查代码
+    12. 根据审查意见修改代码
+    第七步 — 验证：
+    14. 列出所有任务确认完成
+    15. 列出项目文件结构
+  features:
+    - task_create
+    - task_update
+    - task_dependencies
+    - write_file
+    - run_command
+    - load_skill
+    - code_review_skill
+    - edit_file
+    - list_directory
+    - task_list
+  category: e2e_integration
+  difficulty: expert
+  expected_behavior: |
+    完整项目从规划到实现到审查的全流程
+    所有任务按依赖顺序完成
+    测试全部通过
+    代码审查给出了改进建议
+  verification:
+    - "workspace/task_manager/ 目录存在且包含 4 个文件"
+    - "models.py 包含 Task 数据类定义"
+    - "api.py 包含 5 个 CRUD 函数"
+    - "test_api.py 测试全部通过"
+    - "4 个任务全部 completed"
+  edge_cases:
+    - "依赖任务未完成时下游任务应被阻塞"
+
+- id: "E2E-002"
+  name: "多代理协作完成数据处理流水线"
+  description: |
+    请使用多代理协作完成一个数据处理流水线项目：
+
+    1. 创建 workspace/pipeline/ 目录结构
+
+    2. 创建 "data-analyst" 代理：
+       - 发送任务："设计一个 CSV 数据处理管道，包含读取、清洗、转换、聚合四个步骤"
+       - 等待回复
+
+    3. 创建 "developer" 代理：
+       - 发送任务："根据以下设计实现数据处理管道：[转发 data-analyst 的设计]"
+       - 等待回复，并让 developer 创建代码文件
+
+    4. 使用 delegate 委派子代理：
+       - "为 workspace/pipeline/ 下的代码编写单元测试"
+       - 等待测试文件创建
+
+    5. 运行测试验证
+
+    6. 使用 code-review 技能审查代码
+
+    7. 广播给所有代理："任务完成，请各自总结工作"
+
+    8. 关闭所有代理
+  features:
+    - team_spawn
+    - team_send
+    - team_broadcast
+    - team_list
+    - team_shutdown
+    - delegate
+    - load_skill
+    - code_review_skill
+    - write_file
+    - run_command
+  category: e2e_integration
+  difficulty: expert
+  expected_behavior: |
+    多代理分工协作完成项目
+    data-analyst 提供设计方案
+    developer 实现代码
+    子代理编写测试
+    代码审查完成
+    代理正确关闭
+  verification:
+    - "data-analyst 返回管道设计方案"
+    - "developer 创建了代码文件"
+    - "子代理创建了测试文件"
+    - "测试运行通过"
+    - "代码审查报告生成"
+    - "代理全部关闭"
+  edge_cases:
+    - "代理间消息传递延迟"
+    - "代理工作区隔离验证"
+
+- id: "E2E-003"
+  name: "错误恢复与边界场景"
+  description: |
+    请完成以下错误恢复和边界场景测试：
+
+    A. 路径安全测试：
+    1. 尝试写入 /tmp/test.py — 应被拒绝
+    2. 尝试读取 /etc/shadow — 应被拒绝
+    3. 在 workspace/ 下正常写入 safe_test.py — 应成功
+
+    B. 命令安全测试：
+    4. 尝试运行 "rm -rf /" — 应被拦截
+    5. 尝试运行 "export SECRET=leaked" — 应被拦截
+    6. 正常运行 "echo hello" — 应成功
+
+    C. 错误恢复测试：
+    7. 创建一个有语法错误的 Python 文件 workspace/broken.py
+    8. 运行它，观察错误处理
+    9. 使用 edit_file 修复语法错误
+    10. 再次运行，确认修复成功
+
+    D. 大文件测试：
+    11. 创建一个 200+ 行的 Python 文件（包含详细注释的类实现）
+    12. 使用 read_file 读取，验证大文件处理正常
+    13. 使用 search_files 搜索其中的关键词
+
+    E. 幂等性测试：
+    16. 停用未加载的技能
+  features:
+    - path_security
+    - command_security
+    - error_recovery
+    - write_file
+    - edit_file
+    - read_file
+    - search_files
+    - run_command
+    - load_skill
+    - idempotency
+  category: e2e_integration
+  difficulty: hard
+  expected_behavior: |
+    所有安全检查生效
+    错误场景正确处理
+    修复操作成功
+    大文件正常处理
+    幂等操作不报错
+  verification:
+    - "路径越界操作被拦截"
+    - "危险命令被拦截"
+    - "语法错误被正确报告"
+    - "edit_file 修复后代码可运行"
+    - "大文件读取完整"
+    - "重复操作幂等处理"
+  edge_cases:
+    - "并发写入同一文件的冲突处理"
+    - "超大文件（>1MB）的截断处理"
+
+- id: "E2E-004"
+  name: "技能驱动的完整开发工作流"
+  description: |
+    请使用技能系统完成一个完整的开发工作流：
+
+    阶段一 — 代理设计（agent-builder 技能）：
+    1. 加载 agent-builder 技能
+    2. 设计一个"文档生成代理"：能读取代码文件，自动生成 API 文档
+    3. 输出设计方案（架构、工具、提示词）
+
+    阶段二 — 代码实现：
+    4. 根据设计方案创建 workspace/doc_generator/generator.py
+    5. 实现核心功能：从 Python 文件提取 docstring 和类型注解
+    6. 创建 workspace/doc_generator/__init__.py
+
+    阶段三 — 代码审查（code-review 技能）：
+    7. 加载 code-review 技能
+    8. 审查 generator.py 的代码质量
+    9. 根据审查意见改进代码
+
+    阶段四 — 测试：
+    10. 使用 delegate 委派子代理编写测试
+    11. 运行测试
+
+    阶段五 — MCP 集成（mcp-builder 技能）：
+    12. 加载 mcp-builder 技能
+    13. 设计一个 MCP 服务器，将 doc_generator 作为工具暴露
+    14. 输出 MCP 服务器代码框架
+
+    阶段六 — 文档输出（pdf 技能）：
+    15. 加载 pdf 技能
+    16. 将 API 文档导出为 PDF
+
+    阶段七 — 总结：
+    18. 列出完整的项目文件结构
+  features:
+    - load_skill
+    - agent_builder_skill
+    - code_review_skill
+    - mcp_builder_skill
+    - pdf_skill
+    - write_file
+    - edit_file
+    - delegate
+    - run_command
+    - list_directory
+  category: e2e_integration
+  difficulty: expert
+  expected_behavior: |
+    4 个技能全部加载并使用
+    代理设计方案输出
+    代码实现并审查
+    MCP 服务器设计
+    PDF 文档生成
+  verification:
+    - "agent-builder 输出代理设计方案"
+    - "generator.py 包含文档生成功能"
+    - "code-review 审查报告生成"
+    - "代码根据审查意见改进"
+    - "子代理生成测试文件"
+    - "mcp-builder 输出 MCP 服务器设计"
+    - "PDF 文件成功创建"
+  edge_cases:
+    - "技能加载失败时的降级处理"
+
+- id: "E2E-005"
+  name: "后台任务与团队协作综合"
+  description: |
+    请完成一个综合场景，同时使用后台任务和团队协作：
+
+    1. 在后台运行一个长时间的数据处理命令：
+       python -c "import time; [print(f'Processing item {i}...') or time.sleep(0.5) for i in range(10)]"
+
+    2. 在后台任务运行期间，创建一个 "monitor" 代理：
+       - 发送消息："监控后台任务进度，当任务完成时通知我"
+
+    3. 继续执行其他工作：
+       - 创建 workspace/analytics.py 实现简单的数据分析工具
+       - 包含：mean, median, mode, std_dev 函数
+
+    4. 检查后台任务状态
+
+    5. 向 monitor 代理发送更新消息
+
+    6. 使用 team_list 查看团队状态
+
+    7. 后台任务完成后获取结果
+
+    8. 运行 analytics.py 验证
+
+    10. 关闭 monitor 代理
+  features:
+    - background_run
+    - check_background
+    - team_spawn
+    - team_send
+    - team_list
+    - team_shutdown
+    - write_file
+    - run_command
+  category: e2e_integration
+  difficulty: expert
+  expected_behavior: |
+    后台任务与团队操作并行
+    文件创建与后台任务不冲突
+    所有操作结果正确
+  verification:
+    - "后台任务创建成功并返回 task_id"
+    - "monitor 代理创建成功"
+    - "analytics.py 包含 4 个统计函数"
+    - "后台任务最终状态为 completed"
+    - "团队操作（send/list/shutdown）正常"
+  edge_cases:
+    - "后台任务运行时代理操作的并发安全"
+    - "多个后台任务的独立追踪"

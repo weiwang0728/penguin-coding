@@ -1,0 +1,184 @@
+# ═══════════════════════════════════════════════════════════════════
+# 03 — 多代理协作测试案例
+# 覆盖: team_spawn, team_send, team_broadcast, team_list,
+#        team_shutdown, delegate, parallel_executor
+# ═══════════════════════════════════════════════════════════════════
+
+- id: "MA-001"
+  name: "团队创建与消息通信"
+  description: |
+    请完成以下多代理协作任务：
+    1. 创建一个名为 "analyst" 的代理，用于分析代码质量
+    2. 创建一个名为 "writer" 的代理，用于生成文档
+    3. 使用 team_list 确认两个代理都已创建
+    4. 向 analyst 发送消息："请分析 workspace/binary_search.py 的代码质量，给出 1-10 分评分和改进建议"
+    5. 等待 analyst 的回复
+    6. 向 writer 发送消息："请根据以下分析结果生成 markdown 格式的代码审查报告：[将 analyst 的回复内容转发]"
+    7. 等待 writer 的回复
+    8. 关闭所有代理
+  features:
+    - team_spawn
+    - team_send
+    - team_list
+    - team_shutdown
+  category: multi_agent
+  difficulty: hard
+  expected_behavior: |
+    1-2. 两个代理创建成功，返回确认
+    3. team_list 显示 2 个活跃代理
+    4-5. analyst 接收消息并返回代码质量分析
+    6-7. writer 接收消息并生成 markdown 报告
+    8. 代理关闭成功
+  verification:
+    - "team_spawn 返回创建成功信息"
+    - "team_list 包含 analyst 和 writer"
+    - "analyst 返回包含评分和改进建议"
+    - "writer 返回包含 markdown 格式的报告"
+    - "team_shutdown 后 team_list 为空"
+  edge_cases:
+    - "向不存在的代理发消息：应返回错误"
+    - "重复关闭代理：应幂等处理"
+
+- id: "MA-002"
+  name: "团队广播与协作"
+  description: |
+    请完成以下操作：
+    1. 创建 3 个代理：checker、optimizer、documenter
+    2. 使用 team_broadcast 广播消息："请检查 workspace/ 下所有 .py 文件，各自完成自己的任务"
+    3. 使用 team_list 查看代理状态
+    4. 分别向每个代理发送具体指令：
+       - checker: "检查 workspace/calculator.py 的边界情况处理"
+       - optimizer: "检查 workspace/calculator.py 是否有性能优化空间"
+       - documenter: "为 workspace/calculator.py 生成使用文档"
+    5. 收集所有代理的回复
+    6. 关闭所有代理
+  features:
+    - team_spawn
+    - team_broadcast
+    - team_send
+    - team_list
+    - team_shutdown
+  category: multi_agent
+  difficulty: hard
+  expected_behavior: |
+    3 个代理创建成功
+    广播消息发送成功
+    各代理接收到各自具体指令并执行
+    收到 3 份不同角度的分析结果
+  verification:
+    - "3 个代理均出现在 team_list 中"
+    - "team_broadcast 不报错"
+    - "checker 回复涉及边界情况"
+    - "optimizer 回复涉及性能"
+    - "documenter 回复涉及文档/使用说明"
+  edge_cases:
+    - "大量代理（>5）的资源管理"
+
+- id: "MA-003"
+  name: "委派子代理执行独立任务"
+  description: |
+    请使用 delegate 工具完成以下任务：
+    1. 委派一个子代理检查 workspace/ 下所有 Python 文件的语法正确性
+    2. 子代理应使用 run_command 运行 python -m py_compile 检查每个文件
+    3. 汇报检查结果：哪些文件通过、哪些有语法错误
+  features:
+    - delegate
+    - run_command
+  category: multi_agent
+  difficulty: medium
+  expected_behavior: |
+    1. delegate 工具创建子代理
+    2. 子代理独立执行语法检查
+    3. 返回汇总结果
+  verification:
+    - "delegate 返回包含检查结果的文本"
+    - "结果列出各文件状态（通过/错误）"
+    - "子代理不会使用 delegate（无嵌套委派）"
+  edge_cases:
+    - "子代理不应能使用 delegate 工具（防止递归）"
+    - "子代理上下文与主代理隔离"
+
+- id: "MA-004"
+  name: "委派代码审查子任务"
+  description: |
+    请先在 workspace/ 下创建一个 link_list.py，实现单向链表（包含 insert, delete, search, traverse 方法）。
+    然后使用 delegate 委派子代理完成代码审查，审查维度包括：
+    1. 正确性：逻辑是否正确
+    2. 边界情况：空链表、单节点等
+    3. 内存泄漏：是否有未释放的引用
+    4. 代码风格：命名、注释
+  features:
+    - write_file
+    - delegate
+  category: multi_agent
+  difficulty: hard
+  expected_behavior: |
+    link_list.py 创建成功
+    子代理读取代码并返回结构化审查报告
+  verification:
+    - "workspace/link_list.py 存在且可运行"
+    - "delegate 返回的审查报告包含 4 个维度"
+    - "审查报告给出了具体改进建议"
+  edge_cases: []
+
+- id: "MA-005"
+  name: "并行工具执行验证"
+  description: |
+    请一次性请求 agent 执行以下多个只读操作（在同一条消息中要求）：
+    1. 读取 workspace/src/permissions.py
+    2. 读取 workspace/src/permissions_config.py
+    3. 搜索 "ALLOW" 关键词
+    4. 列出 workspace/src/tools/ 目录
+    这些操作应被并行执行（read_file/search_files/list_directory 均为只读工具）。
+  features:
+    - parallel_executor
+    - read_file
+    - search_files
+    - list_directory
+  category: multi_agent
+  difficulty: medium
+  expected_behavior: |
+    agent 在一次响应中发起多个工具调用
+    系统自动识别只读工具并并行执行
+    所有结果正确返回
+  verification:
+    - "agent 在一次响应中生成多个 tool_use 块"
+    - "所有工具调用结果正确返回"
+    - "并行执行比串行更快（日志中可见并发执行）"
+  edge_cases:
+    - "只读工具应并行，写工具应串行"
+
+- id: "MA-006"
+  name: "团队与委派混合场景"
+  description: |
+    请完成一个复杂的协作场景：
+    1. 创建 workspace/stack.py（实现栈数据结构）
+    2. 创建 "reviewer" 代理审查 stack.py 的代码质量
+    3. 使用 delegate 委派子代理为 stack.py 编写单元测试
+    4. reviewer 返回审查意见后，根据意见改进代码
+    5. 运行子代理生成的测试
+    6. 关闭 reviewer
+  features:
+    - write_file
+    - team_spawn
+    - team_send
+    - team_shutdown
+    - delegate
+    - edit_file
+    - run_command
+  category: multi_agent
+  difficulty: hard
+  expected_behavior: |
+    栈代码创建成功
+    reviewer 审查并返回意见
+    子代理编写测试文件
+    主代理根据审查意见改进代码
+    测试通过
+  verification:
+    - "workspace/stack.py 包含 push/pop/peek/isEmpty"
+    - "reviewer 返回审查意见"
+    - "子代理创建了 test_stack.py"
+    - "代码根据审查意见进行了修改"
+    - "pytest 运行通过"
+  edge_cases:
+    - "团队代理和委派子代理不应互相干扰"
