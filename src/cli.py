@@ -201,9 +201,6 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
                 prompt_continuation="...  ",
             ).strip()
         except (EOFError, KeyboardInterrupt):
-            if conversation_history:
-                sid = autosave_session(conversation_history, model_id, usage_stats)
-                console.print(f"\n[dim]Session auto-saved: {sid}[/dim]")
             console.print("Bye!")
             break
 
@@ -212,9 +209,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
 
         # Built-in commands
         if user_input.lower() in ("quit", "exit", "/quit", "/exit"):
-            if conversation_history:
-                sid = autosave_session(conversation_history, model_id, usage_stats)
-                console.print(f"[dim]Session auto-saved: {sid}[/dim]")
+            console.print("Bye!")
             break
         if user_input == "/help":
             _show_help()

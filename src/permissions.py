@@ -134,15 +134,6 @@ class PermissionManager:
         defaults = profile_config.get("defaults", {})
         default_level = defaults.get("run_command", "confirm")
         return PermissionLevel(default_level)
-        overrides = profile_config.get("run_command_overrides", {})
-        for pattern, level_str in overrides.items():
-            if re.search(pattern, command, re.IGNORECASE):
-                return PermissionLevel(level_str)
-
-        # 4. Profile default for run_command
-        defaults = profile_config.get("defaults", {})
-        default_level = defaults.get("run_command", "confirm")
-        return PermissionLevel(default_level)
 
     def _get_profile_config(self) -> dict:
         return self.config.get("profiles", {}).get(self.profile, {})

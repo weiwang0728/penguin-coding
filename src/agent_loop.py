@@ -33,8 +33,6 @@ from ._constants import client
 
 load_dotenv()
 MODEL_ID = os.getenv("MODEL_ID")
-API_KEY = os.getenv("API_KEY")
-BASE_URL = os.getenv("BASE_URL")
 
 SYSTEM_PROMPT = f"""You are a helpful coding assistant at {ALLOWED_BASE_DIR}. You can help users with software engineering tasks.
 
@@ -72,18 +70,6 @@ usage_stats = {
     "last_input_tokens": 0,
     "pending_delta": 0,
 }
-
-def _validate_config() -> None:
-    missing = []
-    if not MODEL_ID:
-        missing.append("MODEL_ID")
-    if not API_KEY:
-        missing.append("API_KEY")
-    if missing:
-        raise EnvironmentError(
-            f"Missing required environment variables: {', '.join(missing)}. "
-            "Set them in .env or export them before running."
-        )
 
 MAX_OUTPUT_TOKENS = 16384
 ESCALATED_MAX_TOKENS = 65536  # 64K — escalation when default output limit is insufficient

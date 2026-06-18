@@ -42,7 +42,7 @@ DEFAULT_CONFIG = {
         },
         "strict": {
             "defaults": {
-                "write_file": "confirm",
+                "write_file": "deny",
                 "edit_file": "confirm",
                 "run_command": "deny",
                 "background_run": "deny",

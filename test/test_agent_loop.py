@@ -289,30 +289,3 @@ class TestRepairJson:
     def test_completely_broken_returns_empty(self):
         result = _repair_json("}{][")
         assert isinstance(result, dict)
-
-
-# --- _validate_config ---
-
-class TestValidateConfig:
-    def test_missing_model_id(self, monkeypatch):
-        monkeypatch.setattr(agent_loop_module, "MODEL_ID", None)
-        monkeypatch.setattr(agent_loop_module, "API_KEY", "test-key")
-        with pytest.raises(EnvironmentError, match="MODEL_ID"):
-            agent_loop_module._validate_config()
-
-    def test_missing_api_key(self, monkeypatch):
-        monkeypatch.setattr(agent_loop_module, "MODEL_ID", "test-model")
-        monkeypatch.setattr(agent_loop_module, "API_KEY", None)
-        with pytest.raises(EnvironmentError, match="API_KEY"):
-            agent_loop_module._validate_config()
-
-    def test_both_missing(self, monkeypatch):
-        monkeypatch.setattr(agent_loop_module, "MODEL_ID", None)
-        monkeypatch.setattr(agent_loop_module, "API_KEY", None)
-        with pytest.raises(EnvironmentError, match="MODEL_ID"):
-            agent_loop_module._validate_config()
-
-    def test_valid_config(self, monkeypatch):
-        monkeypatch.setattr(agent_loop_module, "MODEL_ID", "test-model")
-        monkeypatch.setattr(agent_loop_module, "API_KEY", "test-key")
-        agent_loop_module._validate_config()  # should not raise
