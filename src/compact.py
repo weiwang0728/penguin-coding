@@ -358,14 +358,6 @@ def llm_compact_messages(
     if estimate_messages_tokens(normalized) <= max_tokens:
         return normalized
 
-    # Step 2.5: Pre-save important context to memory before discarding
-    if client and model_id:
-        try:
-            from .memory import memory_store
-            memory_store.presave_from_compaction(normalized, client, model_id)
-        except Exception:
-            logger.warning("Memory presave failed (non-critical), continuing with compaction")
-
     # Step 3: LLM summarization with progressive reduction
     for attempt_keep in (keep_recent, max(2, keep_recent // 2), 0):
         try:

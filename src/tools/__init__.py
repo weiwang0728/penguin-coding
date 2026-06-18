@@ -15,7 +15,6 @@ from ..tool_registry import ToolRegistry
 from . import read_file, write_file, run_command, list_directory, search_files
 from . import edit_file, task, load_skill, background_run, check_background
 from . import team_spawn, team_list, team_shutdown, team_send, team_broadcast
-from . import memory
 
 # ── Default global dispatcher (backward compatibility) ──
 # Creates a dispatcher with ALL tools registered, for existing code
