@@ -15,10 +15,15 @@ load_dotenv()
 MODEL_ID = os.getenv("MODEL_ID")
 API_KEY = os.getenv("API_KEY")
 BASE_URL = os.getenv("BASE_URL")
+_timeout = int(os.getenv("ANTHROPIC_TIMEOUT", "600"))  # 10 min default for long code gen
 client = Anthropic(
     api_key=API_KEY,
     base_url=BASE_URL,
+    timeout=_timeout,
 )
+
+# PRDBench mode: relaxes dangerous command checks for benchmark execution
+_PRDBENCH_MODE = os.getenv("PRDBENCH_MODE", "false").lower() == "true"
 DANGEROUS_COMMANDS = [
     r"\brm\s+-rf\s+/",
     r"\brm\s+-rf\s+~",
@@ -90,6 +95,12 @@ DANGEROUS_PATTERNS = [
 
 
 def check_dangerous_command(command: str) -> str | None:
+    # In PRDBench mode, only block truly destructive commands, not shell substitution
+    if _PRDBENCH_MODE:
+        for pattern in DANGEROUS_PATTERNS:
+            if pattern.search(command):
+                return f"Dangerous command detected and blocked: pattern '{pattern.pattern}'"
+        return None
     for pattern in SHELL_INJECTION_PATTERNS:
         if pattern.search(command):
             return f"Shell command substitution blocked for safety (matched '{pattern.pattern}'). Use direct commands instead of $() or backtick substitution."

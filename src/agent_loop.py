@@ -600,6 +600,11 @@ def agent_loop(
         if not has_tool_calls:
             return collected_content, messages
 
+        # PRDBench mode: log tool calls for progress tracking
+        if os.environ.get("PRDBENCH_MODE") == "true":
+            tool_names = [tc["name"] for tc in tool_calls_list]
+            logger.info(f"[PRDBench] Iteration {iteration + 1}: tool calls = {tool_names}")
+
         tool_results: list[dict[str, Any]] = []
 
         # Inject iteration awareness so the model can plan its work

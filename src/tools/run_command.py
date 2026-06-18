@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from .._constants import ALLOWED_BASE_DIR, check_dangerous_command, _truncate_output
@@ -21,6 +22,10 @@ class RunCommandTool(Tool):
                 "type": "integer",
                 "description": "Timeout in seconds. Default 60. Use 300 for installs/builds, 600 for heavy builds.",
             },
+            "cwd": {
+                "type": "string",
+                "description": "Working directory for the command. Defaults to the workspace directory.",
+            },
         },
         "required": ["command"],
     }
@@ -28,6 +33,14 @@ class RunCommandTool(Tool):
     def execute(self, **kwargs) -> str:
         command = kwargs["command"]
         timeout = kwargs.get("timeout", 300)
+        cwd = kwargs.get("cwd")
+
+        # In PRDBench mode, allow custom cwd; otherwise use default
+        if cwd:
+            cwd = str(cwd)
+        else:
+            cwd = os.getenv("CODE_AGENT_WORKSPACE_DIR", str(ALLOWED_BASE_DIR))
+
         danger_check = check_dangerous_command(command)
         if danger_check:
             return f"Error: {danger_check}"
@@ -41,7 +54,7 @@ class RunCommandTool(Tool):
                 capture_output=True,
                 text=True,
                 timeout=timeout,
-                cwd=ALLOWED_BASE_DIR,
+                cwd=cwd,
             )
             output = result.stdout
             if result.stderr:

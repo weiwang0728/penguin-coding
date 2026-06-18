@@ -1,6 +1,7 @@
 """Shared utilities for tool implementations."""
 
 import difflib
+import os
 import threading
 from pathlib import Path
 
@@ -8,6 +9,13 @@ from .._constants import ALLOWED_BASE_DIR
 from ..skill_loader import SKILLS_DIR
 
 ALLOWED_DIRS = [ALLOWED_BASE_DIR, SKILLS_DIR]
+
+# PRDBench mode: allow all absolute paths (set via env var)
+_PRDBENCH_MODE = os.getenv("PRDBENCH_MODE", "false").lower() == "true"
+if _PRDBENCH_MODE:
+    _extra = os.getenv("CODE_AGENT_WORKSPACE_DIR", "")
+    if _extra and Path(_extra).is_dir():
+        ALLOWED_DIRS.append(Path(_extra))
 
 
 class _ThreadSafeSet:
@@ -126,6 +134,11 @@ def fuzzy_replace(content: str, old_string: str, new_string: str) -> tuple[str, 
 def resolve_and_validate_path(path: str) -> Path:
     """Resolve and validate a path against allowed directories."""
     abs_path = Path(path)
+
+    # PRDBench mode: allow all absolute paths
+    if _PRDBENCH_MODE and abs_path.is_absolute():
+        return abs_path
+
     if abs_path.is_absolute():
         for allowed_dir in ALLOWED_DIRS:
             try:
