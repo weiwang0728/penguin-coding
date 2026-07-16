@@ -81,22 +81,60 @@ def _extract_class_name(text: str) -> str | None:
     return None
 
 
+def _find_test_file_by_name(filename: str) -> Path | None:
+    """Recursively search workspace/ for a test file matching `filename` exactly."""
+    if not WORKSPACE.exists():
+        return None
+    for p in WORKSPACE.rglob(filename):
+        if p.is_file() and "test" in p.name.lower():
+            return p
+    return None
+
+
+def _find_any_test_file() -> Path | None:
+    """Return the first test_*.py or *_test.py found under workspace/."""
+    if not WORKSPACE.exists():
+        return None
+    for pat in ("test_*.py", "*_test.py"):
+        for p in WORKSPACE.rglob(pat):
+            if p.is_file():
+                return p
+    return None
+
+
 def _extract_test_target(text: str, case_description: str = "") -> Path | None:
-    """Find a test file path to run pytest against."""
-    # From verification text
-    for pat in PATH_PATTERNS:
-        m = pat.search(text)
-        if m:
-            p = m.group(0).rstrip("/")
-            if "test" in p.lower():
-                return PROJECT_ROOT / p
-    # From case description
-    for pat in PATH_PATTERNS:
-        m = pat.search(case_description)
-        if m:
-            p = m.group(0).rstrip("/")
-            if "test" in p.lower():
-                return PROJECT_ROOT / p
+    """Find a test file path to run pytest against.
+
+    Tries, in order:
+      1. workspace/-prefixed paths in PATH_PATTERNS (check text, then description)
+      2. bare `test_*.py` / `*_test.py` filenames mentioned in text/description,
+         resolved under workspace/ via rglob
+      3. any test file under workspace/ — only when no specific filename was
+         mentioned at all (avoids running an unrelated test when a named one
+         is missing)
+    """
+    # 1. workspace/-prefixed path in PATH_PATTERNS
+    for src in (text, case_description):
+        for pat in PATH_PATTERNS:
+            m = pat.search(src)
+            if m:
+                p = m.group(0).rstrip("/")
+                if "test" in p.lower():
+                    return PROJECT_ROOT / p
+
+    # 2. bare test filename fallback (only resolves to an exact match)
+    bare_test_pat = re.compile(r"\b(test_[\w.\-]+\.py|[\w.\-]+_test\.py)\b")
+    mentioned_bare = False
+    for src in (text, case_description):
+        for m in bare_test_pat.finditer(src):
+            mentioned_bare = True
+            candidate = _find_test_file_by_name(m.group(0))
+            if candidate:
+                return candidate
+
+    # 3. only fall back to "any test file" if no specific filename was mentioned
+    if not mentioned_bare:
+        return _find_any_test_file()
     return None
 
 

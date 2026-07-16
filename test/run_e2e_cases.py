@@ -32,6 +32,10 @@ from verifiers import (  # noqa: E402
     verify_case as objective_verify,
     summarize_methods,
 )
+from metric_scorer import (  # noqa: E402
+    run_metric,
+    aggregate_case_scores,
+)
 
 # ── Resolve paths ──────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -111,6 +115,8 @@ def run_case(case: dict, timeout: int = 300) -> dict:
         "duration_sec": 0,
         "verification": [],
         "tool_calls": [],
+        "metric_results": [],
+        "metric_score": None,
     }
 
     start = time.time()
@@ -155,12 +161,25 @@ def run_case(case: dict, timeout: int = 300) -> dict:
     result["verification"] = objective_verify(case, result)
     result["verification_summary"] = summarize_methods(result["verification"])
 
+    # Run metric-based scoring (if case declares metrics)
+    metrics = case.get("metrics", [])
+    if metrics:
+        ctx = {"output": result.get("output", ""), "case": case}
+        metric_results = [run_metric(m, ctx) for m in metrics]
+        result["metric_results"] = metric_results
+        result["metric_score"] = aggregate_case_scores(metric_results)
+
     # Determine final pass/fail
     verifications = result["verification"]
+    metric_agg = result.get("metric_score")
+
     if result["status"] == "timeout":
         result["status"] = "timeout"
     elif result["status"] == "error" and not result["output"]:
         result["status"] = "error"
+    elif metric_agg:
+        # Metric-driven status takes precedence when metrics are declared
+        result["status"] = metric_agg["status"]
     elif all(v["passed"] for v in verifications):
         result["status"] = "passed"
     elif any(v["passed"] for v in verifications):
