@@ -1,0 +1,6 @@
+participant_id,name,gender,age,grade,major
+T001,Test User 1,Male,20,Sophomore,Psychology
+T002,Test User 2,Female,19,Freshman,Education
+T003,Test User 3,Male,21,Junior,Psychology
+T004,Test User 4,Female,20,Sophomore,Education
+T005,Test User 5,Male,22,Senior,Psychology

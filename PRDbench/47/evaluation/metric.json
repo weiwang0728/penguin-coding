@@ -1,0 +1,212 @@
+[
+  {
+    "metric": "0.1 Program Startup & Main Menu",
+    "description": "1. **Act:** Execute the program's startup command in the shell (e.g., `python main.py`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu with at least 4 functional options (such as User Login, Admin Login, User Registration, and Exit).",
+    "expected_output": "2 points: The program starts successfully and displays a main menu with 4 or more clear, functional options. 1 point: The program starts, but the menu has fewer than 4 options, is unclear, or contains garbled text. 0 points: The program fails to start or crashes immediately."
+  },
+  {
+    "metric": "1.1 Database Connection & Initialization",
+    "description": "1. **Arrange:** Ensure the MySQL database service is running and the database configuration file is present.\n2. **Act:** Start the program and observe the database connection process.\n3. **Assert:** The program should clearly report the database connection status, be able to access the user, book, and circulation tables, and display their schema information.",
+    "expected_output": "2 points: Successfully connects to the database, all 3 table structures are correct, and the connection status feedback is clear. 1 point: Connects to the database, but one table is missing or the status feedback is unclear. 0 points: Fails to connect to the database or crashes immediately after connecting."
+  },
+  {
+    "metric": "2.1 User Registration",
+    "description": "1. **Pre-check (User Path):** Is there a user registration option in the main menu?\n2. **Arrange:** Prepare a set of valid user information (Student ID, Name, Password, Contact Info).\n3. **Act:** Select the user registration option and enter the user information as prompted.\n4. **Assert:** Verify that a registration success message is displayed and confirm via a database query that the user information has been saved correctly.",
+    "expected_output": "2 points: Pre-check passes, the registration process is complete, all 4 fields are correctly validated, and the data is saved successfully to the database. 1 point: Pre-check passes, but validation for 1-2 fields is missing or there are issues with saving. 0 points: Pre-check fails, or the registration function is unavailable."
+  },
+  {
+    "metric": "2.2a Regular User Login Verification",
+    "description": "1. **Pre-check (User Path):** Is there a user login option in the main menu?\n2. **Arrange:** Use a registered regular (non-admin) user account.\n3. **Act:** Select the user login option and enter the username and password.\n4. **Assert:** After a successful login, verify that the regular user menu is displayed, including options for borrowing, returning, querying, etc.",
+    "expected_output": "2 points: Pre-check passes; the regular user can log in correctly and is shown the dedicated user menu. 1 point: Pre-check passes and the user can log in, but the menu is incomplete. 0 points: Pre-check fails, or the regular user login function is unavailable."
+  },
+  {
+    "metric": "2.2b Admin Login Verification",
+    "description": "1. **Pre-check (User Path):** Is there an admin login option in the main menu?\n2. **Arrange:** Use a registered admin account.\n3. **Act:** Select the admin login option and enter the admin username and password.\n4. **Assert:** After a successful login, verify that the admin menu is displayed, including options for user management, book management, system statistics, etc.",
+    "expected_output": "2 points: Pre-check passes; the admin can log in correctly and is shown the complete admin menu. 1 point: Pre-check passes and the admin can log in, but the admin menu is incomplete. 0 points: Pre-check fails, or the admin login function is unavailable."
+  },
+  {
+    "metric": "2.3 Encrypted Password Storage Verification",
+    "description": "1. **Arrange:** Register a new user with the plaintext password 'password123'.\n2. **Act:** Complete the user registration process.\n3. **Assert:** Directly inspect the user table in the database to confirm that the password field stores a 32-character MD5 hash, not the plaintext password.",
+    "expected_output": "2 points: The password is stored as a 32-character MD5 hash and is completely different from the plaintext. 1 point: The password is encrypted, but not in the standard MD5 format, or the length is incorrect. 0 points: The password is stored in plaintext."
+  },
+  {
+    "metric": "3.1 Add Book Function",
+    "description": "1. **Pre-check (User Path):** After an admin logs in, is there a book management or 'add book' option?\n2. **Arrange:** Prepare complete information for a new book (Title, Book ID, Author, Category, Publisher, Publication Date, Stock Quantity).\n3. **Act:** Select the 'Add Book' function and enter all 7 fields as prompted.\n4. **Assert:** Verify that the book is successfully added to the database and that all 7 fields are saved correctly.",
+    "expected_output": "2 points: Pre-check passes, all 7 book parameters are entered and validated correctly, and the data is saved successfully. 1 point: Pre-check passes, but input for 1-2 parameters is missing or data validation is incomplete. 0 points: Pre-check fails, or the 'add book' function is unavailable."
+  },
+  {
+    "metric": "3.2a Book Query - Fuzzy Title Search",
+    "description": "1. **Pre-check (User Path):** After logging in, is there a book query option in the menu?\n2. **Arrange:** The database should contain at least 2 books with a common keyword in their titles.\n3. **Act:** Select book query, choose to search by title, and enter the keyword.\n4. **Assert:** Verify that the search results include all books whose titles contain the keyword (partial match supported).",
+    "expected_output": "2 points: Pre-check passes, and the fuzzy title search works correctly, finding all relevant books. 1 point: Pre-check passes, but the results are incomplete or fuzzy matching is not supported. 0 points: Pre-check fails, or the title search function is unavailable."
+  },
+  {
+    "metric": "3.2b Book Query - Exact Author Search",
+    "description": "1. **Pre-check (User Path):** Is there a search-by-author option in the book query menu?\n2. **Arrange:** The database should contain at least 2 books by different authors.\n3. **Act:** Select author search and enter a known author's name.\n4. **Assert:** Verify that the results show only books by the specified author (exact match).",
+    "expected_output": "2 points: Pre-check passes, and the exact author search works correctly with accurate results. 1 point: Pre-check passes, but the results are inaccurate or the matching method is incorrect. 0 points: Pre-check fails, or the author search function is unavailable."
+  },
+  {
+    "metric": "3.2c Book Query - Category Filter",
+    "description": "1. **Pre-check (User Path):** Is there a search-by-category option in the book query menu?\n2. **Arrange:** The database should contain at least 2 books from different categories.\n3. **Act:** Select category search and choose a known category.\n4. **Assert:** Verify that the results show only books from that category.",
+    "expected_output": "2 points: Pre-check passes, and the category search works correctly, accurately filtering all books in that category. 1 point: Pre-check passes, but the results are incomplete or the filtering is incorrect. 0 points: Pre-check fails, or the category search function is unavailable."
+  },
+  {
+    "metric": "3.2d Book Query - Exact Book ID Search",
+    "description": "1. **Pre-check (User Path):** Is there a search-by-ID option in the book query menu?\n2. **Arrange:** Use any known, existing book ID from the database.\n3. **Act:** Select book ID search and enter the book ID.\n4. **Assert:** Verify that the result accurately displays the unique book corresponding to that ID.",
+    "expected_output": "2 points: Pre-check passes, and the book ID search works correctly, finding the corresponding book. 1 point: Pre-check passes, but the result is inaccurate or the response is abnormal. 0 points: Pre-check fails, or the book ID search function is unavailable."
+  },
+  {
+    "metric": "3.2e Book Query - Publisher Search",
+    "description": "1. **Pre-check (User Path):** Is there a search-by-publisher option in the book query menu?\n2. **Arrange:** The database should contain at least 2 books from different publishers.\n3. **Act:** Select publisher search and enter a known publisher's name.\n4. **Assert:** Verify that the results show all books from that publisher.",
+    "expected_output": "2 points: Pre-check passes, and the publisher search works correctly with accurate and complete results. 1 point: Pre-check passes, but the results are incomplete or incorrect. 0 points: Pre-check fails, or the publisher search function is unavailable."
+  },
+  {
+    "metric": "3.3a Book Information Modification",
+    "description": "1. **Pre-check (User Path):** After an admin logs in, can the book modification function be accessed?\n2. **Arrange:** Select an existing book and prepare to modify its title and stock quantity.\n3. **Act:** Enter the modification interface, change the book's information, and confirm the save.\n4. **Assert:** Verify that the modification correctly updates the database and that the information has been changed.",
+    "expected_output": "2 points: Pre-check passes, the modification function works correctly, and the database is updated. 1 point: Pre-check passes, but the modification function has defects or the update is incomplete. 0 points: Pre-check fails, or the modification function is unavailable."
+  },
+  {
+    "metric": "3.3b Book Deletion",
+    "description": "1. **Pre-check (User Path):** After an admin logs in, can the book deletion function be accessed?\n2. **Arrange:** Select an existing book with no circulation records.\n3. **Act:** Execute the delete operation and observe if there is a confirmation prompt.\n4. **Assert:** Verify that the delete operation has a confirmation mechanism and that the record is removed after confirmation.",
+    "expected_output": "2 points: Pre-check passes, the delete function has a proper confirmation mechanism, and the record is correctly removed. 1 point: Pre-check passes, but it lacks a confirmation mechanism or the deletion is incomplete. 0 points: Pre-check fails, or the delete function is unavailable."
+  },
+  {
+    "metric": "4.1 Book Borrowing",
+    "description": "1. **Pre-check (User Path):** After a regular user logs in, is there a 'borrow book' option?\n2. **Arrange:** Ensure there are books available for borrowing (stock > 0) and the user has not reached their borrowing limit.\n3. **Act:** Select the borrow function and enter the book ID.\n4. **Assert:** After a successful loan, verify that the stock quantity decreases by 1 and a circulation record is created with the correct Student ID, Book ID, Borrow Time, and Borrow Status.",
+    "expected_output": "2 points: Pre-check passes, the borrowing function is complete, inventory is managed correctly, and the circulation record contains all 4 required pieces of information. 1 point: Pre-check passes, but there is an issue with one of the inventory or record-keeping fields. 0 points: Pre-check fails, or the borrowing function is unavailable."
+  },
+  {
+    "metric": "4.2a Borrowing Rules - Authentication Check",
+    "description": "1. **Arrange:** Start the program in a non-logged-in state.\n2. **Act:** Attempt to access the borrowing function directly or find a borrow option in the main menu.\n3. **Assert:** Verify that the system correctly blocks non-logged-in users from borrowing and prompts for authentication.",
+    "expected_output": "2 points: The system correctly blocks non-logged-in users from borrowing, and the error message is clear and accurate. 1 point: Borrowing is blocked, but the prompt is unclear. 0 points: Non-logged-in users can perform borrowing operations."
+  },
+  {
+    "metric": "4.2b Borrowing Rules - Stock Check",
+    "description": "1. **Arrange:** After a user logs in, select a book with a stock of 0.\n2. **Act:** Attempt to borrow the book.\n3. **Assert:** Verify that the system correctly blocks the borrowing of out-of-stock books and prompts that the stock is insufficient.",
+    "expected_output": "2 points: The system correctly blocks the borrowing of out-of-stock books, and the 'insufficient stock' prompt is clear. 1 point: Borrowing is blocked, but the prompt is inaccurate. 0 points: The system allows borrowing of out-of-stock books."
+  },
+  {
+    "metric": "4.2c Borrowing Rules - Duplicate Borrowing Check",
+    "description": "1. **Arrange:** A user has already borrowed a book and has not yet returned it.\n2. **Act:** Attempt to borrow the same book again.\n3. **Assert:** Verify that the system correctly blocks the duplicate borrowing and prompts that the book is already on loan to the current user.",
+    "expected_output": "2 points: The system correctly blocks duplicate borrowing of the same book, and the prompt is accurate. 1 point: Duplicate borrowing is blocked, but the prompt is unclear. 0 points: The system allows a user to borrow the same book multiple times."
+  },
+  {
+    "metric": "4.2d Borrowing Rules - Quantity Limit Check",
+    "description": "1. **Arrange:** A regular user has borrowed 5 books (their limit), and an admin has borrowed 10 books (their limit).\n2. **Act:** Have each user attempt to borrow one more book.\n3. **Assert:** Verify that the system correctly enforces the borrowing limits and prompts that the limit has been reached.",
+    "expected_output": "2 points: The system correctly enforces borrowing limits (5 for users, 10 for admins), and the prompt is clear. 1 point: A limit exists, but the threshold is incorrect or the prompt is unclear. 0 points: No borrowing limit check is performed."
+  },
+  {
+    "metric": "4.3 Book Return",
+    "description": "1. **Pre-check (User Path):** Is there a 'return book' option in the user menu?\n2. **Arrange:** Ensure the current user has books that are currently on loan.\n3. **Act:** Select the return function and enter the book ID to be returned.\n4. **Assert:** After a successful return, verify that the stock quantity increases by 1, the circulation record status is updated to 'returned', and the return time is recorded correctly.",
+    "expected_output": "2 points: Pre-check passes, the return function is complete, inventory is restored correctly, and the record's status and time are updated accurately. 1 point: Pre-check passes, but there is an issue with one of the inventory or record updates. 0 points: Pre-check fails, or the return function is unavailable."
+  },
+  {
+    "metric": "4.4 Book Reservation",
+    "description": "1. **Pre-check (User Path):** Is there a 'reserve book' option in the user menu?\n2. **Arrange:** Ensure there is an existing book with an available quantity of 0 (i.e., all copies are on loan).\n3. **Act:** Select the reservation function and enter the book ID to be reserved.\n4. **Assert:** After a successful reservation, verify that the book's reservation count increases by 1 and the reservation record includes a queue position.",
+    "expected_output": "2 points: Pre-check passes, the reservation function is complete, the reservation count is updated correctly, and the queuing mechanism is clear. 1 point: Pre-check passes, but there is an issue with the reservation count or queuing mechanism. 0 points: Pre-check fails, or the reservation function is unavailable."
+  },
+  {
+    "metric": "5.1 Personal Circulation History Query",
+    "description": "1. **Pre-check (User Path):** Is there a 'My Circulation' or 'Personal Query' option in the user menu?\n2. **Arrange:** The current user should have a circulation history (including current loans and returned items).\n3. **Act:** Select the personal circulation query function.\n4. **Assert:** Verify that all of the user's circulation records are displayed, with current and past loans clearly categorized and including information like book title, borrow time, and return time.",
+    "expected_output": "2 points: Pre-check passes, personal circulation records are displayed correctly, current and historical records are clearly categorized, and the information is complete. 1 point: Pre-check passes, records are displayed, but the categorization is unclear or information is incomplete. 0 points: Pre-check fails, or the query function is unavailable."
+  },
+  {
+    "metric": "5.2a System Statistics - Basic Data",
+    "description": "1. **Pre-check (User Path):** Is there a 'System Statistics' option in the admin menu?\n2. **Act:** Select the system statistics function.\n3. **Assert:** Verify that 4 basic statistical data points are displayed: total number of books, total number of users, current number of loans, and number of reservations.",
+    "expected_output": "2 points: Pre-check passes, all 4 basic statistics are displayed, and the data is accurate. 1 point: Pre-check passes, but only 2-3 statistics are displayed, or the data is slightly inaccurate. 0 points: Pre-check fails, or fewer than 2 statistics are displayed."
+  },
+  {
+    "metric": "5.2b System Statistics - Low Stock Alert",
+    "description": "1. **Pre-check (User Path):** In the system statistics interface, is there a 'Low Stock Alert' or 'Insufficient Stock' option?\n2. **Arrange:** The database should contain books with a stock quantity of less than 3.\n3. **Act:** View the list of books with low stock.\n4. **Assert:** Verify that the system correctly displays a list of books with insufficient stock, including the book title and current stock quantity.",
+    "expected_output": "2 points: Pre-check passes, the stock alert function works correctly, and it accurately displays the list of low-stock books. 1 point: Pre-check passes, but the alert threshold is unreasonable or the displayed information is incomplete. 0 points: Pre-check fails, or no stock alert function is available."
+  },
+  {
+    "metric": "5.2c System Statistics - Circulation Frequency",
+    "description": "1. **Pre-check (User Path):** In the system statistics interface, is there a 'Circulation Statistics' or 'Popular Books' option?\n2. **Act:** View the circulation frequency statistics.\n3. **Assert:** Verify that the system can display statistics on the number of times books have been borrowed, sorted by frequency.",
+    "expected_output": "2 points: Pre-check passes, the circulation frequency statistics function works correctly, and the results are sorted properly by frequency. 1 point: Pre-check passes, but the statistical data is inaccurate or the sorting is incorrect. 0 points: Pre-check fails, or no circulation frequency statistics function is available."
+  },
+  {
+    "metric": "5.3 Circulation Data Visualization",
+    "description": "1. **Pre-check (User Path):** In the admin statistics menu, is there a 'Generate Chart' or 'Data Visualization' option?\n2. **Arrange:** The system should have sufficient circulation data to generate charts.\n3. **Act:** Select the chart generation function to generate circulation statistics charts.\n4. **Assert:** Verify that the system can use Matplotlib to generate at least 2 types of charts (e.g., bar, pie) and save them as PNG files to the `charts` directory.",
+    "expected_output": "2 points: Pre-check passes, at least 2 types of statistical charts are generated, the charts are clear and well-formatted, and they are saved to the specified directory. 1 point: Pre-check passes, but only one type of chart is generated, or the save path is incorrect. 0 points: Pre-check fails, or the chart generation function is unavailable."
+  },
+  {
+    "metric": "6.1a Regular User Permission Control",
+    "description": "1. **Arrange:** Log in to the system with a regular user account.\n2. **Act:** Attempt to access all menu options to test which functions are accessible.\n3. **Assert:** Verify that the regular user can only access 4 functions: borrow, return, reserve, and query, and cannot access administrative functions like user or book management.",
+    "expected_output": "2 points: The regular user can only access the 4 specified functions and cannot access administrative functions. 1 point: Basic permission control is correct, but there is one case of over-privilege or excessive restriction. 0 points: Permission control for regular users is missing, allowing access to administrative functions."
+  },
+  {
+    "metric": "6.1b Admin Permission Control",
+    "description": "1. **Arrange:** Log in to the system with an admin account.\n2. **Act:** Test all functional modules accessible to the admin.\n3. **Assert:** Verify that the admin can access all 6 functional areas: user management, book management, circulation management, system statistics, data export, and regular user functions.",
+    "expected_output": "2 points: The admin can access all 6 functional modules, with complete permissions. 1 point: The admin can access 4-5 functions, but some are missing. 0 points: Admin permissions are incomplete, with 2 or more functions missing."
+  },
+  {
+    "metric": "6.2a Data Export",
+    "description": "1. **Pre-check (User Path):** Is there a data export option in the admin menu?\n2. **Arrange:** The database should contain user and book data.\n3. **Act:** Test exporting user data and book data separately, in both JSON and CSV formats.\n4. **Assert:** Verify that both data types can be exported in both formats, and that the files are complete and well-formatted.",
+    "expected_output": "2 points: Pre-check passes, the system supports exporting 2 data types in 2 formats, and the data is complete and standard-compliant. 1 point: Pre-check passes, but only some formats are supported or the data is incomplete. 0 points: Pre-check fails, or the export function is unavailable."
+  },
+  {
+    "metric": "6.2b Data Import",
+    "description": "1. **Pre-check (User Path):** Is there a data import option in the admin menu?\n2. **Arrange:** Prepare standard-formatted JSON and CSV data files.\n3. **Act:** Test importing data from both JSON and CSV files separately.\n4. **Assert:** Verify that the import function can correctly process both file formats and that the data is written to the database correctly.",
+    "expected_output": "2 points: Pre-check passes, the system supports importing both JSON and CSV formats, and the data is written to the database correctly. 1 point: Pre-check passes, but only one format is supported or there are errors in the data import. 0 points: Pre-check fails, or the import function is unavailable."
+  },
+  {
+    "metric": "7.1a User Input Validation - Student ID Format",
+    "description": "1. **Arrange:** In the user registration interface, prepare test data: an empty string, an oversized string (21 characters), and a string with special characters.\n2. **Act:** Attempt to register using these invalid student IDs one by one.\n3. **Assert:** Verify that the system correctly blocks all 3 invalid student ID inputs and provides clear error messages.",
+    "expected_output": "2 points: All 3 types of invalid student IDs are correctly validated, and the error messages are clear and accurate. 1 point: 2 of the invalid inputs are validated, but one is missed or the prompt is unclear. 0 points: Student ID format validation is missing or largely ineffective."
+  },
+  {
+    "metric": "7.1b User Input Validation - Password Strength",
+    "description": "1. **Arrange:** Prepare test passwords: an empty password, a short password (5 characters), and an oversized password (33 characters).\n2. **Act:** Attempt to register using these invalid passwords one by one.\n3. **Assert:** Verify that the system correctly validates all 3 invalid passwords, requiring a length of 6-32 characters.",
+    "expected_output": "2 points: All 3 types of invalid passwords are correctly validated, and the strength requirements are clear. 1 point: 2 of the invalid passwords are validated, but the validation is incomplete. 0 points: Password strength validation is missing or the criteria are incorrect."
+  },
+  {
+    "metric": "7.1c Data Input Validation - Book ID Uniqueness",
+    "description": "1. **Arrange:** Get any existing book ID from the database.\n2. **Act:** Attempt to add a new book using the same book ID.\n3. **Assert:** Verify that the system detects the duplicate book ID, blocks the addition, and prompts that the book ID already exists.",
+    "expected_output": "2 points: Correctly detects the duplicate book ID, blocks the addition, and provides a clear prompt. 1 point: Detects the duplicate, but the prompt is unclear. 0 points: No uniqueness check for book IDs; duplicates are allowed."
+  },
+  {
+    "metric": "7.1d Data Input Validation - Date Format",
+    "description": "1. **Arrange:** Prepare invalid date formats: 2023/13/01, 2023-02-30, abcd-ef-gh.\n2. **Act:** Attempt to add a book using these invalid publication dates one by one.\n3. **Assert:** Verify that the system correctly validates all 3 invalid date formats, requiring the YYYY-MM-DD format.",
+    "expected_output": "2 points: All 3 invalid date formats are correctly validated, and the format requirement is clear. 1 point: 2 of the invalid formats are validated, but the validation is incomplete. 0 points: Date format validation is missing or the criteria are incorrect."
+  },
+  {
+    "metric": "7.2a CLI - Multi-Level Menu Navigation",
+    "description": "1. **Act:** Navigate from the main menu to various sub-menus (e.g., user menu, admin menu, book management) to test the menu hierarchy.\n2. **Assert:** Verify that the menu hierarchy is clear, supports at least 3 levels of navigation, and allows for easy switching between different levels.",
+    "expected_output": "2 points: The menu hierarchy is clear, supports 3 or more levels of navigation, and is easy to switch between. 1 point: Supports multiple levels, but the hierarchy is not clear or switching is inconvenient. 0 points: The menu structure is chaotic and difficult to navigate."
+  },
+  {
+    "metric": "7.2b CLI - Operational Prompts & Help",
+    "description": "1. **Act:** Look for help information or operational prompts in various functional interfaces.\n2. **Assert:** Verify that the system provides clear operational prompts, including at least 3 types of help information such as input format instructions, function descriptions, and shortcut key hints.",
+    "expected_output": "2 points: Provides all 3 types of help information, and the operational prompts are clear and complete. 1 point: Provides 2 types of help information, but they are incomplete. 0 points: Lacks operational prompts and help information."
+  },
+  {
+    "metric": "7.2c CLI - Confirmation for Critical Operations",
+    "description": "1. **Act:** Test critical operations like deleting a book or a user.\n2. **Assert:** Verify that the system has a confirmation mechanism for at least 2 critical operations, requiring the user to confirm before execution.",
+    "expected_output": "2 points: All critical operations have a confirmation mechanism with clear prompts. 1 point: Some critical operations have confirmation, but it is not comprehensive. 0 points: Lacks a confirmation mechanism for critical operations."
+  },
+  {
+    "metric": "8.1a Exception Handling - Database Connection",
+    "description": "1. **Arrange:** Intentionally disconnect the database or use an incorrect database configuration.\n2. **Act:** Start the program or execute an operation that requires the database.\n3. **Assert:** Verify that the system gracefully handles the database connection exception, displays a user-friendly error message, and does not crash.",
+    "expected_output": "2 points: Database exception handling is robust, error messages are user-friendly, and the program remains stable. 1 point: Basically handles the exception, but the error message is not user-friendly. 0 points: A database exception causes the program to crash."
+  },
+  {
+    "metric": "8.1b Exception Handling - Input",
+    "description": "1. **Act:** In various input scenarios, enter invalid characters, oversized strings, special symbols, etc.\n2. **Assert:** Verify that the system can handle at least 3 types of input exceptions without crashing.",
+    "expected_output": "2 points: Handles all 3 types of input exceptions, and the system remains stable. 1 point: Handles 2 types of input exceptions, but the handling is incomplete. 0 points: Input exception handling is missing, making the program prone to crashes."
+  },
+  {
+    "metric": "8.1c Exception Handling - File Operations",
+    "description": "1. **Arrange:** Set up an environment with a read-only directory or insufficient disk space.\n2. **Act:** Attempt to perform file operations such as exporting data or generating charts.\n3. **Assert:** Verify that the system handles the file operation failure and provides a clear error message.",
+    "expected_output": "2 points: File operation exception handling is robust, error messages are clear, and the program remains stable. 1 point: Basically handles file exceptions, but the prompts are not clear. 0 points: A file operation failure causes a program exception or crash."
+  },
+  {
+    "metric": "8.2a Data Backup",
+    "description": "1. **Pre-check (User Path):** Is there a data backup option in the admin menu?\n2. **Act:** Select the data backup function and perform a backup.\n3. **Assert:** Verify that the database is correctly backed up and that a backup file containing the complete data is generated.",
+    "expected_output": "2 points: Pre-check passes, the data backup function works correctly, and the backup file is complete and valid. 1 point: Pre-check passes and a backup is performed, but the file is incomplete or has issues. 0 points: Pre-check fails, or the backup function is unavailable."
+  },
+  {
+    "metric": "8.2b System Log Recording",
+    "description": "1. **Act:** Perform key operations like user login, book borrowing, and data modification.\n2. **Assert:** Verify that the system records logs for at least 3 types of key operations, including information such as time, user, and operation content.",
+    "expected_output": "2 points: Records all 3 types of operation logs, and the log information is complete and accurate. 1 point: Records 2 types of operation logs, but the information is incomplete. 0 points: The system logging feature is missing or incomplete."
+  }
+]

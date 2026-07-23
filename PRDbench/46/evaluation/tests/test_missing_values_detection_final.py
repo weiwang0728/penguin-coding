@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Test2.1.2a Data Validation - MissingFailvalueCheckTest (MostEndModifyRecoveryEdition)
+"""
+
+import sys
+import os
+import tempfile
+import pandas as pd
+import numpy as np
+from pathlib import Path
+
+# Add project path - Useforpath
+current_dir = Path(__file__).parent.parent
+src_dir = current_dir.parent / "src"
+sys.path.insert(0, str(src_dir))
+
+# Direct interfaceImport, NotUsetry-exceptandpy test.skip
+from credit_assessment.data.data_manager import DataManager
+from credit_assessment.utils.config_manager import ConfigManager
+
+def test_missing_value s_detection():
+ """TestMissingFailvalueCheckTest function"""
+ # CreateConfigureManager and DataManager
+ config = ConfigManager()
+ data_manager = DataManager(config)
+
+ # CreateContainsMissingFailvalueTest data
+ np.random.seed(42)
+ n_samples = 120
+
+ ages = np.random.randint(20, 80, n_samples).astype(float)
+ incomes = np.random.randint(20000, 200000, n_samples).astype(float)
+ credit_scores = np.random.randint(300, 850, n_samples).astype(float)
+ employment_years = np.random.randint(0, 40, n_samples).astype(float)
+ targets = np.random.choice([0, 1], n_samples)
+
+ # inageand incomefieldin AddMissingFailvalue(Meetsat least 2fieldContainsMissingFailvalue requirements)
+ missing_age_indices = np.random.choice(n_samples, int(n_samples * 0.15), replace=False)
+ missing_income_indices = np.random.choice(n_samples, int(n_samples * 0.12), replace=False)
+
+ ages[missing_age_indices] = np.nan
+ incomes[missing_income_indices] = np.nan
+
+ test_data = pd.DataFrame({
+ 'age': ages,
+ 'income': incomes,
+ 'credit_score': credit_scores,
+ 'employment_years': employment_years,
+ 'target': targets
+ })
+
+ # CreateTimeCSVFile
+ temp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8')
+ test_data.to_csv(temp_file.name, index=False, encoding='utf-8')
+ temp_file.close()
+
+ try:
+ # Execute (Act): ImportContainsMissingFailvalueTest file
+ df = data_manager.import_data(temp_file.name)
+
+ # VerifyData import success
+ assert isinstance(df, pd.DataFrame)
+ assert len(df) == 120
+ assert len(df.columns) == 5
+
+ # VerifyMissingFailvalueSavein
+ missing_count = df.isnull().sum()
+ age_missing = missing_count['age']
+ income_missing = missing_count['income']
+
+ assert age_missing > 0, f"agefieldShouldThisHasMissingFailvalue, Implementationinternational: {age_missing}"
+ assert income_missing > 0, f"incomefieldShouldThisHasMissingFailvalue, Implementationinternational: {income_missing}"
+
+ # Verifyat least 2fieldHasMissingFailvalue
+ fields_with_missing = (missing_count > 0).sum()
+ assert fields_with_missing >= 2, f"at least 2fieldShouldThisHasMissingFailvalue, Implementationinternational: {fields_with_missing}"
+
+ print(f"MissingFailvalueCheck Test Test Passed: ageMissingFail{age_missing}items, incomeMissingFail{income_missing}items")
+
+ finally:
+ # CleanProcessorTimeFile
+ if os.path.exists(temp_file.name):
+ os.unlink(temp_file.name)
+
+if __name__ == "__main__":
+ test_missing_value s_detection()
+ print("Testcompleted successfully!")

@@ -1,0 +1,237 @@
+[
+  {
+    "metric": "1.1 System Environment Configuration and Dependency Check",
+    "description": "1. **Arrange:** Prepare a clean Python environment and ensure Python 3.7+ is installed.\n2. **Act:** Check the project's requirements.txt and try installing all dependencies (numpy>=1.19.0, matplotlib>=3.3.0, pandas>=1.3.0, openpyxl>=3.0.0, scipy>=1.7.0).\n3. **Assert:** Verify Python version ≥3.7, all dependencies are installed with correct versions, system memory ≥4GB, storage ≥1GB, and all core modules can be successfully imported.",
+    "expected_output": "2 points: All dependencies are of correct versions, system resources meet requirements, and all core modules can be imported. 1 point: Most dependencies are satisfied but there are 1-2 version mismatch warnings. 0 points: Missing key dependencies or incompatible versions, unable to run normally."
+  },
+  {
+    "metric": "2.1.1a SI Model Core Algorithm Implementation",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear menu option to run the SI model?\n2. **Arrange:** Set SI model parameters: total population N=10000, transmission rate beta=0.01, contact rate r=10, initial state S[0]=9999, I[0]=1.\n3. **Act:** Select the SI model option, input the above parameters, and run the simulation for 200 days.\n4. **Assert:** Verify that the model outputs reasonable S(t) and I(t) sequences, and S+I=N holds for all time points.",
+    "expected_output": "2 points: Pre-check passes, SI model algorithm is fully correct, parameters are accurate, and numerical validation passes. 1 point: Pre-check passes, model is basically correct but parameters or calculations have minor deviations. 0 points: Pre-check fails, or SI model implementation is wrong and cannot run."
+  },
+  {
+    "metric": "2.1.1b SI Model Visualization Output",
+    "description": "1. **Pre-check (User Path):** After running the SI model, is there an option to generate a visualization chart?\n2. **Act:** After running the SI model, select the chart generation option.\n3. **Assert:** Verify that SI_model_result.png is generated, the image clearly shows the S(t) and I(t) curves, axis labels are correct, and legend is clear.",
+    "expected_output": "2 points: Pre-check passes, the generated image file exists and is of good quality, curves are correct, and labels are complete. 1 point: Pre-check passes, image is basically correct but quality is average or labels are incomplete. 0 points: Pre-check fails, or image file cannot be generated."
+  },
+  {
+    "metric": "2.1.2a SIR Model Core Algorithm Implementation",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear menu option to run the SIR model?\n2. **Arrange:** Set SIR model parameters: transmission rate beta=0.05, recovery rate gamma=0.1, simulation duration 100 days.\n3. **Act:** Select the SIR model option, input the above parameters, and run the simulation.\n4. **Assert:** Verify the SIR model runs normally, S+I+R=N holds for all time points, and numerical stability is good.",
+    "expected_output": "2 points: Pre-check passes, SIR model is fully correct, numerical calculation is stable and accurate. 1 point: Pre-check passes, model is basically correct but calculation accuracy is slightly insufficient. 0 points: Pre-check fails, or SIR model implementation is wrong."
+  },
+  {
+    "metric": "2.1.2b SIR Model R0 Calculation",
+    "description": "1. **Pre-check (User Path):** After running the SIR model, is there an option to calculate R0?\n2. **Act:** After running the SIR model, select the option to calculate the basic reproduction number R0.\n3. **Assert:** Verify the R0 calculation result is correct (R0 = beta/gamma = 0.05/0.1 = 0.5), and the calculation process and result are displayed.",
+    "expected_output": "2 points: Pre-check passes, R0 calculation is fully correct, formula and result are displayed. 1 point: Pre-check passes, R0 calculation is basically correct but display is not detailed enough. 0 points: Pre-check fails, or R0 calculation is wrong."
+  },
+  {
+    "metric": "2.1.2c SIR Model Chart Generation",
+    "description": "1. **Pre-check (User Path):** After running the SIR model, is there an option to generate phase and time series charts?\n2. **Act:** After running the SIR model, select the chart generation option.\n3. **Assert:** Verify that SIR_model_result.png is generated, containing both phase and time series subplots, with good image quality and complete labels.",
+    "expected_output": "2 points: Pre-check passes, a complete image file with both phase and time series plots is generated, quality is good. 1 point: Pre-check passes, image is basically correct but missing one subplot or quality is average. 0 points: Pre-check fails, or image file cannot be generated."
+  },
+  {
+    "metric": "2.1.3a SEIR Model Core Algorithm Implementation",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear menu option to run the SEIR model?\n2. **Arrange:** Set SEIR model parameters: transmission rate beta=0.03, incubation to infection rate sigma=0.1, recovery rate gamma=0.1, contact rate r=20.\n3. **Act:** Select the SEIR model option, input the above parameters, and simulate for 160 days.\n4. **Assert:** Verify the four-state transition logic is correct (S→E→I→R), and S+E+I+R=N holds for all time points.",
+    "expected_output": "2 points: Pre-check passes, SEIR model is fully implemented, four-state transition logic is fully correct. 1 point: Pre-check passes, model is basically correct but state transitions have minor issues. 0 points: Pre-check fails, or SEIR model implementation is wrong."
+  },
+  {
+    "metric": "2.1.3b SEIR Model Visualization Output",
+    "description": "1. **Pre-check (User Path):** After running the SEIR model, is there an option to generate multi-state time series charts?\n2. **Act:** After running the SEIR model, select the chart generation option.\n3. **Assert:** Verify that SEIR_model_result.png is generated, showing clear S, E, I, R curves, with distinct colors and complete legend.",
+    "expected_output": "2 points: Pre-check passes, the generated multi-state image is complete and clear, with all four curves correct and labels complete. 1 point: Pre-check passes, image is basically correct but curves or labels have minor issues. 0 points: Pre-check fails, or image file cannot be generated."
+  },
+  {
+    "metric": "2.2.1a Excel Data File Reading",
+    "description": "1. **Pre-check (User Path):** Does the program provide a data import option?\n2. **Arrange:** Provide an Excel file of Hubei COVID-19 data epidemic_data.xlsx (77 rows × 10 columns).\n3. **Act:** Select the data import option, specify the Excel file path, and run the data reading module.\n4. **Assert:** Verify that 77 rows of data are read successfully, with no errors or exceptions.",
+    "expected_output": "2 points: Pre-check passes, Excel file is read successfully, correct number of rows. 1 point: Pre-check passes, file is mostly read successfully but with minor warnings. 0 points: Pre-check fails, or Excel file cannot be read."
+  },
+  {
+    "metric": "2.2.1b Key Field Extraction and Validation",
+    "description": "1. **Act:** Extract key fields (date, cumulative confirmed, deaths, discharges) from the read Excel data.\n2. **Assert:** Verify that 4 fields are extracted, field names are correct, data types are converted accurately (date as datetime, values as int/float), and there are no missing value handling errors.",
+    "expected_output": "2 points: 4 key fields are extracted, names and types are fully correct, no missing value errors. 1 point: 3 fields extracted or field handling mostly correct but 1-2 type conversion issues. 0 points: Fewer than 3 fields extracted or serious data type conversion errors."
+  },
+  {
+    "metric": "2.2.2a Data Standardization Processing",
+    "description": "1. **Pre-check (User Path):** After data reading, is there an option for data standardization?\n2. **Act:** Select data standardization option, run preprocessing, and calculate daily S, E, I, R values.\n3. **Assert:** Verify that standardization is correct, S, E, I, R values are reasonable, no negatives or anomalies.",
+    "expected_output": "2 points: Pre-check passes, standardization is fully correct, all values are reasonable. 1 point: Pre-check passes, standardization mostly correct but 1-2 values slightly off. 0 points: Pre-check fails, or standardization is seriously wrong."
+  },
+  {
+    "metric": "2.2.2b Standardized Data File Output",
+    "description": "1. **Act:** Run the data file output function.\n2. **Assert:** Verify that 4 standardized data files (data/s.txt, data/i.txt, data/r.txt, data/e.txt) are generated, formats are correct, data is consistent, each file has 77 rows.",
+    "expected_output": "2 points: 4 data files generated, format correct, row count and content fully correct. 1 point: 3 files generated or files mostly correct but minor format issues. 0 points: Fewer than 3 files or serious data errors."
+  },
+  {
+    "metric": "2.2.3a SIR Model Parameter Estimation",
+    "description": "1. **Pre-check (User Path):** Does the program provide an SIR parameter estimation option?\n2. **Act:** Select SIR parameter estimation, use standardized data for parameter fitting.\n3. **Assert:** Verify SIR parameter estimation is successful, fitted values (beta and gamma) are generated, and fitting error (MSE<1000) is reasonable.",
+    "expected_output": "2 points: Pre-check passes, SIR parameter estimation is fully successful, parameter values reasonable, error is good. 1 point: Pre-check passes, estimation mostly successful but accuracy is average. 0 points: Pre-check fails, or parameter estimation missing."
+  },
+  {
+    "metric": "2.2.3b SEIR Model Parameter Estimation",
+    "description": "1. **Pre-check (User Path):** Does the program provide a SEIR parameter estimation option?\n2. **Act:** Select SEIR parameter estimation, use standardized data for parameter fitting.\n3. **Assert:** Verify SEIR parameter estimation is successful, fitted values (beta, sigma, gamma) are generated, and fitting error (MSE<1000) is reasonable.",
+    "expected_output": "2 points: Pre-check passes, SEIR parameter estimation is fully successful, 3 parameter values reasonable, error is good. 1 point: Pre-check passes, estimation mostly successful but accuracy is average. 0 points: Pre-check fails, or parameter estimation missing."
+  },
+  {
+    "metric": "2.2.3c Parameter Estimation Result Output",
+    "description": "1. **Act:** After parameter estimation, generate the result file.\n2. **Assert:** Verify that results/parameter_estimation.txt is generated, containing fitted parameter values and error analysis, with standard format and detailed content.",
+    "expected_output": "2 points: Parameter estimation result file generated, contains full parameter values and error analysis, format standard. 1 point: Result file generated but content not detailed or minor format issue. 0 points: No result file or serious content error."
+  },
+  {
+    "metric": "2.3.1a Seven-state Isolation Model Implementation",
+    "description": "1. **Pre-check (User Path):** Does the program provide an isolation SEIR model option?\n2. **Arrange:** Configure seven-state isolation model parameters: isolation rate q=0.000001, hospitalization rate deltaI=0.13, recovery rate gammaI=0.007, etc.\n3. **Act:** Select the isolation SEIR model option, input parameters, simulate for 70 days.\n4. **Assert:** Verify seven-state transitions (S, Sq, E, Eq, I, H, R) are logically correct and total state is conserved.",
+    "expected_output": "2 points: Pre-check passes, seven-state isolation model is fully implemented, transition logic is fully correct. 1 point: Pre-check passes, model mostly implemented but transitions have 1-2 minor issues. 0 points: Pre-check fails, or isolation implementation is wrong."
+  },
+  {
+    "metric": "2.3.1b Isolation Effect Numerical Validation",
+    "description": "1. **Act:** Run the isolation model, monitor the change in number of infected individuals.\n2. **Assert:** Verify that isolation significantly reduces infection peak (≥30% lower than without isolation), and isolated population increases reasonably.",
+    "expected_output": "2 points: Isolation effect is significant, infection peak reduced by ≥30%, isolated population changes reasonable. 1 point: Isolation effect is moderate, peak reduced by 10%-29%. 0 points: Isolation effect is not obvious, peak reduced by <10%."
+  },
+  {
+    "metric": "2.3.2 Isolation Effect Comparative Analysis",
+    "description": "1. **Pre-check (User Path):** Does the program provide a comparative analysis option for before and after isolation?\n2. **Act:** Select comparative analysis option, generate isolation comparison chart.\n3. **Assert:** Verify that isolation_comparison.png is generated, clearly showing the impact of isolation on the transmission curve, with legend and value annotations.",
+    "expected_output": "2 points: Pre-check passes, comparison chart generated correctly, effect is obvious, visualization clear. 1 point: Pre-check passes, chart basically usable but effect not clear. 0 points: Pre-check fails, or comparison chart cannot be generated."
+  },
+  {
+    "metric": "2.4.1a 2D Spatial Grid Setup",
+    "description": "1. **Pre-check (User Path):** Does the program provide a spatial spread simulation option?\n2. **Arrange:** Set 2D grid parameters: 50×50 grid, 2500 individuals.\n3. **Act:** Select spatial spread simulation, initialize the grid.\n4. **Assert:** Verify grid size is correct (50×50), number of individuals is 2500, and initial distribution is reasonable.",
+    "expected_output": "2 points: Pre-check passes, grid setup is fully correct, individual number and distribution reasonable. 1 point: Pre-check passes, grid setup mostly correct but minor parameter deviation. 0 points: Pre-check fails, or grid setup is wrong."
+  },
+  {
+    "metric": "2.4.1b Brownian Motion Individual Movement",
+    "description": "1. **Arrange:** Set Brownian motion intensity sigma=2.\n2. **Act:** Run individual movement simulation, monitor position changes.\n3. **Assert:** Verify individual movement follows Brownian motion (random walk), distance distribution is reasonable, and intensity parameter is effective.",
+    "expected_output": "2 points: Movement fully follows Brownian motion, randomness good, intensity effective. 1 point: Movement basically follows random walk but randomness slightly insufficient. 0 points: Movement does not follow Brownian motion or intensity ineffective."
+  },
+  {
+    "metric": "2.4.1c Spatial Distance Calculation",
+    "description": "1. **Act:** Run spatial distance calculation, set transmission threshold to 4 grid units.\n2. **Assert:** Verify spatial distance calculation is correct (Euclidean), threshold works, and no transmission beyond 4 units.",
+    "expected_output": "2 points: Calculation is fully correct, threshold effective, judgment accurate. 1 point: Calculation mostly correct but accuracy slightly insufficient. 0 points: Calculation wrong or threshold invalid."
+  },
+  {
+    "metric": "2.4.2 Spatial Transmission Probability Calculation",
+    "description": "1. **Pre-check (User Path):** Is there a transmission probability calculation option in spatial simulation?\n2. **Arrange:** Set transmission rate beta=0.04.\n3. **Act:** Run spatial transmission module, calculate probability based on distance.\n4. **Assert:** Verify probability is negatively correlated with distance, closer means higher probability, beyond 4 units probability is 0.",
+    "expected_output": "2 points: Pre-check passes, probability calculation is fully correct, distance-probability relationship reasonable. 1 point: Pre-check passes, calculation basically correct but accuracy average. 0 points: Pre-check fails, or probability calculation wrong."
+  },
+  {
+    "metric": "2.4.3a Spatial Isolation Strategy Configuration",
+    "description": "1. **Pre-check (User Path):** Is there an isolation strategy option in spatial simulation?\n2. **Arrange:** Configure isolation parameters: latent isolation rate v1=1/5, infected isolation rate v2=1/3, isolation duration 14 days.\n3. **Act:** Set parameters and start spatial isolation simulation.\n4. **Assert:** Verify isolation rates take effect and duration is correct.",
+    "expected_output": "2 points: Pre-check passes, isolation strategy configuration is fully correct, parameters effective. 1 point: Pre-check passes, strategy basically correct but parameter issue. 0 points: Pre-check fails, or strategy configuration wrong."
+  },
+  {
+    "metric": "2.4.3b Isolation State Management",
+    "description": "1. **Act:** Run spatial isolation simulation, monitor isolation state changes.\n2. **Assert:** Verify isolated individuals stop moving, isolation countdown is accurate, release mechanism works, and isolation suppresses spread by ≥20%.",
+    "expected_output": "2 points: State management fully correct, behavior accurate, suppression ≥20%. 1 point: Management basically correct, suppression 10%-19%. 0 points: Management wrong or suppression <10%."
+  },
+  {
+    "metric": "2.4.4a Spatial Spread Animation Frame Generation",
+    "description": "1. **Pre-check (User Path):** Does the program provide spatial visualization option?\n2. **Act:** Select spatial visualization, run the module.\n3. **Assert:** Verify animation frames are generated, saved as spatial_spread_frames/frame_%d.png, at least 10 frames.",
+    "expected_output": "2 points: Pre-check passes, ≥10 frames generated, naming format is correct. 1 point: Pre-check passes, 5-9 frames generated. 0 points: Pre-check fails, or <5 frames generated."
+  },
+  {
+    "metric": "2.4.4b Individual State Visualization",
+    "description": "1. **Act:** Check the generated animation frames.\n2. **Assert:** Individuals' positions are clear, infection states are distinguished by at least 3 colors (S, I, R), and spatial coordinates are accurate.",
+    "expected_output": "2 points: ≥3 colors for states, positions accurate, image clear. 1 point: 2 colors, positions basically accurate. 0 points: ≤1 color or position error."
+  },
+  {
+    "metric": "2.5.1a Parameter Sensitivity Test Execution",
+    "description": "1. **Pre-check (User Path):** Does the program provide sensitivity analysis option?\n2. **Act:** Select sensitivity analysis, test the effect of key parameter changes.\n3. **Assert:** Test ≥5 key parameters (beta, gamma, sigma, etc.), each with ≥3 different values.",
+    "expected_output": "2 points: Pre-check passes, ≥5 parameters tested, each with ≥3 values, test complete. 1 point: Pre-check passes, 3-4 parameters or values not complete. 0 points: Pre-check fails, or <3 parameters tested."
+  },
+  {
+    "metric": "2.5.1b Sensitivity Analysis Result Output",
+    "description": "1. **Act:** After sensitivity analysis, generate result file.\n2. **Assert:** Verify results/sensitivity_analysis.csv is generated, contains sensitivity metrics, influence ranking, and is well formatted.",
+    "expected_output": "2 points: Sensitivity analysis file generated, contains complete metrics and ranking, format standard. 1 point: File generated but content not complete or minor format issue. 0 points: No file or content error."
+  },
+  {
+    "metric": "2.5.2a Model Error Metric Calculation",
+    "description": "1. **Pre-check (User Path):** Does the program provide model comparison option?\n2. **Act:** Select model comparison, compare prediction accuracy of different models.\n3. **Assert:** Calculate MSE and MAE error metrics, compare ≥3 models (SI, SIR, SEIR), metrics accurate.",
+    "expected_output": "2 points: Pre-check passes, 2 error metrics calculated, ≥3 models compared, metrics accurate. 1 point: Pre-check passes, 1 metric or 2 models. 0 points: Pre-check fails, or metric calculation error."
+  },
+  {
+    "metric": "2.5.2b Model Comparison Result Output",
+    "description": "1. **Act:** After model comparison, generate result file.\n2. **Assert:** Verify results/model_comparison.txt is generated, contains error comparison table, analysis conclusion, and is well formatted.",
+    "expected_output": "2 points: File generated, contains full error comparison and analysis, format standard. 1 point: File generated but content not detailed or minor format issue. 0 points: No file or content error."
+  },
+  {
+    "metric": "2.5.3 Infectivity in Latent Period Comparative Study",
+    "description": "1. **Pre-check (User Path):** Does the program provide a latent period infectivity comparison option?\n2. **Act:** Select latent period comparison, run two model comparisons (infectious vs non-infectious latent period).\n3. **Assert:** Verify results/latent_period_comparison.txt is generated, compares results of two models, analyzes impact, and conclusion is reasonable.",
+    "expected_output": "2 points: Pre-check passes, comparative study is complete, model differences are obvious, analysis is in-depth. 1 point: Pre-check passes, study basically complete but analysis not deep. 0 points: Pre-check fails, or analysis missing."
+  },
+  {
+    "metric": "2.6.1a Multi-format Data Output Support",
+    "description": "1. **Pre-check (User Path):** Does the program provide multiple data format output options?\n2. **Act:** Check data output function, try different formats.\n3. **Assert:** Support ≥4 formats (Excel, text, CSV, JSON), each output file generated correctly.",
+    "expected_output": "2 points: Pre-check passes, ≥4 formats supported, all outputs correct. 1 point: Pre-check passes, 2-3 formats, outputs basically correct. 0 points: Pre-check fails, or ≤1 format supported."
+  },
+  {
+    "metric": "2.6.1b Data Format Conversion Quality",
+    "description": "1. **Act:** Check content quality of output files in different formats.\n2. **Assert:** Format conversion is correct, file structure is standard, data integrity is good, no format errors or data loss.",
+    "expected_output": "2 points: All format conversions fully correct, file structure standard, data complete. 1 point: Conversion basically correct but 1-2 minor issues. 0 points: Serious conversion error or data loss."
+  },
+  {
+    "metric": "2.6.2a Input Data Anomaly Detection",
+    "description": "1. **Pre-check (User Path):** Does the program provide data validation?\n2. **Arrange:** Prepare test input with anomalies (negative population, out-of-range parameters, missing values, wrong data types).\n3. **Act:** Input abnormal data, run validation.\n4. **Assert:** Detect ≥4 types of anomalies, provide clear error messages.",
+    "expected_output": "2 points: Pre-check passes, detects ≥4 anomalies, messages clear and accurate. 1 point: Pre-check passes, detects 2-3 anomalies, messages basically clear. 0 points: Pre-check fails, or validation missing."
+  },
+  {
+    "metric": "2.6.2b Exception Handling Mechanism",
+    "description": "1. **Act:** Trigger various exceptions, observe handling.\n2. **Assert:** Exception handling is reasonable (no crash, with message, recoverable), program is stable, user can re-enter correct data.",
+    "expected_output": "2 points: Exception handling is complete, program stable, user experience good. 1 point: Handling basically usable but user experience average. 0 points: Handling poor, program crashes or cannot recover."
+  },
+  {
+    "metric": "2.6.3 Comprehensive Analysis Report Generation",
+    "description": "1. **Pre-check (User Path):** After program runs, is there an option to generate analysis report?\n2. **Act:** After full simulation, select report generation.\n3. **Assert:** reports/analysis_summary.txt is generated, contains ≥5 analysis sections (model fit evaluation, parameter estimation, prediction accuracy, sensitivity analysis, model comparison), detailed and accurate.",
+    "expected_output": "2 points: Pre-check passes, report contains ≥5 sections, detailed, accurate, well formatted. 1 point: Pre-check passes, report contains 3-4 sections, basically complete. 0 points: Pre-check fails, or ≤2 sections."
+  },
+  {
+    "metric": "3.1a Runtime Performance Test",
+    "description": "1. **Arrange:** Set up performance monitoring, prepare full simulation test case.\n2. **Act:** Run full simulation, monitor runtime.\n3. **Assert:** Single full simulation runtime ≤30s, supports ≥200 days long time series.",
+    "expected_output": "2 points: Runtime ≤30s, supports ≥200 days, fully meets performance. 1 point: 31-36s or supports 150-199 days. 0 points: >36s or <150 days."
+  },
+  {
+    "metric": "3.1b Memory Usage Performance Test",
+    "description": "1. **Act:** Run full simulation, monitor memory usage.\n2. **Assert:** Peak memory ≤2GB, no memory leaks, program stable.",
+    "expected_output": "2 points: Peak ≤2GB, no leaks, stable. 1 point: 2.1-2.4GB or slight memory issues. 0 points: >2.4GB or serious memory issues."
+  },
+  {
+    "metric": "3.2a Code Modular Design",
+    "description": "1. **Act:** Check code structure and module division.\n2. **Assert:** Modular design is clear, functional modules are independent, interface definitions are reasonable, low coupling.",
+    "expected_output": "2 points: Excellent modular design, clear division, reasonable interface, low coupling. 1 point: Good modularity but 1-2 modules not well divided. 0 points: Unclear modularity, mixed functions, high coupling."
+  },
+  {
+    "metric": "3.2b Code Specification and Comments",
+    "description": "1. **Act:** Check code comments, naming conventions, and PEP8 compliance.\n2. **Assert:** Comments are detailed (coverage ≥80%), naming is consistent, PEP8 compliance ≥90%, error handling is complete.",
+    "expected_output": "2 points: Comments coverage ≥80%, PEP8 ≥90%, naming standard, error handling complete. 1 point: Comments 60%-79%, PEP8 80%-89%. 0 points: Comments <60%, PEP8 <80%."
+  },
+  {
+    "metric": "3.3a Unit Test Case Design",
+    "description": "1. **Act:** Check unit test files and cases.\n2. **Assert:** Complete unit test cases exist, design is reasonable, core function coverage ≥80%.",
+    "expected_output": "2 points: Complete unit tests, reasonable design, coverage ≥80%. 1 point: Basically complete, coverage 60%-79%. 0 points: Missing tests or coverage <60%."
+  },
+  {
+    "metric": "3.3b Unit Test Execution Result",
+    "description": "1. **Act:** Run unit tests, check pass rate.\n2. **Assert:** Pass rate is 100%, no failed cases, tests are stable.",
+    "expected_output": "2 points: Pass rate 100%, no failures, stable. 1 point: 90%-99%, few failures not affecting core functions. 0 points: <90% or core function test fails."
+  },
+  {
+    "metric": "4.1a Image Output File Integrity",
+    "description": "1. **Act:** After running the full process, check output/images/ folder.\n2. **Assert:** Contains 4 model image files (SI_model_result.png, SIR_model_result.png, SEIR_model_result.png, isolation_comparison.png), file size reasonable (>10KB), image quality good.",
+    "expected_output": "2 points: All 4 image files present, size reasonable, quality good. 1 point: 3 files or average quality. 0 points: <3 files or files corrupted."
+  },
+  {
+    "metric": "4.1b Data Output File Integrity",
+    "description": "1. **Act:** Check output/data/ folder structure and files.\n2. **Assert:** Contains 4 data files (s.txt, i.txt, r.txt, e.txt), format correct, data reasonable, no empty files or format errors.",
+    "expected_output": "2 points: All 4 data files present, format correct, content reasonable. 1 point: 3 files or minor format issues. 0 points: <3 files or serious format errors."
+  },
+  {
+    "metric": "4.1c Result Analysis File Integrity",
+    "description": "1. **Act:** Check output/results/ folder structure and files.\n2. **Assert:** Contains 4 result files (parameter_estimation.txt, sensitivity_analysis.csv, model_comparison.txt, latent_period_comparison.txt), content is detailed, analysis is reasonable.",
+    "expected_output": "2 points: All 4 result files present, content detailed, analysis reasonable. 1 point: 3 files or content not detailed. 0 points: <3 files or content errors."
+  },
+  {
+    "metric": "4.2a Technical Documentation Integrity",
+    "description": "1. **Act:** Check documentation in project root and docs folder.\n2. **Assert:** At least 3 types of documentation exist (README.md, technical docs, API docs, etc.), content is complete and detailed, format standard.",
+    "expected_output": "2 points: ≥3 types of documentation, content complete and detailed, format standard. 1 point: 2 types, content basically complete. 0 points: ≤1 type or poor quality."
+  },
+  {
+    "metric": "4.2b User Manual",
+    "description": "1. **Act:** Check user manual or usage section in README.\n2. **Assert:** Instructions are clear, include installation steps, running method, parameter description, example usage (≥4 parts), new users can run the program as described.",
+    "expected_output": "2 points: ≥4 complete sections, new users can run successfully. 1 point: 2-3 sections, basically usable. 0 points: ≤1 section or unclear."
+  }
+]

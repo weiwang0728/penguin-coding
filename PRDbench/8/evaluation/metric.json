@@ -1,0 +1,142 @@
+[
+  {
+    "metric": "0.1.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in shell (e.g., `python -m src.main`).\n2. **Assert:** Observe whether the program successfully starts and displays a clear main menu containing at least 10 actionable options (such as \"User Management\", \"Organizational Structure Management\", \"Project Management\", etc.).",
+    "expected_output": "2 points: Program successfully starts and displays a main menu containing 10 or more clear, actionable options. 1 point: Program starts, but menu options are fewer than 10, unclear, or contain garbled characters. 0 points: Program fails to start or crashes immediately after startup."
+  },
+  {
+    "metric": "1.1.1 Organizational Structure Management - Department Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Organizational Structure Management\"?\n2. **Arrange:** Prepare a unique department name, description, and manager information.\n3. **Act:** Select \"Organizational Structure Management\", then select \"Add Department\", sequentially input the prepared department name, description, and manager.\n4. **Assert:** Observe whether the program clearly reports \"Department creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully create department. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot create department through interactive flow."
+  },
+  {
+    "metric": "1.1.2 Organizational Structure Management - Department Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Organizational Structure Management\" menu, is there a clear option for \"Edit Department\"?\n2. **Arrange:** Ensure at least one existing department exists in the system.\n3. **Act:** Select \"Edit Department\", then select a department, modify its name, description, or manager.\n4. **Assert:** Observe whether the program clearly reports \"Department update successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully edit department. 1 point: Pre-check passes, but interactive flow prompts are unclear, or update success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot edit department through interactive flow."
+  },
+  {
+    "metric": "1.1.3 Organizational Structure Management - Department Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Organizational Structure Management\" menu, is there a clear option for \"Delete Department\"?\n2. **Arrange:** Ensure at least one department without members exists in the system.\n3. **Act:** Select \"Delete Department\", then select a department without members, confirm deletion operation.\n4. **Assert:** Observe whether the program clearly reports \"Department deletion successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully delete department. 1 point: Pre-check passes, but interactive flow prompts are unclear, or deletion success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot delete department through interactive flow."
+  },
+  {
+    "metric": "1.2.1 User Management - User Addition",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"User Management\"?\n2. **Arrange:** Prepare unique user information including username, password, name, email, etc.\n3. **Act:** Select \"User Management\", then select \"Add User\", sequentially input the prepared user information.\n4. **Assert:** Observe whether the program clearly reports \"User creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully add user. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot add user through interactive flow."
+  },
+  {
+    "metric": "1.2.2 User Management - User Edit",
+    "description": "1. **Pre-check (User Path):** In the \"User Management\" menu, is there a clear option for \"Edit User\"?\n2. **Arrange:** Ensure at least one existing user exists in the system.\n3. **Act:** Select \"Edit User\", then select a user, modify their name, email, role, etc.\n4. **Assert:** Observe whether the program clearly reports \"User information update successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully edit user information. 1 point: Pre-check passes, but interactive flow prompts are unclear, or update success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot edit user information through interactive flow."
+  },
+  {
+    "metric": "1.2.3 User Management - User Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"User Management\" menu, is there a clear option for \"Delete User\"?\n2. **Arrange:** Ensure at least one non-super administrator user exists in the system.\n3. **Act:** Select \"Delete User\", then select a non-super administrator user, confirm deletion operation.\n4. **Assert:** Observe whether the program clearly reports \"User deletion successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully delete user. 1 point: Pre-check passes, but interactive flow prompts are unclear, or deletion success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot delete user through interactive flow."
+  },
+  {
+    "metric": "1.3.1 Project Management - Project Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Project Management\"?\n2. **Arrange:** Prepare unique project information including project name, description, type, importance level, etc.\n3. **Act:** Select \"Project Management\", then select \"Create New Project\", sequentially input the prepared project information.\n4. **Assert:** Observe whether the program clearly reports \"Project creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully create project. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot create project through interactive flow."
+  },
+  {
+    "metric": "1.3.2 Project Management - Project Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Project Management\" menu, is there a clear option for \"Edit Project\"?\n2. **Arrange:** Ensure at least one existing project exists in the system.\n3. **Act:** Select \"Edit Project\", then select a project, modify its name, description, type, importance level, etc.\n4. **Assert:** Observe whether the program clearly reports \"Project update successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully edit project information. 1 point: Pre-check passes, but interactive flow prompts are unclear, or update success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot edit project information through interactive flow."
+  },
+  {
+    "metric": "1.3.3 Project Management - Project Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Project Management\" menu, is there a clear option for \"Delete Project\"?\n2. **Arrange:** Ensure at least one project with status \"Closed\" or \"Cancelled\" exists in the system.\n3. **Act:** Select \"Delete Project\", then select a qualifying project, confirm deletion operation.\n4. **Assert:** Observe whether the program clearly reports \"Project deletion successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully delete project. 1 point: Pre-check passes, but interactive flow prompts are unclear, or deletion success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot delete project through interactive flow."
+  },
+  {
+    "metric": "1.4.1 Project Status Management",
+    "description": "1. **Pre-check (User Path):** In the \"Project Management\" menu, is there a clear option for \"Project Status Management\" or similar function?\n2. **Arrange:** Ensure at least one existing project exists in the system.\n3. **Act:** Select the project, then modify its status (e.g., from \"Planning\" to \"In Progress\").\n4. **Assert:** Observe whether the program clearly reports \"Project status modified\", and can view status change history.",
+    "expected_output": "2 points: Pre-check passes, and can successfully change project status and record change history. 1 point: Pre-check passes, but status change or history recording function has defects. 0 points: Pre-check fails, or cannot change project status."
+  },
+  {
+    "metric": "2.1.1 Requirements Management - Requirement Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Requirements Management\"?\n2. **Arrange:** Prepare information required for creating new requirement, including requirement title, description, project, requirement source, requirement level, priority, creator, etc.\n3. **Act:** Select \"Requirements Management\", then select \"Create New Requirement\", sequentially input the prepared requirement information.\n4. **Assert:** Observe whether the program clearly reports \"Requirement creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully create requirement. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot create requirement through interactive flow."
+  },
+  {
+    "metric": "2.1.2 Requirements Management - Requirement Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Requirements Management\" menu, is there a clear option for \"Edit Requirement\"?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select \"Edit Requirement\", then select an existing requirement, modify its title, description, priority, etc.\n4. **Assert:** Observe whether the program clearly reports \"Requirement update successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully edit requirement information. 1 point: Pre-check passes, but interactive flow prompts are unclear, or update success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot edit requirement information through interactive flow."
+  },
+  {
+    "metric": "2.1.3 Requirements Management - Requirement Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Requirements Management\" menu, is there a clear option for \"Delete Requirement\"?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select \"Delete Requirement\", then select an existing requirement, confirm deletion operation.\n4. **Assert:** Observe whether the program clearly reports \"Requirement deletion successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully delete requirement. 1 point: Pre-check passes, but interactive flow prompts are unclear, or deletion success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot delete requirement through interactive flow."
+  },
+  {
+    "metric": "2.2.1 Requirements Management - Requirement Status Change",
+    "description": "1. **Pre-check (User Path):** In the \"Requirements Management\" menu, is there a clear option for \"Requirement Status Management\" or similar function?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select the requirement, then modify its status (e.g., from \"New\" to \"Under Review\").\n4. **Assert:** Observe whether the program clearly reports \"Requirement status modified\".",
+    "expected_output": "2 points: Pre-check passes, can successfully change all 8 requirement statuses (New, Under Review, Approved, To Be Developed, In Development, Under Testing, Completed, Rejected). 1 point: Pre-check passes, can change some statuses. 0 points: Pre-check fails, or cannot change requirement status."
+  },
+  {
+    "metric": "2.2.2 Requirements Management - Requirement Review",
+    "description": "1. **Pre-check (User Path):** In the \"Requirements Management\" menu, is there a clear option for \"Requirement Review\"?\n2. **Arrange:** Ensure at least one requirement with status \"New\" exists in the system.\n3. **Act:** Select the requirement, then execute review operation, select review result (Approve, Reject, Need Modification).\n4. **Assert:** Observe whether the program clearly reports review result and correctly updates requirement status.",
+    "expected_output": "2 points: Pre-check passes, can complete all 3 review operations (Approve, Reject, Need Modification) and correctly update status. 1 point: Pre-check passes, can complete some review operations. 0 points: Pre-check fails, or cannot conduct requirement review."
+  },
+  {
+    "metric": "2.3.1 Requirements Traceability",
+    "description": "1. **Pre-check (User Path):** In the \"Requirements Management\" menu, is there a clear option for \"Requirements Traceability\" or viewing requirement details?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select the requirement, view its details page.\n4. **Assert:** Observe whether the page displays historical status records, associated tasks, use cases, defects, etc.",
+    "expected_output": "2 points: Pre-check passes, can completely display historical status records and associated information. 1 point: Pre-check passes, can display some historical records or associated information. 0 points: Pre-check fails, or cannot view historical status records or associated information."
+  },
+  {
+    "metric": "3.1.1 Planning Management - Plan Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Planning Management\"?\n2. **Arrange:** Prepare information required for creating new plan, including plan name, project, start date, end date, status, progress, etc.\n3. **Act:** Select \"Planning Management\", then select \"Create New Plan\", sequentially input the prepared requirement information.\n4. **Assert:** Observe whether the program clearly reports \"Plan creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully create plan. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot create plan through interactive flow."
+  },
+  {
+    "metric": "3.1.2 Planning Management - Task Creation",
+    "description": "1. **Pre-check (User Path):** In the plan details page, is there task creation functionality?\n2. **Arrange:** Prepare information required for creating new task, including plan, task name, description, responsible person, estimated work hours, etc.\n3. **Act:** Select \"Task Management\", then select \"Add Task\", sequentially input the prepared requirement information.\n4. **Assert:** Observe whether the program clearly reports \"Task creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully create task. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot create task through interactive flow."
+  },
+  {
+    "metric": "3.1.3 Planning Management - Progress Entry",
+    "description": "1. **Pre-check (User Path):** In the task details page, is there progress entry functionality?\n2. **Arrange:** Ensure at least one assigned task exists in the system.\n3. **Act:** Fill in status, actual work hours for the task.\n4. **Assert:** Observe whether the program can successfully save progress information.",
+    "expected_output": "2 points: Pre-check passes, can successfully fill in all 2 types of progress information (status, actual work hours). 1 point: Pre-check passes, can fill in some progress information. 0 points: Pre-check fails, or cannot fill in progress information."
+  },
+  {
+    "metric": "3.2.1 Planning Management - Plan Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Planning Management\" menu, is there a clear option for \"Edit Plan\"?\n2. **Arrange:** Ensure at least one existing plan exists in the system.\n3. **Act:** Select \"Edit Plan\", then select an existing plan, modify its plan name, project, start date, end date, status, progress, etc.\n4. **Assert:** Observe whether the program clearly reports \"Plan update successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully edit plan information. 1 point: Pre-check passes, but interactive flow prompts are unclear, or update success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot edit plan information through interactive flow."
+  },
+  {
+    "metric": "3.2.2 Planning Management - Plan Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Planning Management\" menu, is there a clear option for \"Delete Plan\"?\n2. **Arrange:** Ensure at least one existing plan exists in the system.\n3. **Act:** Select \"Delete Plan\", then select an existing requirement, confirm deletion operation.\n4. **Assert:** Observe whether the program clearly reports \"Plan deletion successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully delete plan. 1 point: Pre-check passes, but interactive flow prompts are unclear, or deletion success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot delete plan through interactive flow."
+  },
+  {
+    "metric": "4.1.1 Defect Management - Defect Creation",
+    "description": "1. **Pre-check (User Path):** In the \"Quality Management\" menu, is there a clear option for \"Create New Defect\"?\n2. **Arrange:** Prepare information required for creating defect, including title, project, severity level, etc.\n3. **Act:** Select \"Create New Defect\", sequentially input the prepared information.\n4. **Assert:** Observe whether the program clearly reports \"Defect creation successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully create defect. 1 point: Pre-check passes, but interactive flow prompts are unclear, or creation success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot create defect through interactive flow."
+  },
+  {
+    "metric": "4.1.2 Defect Management - Defect Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Quality Management\" menu, is there a clear option for \"Edit Defect\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Edit Defect\", then select a defect, modify its title, description, severity level, etc.\n4. **Assert:** Observe whether the program clearly reports \"Defect update successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully edit defect. 1 point: Pre-check passes, but interactive flow prompts are unclear, or update success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot edit defect through interactive flow."
+  },
+  {
+    "metric": "4.1.3 Defect Management - Defect Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Quality Management\" menu, is there a clear option for \"Delete Defect\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Delete Defect\", then select a defect, confirm deletion operation.\n4. **Assert:** Observe whether the program clearly reports \"Defect deletion successful\".",
+    "expected_output": "2 points: Pre-check passes, and can fully follow the interactive guidance and successfully delete defect. 1 point: Pre-check passes, but interactive flow prompts are unclear, or deletion success/failure status feedback is unclear. 0 points: Pre-check fails, or cannot delete defect through interactive flow."
+  },
+  {
+    "metric": "4.1.4 Defect Management - Defect Status Management",
+    "description": "1. **Pre-check (User Path):** In the defect details page, is there status change functionality?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select the defect, modify its status.\n4. **Assert:** Observe whether the program clearly reports \"Defect status modified\".",
+    "expected_output": "2 points: Pre-check passes, can successfully change all defect statuses (Open, Assigned, In Progress, Resolved, Closed). 1 point: Pre-check passes, can change some statuses. 0 points: Pre-check fails, or cannot change defect status."
+  },
+  {
+    "metric": "4.2.1 Quality Metrics Viewing",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Quality Management\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Quality Management\", then view quality metrics.\n4. **Assert:** Observe whether the program can successfully display quality metrics information.",
+    "expected_output": "2 points: Pre-check passes, can display quality metrics. 1 point: Pre-check passes, can configure some quality metrics. 0 points: Pre-check fails, or cannot display quality metrics."
+  },
+  {
+    "metric": "4.2.2 Quality Report Viewing",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Quality Management\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Quality Management\", then view quality report.\n4. **Assert:** Observe whether the program can successfully display quality report information.",
+    "expected_output": "2 points: Pre-check passes, can display quality report. 1 point: Pre-check passes, can configure some quality report. 0 points: Pre-check fails, or cannot display quality report."
+  }
+]

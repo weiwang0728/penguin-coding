@@ -1,0 +1,1 @@
+curl --noproxy "*" -X POST -H "Content-Type: application/json" -d "{\"card_id\": \"test_card_123\"}" http://localhost:8080/slave/

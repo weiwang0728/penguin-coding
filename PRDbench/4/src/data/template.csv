@@ -1,0 +1,2 @@
+project_name,city,area,business_circle_type,longitude,latitude,category1_name,category1_ratio,category2_name,category2_ratio,category3_name,category3_ratio,avg_item_price,ingredient_cost_ratio,packaging_cost_ratio,monthly_rent,monthly_labor_cost,monthly_marketing_cost,commission_rate
+MyFirstStore,Shanghai,Pudong New Area,Core Business District,121.52,31.22,Staples,0.5,Snacks,0.3,Beverages,0.2,35,0.3,0.05,20000,30000,5000,0.15

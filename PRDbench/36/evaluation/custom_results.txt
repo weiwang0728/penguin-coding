@@ -1,0 +1,56 @@
+Keigo HigashinoSmallnovel textminingAnalysisResult
+==================================================
+
+entity recognitionResult:
+------------------------------
+
+PERSONS:
+- Kaga Kyoichiro (nr): 3Times
+  onunderText: inTokyoOneitem(s)rainy night, detectiveKaga KyoichiroCorrectinAdjustinvestigateOnemysterious case
+- Tanaka Yukiho (nr): 2Times
+  onunderText: victimErYesOneNamenamedTanaka Yukihoyoungwoman, sheYesOneNamenurse
+- Ishigami Tetsuya (nr): 2Times
+  onunderText: and his coworker Ishigami TetsuyadiscussedCaseSituation.IshiGodYesOneNameEconomyExperienceexperienced detective
+
+LOCATIONS:
+- Tokyo (ns): 1Times
+  onunderText: inTokyoOneitem(s)rainy night, detectiveKaga KyoichiroCorrectinAdjustinvestigate
+- Shibuya District (ns): 1Times
+  onunderText: locationYesShibuya DistrictOnebuildingOfficeapartment building
+
+TIMES:
+- March 15, 2023 (t): 1Times
+  onunderText: CasePieceSendNativeinMarch 15, 20238 PM
+- 8 PM (t): 1Times
+  onunderText: March 15, 20238 PM, locationYesShibuya District
+
+PROFESSIONS:
+- detective (nn): 1Times
+  onunderText: inTokyoOneitem(s)rainy night, detectiveKaga KyoichiroCorrectinAdjustinvestigate
+- nurse (nn): 2Times
+  onunderText: sheYesOneNamenurse, innearby hospitalEngineeringWork
+
+
+frequencySystemDesignResult:
+------------------------------
+1. Kaga Kyoichiro (nr): 3Times
+2. Tanaka Yukiho (nr): 2Times
+3. Ishigami Tetsuya (nr): 2Times
+4. nurse (nn): 2Times
+5. Tokyo (ns): 1Times
+6. Shibuya District (ns): 1Times
+7. March 15, 2023 (t): 1Times
+8. 8 PM (t): 1Times
+9. detective (nn): 1Times
+
+
+semantic similarity analysisResult:
+------------------------------
+Word2VecModelTypeParameter:
+- UseUseModelSimulationWord2VecModelType
+
+
+RelatedSeriesPushProcessorAnalysisResult:
+------------------------------
+SupportSupportDirectionEditionEmptyBetweenCategoryBiferPushProcessorCalculateMethod (D = C + B - A)
+relationship pattern recognitionFunctionAlreadyEnableUse

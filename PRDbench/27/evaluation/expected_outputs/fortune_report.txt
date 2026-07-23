@@ -1,0 +1,24 @@
+==================================================
+        ** Your Daily Fortune Report **
+==================================================
+Name: Zhang San
+Birth Date: 1990-01-01 (Lunar calendar conversion not yet implemented)
+Gender: Male
+Sun Sign: **Capricorn**
+--------------------------------------------------
+Today's Fortune: **Excellent Fortune**
+Outfit Color: Red
+Jewelry: Metal
+--------------------------------------------------
+[Career Suitability]
+  Recommendation: **Suitable for work**
+  Index: 80.0/100
+--------------------------------------------------
+[Lucky Outfit Recommendation]
+  Recommended Color: **Blue**
+  Recommended Jewelry: **Jade**
+--------------------------------------------------
+[Interpersonal Interaction Suggestion]
+  Best Zodiac Partner: **Virgo**
+  Interaction Index: 92.0/100
+==================================================

@@ -1,0 +1,147 @@
+[
+  {
+    "metric": "1.1 Program Executability: The system can start normally and enter the main menu interface.",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., python src/main_console.py).\\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu with function options.",
+    "expected_output": "2 points: The program starts successfully and displays a main menu with function options. 1 point: The program starts but the menu options are unclear or garbled. 0 points: The program fails to start or crashes immediately after starting."
+  },
+  {
+    "metric": "2.1.1.1 Member Information Entry: Date Format Validation - Birth/Death dates must conform to the YYYYMMDD format.",
+    "description": "1. **Arrange:** Prepare member information where the birth date or death date is in an invalid format (e.g., '1990-01-01' or '900101').\\n2. **Act:** Select the add new member function and attempt to submit the prepared information.\\n3. **Assert:** Observe whether the system prompts a date format error (e.g., \"Date format should be YYYYMMDD\") and prevents submission.",
+    "expected_output": "2 points: Correctly identifies and rejects all date inputs not in YYYYMMDD format. 1 point: Some invalid dates are accepted or the prompt is unclear. 0 points: The system does not validate date formats."
+  },
+  {
+    "metric": "2.1.1.2 Member Information Entry: Value Range Validation - Height is limited to between 50-300cm.",
+    "description": "1. **Arrange:** Prepare member information with an invalid height value (e.g., 40 or 350).\\n2. **Act:** Select the add new member function and attempt to submit the prepared information.\\n3. **Assert:** Observe whether the system prompts a height range error (e.g., \"Height range should be between 50-300cm\") and prevents submission.",
+    "expected_output": "2 points: Correctly intercepts all height inputs outside the 50-300cm range. 1 point: Some invalid height values are accepted or the prompt is unclear. 0 points: The system does not validate the height range."
+  },
+  {
+    "metric": "2.1.1.3 Member Information Entry: Education Enumeration Validation - Must match predefined education values.",
+    "description": "1. **Arrange:** Prepare member information with an invalid education value (e.g., 'Postdoctorate').\\n2. **Act:** Select the add new member function and attempt to submit the prepared information.\\n3. **Assert:** Observe whether the system prompts an education value error (e.g., \"Education must be one of Elementary School/Junior High/High School/Bachelor/Master/PhD\") and prevents submission.",
+    "expected_output": "2 points: Correctly validates all education inputs, accepting only predefined enumeration values. 1 point: Some invalid education values are accepted or the prompt is unclear. 0 points: The system does not validate education."
+  },
+  {
+    "metric": "2.1.1.4 Member Information Entry: Relationship Logic Validation - Specified relatives must exist in the system.",
+    "description": "1. **Arrange:** Prepare member information specifying a relative name that does not exist in the system.\\n2. **Act:** Select the add new member function and attempt to submit the prepared information.\\n3. **Assert:** Observe whether the system prompts that the specified relative does not exist (e.g., \"The specified relative XXX does not exist in the system\") and prevents submission.",
+    "expected_output": "2 points: Correctly validates if the specified relative exists in the system, prompts if not found. 1 point: Validation logic is incomplete or the prompt is unclear. 0 points: The system does not validate the existence of the relative."
+  },
+  {
+    "metric": "2.1.2.1 Member Information Storage: CSV File Creation and Data Writing.",
+    "description": "1. **Arrange:** Ensure the data.csv file does not exist in the project directory.\\n2. **Act:** Run the program for the first time and enter member information.\\n3. **Assert:** Check whether the data.csv file is created in the project directory and contains the newly entered member information.",
+    "expected_output": "2 points: Successfully creates data.csv and writes data correctly. 1 point: There are warning messages during creation or writing. 0 points: File not created, content incorrect, or program crashes."
+  },
+  {
+    "metric": "2.1.2.2 Member Information Storage: Incremental Storage Mode - Append New Member Information.",
+    "description": "1. **Arrange:** Ensure there is a data.csv file with at least one member in the project directory.\\n2. **Act:** Enter a new member again.\\n3. **Assert:** Check whether the data.csv file appends the new member information while retaining the original data.",
+    "expected_output": "2 points: Correctly writes new data in append mode without overwriting existing data. 1 point: There are warning messages or efficiency issues when writing new data. 0 points: New data overwrites old data or writing fails."
+  },
+  {
+    "metric": "2.2.1.1 Tree Structure Construction: Member Class Definition and Root Node Setting.",
+    "description": "1. **Arrange:** Input at least one member.\\n2. **Act:** Check the generated family tree structure.\\n3. **Assert:** Confirm that the Member object includes idx, kids, spouse attributes and the first member is set as the root node (relationship type is -1).",
+    "expected_output": "2 points: Member class is defined correctly, root node is set correctly. 1 point: Some properties or logic are incomplete. 0 points: Member class definition is incorrect or root node setting fails."
+  },
+  {
+    "metric": "2.2.1.2 Tree Structure Construction: Bidirectional Spouse Relationship and Shared Children.",
+    "description": "1. **Arrange:** Input a pair of spouses and their children.\\n2. **Act:** Check the generated family tree structure.\\n3. **Assert:** Confirm that the spouse attributes of both parties correctly point to each other and their kids lists are consistent and include the children.",
+    "expected_output": "2 points: Spouse relationships are correctly established bidirectionally, children are shared by both. 1 point: Relationship establishment is incorrect but some functions are usable. 0 points: Spouse relationship or shared children logic is completely wrong."
+  },
+  {
+    "metric": "2.2.1.3 Tree Structure Construction: Parent-Child Relationship Establishment and Index Lookup.",
+    "description": "1. **Arrange:** Input a parent-child relationship.\\n2. **Act:** Check the generated family tree structure and try to find a member by name.\\n3. **Assert:** Confirm that the parent's kids list includes the index of the child, and the system can find the member's position in the family list by name.",
+    "expected_output": "2 points: Parent-child relationships can be correctly established and index lookup is accurate. 1 point: There are minor issues in relationships or lookup logic. 0 points: Parent-child relationship establishment or index lookup fails."
+  },
+  {
+    "metric": "2.2.2.1a Relationship Query: Parent Query Algorithm and Generation Control - Query First Generation Parents",
+    "description": "1. **Arrange:** Build a family structure with at least a parent-child relationship.\\n2. **Act:** Select the relationship query function, then select \"Parent Query\" and specify the target member and generation as 1.\\n3. **Assert:** Check whether the returned result correctly includes the parent information of the target member.",
+    "expected_output": "2 points: Can correctly query parent members of the specified generation. 1 point: Query result is incorrect or generation control is inaccurate. 0 points: Parent query function is completely non-functional."
+  },
+  {
+    "metric": "2.2.2.1b Relationship Query: Parent Query Algorithm and Generation Control - Query Second Generation Parents (Grandparents)",
+    "description": "1. **Arrange:** Build a family structure with at least three generations (grandparent-grandchild).\\n2. **Act:** Select the relationship query function, then select \"Parent Query\" and specify the target member and generation as 2.\\n3. **Assert:** Check whether the returned result correctly includes the grandparent information of the target member.",
+    "expected_output": "2 points: Can correctly query parent members of the specified generation. 1 point: Query result is incorrect or generation control is inaccurate. 0 points: Parent query function is completely non-functional."
+  },
+  {
+    "metric": "2.2.2.2 Relationship Query: Parent Query Algorithm and Gender Filtering.",
+    "description": "1. **Arrange:** Build a family structure containing both male and female parents.\\n2. **Act:** Select the relationship query function, then select \"Parent Query\", specify the target member, generation as 1, and add a gender filter (e.g., only males).\\n3. **Assert:** Check whether the returned result only includes parent members that match the criteria.",
+    "expected_output": "2 points: Gender filtering works correctly and accurately filters query results. 1 point: Filtering logic is erroneous but some functionality works. 0 points: Gender filtering function is completely non-functional."
+  },
+  {
+    "metric": "2.2.2.3a Relationship Query: Child Query Algorithm and Cross-Generation Query - Query First Generation Children",
+    "description": "1. **Arrange:** Build a family structure with a parent-child relationship.\\n2. **Act:** Select the relationship query function, then select \"Child Query\", specify the target member and generation as 1.\\n3. **Assert:** Check whether the returned result correctly includes the child information of the target member.",
+    "expected_output": "2 points: Can correctly query child members of the specified generation. 1 point: Query result is incorrect or generation control is inaccurate. 0 points: Child query function is completely non-functional."
+  },
+  {
+    "metric": "2.2.2.3b Relationship Query: Child Query Algorithm and Cross-Generation Query - Query Second Generation Children (Grandchildren)",
+    "description": "1. **Arrange:** Build a family structure with at least three generations (grandparent-grandchild).\\n2. **Act:** Select the relationship query function, then select \"Child Query\", specify the target member and generation as 2.\\n3. **Assert:** Check whether the returned result correctly includes the grandchild information of the target member.",
+    "expected_output": "2 points: Can correctly query child members of the specified generation. 1 point: Query result is incorrect or generation control is inaccurate. 0 points: Child query function is completely non-functional."
+  },
+  {
+    "metric": "2.2.2.4 Relationship Query: Child Query Algorithm and Gender Filtering.",
+    "description": "1. **Arrange:** Build a family structure with multiple children (both male and female).\\n2. **Act:** Select the relationship query function, then select \"Child Query\", specify the target member, generation as 1, and add a gender filter (e.g., only females).\\n3. **Assert:** Check whether the returned result only includes child members that match the criteria.",
+    "expected_output": "2 points: Gender filtering works correctly and accurately filters query results. 1 point: Filtering logic is erroneous but some functionality works. 0 points: Gender filtering function is completely non-functional."
+  },
+  {
+    "metric": "2.2.2.5 Relationship Query: Spouse Query Algorithm and Exception Handling.",
+    "description": "1. **Arrange:** Prepare one married member and one unmarried member.\\n2. **Act:** Execute spouse query for the married member; execute spouse query for the unmarried member.\\n3. **Assert:** Check whether the married member's query returns spouse information; whether the unmarried member's query returns \"Spouse not found\" or a similar prompt.",
+    "expected_output": "2 points: Can correctly query spouse information and handle unmarried situations. 1 point: Query logic or prompt is incorrect. 0 points: Spouse query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1a Multi-Dimensional Query: Exact Name Match Query",
+    "description": "1. **Arrange:** Ensure there is a member named \"Zhang San\" in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Name\" and enter \"Zhang San\".\\n3. **Assert:** Check whether the returned result correctly includes \"Zhang San\"'s information.",
+    "expected_output": "2 points: Can correctly perform exact name match queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1b Multi-Dimensional Query: Fuzzy Birthplace Match Query",
+    "description": "1. **Arrange:** Ensure there is a member whose birthplace is \"Chaoyang District, Beijing\" in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Birthplace\" and enter \"Beijing\".\\n3. **Assert:** Check whether the returned result correctly includes information of the member from \"Chaoyang District, Beijing\".",
+    "expected_output": "2 points: Can correctly perform fuzzy birthplace match queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1c Multi-Dimensional Query: Exact Birth Date Match Query",
+    "description": "1. **Arrange:** Ensure there is a member whose birth date is \"19901212\" in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Birth Date\" and enter \"19901212\".\\n3. **Assert:** Check whether the returned result correctly includes the information of that member.",
+    "expected_output": "2 points: Can correctly perform exact birth date match queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1d Multi-Dimensional Query: Education Level Match Query",
+    "description": "1. **Arrange:** Ensure there is a member whose education is \"Bachelor\" in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Education\" and choose \"Bachelor\".\\n3. **Assert:** Check whether the returned result correctly includes the information of that member.",
+    "expected_output": "2 points: Can correctly perform education level match queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1e Multi-Dimensional Query: Occupation Keyword Query",
+    "description": "1. **Arrange:** Ensure there is a member whose occupation is \"Software Engineer\" in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Occupation\" and enter \"Software\".\\n3. **Assert:** Check whether the returned result correctly includes the information of the \"Software Engineer\" member.",
+    "expected_output": "2 points: Can correctly perform occupation keyword queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1f Multi-Dimensional Query: Highest Position Match Query",
+    "description": "1. **Arrange:** Ensure there is a member whose highest position is \"Department Manager\" in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Highest Position\" and enter \"Department Manager\".\\n3. **Assert:** Check whether the returned result correctly includes the information of that member.",
+    "expected_output": "2 points: Can correctly perform highest position match queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.1g Multi-Dimensional Query: Gender Classification Query",
+    "description": "1. **Arrange:** Ensure there are both male and female members in the system.\\n2. **Act:** Select the information retrieval function, then select \"Query by Gender\" and choose \"Male\".\\n3. **Assert:** Check whether the returned result only includes information of male members.",
+    "expected_output": "2 points: Can correctly perform gender classification queries. 1 point: Query result is incorrect. 0 points: Query function is completely non-functional."
+  },
+  {
+    "metric": "2.3.1.2 Multi-Dimensional Query: Handling of No Matching Results.",
+    "description": "1. **Arrange:** Prepare a search condition that does not exist in the system.\\n2. **Act:** Use this condition to search.\\n3. **Assert:** Check whether the system returns -1 code or a corresponding prompt (e.g., \"No matching results found\").",
+    "expected_output": "2 points: Can correctly handle cases where no matching results are found. 1 point: Handling is unclear or the prompt is not explicit. 0 points: The system crashes or does not respond when no matching results are found."
+  },
+  {
+    "metric": "2.5.1.1 Basic Statistics: Average Height Calculation and Data Filtering.",
+    "description": "1. **Arrange:** Ensure there are multiple members in the system, including valid and invalid height data.\\n2. **Act:** Select the statistical analysis function, then select \"Height Statistics\".\\n3. **Assert:** Check whether the returned average height is correct and whether invalid data (e.g., zero values) are filtered out.",
+    "expected_output": "2 points: Can correctly calculate average height and filter invalid data. 1 point: Calculation result is incorrect or data filtering is incomplete. 0 points: Height statistics function is completely non-functional."
+  },
+  {
+    "metric": "2.5.1.2 Basic Statistics: Education Level Conversion and Statistics.",
+    "description": "1. **Arrange:** Ensure there are multiple members in the system with different education levels.\\n2. **Act:** Select the statistical analysis function, then select \"Education Statistics\".\\n3. **Assert:** Check whether the returned average education, highest education, and lowest education are correct, and if they are based on numerical level conversion.",
+    "expected_output": "2 points: Can correctly convert education levels and complete relevant statistics. 1 point: Statistical result is incorrect or conversion logic is incomplete. 0 points: Education statistics function is completely non-functional."
+  },
+  {
+    "metric": "2.5.2.1 Population Statistics: Gender Ratio Calculation and Simplification.",
+    "description": "1. **Arrange:** Ensure there are both male and female members in the system.\\n2. **Act:** Select the statistical analysis function, then select \"Gender Ratio Statistics\".\\n3. **Assert:** Check whether the returned male-to-female ratio is correct and whether it is simplified (e.g., 6:4 simplified to 3:2).",
+    "expected_output": "2 points: Can correctly calculate and simplify gender ratio. 1 point: Statistical or simplification result is incorrect. 0 points: Gender ratio statistics function is completely non-functional."
+  },
+  {
+    "metric": "2.6.1.1 Tree Display: Textual Tree Structure and Hierarchical Indentation.",
+    "description": "1. **Arrange:** Ensure there are multi-generational family members in the system.\\n2. **Act:** Select the family tree display function.\\n3. **Assert:** Check whether the output is a correct textual tree structure with proper indentation for each generation (e.g., 2 spaces).",
+    "expected_output": "2 points: Can correctly display the tree structure and indentation is accurate. 1 point: Structure or indentation has minor issues. 0 points: Family tree display function is completely non-functional."
+  }
+]

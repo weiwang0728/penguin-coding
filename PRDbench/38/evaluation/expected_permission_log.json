@@ -1,0 +1,17 @@
+{
+    "admin_operations": [
+        "ModelTrainingSupervision",
+        "LogExport", 
+        "ColdStartTrendProcessQualityCheck"
+    ],
+    "user_operations": [
+        "ViewRecommendations",
+        "Data Import",
+        "FoundationFoundationAnalysis"
+    ],
+    "access_test_results": {
+        "admin_exclusive_count": 3,
+        "user_accessible_count": 3,
+        "permission_control_working": true
+    }
+}

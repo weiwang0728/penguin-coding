@@ -1,0 +1,27 @@
+1
+evaluation/sample_data.csv
+
+2
+SELECT 
+    a.Ticker AS Ticker1,
+    b.Ticker AS Ticker2,
+    a.CompanyName AS Company1,
+    b.CompanyName AS Company2,
+    a."Market Value" * b."Price-Earnings Ratio (PE)" AS ComplexValue,
+    LENGTH(a.CompanyName) + LENGTH(b.CompanyName) AS NameLengthSum,
+    SUBSTR(a.CompanyName, 1, LENGTH(a.CompanyName) / 2) AS Company1Half,
+    SUBSTR(b.CompanyName, 1, LENGTH(b.CompanyName) / 2) AS Company2Half,
+    CASE 
+        WHEN a."Market Value" > b."Market Value" THEN 'A_greater_than_B'
+        WHEN a."Market Value" < b."Market Value" THEN 'A_less_than_B'
+        ELSE 'A_equals_B'
+    END AS Comparison,
+    a."Daily Return Volatility" * b."Daily Return Volatility" AS VolatilityProduct,
+    (a."Market Value" + b."Market Value") / 2.0 AS AvgMarketValue
+FROM stocks a
+CROSS JOIN stocks b
+WHERE a.Ticker != b.Ticker
+    AND (LENGTH(a.CompanyName) + LENGTH(b.CompanyName)) > 10
+    AND (a."Market Value" * b."Price-Earnings Ratio (PE)") > 0
+ORDER BY ComplexValue DESC;
+

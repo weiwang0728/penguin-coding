@@ -1,0 +1,590 @@
+[
+    {
+        "metric": "0.1 Program Startup and Main Menu",
+        "description": "1. **Act:** Execute the program's startup command in the shell (e.g., `python main.py`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu with at least 4 functional options (e.g., User Login, Admin Login, User Registration, Exit).",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/tools/setup_offline_mode.py && timeout 5 python src/run.py",
+                "test_input": "0"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The program starts successfully and displays a clear main menu with at least 4 functional options: User Login, User Registration, System Info, Help, and Exit."
+    },
+    {
+        "metric": "1.1 Database Connection and Initialization",
+        "description": "1. **Arrange:** Ensure the MySQL database service is running and the database configuration file exists.\n2. **Act:** Start the program and observe the database connection process.\n3. **Assert:** The program should clearly report the database connection status, be able to access the user, book, and circulation tables, and display their schema information.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python evaluation/tests/test_database_init.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Database connection is successful. The user, book, and circulation tables are accessible, and their schemas are validated."
+    },
+    {
+        "metric": "2.1 User Registration",
+        "description": "1. **Pre-check (User Path):** Is there a user registration option in the main menu?\n2. **Arrange:** Prepare a set of valid user information (Student ID, Name, Password, Contact Info).\n3. **Act:** Select the user registration option and enter the user information as prompted.\n4. **Assert:** Verify that a registration success message is displayed and confirm via a database query that the user information has been saved correctly.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python evaluation/tests/test_2_1_user_registration.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "User registration is successful. A success message is displayed, and the user information (including Student ID, Name, Password, and Contact Info) is correctly saved to the database."
+    },
+    {
+        "metric": "2.2a Regular User Login Verification",
+        "description": "1. **Pre-check (User Path):** Is there a user login option in the main menu?\n2. **Arrange:** Use a registered regular (non-admin) user account.\n3. **Act:** Select the user login option and enter the username and password.\n4. **Assert:** After a successful login, verify that the regular user menu is displayed, including options for borrowing, returning, querying, etc.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_2_2a_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A user login option is displayed. Upon successful login, the regular user menu appears, including options for borrowing, returning, and querying."
+    },
+    {
+        "metric": "2.2b Admin Login Verification",
+        "description": "1. **Pre-check (User Path):** Is there an admin login option in the main menu?\n2. **Arrange:** Use a registered admin account.\n3. **Act:** Select the admin login option and enter the admin username and password.\n4. **Assert:** After a successful login, verify that the admin menu is displayed, including options for user management, book management, system statistics, etc.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_2_2b_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A user login option is displayed. Upon successful admin login, the admin menu appears, including options for user management, book management, and system statistics."
+    },
+    {
+        "metric": "2.3 Encrypted Password Storage Verification",
+        "description": "1. **Arrange:** Register a new user with the plaintext password 'password123'.\n2. **Act:** Complete the user registration process.\n3. **Assert:** Directly inspect the user table in the database to confirm that the password field stores a 32-character MD5 hash, not the plaintext password.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_password_encryption.py::test_password_encryption -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes, confirming the password is stored as a 32-character MD5 hash and is completely different from the plaintext."
+    },
+    {
+        "metric": "3.1 Add Book Function",
+        "description": "1. **Pre-check (User Path):** After an admin logs in, is there a book management or 'add book' option?\n2. **Arrange:** Prepare complete information for a new book (Title, Book ID, Author, Category, Publisher, Publication Date, Stock Quantity).\n3. **Act:** Select the 'Add Book' function and enter all 7 book details as prompted.\n4. **Assert:** Verify that the book is added to the database successfully and that all 7 pieces of information are saved correctly.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python evaluation/tests/test_3_1_add_book.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The 'Add Book' feature works correctly. A book is successfully added to the database, and all 7 parameters (Title, Book ID, Author, Category, Publisher, Publication Date, Stock Quantity) are saved correctly."
+    },
+    {
+        "metric": "3.2a Book Query - Fuzzy Title Search",
+        "description": "1. **Pre-check (User Path):** After logging in, is there a book query option in the menu?\n2. **Arrange:** The database should contain at least 2 books with a common keyword in their titles.\n3. **Act:** Select book query, choose to search by title, and enter the keyword.\n4. **Assert:** Verify that the search results include all books whose titles contain the keyword, supporting partial matches.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_3_2a_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A book query option is displayed. A fuzzy search by title returns all books containing the specified keyword."
+    },
+    {
+        "metric": "3.2b Book Query - Exact Author Search",
+        "description": "1. **Pre-check (User Path):** Is there a search-by-author option in the book query menu?\n2. **Arrange:** The database should contain at least 2 books by different authors.\n3. **Act:** Choose search by author and enter the name of one known author.\n4. **Assert:** Verify that the query result displays all books by that author (exact match).",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_3_2b_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A search-by-author option is displayed. An exact match search returns all books by the specified author."
+    },
+    {
+        "metric": "3.2c Book Query - Category Filter",
+        "description": "1. **Pre-check (User Path):** Is there a search-by-category option in the book query menu?\n2. **Arrange:** The database should contain at least 2 books from different categories.\n3. **Act:** Choose search by category and select one known category.\n4. **Assert:** Verify that the query result only displays all books in that category.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_3_2c_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A search-by-category option is displayed. The search returns all books in the specified category."
+    },
+    {
+        "metric": "3.2d Book Query - Exact Book ID Search",
+        "description": "1. **Pre-check (User Path):** Is there a search-by-ID option in the book query menu?\n2. **Arrange:** Use any known, existing book ID from the database.\n3. **Act:** Choose search by book ID and enter the book ID.\n4. **Assert:** Verify that the query returns the unique book information corresponding to that book ID.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_3_2d_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A search-by-ID option is displayed. An exact search returns the unique book information for the specified book ID."
+    },
+    {
+        "metric": "3.2e Book Query - Publisher Search",
+        "description": "1. **Pre-check (User Path):** Is there a search-by-publisher option in the book query menu?\n2. **Arrange:** There should be at least 2 books from different publishers in the database.\n3. **Act:** Choose search by publisher and enter one known publisher name.\n4. **Assert:** Verify that the query result displays all books from that publisher.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_3_2e_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A search-by-publisher option is displayed. The search returns all books from the specified publisher."
+    },
+    {
+        "metric": "3.3a Book Information Modification",
+        "description": "1. **Pre-check (User Path):** After an admin logs in, can the book modification function be accessed?\n2. **Arrange:** Select an existing book and prepare to modify its title and stock quantity.\n3. **Act:** Enter the edit screen, change the book's information, and confirm the save.\n4. **Assert:** Verify that the edit correctly updates the database and that the information is updated.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_3_3a_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The admin can access the book modification feature. Book information is successfully modified, and a success confirmation is displayed."
+    },
+    {
+        "metric": "3.3b Book Deletion",
+        "description": "1. **Pre-check (User Path):** After an admin logs in, can the book deletion function be accessed?\n2. **Arrange:** Select an existing book with no circulation records.\n3. **Act:** Execute the delete operation and observe if there is a confirmation prompt.\n4. **Assert:** Verify that the delete operation has a confirmation mechanism and that the record is correctly removed after confirmation.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python evaluation/test_3_3b_simple.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The admin can access the book deletion feature. A confirmation prompt is displayed, and the book record is successfully deleted after confirmation."
+    },
+    {
+        "metric": "4.1 Book Borrowing",
+        "description": "1. **Pre-check (User Path):** After a regular user logs in, is there a 'borrow book' option?\n2. **Arrange:** Ensure there are books available for borrowing (stock > 0) and the user has not reached their borrowing limit.\n3. **Act:** Select the borrow function and enter the book ID to borrow.\n4. **Assert:** After a successful loan, verify that the stock quantity decreases by 1 and a circulation record is created with the correct Student ID, Book ID, Borrow Time, and Borrow Status.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_4_1_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "A 'borrow book' option is displayed after user login. After a successful loan, a success message is displayed, and the stock quantity is updated."
+    },
+    {
+        "metric": "4.2a Borrowing Rules - Authentication Check",
+        "description": "1. **Arrange:** Start the program in a non-logged-in state.\n2. **Act:** Attempt to access the borrowing function directly or find a borrow option in the main menu.\n3. **Assert:** Verify that the system correctly blocks non-logged-in users from borrowing and prompts for authentication.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_borrow_auth.py::test_borrow_authentication_check -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. The system correctly blocks non-logged-in users from borrowing, and the error prompt is clear and accurate."
+    },
+    {
+        "metric": "4.2b Borrowing Rules - Stock Check",
+        "description": "1. **Arrange:** After a user logs in, select a book with a stock of 0.\n2. **Act:** Attempt to borrow that book.\n3. **Assert:** Verify that the system correctly blocks the borrowing of out-of-stock books and prompts that the stock is insufficient.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_stock_check.py::test_stock_check -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. The system correctly blocks the borrowing of out-of-stock books, and the 'insufficient stock' prompt is clear."
+    },
+    {
+        "metric": "4.2c Borrowing Rules - Duplicate Borrowing Check",
+        "description": "1. **Arrange:** A user has already borrowed a book and has not yet returned it.\n2. **Act:** Try to borrow the same book again.\n3. **Assert:** Verify that the system correctly blocks the duplicate borrowing and prompts that the book is already on loan to the current user.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_duplicate_borrow_check.py -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes, functionality is verified."
+    },
+    {
+        "metric": "4.2d Borrowing Rules - Quantity Limit Check",
+        "description": "1. **Arrange:** A regular user has borrowed 5 books (their limit), and an admin has borrowed 10 books (their limit).\n2. **Act:** Have each user attempt to borrow one more book.\n3. **Assert:** Verify that the system correctly enforces the borrowing limits and prompts that the limit has been reached.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_borrow_limit_check.py -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes, functionality is verified."
+    },
+    {
+        "metric": "4.3 Book Return",
+        "description": "1. **Pre-check (User Path):** Is there a 'return book' option in the user menu?\n2. **Arrange:** Ensure the current user has books that are currently on loan.\n3. **Act:** Select the return function and enter the book ID to be returned.\n4. **Assert:** After a successful return, verify that the stock quantity increases by 1, the circulation record status is updated to 'returned', and the return time is recorded correctly.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_4_3_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The user menu displays a 'return book' option. After a successful return, a success message is displayed, and the stock quantity and circulation record are updated."
+    },
+    {
+        "metric": "4.4 Book Reservation",
+        "description": "1. **Pre-check (User Path):** Is there a 'reserve book' option in the user menu?\n2. **Arrange:** Ensure there is an existing book with an available quantity of 0 (i.e., all copies are on loan).\n3. **Act:** Select the reservation function and enter the book ID to be reserved.\n4. **Assert:** After a successful reservation, verify that the book's reservation count increases by 1 and the reservation record includes a queue position.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python evaluation/test_4_4_simple_reservation.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The user menu displays a 'reserve book' option. After a successful reservation, a success message and queue position are displayed, and the reservation count is updated."
+    },
+    {
+        "metric": "5.1 Personal Circulation History Query",
+        "description": "1. **Pre-check (User Path):** Is there a 'My Circulation' or 'Personal Query' option in the user menu?\n2. **Arrange:** The current user should have a circulation history (including current loans and returned items).\n3. **Act:** Select the personal circulation query function.\n4. **Assert:** Verify that all of the user's circulation records are displayed, with current and past loans clearly categorized and including information like book title, borrow time, and return time.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_5_1_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The user menu displays a personal query option. The user's circulation records are displayed, with current and historical records clearly categorized."
+    },
+    {
+        "metric": "5.2a System Statistics - Basic Data",
+        "description": "1. **Pre-check (User Path):** Is there a 'System Statistics' option in the admin menu?\n2. **Act:** Select the system statistics function.\n3. **Assert:** Verify that 4 basic statistical data points are displayed: total number of books, total number of users, current number of loans, and number of reservations.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_5_2a_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The admin menu displays a system statistics option. It shows 4 basic statistics: total books, total users, current loans, and current reservations."
+    },
+    {
+        "metric": "5.2b System Statistics - Low Stock Alert",
+        "description": "1. **Pre-check (User Path):** In the system statistics interface, is there a 'Low Stock Alert' or 'Insufficient Stock' option?\n2. **Arrange:** The database should contain books with a stock quantity of less than 3.\n3. **Act:** View the list of books with low stock.\n4. **Assert:** Verify that the system correctly displays a list of books with insufficient stock, including the book title and current stock quantity.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_5_2b_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The statistics interface displays a stock alert option. A list of low-stock books is shown, including book titles and current stock quantities."
+    },
+    {
+        "metric": "5.2c System Statistics - Circulation Frequency",
+        "description": "1. **Pre-check (User Path):** In the system statistics interface, is there a 'Circulation Statistics' or 'Popular Books' option?\n2. **Act:** View the circulation frequency statistics.\n3. **Assert:** Verify that the system can display statistics on the number of times books have been borrowed, sorted by frequency.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_5_2c_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The statistics interface displays a circulation statistics option. It shows book circulation counts, sorted by frequency."
+    },
+    {
+        "metric": "5.3 Circulation Data Visualization",
+        "description": "1. **Pre-check (User Path):** In the admin statistics menu, is there a 'Generate Chart' or 'Data Visualization' option?\n2. **Arrange:** The system should have sufficient circulation data to generate charts.\n3. **Act:** Select the chart generation function to generate circulation statistics charts.\n4. **Assert:** Verify that the system can use Matplotlib to generate at least 2 types of charts (e.g., bar, pie) and save them as PNG files to the `charts` directory.",
+        "type": "file_comparison",
+        "testcases": [
+            {
+                "test_command": "python evaluation/tests/test_chart_generation.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": "data/charts/*.png",
+        "expected_output": "At least 2 types of statistical charts (bar, pie) are successfully generated and saved as PNG files to the `charts` directory."
+    },
+    {
+        "metric": "6.1a Regular User Permission Control",
+        "description": "1. **Arrange:** Log in to the system with a regular user account.\n2. **Act:** Attempt to access all menu options to test which functions are accessible.\n3. **Assert:** Verify that the regular user can only access 4 functions: borrow, return, reserve, and query, and cannot access administrative functions like user or book management.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_6_1a_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "After a regular user logs in, they can only access 4 functions: borrow, return, reserve, and query. Administrative functions are not accessible."
+    },
+    {
+        "metric": "6.1b Admin Permission Control",
+        "description": "1. **Arrange:** Log in to the system with an admin account.\n2. **Act:** Test all functional modules accessible to the admin.\n3. **Assert:** Verify that the admin can access all 6 functional areas: user management, book management, circulation management, system statistics, data export, and regular user functions.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_admin_permission.py -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes, functionality is verified."
+    },
+    {
+        "metric": "6.2a Data Export",
+        "description": "1. **Pre-check (User Path):** Is there a data export option in the admin menu?\n2. **Arrange:** The database should contain user and book data.\n3. **Act:** Test exporting user data and book data separately, in both JSON and CSV formats.\n4. **Assert:** Verify that both data types can be exported in both formats, and that the files are complete and well-formatted.",
+        "type": "file_comparison",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_export_input_fixed.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": "evaluation/expected_users.csv,evaluation/expected_books.json",
+        "expected_output": "The program successfully exports user data to CSV and book data to JSON. The file content is complete and standard-formatted."
+    },
+    {
+        "metric": "6.2b Data Import",
+        "description": "1. **Pre-check (User Path):** Is there a data import option in the admin menu?\n2. **Arrange:** Prepare standard-formatted JSON and CSV data files.\n3. **Act:** Test importing data from both JSON and CSV files separately.\n4. **Assert:** Verify that the import function can correctly process both file formats and that the data is written to the database correctly.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_6_2b_input.in"
+            }
+        ],
+        "input_files": "evaluation/test_users.json",
+        "expected_output_files": null,
+        "expected_output": "The admin menu displays a data import option. The system correctly handles the JSON data file, and the data is successfully written to the database."
+    },
+    {
+        "metric": "7.1a User Input Validation - Student ID Format",
+        "description": "1. **Arrange:** In the user registration interface, prepare test data: an empty string, an oversized string (21 characters), and a string with special characters.\n2. **Act:** Attempt to register using these invalid student IDs one by one.\n3. **Assert:** Verify that the system correctly blocks all 3 invalid student ID inputs and provides clear error messages.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_student_id_validation.py::test_student_id_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. All 3 types of invalid student ID inputs are correctly validated, and the error prompts are clear and accurate."
+    },
+    {
+        "metric": "7.1b User Input Validation - Password Strength",
+        "description": "1. **Arrange:** Prepare test passwords: an empty password, a short password (5 characters), and an oversized password (33 characters).\n2. **Act:** Attempt to register using these invalid passwords one by one.\n3. **Assert:** Verify that the system correctly validates all 3 invalid passwords, requiring a length of 6-32 characters.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_password_validation.py::test_password_strength_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. All 3 types of invalid passwords are correctly validated, and the strength requirement (6-32 characters) is clear."
+    },
+    {
+        "metric": "7.1c Data Input Validation - Book ID Uniqueness",
+        "description": "1. **Arrange:** Get any existing book ID from the database.\n2. **Act:** Attempt to add a new book using the same book ID.\n3. **Assert:** Verify that the system detects the duplicate book ID, blocks the addition, and prompts that the book ID already exists.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_book_uniqueness.py::test_book_id_uniqueness -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. The system correctly detects a duplicate book ID, blocks the addition, and provides a clear prompt."
+    },
+    {
+        "metric": "7.1d Data Input Validation - Date Format",
+        "description": "1. **Arrange:** Prepare invalid date formats: 2023/13/01, 2023-02-30, abcd-ef-gh.\n2. **Act:** Attempt to add a book using these invalid publication dates one by one.\n3. **Assert:** Verify that the system correctly validates all 3 invalid date formats, requiring the YYYY-MM-DD format.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_date_validation.py::test_date_format_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. All 3 invalid date formats are correctly validated, and the format requirement (YYYY-MM-DD) is clear."
+    },
+    {
+        "metric": "7.2a CLI - Multi-Level Menu Navigation",
+        "description": "1. **Act:** Navigate from the main menu to various sub-menus (e.g., user menu, admin menu, book management) to test the menu hierarchy.\n2. **Assert:** Verify that the menu hierarchy is clear, supports at least 3 levels of navigation, and allows for easy switching between different levels.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_7_2a_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The menu hierarchy is clear, supports 3-level navigation, and allows for easy switching between different levels (e.g., Main Menu -> Admin Menu -> Book Management)."
+    },
+    {
+        "metric": "7.2b CLI - Operational Prompts and Help",
+        "description": "1. **Act:** Look for help information or operational prompts in various functional interfaces.\n2. **Assert:** Verify that the system provides clear operational prompts, including at least 3 types of help information such as input format instructions, function descriptions, and shortcut key hints.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_7_2b_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Displays clear operational prompts, including at least 3 types of help information such as input format instructions, function descriptions, and shortcut key hints."
+    },
+    {
+        "metric": "7.2c CLI - Confirmation for Critical Operations",
+        "description": "1. **Act:** Test critical operations like deleting a book or a user.\n2. **Assert:** Verify that the system has a confirmation mechanism for at least 2 critical operations, requiring the user to confirm before execution.",
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_7_2c_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Critical operations (such as deleting a book) display a confirmation prompt, requiring user confirmation before execution."
+    },
+    {
+        "metric": "8.1a Exception Handling - Database Connection",
+        "description": "1. **Arrange:** Intentionally disconnect the database or use an incorrect database configuration.\n2. **Act:** Start the program or execute an operation that requires the database.\n3. **Assert:** Verify that the system gracefully handles the database connection exception, displays a user-friendly error message, and does not crash.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_database_exception.py -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes, functionality is verified."
+    },
+    {
+        "metric": "8.1b Exception Handling - Input",
+        "description": "1. **Act:** In various input scenarios, enter invalid characters, oversized strings, special symbols, etc.\n2. **Assert:** Verify that the system can handle at least 3 types of input exceptions without crashing.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_input_exception.py -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes, functionality is verified."
+    },
+    {
+        "metric": "8.1c Exception Handling - File Operations",
+        "description": "1. **Arrange:** Create file operation exception scenarios (e.g., read-only directory, non-existent path).\n2. **Act:** Attempt file operations like data export or chart generation to an invalid path.\n3. **Assert:** Verify that the system correctly catches exceptions like `FileNotFoundError` and `PermissionError`, returns `None` or `False`, provides an error prompt, and continues to run stably.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python evaluation/test_8_1c_file_exception.py",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The system correctly catches file operation exceptions (FileNotFoundError, PermissionError), returns an exception indicator (None/False), and remains stable, continuing normal operation."
+    },
+    {
+        "metric": "8.2a Data Backup",
+        "description": "1. **Pre-check (User Path):** Is there a data backup option in the admin menu?\n2. **Act:** Select the backup function and perform a backup.\n3. **Assert:** Verify that the database is correctly backed up and that a backup file containing the complete data is generated.",
+        "type": "file_comparison",
+        "testcases": [
+            {
+                "test_command": "python src/run.py",
+                "test_input": "evaluation/test_backup_input.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": "data/backup/library_backup_*.db",
+        "expected_output": "The program successfully executes a database backup, generating a backup file that contains the complete data."
+    },
+    {
+        "metric": "8.2b System Log Recording",
+        "description": "1. **Act:** Perform key operations such as user login, book borrowing, and data modification.\n2. **Assert:** Verify that the system records logs for at least 3 types of key operations, including information such as time, user, and operation content.",
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "python -m pytest evaluation/tests/test_logging.py::test_system_logging -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "Test passes. All 3 types of operation logs are recorded, and the log information is complete and accurate."
+    }
+]

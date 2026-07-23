@@ -1,0 +1,72 @@
+[
+  {
+    "metric": "UT.1 Node Initialization Unit Test",
+    "description": "Test Node class basic initialization function, including node ID setup, predecessor/successor pointer initialization, finger table creation, etc.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_chord_basic.py::test_node_initialization -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Node initialization test passed, verifying node ID, predecessor/successor pointers, finger table and other attributes are set correctly"
+  },
+  {
+    "metric": "UT.2 Network Initialization Unit Test",
+    "description": "Test Network class basic initialization function, including parameter setup, first node creation, etc.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_chord_basic.py::test_network_initialization -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Network initialization test passed, verifying m parameter, ring size, first node and other attributes are set correctly"
+  },
+  {
+    "metric": "UT.3 Hash Function Unit Test",
+    "description": "Test hash function consistency and validity",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_chord_basic.py::test_hash_function -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Hash function test passed, verifying same input produces same output, output is within valid range"
+  },
+  {
+    "metric": "UT.4 Data Insertion Unit Test",
+    "description": "Test data insertion function correctness",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_data_operations.py::test_data_insertion -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Data insertion test passed, verifying data can be correctly inserted and found"
+  },
+  {
+    "metric": "UT.5 Data Lookup Unit Test",
+    "description": "Test data lookup function correctness",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_data_operations.py::test_data_lookup -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Data lookup test passed, verifying ability to find existing data, correctly handle non-existent data"
+  }
+]

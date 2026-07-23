@@ -1,0 +1,61 @@
+{
+  "name": "College Student Attention Stability Scale",
+  "description": "Measures various dimensions of attention stability in college students",
+  "version": "1.0",
+  "config": {
+    "scoring_method": "likert_7",
+    "dimensions": ["Attention Focusing", "Attention Control", "Attention Sustaining", "Attention Switching", "Attention Distribution"],
+    "scoring_range": [1, 7],
+    "higher_better": true
+  },
+  "items": [
+    {
+      "item_number": 1,
+      "content": "I can concentrate on studying for extended periods of time",
+      "dimension": "Attention Sustaining",
+      "is_reverse": false
+    },
+    {
+      "item_number": 2,
+      "content": "I am easily distracted when studying",
+      "dimension": "Attention Focusing",
+      "is_reverse": true
+    },
+    {
+      "item_number": 3,
+      "content": "I can control my attention",
+      "dimension": "Attention Control",
+      "is_reverse": false
+    },
+    {
+      "item_number": 4,
+      "content": "My attention often wanders",
+      "dimension": "Attention Focusing",
+      "is_reverse": true
+    },
+    {
+      "item_number": 5,
+      "content": "I can consciously regulate my attention",
+      "dimension": "Attention Control",
+      "is_reverse": false
+    },
+    {
+      "item_number": 6,
+      "content": "I can stay focused in noisy environments",
+      "dimension": "Attention Sustaining",
+      "is_reverse": false
+    },
+    {
+      "item_number": 7,
+      "content": "I have difficulty shifting my attention from one thing to another",
+      "dimension": "Attention Switching",
+      "is_reverse": true
+    },
+    {
+      "item_number": 8,
+      "content": "I can pay attention to multiple important pieces of information simultaneously",
+      "dimension": "Attention Distribution",
+      "is_reverse": false
+    }
+  ]
+}

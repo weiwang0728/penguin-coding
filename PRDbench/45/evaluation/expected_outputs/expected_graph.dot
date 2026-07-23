@@ -1,0 +1,14 @@
+digraph G {
+0 -> 3
+3 -> 7
+7 -> 9
+9 -> 0
+data_0 [label="Keys:\n-------------\nkey: 1 - data: 'file_0.txt'\n", shape=box]
+0->data_0
+fingers_0 [label="Finger Table:\n-------------\n1 : 3\n2 : 3\n4 : 7\n8 : 0\n", shape=box]
+0->fingers_0
+data_3 [label="Keys:\n-------------\nkey: 5 - data: 'file_1.png'\n", shape=box]
+3->data_3
+fingers_3 [label="Finger Table:\n-------------\n4 : 7\n5 : 7\n7 : 7\n11 : 0\n", shape=box]
+3->fingers_3
+}

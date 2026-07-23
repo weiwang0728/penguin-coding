@@ -1,0 +1,50 @@
+Qingdao District 1 Lottery System - Lottery Results Report
+============================================================
+Generation Time: March 15, 2024 14:30:22
+
+【Lottery Results】
+----------------------------------------
+
+🏆 First Prize (1 person):
+No.   Name       Employee ID  Dept   Score  Tenure
+--------------------------------------------------
+1     Zhang San  0101001      01     85     24
+
+🏆 Second Prize (2 people):
+No.   Name       Employee ID  Dept   Score  Tenure
+--------------------------------------------------
+1     Li Si      0101002      01     92     18
+2     Wang Wu    0102001      02     78     36
+
+
+【Fairness Statistical Report】
+----------------------------------------
+
+Score Distribution Z-Test:
+Overall Score Mean: 85.50
+Overall Score Standard Deviation: 5.89
+
+First Prize:
+  Winner Score Mean: 85.00
+  Z Statistic: -0.0849
+  p-value: 0.9323
+  ✅ Statistical results meet randomness requirements
+
+Second Prize:
+  Winner Score Mean: 85.00
+  Z Statistic: -0.0600
+  p-value: 0.9522
+  ✅ Statistical results meet randomness requirements
+
+Department Distribution Chi-Square Test:
+Dept    Overall Ratio   Winner Ratio   Observed   Expected
+--------------------------------------------------
+01      60.0%          66.7%          2          1.8
+02      40.0%          33.3%          1          1.2
+
+Chi-Square Statistic (χ²): 0.1389
+p-value: 0.7094
+✅ Statistical results meet randomness requirements
+
+============================================================
+End of Report

@@ -1,0 +1,338 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the command `python src/main.py` in the shell.\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_0.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program starts successfully and displays main menu"
+  },
+  {
+    "metric": "2.1.1a Add Participant - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for participant management, and after entering, is there an option to add participants?\n2. **Arrange:** Prepare participant information to add: name 'Tester', department 'Test Department', initial weight '2.5'.\n3. **Act:** Select main menu to enter participant management, then select submenu to add participant. Follow prompts to input name 'Tester', department 'Test Department', initial weight '2.5'.\n4. **Assert:** Observe whether program prompts \"Successfully added participant: Tester\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays successful participant addition"
+  },
+  {
+    "metric": "2.1.1b Add Participant - Name , Department Information Processing",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for participant management, and after entering, is there an option to view participant list?\n2. **Act:** Select participant management submenu to view participant list.\n3. **Assert:** Observe whether list contains participants and displays relevant departments.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays participant list records"
+  },
+  {
+    "metric": "2.1.2a Delete Participant - User Path Accessibility and Secondary Confirmation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for participant management, and after entering, is there an option to delete participants?\n2. **Arrange:** Ensure a participant named 'Tester' exists in system.\n3. **Act:** Select main menu to enter participant management, then select submenu to delete participant. Input 'Tester', during secondary confirmation input 'y' or 'yes'.\n4. **Assert:** Observe whether program prompts \"Successfully deleted participant: Tester\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays successful participant deletion, includes secondary confirmation step"
+  },
+  {
+    "metric": "2.1.3a Modify Participant Weight - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for participant management, and after entering, is there an option to modify participant weight?\n2. **Arrange:** Ensure a participant named 'Zhang San' exists in system, record current weight.\n3. **Act:** Select main menu to enter participant management, then select submenu to modify weight. Input 'Zhang San', modify weight to '3.0'.\n4. **Assert:** Observe whether program prompts \"Successfully modified Zhang San's weight to 3.0\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.3a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays successful weight modification"
+  },
+  {
+    "metric": "2.1.3b Modify Participant Weight - Weight Value Validation (Lower Limit)",
+    "description": "1. **Act:** In modify weight function, attempt to input weight value '0.05' for any participant.\n2. **Assert:** Observe whether program displays Chinese error prompt \"Weight value must be between 0.1-10.0\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.3b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program displays Chinese error prompt"
+  },
+  {
+    "metric": "2.1.3c Modify Participant Weight - Weight Value Validation (Upper Limit)",
+    "description": "1. **Act:** In modify weight function, attempt to input weight value '15.0' for any participant.\n2. **Assert:** Observe whether program displays Chinese error prompt \"Weight value must be between 0.1-10.0\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.3c.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program displays Chinese error prompt"
+  },
+  {
+    "metric": "2.1.4a Save Participant - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for participant management, and after entering, is there an option to save participant list to file?\n2. **Act:** Select main menu to enter participant management, then select submenu to save participant list.\n3. **Assert:** Observe whether program prompts successful save, and check whether `participants.csv` file generated in project `data` directory.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.1.4a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program prompts successful save"
+  },
+  {
+    "metric": "2.2.1a Create Multiple Lottery Rounds - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for rule configuration, and after entering, is there an option to add lottery rounds?\n2. **Arrange:** Prepare round information: name 'First Prize', number of winners '1', participation scope 'Specified Department', select 'Technical Department'.\n3. **Act:** Select main menu to enter rule configuration, then select submenu to add round. Follow prompts to input round name 'First Prize', number of winners '1', select participation scope as 'Specified Department' and choose 'Technical Department'.\n4. **Assert:** Observe whether program prompts \"Successfully added round: First Prize\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.2.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program prompts successful addition"
+  },
+  {
+    "metric": "2.2.1b Create Multiple Lottery Rounds - Round Name and Number Configuration",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for rule configuration, and after entering, is there an option to view lottery round list?\n2. **Act:** After completing metric 2.2.1a operations, select rule configuration submenu to view round list.\n3. **Assert:** Observe whether list contains record with name 'First Prize' and number of winners '1'.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.2.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program successfully displays round list"
+  },
+  {
+    "metric": "2.2.2a Special Weight Configuration - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for rule configuration, and after entering, is there an option to add lottery rounds?\n2. **Arrange:** Prepare round information: name 'Weight Test', number of winners '1', participation scope 'All Participants', any lottery mode. When asked whether to configure special weights, select 'yes'.\n3. **Act:** Select main menu to enter rule configuration, then select submenu to add round. Input basic information as prompted, when configuring special weights, select one participant (e.g., 'Wang Wu'), set weight coefficient to '3.0'.\n4. **Assert:** Observe whether program prompts \"Successfully added round: Weight Test\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.2.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program successfully configures special weight coefficient"
+  },
+  {
+    "metric": "2.2.3a Preview Lottery Rules - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for rule configuration, and after entering, is there an option to preview lottery rules?\n2. **Act:** Select main menu to enter rule configuration, then select submenu to preview lottery rules.\n3. **Assert:** Observe whether terminal outputs detailed information for all configured rounds, including name, number of winners, scope, mode, and special weights.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.2.3a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully previews detailed information of all configured rounds"
+  },
+  {
+    "metric": "2.2.4a Save Rule Configuration - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for rule configuration, and after entering, is there an option to save configuration to file?\n2. **Act:** Select main menu to enter rule configuration, then select submenu to save configuration.\n3. **Assert:** Observe whether program prompts successful save, and check whether `lottery_config.json` file generated in project `data` directory.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.2.4a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program prompts successful save"
+  },
+  {
+    "metric": "2.3.1 Alias Method Algorithm Implementation",
+    "description": "1. **Act:** Check `AliasMethod` class implementation in `src/alias_method.py` file.\n2. **Assert:** Through code review confirm constructor implements O(n) preprocessing, `sample` method implements O(1) sampling.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_alias_method.py::test_alias_method_complexity",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.3.2a Execute Single Lottery Round - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option to execute lottery, and after entering, is there an option to execute single lottery round?\n2. **Arrange:** Ensure at least one lottery round configured (such as 'Quarterly Star').\n3. **Act:** Select main menu to enter execute lottery, then select submenu to execute single round. Select 'Quarterly Star' round to execute.\n4. **Assert:** Observe whether program successfully executes and outputs lottery result.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.3.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully executes single lottery round and outputs result"
+  },
+  {
+    "metric": "2.3.2b Execute Single Lottery Round - Weight Application Accuracy",
+    "description": "1. **Arrange:** Ensure system has one participant with weight significantly higher than others (e.g., 'Zhao Liu' weight 2.0, others 1.0).\n2. **Act:** Multiple times execute lottery round targeting this participant (e.g., 10 times or more).\n3. **Assert:** Count this participant's winning frequency, should be significantly higher than others, conforming to weighted probability distribution.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_lottery_engine.py::test_weighted_probability",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.3.3a Execute All Rounds - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option to execute lottery, and after entering, is there an option to execute all rounds?\n2. **Arrange:** Ensure multiple lottery rounds configured (such as 'Quarterly Star' and 'Lucky Prize').\n3. **Act:** Select main menu to enter execute lottery, then select submenu to execute all rounds.\n4. **Assert:** Observe whether program executes all rounds in order and outputs each round's result.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.3.3a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully executes all lottery rounds and outputs results"
+  },
+  {
+    "metric": "2.3.3b Execute All Rounds - No Repeat Winning Logic",
+    "description": "1. **Arrange:** Configure two-round lottery: first round draws 1 person with mode 'No Repeat Winning', second round draws all participants.\n2. **Act:** Execute all rounds.\n3. **Assert:** Observe second round's candidate list, confirm first round's winner not included.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_lottery_engine.py::test_no_repeat_logic",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.1a Historical Record Query - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for result query?\n2. **Act:** Select main menu for result query.\n3. **Assert:** Observe whether program displays query condition menu (such as query by round name, participant name, date range).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.4.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Enters query interface and displays query options"
+  },
+  {
+    "metric": "2.4.1b Historical Record Query - Query by Round Name",
+    "description": "1. **Arrange:** Ensure lottery record named 'Star of the Quarter' exists.\n2. **Act:** In result query interface, select query by round name, input 'Lucky Prize'.\n3. **Assert:** Observe whether returned results only contain 'Lucky Prize' records.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.4.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Can accurately query by round name and return correct results"
+  },
+  {
+    "metric": "2.4.1c Historical Record Query - Query by Participant Name",
+    "description": "1. **Arrange:** Ensure 'Zhang San' winning record exists.\n2. **Act:** In result query interface, select query by participant name, input 'Zhang San'.\n3. **Assert:** Observe whether returned results contain all 'Zhang San' winning records.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.4.1c.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Can accurately query by participant name and return correct results"
+  },
+  {
+    "metric": "2.4.1d Historical Record Query - Query by Date Range",
+    "description": "1. **Arrange:** Ensure lottery records exist spanning different dates.\n2. **Act:** In result query interface, select query by date range, input date range that includes some records.\n3. **Assert:** Observe whether returned results only contain records within specified date range.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.4.1d.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Can accurately query by date range and return correct results"
+  },
+  {
+    "metric": "2.5.1a Input Validation - Number Range Validation",
+    "description": "1. **Act:** Where number of winners input required (such as when adding round), input number outside valid range (such as '999').\n2. **Assert:** Observe whether system provides corresponding Chinese error prompt, e.g., \"Number of winners must be between 1-X\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.5.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Number range input effectively validated, and provides clear, accurate Chinese prompt"
+  },
+  {
+    "metric": "2.5.2a Secondary Confirmation - Delete Round Operation",
+    "description": "1. **Arrange:** Ensure at least one lottery round configured.\n2. **Act:** Attempt to execute delete round, at confirmation prompt input 'y' or 'yes'.\n3. **Assert:** Observe whether program deletes round.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs_for_test_2.5.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Has secondary confirmation step, and program correctly deletes round"
+  }
+]

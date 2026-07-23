@@ -1,0 +1,352 @@
+[
+  {
+    "metric": "0.1 Program Startup and Basic Operation",
+    "description": "1. **Act:** Execute `python code/main.py 2` in the project root directory.\n2. **Assert:** Observe whether the program starts successfully without reporting errors or crashing, check if there are relevant output messages indicating successful startup.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program starts successfully"
+  },
+  {
+    "metric": "1.1 Host Device Port Allocation",
+    "description": "1. **Act:** After system startup, view program output and execute status queries.\n2. **Assert:** Verify whether all host device ports strictly follow the format.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Host device port format correct"
+  },
+  {
+    "metric": "1.2 Device Type Identification",
+    "description": "1. **Act:** After starting system, view program output.\n2. **Assert:** Confirm system can correctly identify and label devices, check device initialization process type identification output.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Device type identification correct"
+  },
+  {
+    "metric": "2.1a Frame Structure Field Completeness",
+    "description": "1. **Act:** View frame structure definitions in code.\n2. **Assert:** Verify whether frame structure contains all 8 required fields: frame locator (8 bits), source port (16 bits), session status (2 bits), response flag (1 bit), sequence number (1 bit), data segment (32 bits), destination port (16 bits), CRC check (16 bits).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_frame_structure.py::test_frame_fields_completeness",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.1b FrameBuilder and FrameParser Class Implementation",
+    "description": "1. **Act:** Check whether FrameBuilder and FrameParser classes exist in code.\n2. **Assert:** Verify whether these two classes provide complete processing functions such as frame construction, validation, parsing.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_frame_classes.py::test_frame_builder_parser_existence",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.2a CRC-16 Algorithm Parameter Configuration",
+    "description": "1. **Act:** View CRC-16 check algorithm implementation in code.\n2. **Assert:** Verify whether uses generator polynomial 0xA001, initial value 0xFFFF.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_crc16.py::test_crc16_parameters",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.2b CRC-16 Check Function Verification",
+    "description": "1. **Arrange:** Prepare test data for CRC check.\n2. **Act:** Run CRC check function or view related test cases.\n3. **Assert:** Verify whether check code calculation function works normally.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_crc16.py::test_crc16_calculation",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/crc_test_data.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.3a SwitchTable Class Basic Implementation",
+    "description": "1. **Act:** Check whether SwitchTable class exists in code.\n2. **Assert:** Verify whether SwitchTable class implements basic port address table data structure, format as dict[local_port, dict[remote_port, lifetime]].",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_switch_table.py::test_switch_table_structure",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.3b Switch Address Learning Mechanism",
+    "description": "1. **Act:** View address learning implementation in switch code.\n2. **Assert:** Verify whether implemented functions of automatically extracting source address, updating port address table, setting lifetime to REMOTE_MAX_LIFE.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_switch_learning.py::test_address_learning_mechanism",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.3c Switch Lifetime Management",
+    "description": "1. **Act:** View lifetime processing logic in switch code.\n2. **Assert:** Verify whether implemented mechanism of decrementing all entry lifetimes by 1 during each frame processing, automatically deleting expired entries.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_switch_lifetime.py::test_lifetime_management",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.4a RouterTable Class Data Structure",
+    "description": "1. **Act:** View RouterTable class implementation in code.\n2. **Assert:** Verify whether contains WAN environment (router_id -> Path structure) and LAN environment (host_id -> exit_port) two-level mapping structure.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_router_table.py::test_router_table_structure",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "2.4b Dijkstra Algorithm Path Fields",
+    "description": "1. **Act:** View Path structure in Dijkstra algorithm implementation.\n2. **Assert:** Verify whether Path structure contains next (next hop), exit (exit port), cost (cost), optimized (optimization status) all 4 fields.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_dijkstra.py::test_path_structure_fields",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "3.1 Text Data UTF-8 Encoding Support",
+    "description": "1. **Pre-check (User Path):** After starting system, whether exists clear text message sending function entry?\n2. **Arrange:** Prepare test text containing Chinese, English, punctuation symbols.\n3. **Act:** Send test text through system.\n4. **Assert:** Verify whether receiving end can correctly display all characters, no garbled text phenomenon.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/utf8_test_text.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Text data UTF-8 encoding support correct"
+  },
+  {
+    "metric": "3.2 PNG Image File Transmission Function",
+    "description": "1. **Pre-check (User Path):** After starting system, whether exists clear image file sending function entry?\n2. **Arrange:** Prepare a PNG format test image file.\n3. **Act:** Send test image through system.\n4. **Assert:** Verify whether receiving end can completely receive image file, file size and content consistent with original file.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": "evaluation/inputs/inputs_for_test_3.2.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/test_image.png"
+    ],
+    "expected_output_files": null,
+    "expected_output": "PNG image file transmission function correct"
+  },
+  {
+    "metric": "4.1a Buffer Size Configuration",
+    "description": "1. **Act:** View buffer configuration in code.\n2. **Assert:** Verify whether defined INTER_NE_BUFSIZE (inter-network-element communication buffer) and IN_NE_BUFSIZE (intra-network-element communication buffer) two buffer size constants.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_buffer_config.py::test_buffer_size_constants",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "4.1b Send Rate Control Mechanism",
+    "description": "1. **Act:** View send rate control implementation in code.\n2. **Assert:** Verify whether implemented maximum send interval setting, preventing sender speed too fast mechanism.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_flow_control.py::test_send_rate_control",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "5.1 Interactive Console Function",
+    "description": "1. **Pre-check (User Path):** After starting system, whether provides interactive command line interface?\n2. **Act:** Try input query commands (such as viewing routing table, device status, etc.).\n3. **Assert:** Verify whether system can respond to commands and provide corresponding information output.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": "evaluation/inputs/inputs_for_test_5.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Interactive console function correct"
+  },
+  {
+    "metric": "6.1 Bit Stuffing Algorithm Implementation",
+    "description": "1. **Act:** View bit stuffing algorithm implementation in code.\n2. **Assert:** Verify whether implemented detecting 5 consecutive '1's and inserting '0' bit stuffing algorithm, ensuring frame locator uniqueness.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_bit_stuffing.py::test_bit_stuffing_algorithm",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "6.2a Stop-and-Wait ARQ-ACK or NAK Mechanism",
+    "description": "1. **Act:** View ACK/NAK confirmation mechanism implementation in code.\n2. **Assert:** Verify whether implemented ACK confirmation and NAK denial response mechanism.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_arq.py::test_ack_nak_mechanism",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "6.2b Stop-and-Wait ARQ-Sequence Number Alternation",
+    "description": "1. **Act:** View sequence number processing implementation in code.\n2. **Assert:** Verify whether implemented 0/1 alternating sequence number mechanism, preventing duplicate frame reception.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_arq.py::test_sequence_number_alternation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "7.1 Phased Configuration File Support",
+    "description": "1. **Act:** Check config directory whether exists different phase configuration files, try using parameters 2, 3, 4 to start system.\n2. **Assert:** Verify whether system can load corresponding phase configuration files according to different parameters.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/code/main.py 2",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/code/main.py 3",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/code/main.py 4",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Phased configuration file support correct"
+  },
+  {
+    "metric": "8.1a Switch Unicast Forwarding",
+    "description": "1. **Act:** View forwarding decision logic in switch code.\n2. **Assert:** Verify whether implemented function of performing unicast forwarding based on destination address query port address table.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_switch_forwarding.py::test_unicast_forwarding",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "8.1b Switch Broadcast Forwarding",
+    "description": "1. **Act:** View broadcast processing logic in switch code.\n2. **Assert:** Verify whether implemented function of forwarding broadcast data to all physical layer ports except receiving port.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_switch_forwarding.py::test_broadcast_forwarding",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  },
+  {
+    "metric": "8.1c Switch Flood Forwarding",
+    "description": "1. **Act:** View unknown address processing logic in switch code.\n2. **Assert:** Verify when destination address unknown, whether implemented function of performing flood forwarding to all ports (except receiving port).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_switch_forwarding.py::test_flooding_forwarding",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passed, and if an ImportError occurs, a score of zero will be given."
+  }
+]

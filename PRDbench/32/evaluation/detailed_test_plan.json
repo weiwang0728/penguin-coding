@@ -1,0 +1,182 @@
+[
+  {
+    "metric": "1.1.1a Program startup and menu display",
+    "description": "1. **Act:** Run `python main.py` in the src directory.\n2. **Assert:** Observe whether the program starts successfully and displays information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program starts correctly and displays the main menu"
+  },
+  {
+    "metric": "1.1.1b Crawling quantity limit function",
+    "description": "1. **Arrange:** Prepare a valid seed URL and database path.\n2. **Act:** After starting the program, select the crawler function in the interactive menu, enter the seed URL, database path, and crawling quantity limit (set to 5).\n3. **Assert:** Observe the crawler's output or the final database records. Verify that the total number of web pages crawled and saved to the database is exactly 5.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The number of records in the database matches the specified limit"
+  },
+  {
+    "metric": "1.1.1c Progress display and logs",
+    "description": "1. **Act:** Select the crawler function in the interactive menu, set the crawl count to 10 pages, and start the crawler.\n2. **Assert:** During crawling, the console should display real-time progress information, such as \"Crawled 3/10 pages...\". Also, check whether the `logs/spider.log` file exists and contains key information about the crawling process (such as start, end, encountered errors, etc.).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.1c.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Progress information is displayed correctly on the console"
+  },
+  {
+    "metric": "1.1.1d Breadth-first and URL filtering",
+    "description": "1. **Arrange:** Prepare a test website structure containing duplicate links, invalid links (404), and valid sublinks.\n2. **Act:** Select the crawler function in the interactive menu, enter the test website's URL, and start crawling.\n3. **Assert:** Check the crawl log and database. Verify whether the crawler crawls in level order (breadth-first). Verify that invalid links are skipped and not recorded. Verify that duplicate URLs are only crawled once.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.1d.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "URLs are processed in breadth-first order, no duplicates, invalid links are correctly filtered"
+  },
+  {
+    "metric": "1.1.1e Specific content extraction",
+    "description": "1. **Arrange:** Prepare an HTML page containing `<article>` and `<p>` tags, and a page that does not contain these tags.\n2. **Act:** Select the crawler function in the interactive menu, and separately enter the URLs of these two pages to crawl.\n3. **Assert:** Check the database and verify whether the content of the first page is correctly extracted and saved. Verify whether the second page is treated as a blank document and ignored.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.1e.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_test.db"
+    ],
+    "expected_output": "Valid content is extracted correctly, blank documents are ignored"
+  },
+  {
+    "metric": "1.2.1 Database and table structure creation",
+    "description": "1. **Arrange:** Create a temporary database file path.\n2. **Act:** Directly call the DataBase class constructor and the create_tables method.\n3. **Assert:** Verify whether the database file is created successfully, and that there are two tables named `doc` and `word`, and check whether the table structures are correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_database_creation.py::TestDatabaseCreation::test_database_table_creation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, database file and table structure creation function is normal"
+  },
+  {
+    "metric": "1.2.2 Chinese word segmentation and inverted index",
+    "description": "1. **Arrange:** In the interactive menu, select the crawler function and crawl a page that contains clear Chinese sentences (such as \"Welcome to the world of search engines\").\n2. **Act:** After crawling is complete, connect to the database.\n3. **Assert:** Query the segmentation results in the `word` table (such as \"Welcome\", \"to\", \"search engine\", \"world\"), and these entries should be found. Each entry should be associated with the corresponding document ID and its position in the document.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_cctv.db"
+    ],
+    "expected_output": "Chinese content is correctly segmented and indexed"
+  },
+  {
+    "metric": "1.2.3 Incremental indexing",
+    "description": "1. **Arrange:** In the interactive menu, select the crawler function and run the crawler once to build the initial database.\n2. **Act:** Using the same database path, select the crawler function again in the interactive menu, and enter a new seed URL.\n3. **Assert:** Check the database to verify that the old data still exists, and the newly crawled content has been successfully appended to the database, with document IDs and indexes updated accordingly.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.3_1.in"
+      },
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.3_2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_python.db"
+    ],
+    "expected_output": "New and old data coexist, indexes are updated correctly"
+  },
+  {
+    "metric": "1.3.1a Command line search function - successful case",
+    "description": "1. **Arrange:** Use the crawler to pre-build a database file containing specific words (such as \"database\").\n2. **Act:** Select the search function in the interactive menu, enter the search keyword \"database\" and database path.\n3. **Assert:** The program should output a list containing at least one result related to \"database\", with each result containing a URL and title.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Search results returned in correct format"
+  },
+  {
+    "metric": "1.3.1b Command line search function - no results case",
+    "description": "1. **Arrange:** Prepare a pre-built database file.\n2. **Act:** In the interactive menu, select the search function, enter an extremely unlikely random keyword (such as asdfqwerzxcv) and the database path.\n3. **Assert:** The program should clearly output a prompt message, such as \"No results found\", rather than returning an empty list or throwing an error.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays no results prompt"
+  },
+  {
+    "metric": "1.3.1c Multi-keyword search and score accumulation",
+    "description": "1. **Arrange:** Pre-build a database where Document A contains both \"Python\" and \"Web\", and Document B contains only \"Python\".\n2. **Act:** In the interactive menu, select the search function, enter multiple keywords \"Python Web\" and the database path.\n3. **Assert:** In the returned result list, Document A should be ranked ahead of Document B, reflecting the effect of cumulative scores for multiple keywords.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.1c.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Multi-keyword search results are ranked correctly by relevance"
+  },
+  {
+    "metric": "2.1.1 Database clear function",
+    "description": "1. **Arrange:** Run the crawler to fill some data into the database.\n2. **Act:** In the interactive menu, select the \"Clear Database\" function and enter 'y' at the confirmation prompt.\n3. **Assert:** The database file is cleared and reset, and its state should be consistent with a standard empty database file.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_empty.db"
+    ],
+    "expected_output": null
+  }
+]

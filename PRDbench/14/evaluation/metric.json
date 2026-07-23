@@ -1,0 +1,122 @@
+[
+  {
+    "metric": "0.1 Program Launch and Help Command",
+    "verification_method": "1. **Execute (Act):** In the shell, execute `python -m golf_analyzer --help`.\n2. **Assert:** Observe if the program exits normally and if the help text clearly includes the four main commands `template`, `collect`, `analyze`, `report` and their basic descriptions.",
+    "scoring_criteria": "2 points: The program executes successfully, clearly listing all four main commands with descriptions. 1 point: The program executes successfully, but the help information lacks 1-2 main commands, or the descriptions are unclear. 0 points: The program crashes, reports an error when the command is executed, or more than two main commands are missing.",
+    "weight": 5
+  },
+  {
+    "metric": "2.1.1a Questionnaire Template Creation",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer --help`, is there a clear `template` subcommand, and in the output of `python -m golf_analyzer template --help`, is there a clear `create` subcommand?\n2. **Arrange:** Prepare a template name '2024 Spring Survey'.\n3. **Execute (Act):** Run `python -m golf_analyzer template create`, and enter the template name and description according to the interactive prompts.\n4. **Assert:** Run `python -m golf_analyzer template list` and check if the list output contains the entry named '2024 Spring Survey'.",
+    "scoring_criteria": "2 points: Pre-validation passed, and the template is created successfully following the interactive guide and displayed correctly in the list. 1 point: Pre-validation passed, but the interaction process prompt is unclear, or the list display after creation is incorrect. 0 points: Pre-validation failed, or unable to create the template through the interactive process.",
+    "weight": 4
+  },
+  {
+    "metric": "2.1.1b Add Question (Single Choice)",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer template --help`, is there a clear `add-question` subcommand?\n2. **Arrange:** Ensure there is an existing template named '2024 Spring Survey'.\n3. **Execute (Act):** Run `python -m golf_analyzer template add-question --template-name '2024 Spring Survey' --module 'Basic Personal Information' --type 'Single Choice' --title 'What is your gender?' --options 'Male,Female'`.\n4. **Assert:** Run `python -m golf_analyzer template show --template-name '2024 Spring Survey'`, and check if the output contains the newly added question of 'Single Choice' type, and all attributes (module, title, options) are correct.",
+    "scoring_criteria": "2 points: Pre-validation passed, and the single choice question is added successfully with all attributes correct. 1 point: Pre-validation passed, but there are errors in the question attributes after adding. 0 points: Pre-validation failed, or unable to add a single choice question.",
+    "weight": 1.25
+  },
+  {
+    "metric": "2.1.1c Add Question (Multiple Choice)",
+    "verification_method": "1. **Arrange:** Ensure there is an existing template named '2024 Spring Survey'.\n2. **Execute (Act):** Run `python -m golf_analyzer template add-question --template-name '2024 Spring Survey' --module 'Current Consumption Status' --type 'Multiple Choice' --title 'What types of golf courses do you frequently visit?' --options 'Public, Membership, Practice'`.\n3. **Assert:** Run `python -m golf_analyzer template show --template-name '2024 Spring Survey'`, and check if the output contains the newly added question of 'Multiple Choice' type, and all attributes are correct.",
+    "scoring_criteria": "2 points: Successfully added multiple choice questions with all attributes correct. 1 point: There are errors in question attributes after adding. 0 points: Unable to add multiple choice questions.",
+    "weight": 1.25
+  },
+  {
+    "metric": "2.1.1d Add Question (Scale)",
+    "verification_method": "1. **Arrange:** Ensure there is an existing template named '2024 Spring Survey'.\n2. **Execute (Act):** Run `python -m golf_analyzer template add-question --template-name '2024 Spring Survey' --module 'Travel Motivation' --type 'Scale' --title 'How much does price affect you?' --options '1,5'`.\n3. **Assert:** Run `python -m golf_analyzer template show --template-name '2024 Spring Survey'`, and check if the output contains the newly added question of 'Scale' type, with the correct range.",
+    "scoring_criteria": "2 points: Successfully added a scale question with all attributes correct. 1 point: There are errors in question attributes after adding. 0 points: Unable to add a scale question.",
+    "weight": 1.25
+  },
+  {
+    "metric": "2.1.1e Add Question (Open Text)",
+    "verification_method": "1. **Arrange:** Ensure there is an existing template named '2024 Spring Survey'.\n2. **Execute (Act):** Run `python -m golf_analyzer template add-question --template-name '2024 Spring Survey' --module 'Basic Personal Information' --type 'Open Text' --title 'What is your occupation?'`.\n3. **Assert:** Run `python -m golf_analyzer template show --template-name '2024 Spring Survey'`, and check if the output contains the newly added, open text type question.",
+    "scoring_criteria": "2 points: Successfully added an open text question. 1 point: Errors in question attributes after adding. 0 points: Unable to add an open text question.",
+    "weight": 1.25
+  },
+  {
+    "metric": "2.1.1f Questionnaire Template Import (CSV)",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer template --help`, is there a clear `import` subcommand?\n2. **Arrange:** Create a file `expert_questions.csv` with columns 'module', 'type', 'title', 'options' and at least 3 rows of question data.\n3. **Execute (Act):** Run `python -m golf_analyzer template import --file-path expert_questions.csv --template-name 'Expert Template'`.\n4. **Assert:** Run `python -m golf_analyzer template show --template-name 'Expert Template'`, and check if the number of questions and content output matches the CSV file exactly.",
+    "scoring_criteria": "2 points: Pre-validation passed, and all questions are imported completely and correctly. 1 point: Pre-validation passed, but there is data loss (fewer than 3 questions imported) or content error after import. 0 points: Pre-validation failed, or the import functionality completely failed.",
+    "weight": 4
+  },
+  {
+    "metric": "2.1.2b Input Validation (Range Check)",
+    "verification_method": "1. **Arrange:** In the `collect` interaction process, locate a scale question (e.g., range 1-5).\n2. **Execute (Act):** When prompted to input an answer, first input an out-of-bounds value '6'.\n3. **Assert:** Observe if the program rejects the input and prints a clear error prompt (e.g., 'Input must be between 1 and 5'), then requests for re-entry, rather than accepting the invalid value or crashing.",
+    "scoring_criteria": "2 points: The program accurately identifies out-of-bounds values, provides a clear error prompt and requests re-entry. 1 point: It can identify out-of-bounds values but the prompt is unclear, or re-entry is not requested. 0 points: No response to out-of-bounds values, direct acceptance or program crashes.",
+    "weight": 2
+  },
+  {
+    "metric": "2.1.2c Input Validation (Required Field Check)",
+    "verification_method": "1. **Arrange:** In the `collect` interaction process, locate a required question (default all questions are required).\n2. **Execute (Act):** When prompted to enter an answer, press the enter key directly (inputting an empty value).\n3. **Assert:** Observe if the program rejects the input and prints a clear error prompt (e.g., 'This is a required field'), then requests for re-entry, rather than accepting empty values or crashing.",
+    "scoring_criteria": "2 points: The program accurately identifies empty input, provides a clear error prompt and requests re-entry. 1 point: It can identify empty input but the prompt is unclear, or re-entry is not requested. 0 points: No response to empty input, direct acceptance or program crashes.",
+    "weight": 2
+  },
+  {
+    "metric": "2.1.3a Data Export (CSV)",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer --help`, is there a `data` command, and in the output of `python -m golf_analyzer data --help`, is there an `export` command?\n2. **Arrange:** Ensure there are at least 2 collected data entries in the database.\n3. **Execute (Act):** Run `python -m golf_analyzer data export --output-path collected_data.csv`.\n4. **Assert:** Check if the file `collected_data.csv` is created, use the `head` command to check the file and confirm it is UTF-8 encoded, and the field order meets PRD requirements.",
+    "scoring_criteria": "2 points: Pre-validation passed, and successfully exported a CSV file containing all data, with completely correct format. 1 point: Pre-validation passed, but the exported file has format errors (encoding, field order) or incomplete data. 0 points: Pre-validation failed, or export function failed.",
+    "weight": 4
+  },
+  {
+    "metric": "2.1.3b Data Anonymization",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer data export --help`, is there an option description like `--anonymize`?\n2. **Arrange:** Ensure there are records in the database containing personal information (such as 'name').\n3. **Execute (Act):** Run `python -m golf_analyzer data export --anonymize --output-path anonymized_data.csv`.\n4. **Assert:** Check `anonymized_data.csv` file, confirm that the data in the privacy information column has been masked (e.g., 'Zhang San' -> 'Zhang**'), while other data remains unchanged.",
+    "scoring_criteria": "2 points: Pre-validation passed, and the specified fields are effectively anonymized. 1 point: Pre-validation passed, but anonymization is ineffective or wrongly modifies other data. 0 points: Pre-validation failed, or no anonymization function.",
+    "weight": 3
+  },
+  {
+    "metric": "2.2.1 Descriptive Statistical Analysis - Table and Chart Output",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer analyze --help`, is there a `descriptive` subcommand?\n2. **Arrange:** Prepare a `sample_data.csv` containing at least 10 records.\n3. **Execute (Act):** Run `python -m golf_analyzer analyze descriptive --data-path sample_data.csv --output-dir reports/descriptive`.\n4. **Assert:** Check the `reports/descriptive` directory to see if table files (.txt/.md) and at least 2 chart files (.png) are generated, containing at least 3 statistical measures (mean, standard deviation, proportion) with corresponding bar and pie charts as required in the PRD.",
+    "scoring_criteria": "2 points: Pre-validation passed, successfully generated tables containing all 3 specified statistics and 2 or more types of chart files. 1 point: Pre-validation passed, but the generated table lacks 1-2 statistics or only one type of chart file was generated. 0 points: Pre-validation failed, unable to generate tables or no chart files generated.",
+    "weight": 5.0
+  },
+  {
+    "metric": "2.2.2a Factor Analysis (Load Matrix Output)",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer analyze --help`, is there a `factor` subcommand?\n2. **Arrange:** Prepare a `sample_data.csv` containing scale questions.\n3. **Execute (Act):** Run `python -m golf_analyzer analyze factor --data-path sample_data.csv --questions 'Q1,Q2,Q3,Q4,Q5' --output-dir reports/factor`.\n4. **Assert:** Check the `reports/factor` directory to see if a result file containing the factor load matrix (e.g., `factor_loadings.csv`) is generated.",
+    "scoring_criteria": "2 points: Pre-validation passed, and successfully generated a readable factor loadings matrix file. 1 point: Pre-validation passed, but the generated file content is empty or incorrectly formatted. 0 points: Pre-validation failed, or unable to generate file.",
+    "weight": 2
+  },
+  {
+    "metric": "2.2.2b Factor Analysis (Factor Score Output)",
+    "verification_method": "1. **Arrange:** Use the execution results from the previous step.\n2. **Execute (Act):** No additional execution needed.\n3. **Assert:** Check the `reports/factor` directory to see if a result file containing factor scores for each sample (e.g., `factor_scores.csv`) is generated.",
+    "scoring_criteria": "2 points: Successfully generated a file containing each sample's scores. 1 point: The generated file content is incomplete or incorrectly formatted. 0 points: No factor score file generated.",
+    "weight": 2
+  },
+  {
+    "metric": "2.2.5 User Persona Generation",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer --help`, is there a `persona` command, and in the output of `python -m golf_analyzer persona --help`, is there a `generate` command?\n2. **Arrange:** Prepare a clustering analysis result file `reports/cluster/results.json`.\n3. **Execute (Act):** Run `python -m golf_analyzer persona generate --from-cluster-results reports/cluster/results.json --output-dir reports/personas`.\n4. **Assert:** Check the `reports/personas` directory to see if a JSON persona file is generated for each cluster, and each file contains at least 4 dimensions mentioned in the PRD (demographic characteristics, primary motivation, consumption tendencies, destination preferences).",
+    "scoring_criteria": "2 points: Pre-validation passed, and the generated persona JSON contains all four or more dimensions. 1 point: Pre-validation passed, but the generated persona JSON contains only 2-3 dimensions. 0 points: Pre-validation failed, or the generated persona JSON contains fewer than 2 dimensions.",
+    "weight": 5
+  },
+  {
+    "metric": "2.3.2b Full Report Export (Word)",
+    "verification_method": "1. **Arrange:** Prepare a `sample_data.csv`.\n2. **Execute (Act):** Run `python -m golf_analyzer report generate-full --data-path sample_data.csv --format word --output-path full_report.docx`.\n3. **Assert:** Check if the `full_report.docx` file is successfully generated and the file size is not zero.",
+    "scoring_criteria": "2 points: Successfully generated a Word report with valid content. 1 point: The generated Word file is empty or corrupted. 0 points: Command execution failed.",
+    "weight": 3
+  },
+  {
+    "metric": "2.3.2c Full Report Export (Markdown)",
+    "verification_method": "1. **Arrange:** Prepare a `sample_data.csv`.\n2. **Execute (Act):** Run `python -m golf_analyzer report generate-full --data-path sample_data.csv --format markdown --output-path full_report.md`.\n3. **Assert:** Check if the `full_report.md` file is successfully generated and the file size is not zero.",
+    "scoring_criteria": "2 points: Successfully generated a Markdown report with valid content. 1 point: The generated Markdown file is empty. 0 points: Command execution failed.",
+    "weight": 2
+  },
+  {
+    "metric": "2.3.3a Permission Control (Role)",
+    "verification_method": "1. **Pre-Validation (User Path):** In the output of `python -m golf_analyzer --help`, is there an explanation of `--role` option?\n2. **Arrange:** Prepare a `sample_data.csv`.\n3. **Execute (Act):** Run a command requiring analyst permissions, but using the regular user role: `python -m golf_analyzer --role 'Regular User' analyze descriptive --data-path sample_data.csv`.\n4. **Assert:** Observe if the program refuses to execute and returns a clear insufficient permission error message.",
+    "scoring_criteria": "2 points: Pre-validation passed, and permission control fully meets expectations with clear prompts. 1 point: Pre-validation passed, but exits without any prompt, or the prompt is unclear. 0 points: Pre-validation failed, or permission control is ineffective (regular user can execute analysis command).",
+    "weight": 2
+  },
+  {
+    "metric": "2.3.3b Log Recording",
+    "verification_method": "1. **Arrange:** Delete existing log files (e.g., `activity.log`).\n2. **Execute (Act):** Execute any successful command, e.g., `python -m golf_analyzer template list`.\n3. **Assert:** Check if a log file is generated in the project root or specified log directory, and the file records the recent operation.",
+    "scoring_criteria": "2 points: Successfully generated a log file and recorded the operation information. 1 point: Log file generated but content is empty or formatted incorrectly. 0 points: No log file generated.",
+    "weight": 1
+  },
+  {
+    "metric": "3.0 Performance Requirements",
+    "verification_method": "1. **Arrange:** Prepare a survey data file `large_data.csv` containing 5000 records.\n2. **Execute (Act):** Execute the timing command `time python -m golf_analyzer report generate-full --data-path large_data.csv --format markdown`.\n3. **Assert:** Observe and record the real time required for the command execution.",
+    "scoring_criteria": "2 points: The complete analysis and report generation process finishes within 30 seconds. 1 point: Completion time is between 30.01 and 60 seconds. 0 points: Completion time exceeds 60 seconds or fails due to performance issues.",
+    "weight": 3
+  }
+]

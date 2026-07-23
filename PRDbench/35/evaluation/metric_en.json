@@ -1,0 +1,192 @@
+[
+  {
+    "metric": "0.1 System Startup and Feature Availability",
+    "description": "1. **Act:** Execute the `cd src && python main.py` command in the shell. 2. **Assert:** Observe whether the program starts successfully and the main interface is fully initialized as shown in the console output.",
+    "expected_output": "2 points: Program starts successfully and loads main interface correctly. 1 point: Program starts but with warning messages or incomplete interface loading. 0 points: Program fails to start or crashes immediately after startup."
+  },
+  {
+    "metric": "2.1.1 User Login - Username Password Authentication",
+    "description": "1. **Arrange:** Ensure there is a user in the database, for example, username 'admin' and password '123456'. 2. **Act:** Enter username 'admin' and password '123456' on the login page and click the login button. 3. **Assert:** Check whether you enter the main interface successfully and the interface displays the current user as 'admin'.",
+    "expected_output": "2 points: Logging in with correct username and password successfully enters the main interface and shows correct user info. 1 point: Able to log in but user info is incomplete or formatted incorrectly. 0 points: Unable to log in or no feedback after login."
+  },
+  {
+    "metric": "2.1.2 User Login - Incorrect Password Handling",
+    "description": "1. **Arrange:** Ensure there is a user in the database, for example, username 'admin'. 2. **Act:** Enter username 'admin' and incorrect password 'wrongpassword' on the login page and click the login button. 3. **Assert:** Check whether the interface displays a password error prompt and remains on the login page.",
+    "expected_output": "2 points: When incorrect password is entered, a clear password error prompt is displayed and stays on the login page. 1 point: Password error is shown but prompt is unclear. 0 points: No response to incorrect password or directly enters main interface."
+  },
+  {
+    "metric": "2.1.3 User Logout",
+    "description": "1. **Arrange:** First perform a successful login to enter the main interface. 2. **Act:** Click the logout button or select the logout menu item on the interface. 3. **Assert:** Check whether it returns to the login page successfully. Then try to access the main interface directly, and it should be redirected to the login page.",
+    "expected_output": "2 points: Can log out successfully, return to login page, and cannot access main interface functions directly. 1 point: Can perform logout operation but redirect is not fully effective. 0 points: Unable to perform logout or no feedback after logout."
+  },
+  {
+    "metric": "2.1.4 Retrieve Current User Information",
+    "description": "1. **Arrange:** Perform a successful login to enter the main interface. 2. **Act:** View the top or user info section of the main interface. 3. **Assert:** Check whether the interface displays the current user's 'name', 'role', and 'department' information.",
+    "expected_output": "2 points: Current user information is displayed successfully, including complete name, role, and department info. 1 point: User info is displayed but some fields are missing. 0 points: Unable to display user info or empty data shown."
+  },
+  {
+    "metric": "2.1.5a User List Query - SYSTEM Permission",
+    "description": "1. **Arrange:** Ensure there is a SYSTEM user and at least two users exist. 2. **Act:** Log in with the SYSTEM user, enter the user management page, and view the user list. 3. **Assert:** Check whether the user list includes all users and that each user's info contains 'name', 'department', 'role', and 'is_active' fields.",
+    "expected_output": "2 points: SYSTEM user can view the complete user list with all info. 1 point: List viewable but info is incomplete or missing. 0 points: Unable to view user list or returns empty list."
+  },
+  {
+    "metric": "2.1.5b User List Query - STAFF Permission",
+    "description": "1. **Arrange:** Ensure there is a normal user with STAFF permissions. 2. **Act:** Log in with STAFF user and try to access the user management page. 3. **Assert:** Check whether access to user management page is rejected or if a no-permission prompt is shown.",
+    "expected_output": "2 points: STAFF user access to user management page is correctly rejected with a clear no-permission prompt. 1 point: Access rejected but prompt is unclear. 0 points: STAFF user can access user management page, violating permission control."
+  },
+  {
+    "metric": "2.1.6 Add New User",
+    "description": "1. **Arrange:** Ensure there is a SYSTEM user and prepare a new user's name (e.g. 'testuser'), department ID, and role list (e.g. ['IT']). 2. **Act:** Log in with SYSTEM user, go to user management page, click add user, fill out the form and submit. 3. **Assert:** Check if add-success prompt appears and if you can see new user in user list. Then try logging in with new user credentials to verify successful creation (default password 123456).",
+    "expected_output": "2 points: Can successfully add new user and assign role and department, and new user can log in. 1 point: Able to add user but role or department assignment incorrect. 0 points: Unable to add user or user info is incorrect after addition."
+  },
+  {
+    "metric": "2.1.7 Edit User Information",
+    "description": "1. **Arrange:** Ensure there is a SYSTEM user and a test user to be edited. Prepare new department ID and role list. 2. **Act:** Log in with SYSTEM user, go to user management page, find test user and click edit, modify department and role info and save. 3. **Assert:** Check if edit-success prompt appears and if the user's department and role are updated in the user list.",
+    "expected_output": "2 points: User info can be edited successfully, and department and role are updated correctly. 1 point: Able to edit info but some updates fail. 0 points: Unable to edit user info or changes not saved."
+  },
+  {
+    "metric": "2.1.8 Delete User",
+    "description": "1. **Arrange:** Ensure there is a SYSTEM user and a test user to be deleted. 2. **Act:** Log in with SYSTEM user, go to user management page, find test user and click delete, confirm deletion. 3. **Assert:** Check if delete-success prompt appears and if the user no longer exists in the user list.",
+    "expected_output": "2 points: Can successfully delete specified user. 1 point: Able to delete user but there are restrictions (e.g. cannot delete admin, prompt shown). 0 points: Unable to delete user or user still exists after deletion."
+  },
+  {
+    "metric": "2.1.9 Lock/Unlock User",
+    "description": "1. **Arrange:** Ensure there is a SYSTEM user and a regular user to be locked. 2. **Act:** Log in with SYSTEM user, go to user management page, find test user and click lock. Then try logging in with testuser credentials. 3. **Assert:** Check if lock operation is successful and login prompt indicates user is locked. Then unlock and try login again to verify success.",
+    "expected_output": "2 points: Can successfully lock and unlock user, behavior after status change meets expectation. 1 point: Able to perform lock/unlock but status does not fully take effect. 0 points: Unable to perform lock/unlock or status change has no effect."
+  },
+  {
+    "metric": "2.1.10 Change Own Password",
+    "description": "1. **Arrange:** Ensure there is a regular user (e.g. 'testuser', password '123456'). 2. **Act:** Log in with this user, find change password option in personal settings or similar, input old password '123456' and new password 'newpassword123', save, then log out and try to log in with new password. 3. **Assert:** Check if password change success prompt appears and if you can log in with the new password.",
+    "expected_output": "2 points: Can successfully change password and log in with new password. 1 point: Able to change password but extra verification steps needed. 0 points: Unable to change password or cannot log in with new password."
+  },
+  {
+    "metric": "2.2.1a Department Tree Structure - Create Root Department",
+    "description": "1. **Arrange:** Ensure there is a SYSTEM user. 2. **Act:** Log in with SYSTEM user, go to department management page, create a root department named 'RootDept'. 3. **Assert:** Check if creation success prompt appears and if the root department shows in department tree.",
+    "expected_output": "2 points: Can successfully create root department and display correctly in department tree. 1 point: Can create department but display is incomplete. 0 points: Unable to create root department."
+  },
+  {
+    "metric": "2.2.1b Department Tree Structure - Create Sub-department",
+    "description": "1. **Arrange:** Ensure a root department 'RootDept' exists. 2. **Act:** On department management page, select 'RootDept' and create a child department named 'ChildDept'. 3. **Assert:** Check if creation success prompt appears and if 'ChildDept' appears under 'RootDept' in the department tree.",
+    "expected_output": "2 points: Can successfully create child department, parent-child relationship correctly established and displayed. 1 point: Can create child department but relationship display is incorrect. 0 points: Unable to create child department."
+  },
+  {
+    "metric": "2.2.2 Department Asset Manager Configuration",
+    "description": "1. **Arrange:** Ensure there is a department 'DeptA' and a user 'AssetUser' with ASSET permission, and 'AssetUser' belongs to 'DeptA'. 2. **Act:** In department management page, find 'DeptA' and set its asset manager as 'AssetUser'. 3. **Assert:** Check if configuration is saved successfully and asset manager is displayed as 'AssetUser' in department info.",
+    "expected_output": "2 points: Can successfully assign asset manager to department and view it correctly. 1 point: Asset manager assigned but viewing method problematic. 0 points: Unable to assign or view department asset manager."
+  },
+  {
+    "metric": "2.3.1a Asset Classification Tree - Create Root Classification",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission. 2. **Act:** Log in with ASSET user, enter asset category management, create a root category named 'RootCategory'. 3. **Assert:** Check if creation success prompt appears and root category shows in asset category tree.",
+    "expected_output": "2 points: Can successfully create root asset category and display in category tree correctly. 1 point: Can create category but display incomplete. 0 points: Unable to create root category."
+  },
+  {
+    "metric": "2.3.1b Asset Classification Tree - Create Sub-classification",
+    "description": "1. **Arrange:** Ensure a root category 'RootCategory' exists. 2. **Act:** On asset category management page, select 'RootCategory' and create a child category named 'ChildCategory'. 3. **Assert:** Check if creation success prompt appears and if 'ChildCategory' appears under 'RootCategory' in asset category tree.",
+    "expected_output": "2 points: Child asset category can be created and parent-child relationship correctly displayed. 1 point: Can create but relation display incorrect. 0 points: Unable to create child category."
+  },
+  {
+    "metric": "2.3.2a Custom Properties - Create Property",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission. 2. **Act:** On custom attribute management page, create a custom attribute named 'Brand'. 3. **Assert:** Check for creation success prompt and presence of 'Brand' in attribute list.",
+    "expected_output": "2 points: Can create custom attribute and display correctly. 1 point: Can create but name or display incorrect. 0 points: Unable to create custom attribute."
+  },
+  {
+    "metric": "2.3.2b Custom Properties - Add Property Value to Asset",
+    "description": "1. **Arrange:** Ensure there is an asset and a custom attribute named 'Brand'. 2. **Act:** Edit the asset in asset management, set the 'Brand' field value to 'Dell' and save. 3. **Assert:** Check for save success prompt and that the 'Brand' field displays 'Dell' in asset details.",
+    "expected_output": "2 points: Can add custom attribute value to asset, display correct. 1 point: Value added but display incorrect. 0 points: Unable to add custom attribute value."
+  },
+  {
+    "metric": "2.4.1a Asset Creation",
+    "description": "1. **Arrange:** Ensure an ASSET permission user and a valid asset category exist. 2. **Act:** Log in with ASSET user, go to asset management, click create asset, fill in required fields such as name, value, category and save. 3. **Assert:** Check for creation success prompt and presence of new asset in asset list.",
+    "expected_output": "2 points: Able to create asset with all required info saved and displayed correctly. 1 point: Able to create asset but some info is incorrect. 0 points: Unable to create asset."
+  },
+  {
+    "metric": "2.4.1b Asset Query",
+    "description": "1. **Arrange:** Ensure at least one asset exists. 2. **Act:** Log in with ASSET user, go to asset management, view asset list. 3. **Assert:** Check asset list for presence of created asset, information is complete and accurate.",
+    "expected_output": "2 points: Asset list view successful, returns correct asset info. 1 point: Viewable but info incomplete. 0 points: Unable to view asset list."
+  },
+  {
+    "metric": "2.4.1c Asset Edit",
+    "description": "1. **Arrange:** Ensure there is an asset and an ASSET user. 2. **Act:** Log in as ASSET user, go to asset management, select target asset and click edit, update fields such as name and description and save. 3. **Assert:** Check for edit success prompt and that asset info is updated in list.",
+    "expected_output": "2 points: Successfully edit asset info and save correctly. 1 point: Able to edit but some updates fail. 0 points: Unable to edit asset info."
+  },
+  {
+    "metric": "2.4.1d Asset Delete",
+    "description": "1. **Arrange:** Ensure an asset and ASSET user exist. 2. **Act:** Log in as ASSET user, go to asset management, select asset, click delete and confirm deletion. 3. **Assert:** Check for delete success prompt and asset absence in asset list.",
+    "expected_output": "2 points: Can delete specified asset successfully. 1 point: Can delete but restrictions apply. 0 points: Unable to delete asset."
+  },
+  {
+    "metric": "2.4.2a Asset Tree Structure - Set Parent Asset",
+    "description": "1. **Arrange:** Ensure two assets AssetA and AssetB exist. 2. **Act:** Edit AssetB in asset management, set AssetA as parent asset and save. 3. **Assert:** Check for save success prompt and AssetB showing as child of AssetA in asset tree structure.",
+    "expected_output": "2 points: Parent-child relationship set successfully and displayed correctly in tree. 1 point: Set successfully but display incorrect. 0 points: Cannot set parent-child relationship."
+  },
+  {
+    "metric": "2.4.2b Asset Tree Structure - Query Parent Asset",
+    "description": "1. **Arrange:** Ensure two assets AssetA and AssetB with parent-child relation exist. 2. **Act:** View details of AssetB in asset management. 3. **Assert:** Check whether parent asset of AssetB displays as AssetA in details.",
+    "expected_output": "2 points: Parent asset info displayed correctly. 1 point: Displayed but format incorrect. 0 points: Cannot view parent asset info."
+  },
+  {
+    "metric": "2.4.2c Asset Tree Structure - Query Child Asset",
+    "description": "1. **Arrange:** Ensure two assets AssetA and AssetB with parent-child relation exist. 2. **Act:** View details of AssetA in asset management. 3. **Assert:** Check whether child asset list includes AssetB in details.",
+    "expected_output": "2 points: Child asset list displayed correctly. 1 point: List viewable but incomplete. 0 points: Cannot view child asset info."
+  },
+  {
+    "metric": "2.4.3 Asset Value Calculation and Depreciation",
+    "description": "1. **Arrange:** Create an asset, set its original value to 1000, usage life to 5 years, and entry time as five years ago. 2. **Act:** View asset details in asset management. 3. **Assert:** Check if 'current value' field is 0 (expired) or correct as calculated by formula.",
+    "expected_output": "2 points: Asset current value is calculated and displayed correctly according to formula. 1 point: Value displayed but calculation logic slightly off. 0 points: Unable to calculate or displayed value unrelated to formula."
+  },
+  {
+    "metric": "2.4.4 Asset Retirement",
+    "description": "1. **Arrange:** Ensure an asset and ASSET user exist. 2. **Act:** Log in as ASSET user, go to asset management, select asset, click retire and confirm action. 3. **Assert:** Check for retire success prompt, and asset status in details shows 'Retired', current value is 0.",
+    "expected_output": "2 points: Can retire asset successfully and status, value updated correctly. 1 point: Retire operation performed but status or value update incorrect. 0 points: Unable to retire asset."
+  },
+  {
+    "metric": "2.5.1a Event Initiation - Receive",
+    "description": "1. **Arrange:** Ensure a STAFF permission user and an asset category exist. 2. **Act:** Log in as STAFF user, go to event management, start a receiving event, select asset category, and submit application reason. 3. **Assert:** Check for creation success prompt and new event in event list.",
+    "expected_output": "2 points: STAFF user can successfully start a receiving event. 1 point: Event started but info incomplete. 0 points: Unable to start receiving event."
+  },
+  {
+    "metric": "2.5.1b Event Initiation - Maintenance",
+    "description": "1. **Arrange:** Ensure a STAFF permission user and an asset exist. 2. **Act:** Log in as STAFF user, go to event management, start a maintenance event, select asset and submit. 3. **Assert:** Check for creation success prompt and new maintenance event in event list.",
+    "expected_output": "2 points: STAFF user can successfully start a maintenance event. 1 point: Started but info incomplete. 0 points: Unable to start maintenance event."
+  },
+  {
+    "metric": "2.5.1c Event Initiation - Transfer",
+    "description": "1. **Arrange:** Ensure a STAFF permission user, an asset, and another target user exist. 2. **Act:** Log in as STAFF user, go to event management, start a transfer event, select asset and target user, submit. 3. **Assert:** Check for creation success prompt and new transfer event in event list.",
+    "expected_output": "2 points: STAFF user can successfully start a transfer event. 1 point: Started but info incomplete. 0 points: Unable to start transfer event."
+  },
+  {
+    "metric": "2.5.1d Event Initiation - Return to Inventory",
+    "description": "1. **Arrange:** Ensure a STAFF permission user and asset under that user's name. 2. **Act:** Log in as STAFF user, go to event management, start a return-to-inventory event, select asset, submit. 3. **Assert:** Check for creation success prompt and new return event in event list.",
+    "expected_output": "2 points: STAFF user can successfully start a return-to-inventory event. 1 point: Started but info incomplete. 0 points: Unable to start return-to-inventory event."
+  },
+  {
+    "metric": "2.5.2a Event Processing - Query Tasks",
+    "description": "1. **Arrange:** Ensure an ASSET permission user and a pending event exist. 2. **Act:** Log in as ASSET user, go to event management, view pending event list. 3. **Assert:** Check whether the list contains the pending event.",
+    "expected_output": "2 points: Asset manager can view pending event list. 1 point: List shown but incomplete. 0 points: Unable to view pending events."
+  },
+  {
+    "metric": "2.5.2b Event Processing - Handle Event",
+    "description": "1. **Arrange:** Ensure there is an ASSET permission user and a pending event. 2. **Act:** Log in as ASSET user, go to event management, find pending event, click handle, select result (e.g. approve), submit. 3. **Assert:** Check for handle success prompt, event status updates to 'approved' or 'rejected' in event details. View details again to confirm.",
+    "expected_output": "2 points: Asset manager can process pending event, status update correct. 1 point: Able to handle event but status update problematic. 0 points: Unable to handle pending events."
+  },
+  {
+    "metric": "2.5.3 Event Conflict Handling",
+    "description": "1. **Arrange:** Ensure a STAFF permission user and an asset exist. 2. **Act:** Log in as STAFF user, try to start two maintenance events for the same asset in succession. 3. **Assert:** Check if second attempt is rejected with a conflict prompt.",
+    "expected_output": "2 points: System effectively prevents event conflict and gives a clear prompt. 1 point: Conflict detected but prompt unclear. 0 points: No restriction or prompt for duplicate events."
+  },
+  {
+    "metric": "2.6.1 Asset Change History Log",
+    "description": "1. **Arrange:** Ensure an asset exists and has been modified at least once (e.g. name changed). 2. **Act:** View the asset's change history in asset management. 3. **Assert:** Check whether history includes modification time, user, type (e.g. modification), details (e.g. name changed from 'A' to 'B').",
+    "expected_output": "2 points: All asset changes are fully recorded and accurate. 1 point: Only part of change info recorded. 0 points: No asset change history recorded."
+  },
+  {
+    "metric": "2.6.2 System Operation Log",
+    "description": "1. **Arrange:** Perform a series of user operations (e.g. login, logout, add/delete/update asset or user). 2. **Act:** Go to system log, view operation log list. 3. **Assert:** Check whether log list includes time, user, and details for these operations.",
+    "expected_output": "2 points: All key operations are fully logged with accurate info. 1 point: Only part of operation logs recorded. 0 points: No system operation logs recorded."
+  },
+  {
+    "metric": "2.7.1 Data Permissions - Department Data Isolation",
+    "description": "1. **Arrange:** Create two departments DeptA and DeptB, and users UserA and UserB in each. Create assets AssetA and AssetB under their respective departments. 2. **Act:** Log in as UserA, view asset list. Then log in as UserB, view asset list. 3. **Assert:** Verify that UserA only sees AssetA (or assets in their department), UserB only sees AssetB (or assets in their department).",
+    "expected_output": "2 points: Data filtered strictly by department permissions, users can only see their department's data. 1 point: Most data filtered but some unauthorized access remains. 0 points: No data isolation by department, users can see other department data."
+  }
+]

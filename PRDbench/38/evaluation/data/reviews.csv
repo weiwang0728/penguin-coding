@@ -1,0 +1,501 @@
+review_id,user_id,product_id,review_text,timestamp
+1,74,199,The product matches the description and I am satisfied.,2023-06-01
+2,95,60,This product has great quality and is worth recommending!,2023-06-01
+3,89,165,The features are complete and it is easy to use.,2023-06-01
+4,81,32,The appearance design is very attractive.,2023-06-01
+5,77,108,The product matches the description and I am satisfied.,2023-06-01
+6,24,129,The product matches the description and I am satisfied.,2023-06-01
+7,32,97,The packaging was good and the shipping was fast.,2023-06-01
+8,5,140,The price is affordable and the value is good.,2023-06-01
+9,43,140,The packaging was good and the shipping was fast.,2023-06-01
+10,16,47,Not very satisfied, there are quality issues.,2023-06-01
+11,40,176,This product has great quality and is worth recommending!,2023-06-01
+12,73,15,Not very satisfied, there are quality issues.,2023-06-01
+13,90,146,The materials are good and the workmanship is fine.,2023-06-01
+14,51,124,This product has great quality and is worth recommending!,2023-06-01
+15,1,59,The materials are good and the workmanship is fine.,2023-06-01
+16,96,122,The quality is average, but the price is affordable.,2023-06-01
+17,10,49,The appearance design is very attractive.,2023-06-01
+18,68,2,The product matches the description and I am satisfied.,2023-06-01
+19,19,35,The materials are good and the workmanship is fine.,2023-06-01
+20,51,92,Very easy to use, would buy again.,2023-06-01
+21,82,22,The packaging was good and the shipping was fast.,2023-06-01
+22,88,99,The features are complete and it is easy to use.,2023-06-01
+23,31,172,The product matches the description and I am satisfied.,2023-06-01
+24,82,74,The product matches the description and I am satisfied.,2023-06-01
+25,65,128,Very easy to use, would buy again.,2023-06-01
+26,66,154,Very easy to use, would buy again.,2023-06-01
+27,1,166,Very easy to use, would buy again.,2023-06-01
+28,42,139,The materials are good and the workmanship is fine.,2023-06-01
+29,22,81,The features are complete and it is easy to use.,2023-06-01
+30,43,94,The quality is average, but the price is affordable.,2023-06-01
+31,1,71,The features are complete and it is easy to use.,2023-06-01
+32,15,186,This product has great quality and is worth recommending!,2023-06-01
+33,4,178,The product matches the description and I am satisfied.,2023-06-01
+34,49,119,This product has great quality and is worth recommending!,2023-06-01
+35,15,19,The materials are good and the workmanship is fine.,2023-06-01
+36,2,54,Not very satisfied, there are quality issues.,2023-06-01
+37,3,126,The appearance design is very attractive.,2023-06-01
+38,11,42,The price is affordable and the value is good.,2023-06-01
+39,59,110,The price is affordable and the value is good.,2023-06-01
+40,29,8,The quality is average, but the price is affordable.,2023-06-01
+41,64,132,The features are complete and it is easy to use.,2023-06-01
+42,88,105,This product has great quality and is worth recommending!,2023-06-01
+43,25,14,The quality is average, but the price is affordable.,2023-06-01
+44,19,156,The quality is average, but the price is affordable.,2023-06-01
+45,91,4,The features are complete and it is easy to use.,2023-06-01
+46,5,37,The features are complete and it is easy to use.,2023-06-01
+47,43,68,The features are complete and it is easy to use.,2023-06-01
+48,82,113,The packaging was good and the shipping was fast.,2023-06-01
+49,14,4,The materials are good and the workmanship is fine.,2023-06-01
+50,28,45,The quality is average, but the price is affordable.,2023-06-01
+51,55,199,The quality is average, but the price is affordable.,2023-06-01
+52,16,185,Not very satisfied, there are quality issues.,2023-06-01
+53,24,120,Not very satisfied, there are quality issues.,2023-06-01
+54,25,22,Not very satisfied, there are quality issues.,2023-06-01
+55,35,184,The product matches the description and I am satisfied.,2023-06-01
+56,7,124,Not very satisfied, there are quality issues.,2023-06-01
+57,96,116,The price is affordable and the value is good.,2023-06-01
+58,4,104,The quality is average, but the price is affordable.,2023-06-01
+59,40,123,Very easy to use, would buy again.,2023-06-01
+60,29,37,The packaging was good and the shipping was fast.,2023-06-01
+61,61,136,The packaging was good and the shipping was fast.,2023-06-01
+62,87,162,The features are complete and it is easy to use.,2023-06-01
+63,68,3,Not very satisfied, there are quality issues.,2023-06-01
+64,55,150,The appearance design is very attractive.,2023-06-01
+65,49,115,The product matches the description and I am satisfied.,2023-06-01
+66,91,142,The features are complete and it is easy to use.,2023-06-01
+67,24,159,Not very satisfied, there are quality issues.,2023-06-01
+68,91,6,The quality is average, but the price is affordable.,2023-06-01
+69,97,3,Very easy to use, would buy again.,2023-06-01
+70,48,72,Not very satisfied, there are quality issues.,2023-06-01
+71,73,189,This product has great quality and is worth recommending!,2023-06-01
+72,65,173,The features are complete and it is easy to use.,2023-06-01
+73,14,90,Not very satisfied, there are quality issues.,2023-06-01
+74,29,35,Not very satisfied, there are quality issues.,2023-06-01
+75,18,191,The packaging was good and the shipping was fast.,2023-06-01
+76,43,174,The features are complete and it is easy to use.,2023-06-01
+77,95,125,The materials are good and the workmanship is fine.,2023-06-01
+78,30,176,This product has great quality and is worth recommending!,2023-06-01
+79,90,91,The packaging was good and the shipping was fast.,2023-06-01
+80,43,198,This product has great quality and is worth recommending!,2023-06-01
+81,21,52,The features are complete and it is easy to use.,2023-06-01
+82,84,150,The appearance design is very attractive.,2023-06-01
+83,9,173,Not very satisfied, there are quality issues.,2023-06-01
+84,29,137,The product matches the description and I am satisfied.,2023-06-01
+85,23,84,The packaging was good and the shipping was fast.,2023-06-01
+86,74,76,The product matches the description and I am satisfied.,2023-06-01
+87,64,25,The appearance design is very attractive.,2023-06-01
+88,3,61,The product matches the description and I am satisfied.,2023-06-01
+89,69,57,This product has great quality and is worth recommending!,2023-06-01
+90,94,49,The product matches the description and I am satisfied.,2023-06-01
+91,80,140,Not very satisfied, there are quality issues.,2023-06-01
+92,33,66,This product has great quality and is worth recommending!,2023-06-01
+93,12,10,The quality is average, but the price is affordable.,2023-06-01
+94,3,27,This product has great quality and is worth recommending!,2023-06-01
+95,25,43,Not very satisfied, there are quality issues.,2023-06-01
+96,80,176,Not very satisfied, there are quality issues.,2023-06-01
+97,83,59,The appearance design is very attractive.,2023-06-01
+98,71,103,The features are complete and it is easy to use.,2023-06-01
+99,42,52,The packaging was good and the shipping was fast.,2023-06-01
+100,57,64,The product matches the description and I am satisfied.,2023-06-01
+101,41,45,The price is affordable and the value is good.,2023-06-01
+102,52,158,This product has great quality and is worth recommending!,2023-06-01
+103,31,34,Not very satisfied, there are quality issues.,2023-06-01
+104,50,19,The packaging was good and the shipping was fast.,2023-06-01
+105,14,104,This product has great quality and is worth recommending!,2023-06-01
+106,25,181,The product matches the description and I am satisfied.,2023-06-01
+107,48,186,The features are complete and it is easy to use.,2023-06-01
+108,34,32,The materials are good and the workmanship is fine.,2023-06-01
+109,49,139,The appearance design is very attractive.,2023-06-01
+110,97,82,The materials are good and the workmanship is fine.,2023-06-01
+111,66,87,The price is affordable and the value is good.,2023-06-01
+112,82,146,This product has great quality and is worth recommending!,2023-06-01
+113,69,24,The features are complete and it is easy to use.,2023-06-01
+114,77,197,The materials are good and the workmanship is fine.,2023-06-01
+115,92,95,The materials are good and the workmanship is fine.,2023-06-01
+116,48,97,The materials are good and the workmanship is fine.,2023-06-01
+117,52,66,The product matches the description and I am satisfied.,2023-06-01
+118,57,42,The price is affordable and the value is good.,2023-06-01
+119,49,177,The packaging was good and the shipping was fast.,2023-06-01
+120,33,130,The price is affordable and the value is good.,2023-06-01
+121,46,190,Very easy to use, would buy again.,2023-06-01
+122,14,13,The features are complete and it is easy to use.,2023-06-01
+123,76,164,The features are complete and it is easy to use.,2023-06-01
+124,40,60,The features are complete and it is easy to use.,2023-06-01
+125,16,4,The appearance design is very attractive.,2023-06-01
+126,59,113,The packaging was good and the shipping was fast.,2023-06-01
+127,12,63,The price is affordable and the value is good.,2023-06-01
+128,12,118,The product matches the description and I am satisfied.,2023-06-01
+129,7,79,Not very satisfied, there are quality issues.,2023-06-01
+130,7,89,The packaging was good and the shipping was fast.,2023-06-01
+131,41,160,Very easy to use, would buy again.,2023-06-01
+132,56,11,Not very satisfied, there are quality issues.,2023-06-01
+133,24,98,This product has great quality and is worth recommending!,2023-06-01
+134,85,15,Very easy to use, would buy again.,2023-06-01
+135,57,197,The product matches the description and I am satisfied.,2023-06-01
+136,94,175,The product matches the description and I am satisfied.,2023-06-01
+137,76,80,The features are complete and it is easy to use.,2023-06-01
+138,36,160,This product has great quality and is worth recommending!,2023-06-01
+139,41,107,This product has great quality and is worth recommending!,2023-06-01
+140,80,112,The price is affordable and the value is good.,2023-06-01
+141,13,83,Not very satisfied, there are quality issues.,2023-06-01
+142,79,88,The product matches the description and I am satisfied.,2023-06-01
+143,7,80,The materials are good and the workmanship is fine.,2023-06-01
+144,77,127,The materials are good and the workmanship is fine.,2023-06-01
+145,38,102,Not very satisfied, there are quality issues.,2023-06-01
+146,52,35,The price is affordable and the value is good.,2023-06-01
+147,41,145,The packaging was good and the shipping was fast.,2023-06-01
+148,83,6,Not very satisfied, there are quality issues.,2023-06-01
+149,36,87,The quality is average, but the price is affordable.,2023-06-01
+150,8,41,The materials are good and the workmanship is fine.,2023-06-01
+151,84,195,Not very satisfied, there are quality issues.,2023-06-01
+152,45,65,The packaging was good and the shipping was fast.,2023-06-01
+153,75,100,This product has great quality and is worth recommending!,2023-06-01
+154,31,42,Not very satisfied, there are quality issues.,2023-06-01
+155,24,15,The packaging was good and the shipping was fast.,2023-06-01
+156,36,127,The price is affordable and the value is good.,2023-06-01
+157,58,31,The price is affordable and the value is good.,2023-06-01
+158,34,4,Very easy to use, would buy again.,2023-06-01
+159,23,57,Not very satisfied, there are quality issues.,2023-06-01
+160,23,23,The appearance design is very attractive.,2023-06-01
+161,37,126,The quality is average, but the price is affordable.,2023-06-01
+162,65,130,The quality is average, but the price is affordable.,2023-06-01
+163,21,76,The product matches the description and I am satisfied.,2023-06-01
+164,26,135,The packaging was good and the shipping was fast.,2023-06-01
+165,9,129,The appearance design is very attractive.,2023-06-01
+166,57,157,The product matches the description and I am satisfied.,2023-06-01
+167,55,93,Not very satisfied, there are quality issues.,2023-06-01
+168,49,77,The quality is average, but the price is affordable.,2023-06-01
+169,18,50,The price is affordable and the value is good.,2023-06-01
+170,32,9,The quality is average, but the price is affordable.,2023-06-01
+171,29,109,The product matches the description and I am satisfied.,2023-06-01
+172,35,35,The price is affordable and the value is good.,2023-06-01
+173,2,117,The features are complete and it is easy to use.,2023-06-01
+174,61,63,The appearance design is very attractive.,2023-06-01
+175,81,184,The packaging was good and the shipping was fast.,2023-06-01
+176,84,76,The features are complete and it is easy to use.,2023-06-01
+177,53,28,The appearance design is very attractive.,2023-06-01
+178,8,63,The packaging was good and the shipping was fast.,2023-06-01
+179,5,62,Very easy to use, would buy again.,2023-06-01
+180,30,96,The materials are good and the workmanship is fine.,2023-06-01
+181,38,42,The product matches the description and I am satisfied.,2023-06-01
+182,76,184,The packaging was good and the shipping was fast.,2023-06-01
+183,63,116,The product matches the description and I am satisfied.,2023-06-01
+184,68,106,Not very satisfied, there are quality issues.,2023-06-01
+185,85,61,Very easy to use, would buy again.,2023-06-01
+186,15,11,The packaging was good and the shipping was fast.,2023-06-01
+187,90,84,The appearance design is very attractive.,2023-06-01
+188,58,99,The quality is average, but the price is affordable.,2023-06-01
+189,19,185,The features are complete and it is easy to use.,2023-06-01
+190,28,144,This product has great quality and is worth recommending!,2023-06-01
+191,89,176,The quality is average, but the price is affordable.,2023-06-01
+192,46,154,Not very satisfied, there are quality issues.,2023-06-01
+193,63,183,The price is affordable and the value is good.,2023-06-01
+194,56,93,This product has great quality and is worth recommending!,2023-06-01
+195,94,11,The price is affordable and the value is good.,2023-06-01
+196,33,191,Not very satisfied, there are quality issues.,2023-06-01
+197,22,174,Not very satisfied, there are quality issues.,2023-06-01
+198,59,95,The features are complete and it is easy to use.,2023-06-01
+199,35,184,The product matches the description and I am satisfied.,2023-06-01
+200,23,27,This product has great quality and is worth recommending!,2023-06-01
+201,97,194,The quality is average, but the price is affordable.,2023-06-01
+202,69,9,The price is affordable and the value is good.,2023-06-01
+203,74,169,The product matches the description and I am satisfied.,2023-06-01
+204,71,26,The product matches the description and I am satisfied.,2023-06-01
+205,94,187,The product matches the description and I am satisfied.,2023-06-01
+206,2,79,This product has great quality and is worth recommending!,2023-06-01
+207,12,112,The appearance design is very attractive.,2023-06-01
+208,79,82,The packaging was good and the shipping was fast.,2023-06-01
+209,3,113,The packaging was good and the shipping was fast.,2023-06-01
+210,79,36,Very easy to use, would buy again.,2023-06-01
+211,36,87,The appearance design is very attractive.,2023-06-01
+212,97,110,The features are complete and it is easy to use.,2023-06-01
+213,24,87,The appearance design is very attractive.,2023-06-01
+214,84,50,This product has great quality and is worth recommending!,2023-06-01
+215,79,110,The appearance design is very attractive.,2023-06-01
+216,97,99,The price is affordable and the value is good.,2023-06-01
+217,14,15,The features are complete and it is easy to use.,2023-06-01
+218,59,16,Very easy to use, would buy again.,2023-06-01
+219,1,174,Not very satisfied, there are quality issues.,2023-06-01
+220,37,39,The product matches the description and I am satisfied.,2023-06-01
+221,4,189,This product has great quality and is worth recommending!,2023-06-01
+222,34,142,This product has great quality and is worth recommending!,2023-06-01
+223,38,62,The price is affordable and the value is good.,2023-06-01
+224,12,127,The quality is average, but the price is affordable.,2023-06-01
+225,8,164,Not very satisfied, there are quality issues.,2023-06-01
+226,78,188,The features are complete and it is easy to use.,2023-06-01
+227,5,55,This product has great quality and is worth recommending!,2023-06-01
+228,66,34,The materials are good and the workmanship is fine.,2023-06-01
+229,85,156,Very easy to use, would buy again.,2023-06-01
+230,21,78,The appearance design is very attractive.,2023-06-01
+231,56,16,The appearance design is very attractive.,2023-06-01
+232,94,7,The product matches the description and I am satisfied.,2023-06-01
+233,94,78,The packaging was good and the shipping was fast.,2023-06-01
+234,50,166,Not very satisfied, there are quality issues.,2023-06-01
+235,6,140,Not very satisfied, there are quality issues.,2023-06-01
+236,32,153,The packaging was good and the shipping was fast.,2023-06-01
+237,66,4,The materials are good and the workmanship is fine.,2023-06-01
+238,10,183,The quality is average, but the price is affordable.,2023-06-01
+239,21,3,The appearance design is very attractive.,2023-06-01
+240,41,131,The features are complete and it is easy to use.,2023-06-01
+241,31,67,The appearance design is very attractive.,2023-06-01
+242,77,50,Not very satisfied, there are quality issues.,2023-06-01
+243,23,182,The price is affordable and the value is good.,2023-06-01
+244,44,66,The features are complete and it is easy to use.,2023-06-01
+245,87,168,The packaging was good and the shipping was fast.,2023-06-01
+246,58,17,The packaging was good and the shipping was fast.,2023-06-01
+247,29,71,Very easy to use, would buy again.,2023-06-01
+248,28,138,The product matches the description and I am satisfied.,2023-06-01
+249,46,170,Very easy to use, would buy again.,2023-06-01
+250,26,87,The product matches the description and I am satisfied.,2023-06-01
+251,38,27,The appearance design is very attractive.,2023-06-01
+252,86,123,Very easy to use, would buy again.,2023-06-01
+253,5,162,The appearance design is very attractive.,2023-06-01
+254,7,106,This product has great quality and is worth recommending!,2023-06-01
+255,30,199,This product has great quality and is worth recommending!,2023-06-01
+256,97,130,This product has great quality and is worth recommending!,2023-06-01
+257,38,11,The features are complete and it is easy to use.,2023-06-01
+258,24,131,The features are complete and it is easy to use.,2023-06-01
+259,71,21,The packaging was good and the shipping was fast.,2023-06-01
+260,47,57,The quality is average, but the price is affordable.,2023-06-01
+261,1,112,Very easy to use, would buy again.,2023-06-01
+262,72,100,The quality is average, but the price is affordable.,2023-06-01
+263,13,194,The product matches the description and I am satisfied.,2023-06-01
+264,89,85,The product matches the description and I am satisfied.,2023-06-01
+265,14,120,The price is affordable and the value is good.,2023-06-01
+266,92,169,The price is affordable and the value is good.,2023-06-01
+267,100,70,This product has great quality and is worth recommending!,2023-06-01
+268,55,148,The materials are good and the workmanship is fine.,2023-06-01
+269,11,166,The product matches the description and I am satisfied.,2023-06-01
+270,92,104,The quality is average, but the price is affordable.,2023-06-01
+271,2,37,This product has great quality and is worth recommending!,2023-06-01
+272,37,134,The features are complete and it is easy to use.,2023-06-01
+273,98,59,The features are complete and it is easy to use.,2023-06-01
+274,84,51,The price is affordable and the value is good.,2023-06-01
+275,30,159,This product has great quality and is worth recommending!,2023-06-01
+276,68,193,Not very satisfied, there are quality issues.,2023-06-01
+277,32,136,This product has great quality and is worth recommending!,2023-06-01
+278,16,81,The product matches the description and I am satisfied.,2023-06-01
+279,25,199,The packaging was good and the shipping was fast.,2023-06-01
+280,19,151,The features are complete and it is easy to use.,2023-06-01
+281,46,126,This product has great quality and is worth recommending!,2023-06-01
+282,38,161,The product matches the description and I am satisfied.,2023-06-01
+283,48,76,The product matches the description and I am satisfied.,2023-06-01
+284,7,52,This product has great quality and is worth recommending!,2023-06-01
+285,39,173,The features are complete and it is easy to use.,2023-06-01
+286,31,44,The price is affordable and the value is good.,2023-06-01
+287,56,126,This product has great quality and is worth recommending!,2023-06-01
+288,75,124,This product has great quality and is worth recommending!,2023-06-01
+289,76,45,Not very satisfied, there are quality issues.,2023-06-01
+290,97,173,The appearance design is very attractive.,2023-06-01
+291,7,106,The quality is average, but the price is affordable.,2023-06-01
+292,36,57,The price is affordable and the value is good.,2023-06-01
+293,53,134,This product has great quality and is worth recommending!,2023-06-01
+294,10,134,Very easy to use, would buy again.,2023-06-01
+295,23,5,This product has great quality and is worth recommending!,2023-06-01
+296,19,76,This product has great quality and is worth recommending!,2023-06-01
+297,7,75,The materials are good and the workmanship is fine.,2023-06-01
+298,7,69,The price is affordable and the value is good.,2023-06-01
+299,27,132,This product has great quality and is worth recommending!,2023-06-01
+300,37,97,Not very satisfied, there are quality issues.,2023-06-01
+301,9,177,The materials are good and the workmanship is fine.,2023-06-01
+302,11,57,The product matches the description and I am satisfied.,2023-06-01
+303,67,70,The materials are good and the workmanship is fine.,2023-06-01
+304,94,150,The price is affordable and the value is good.,2023-06-01
+305,86,64,The price is affordable and the value is good.,2023-06-01
+306,8,152,The quality is average, but the price is affordable.,2023-06-01
+307,90,26,Not very satisfied, there are quality issues.,2023-06-01
+308,40,17,The price is affordable and the value is good.,2023-06-01
+309,80,50,The appearance design is very attractive.,2023-06-01
+310,6,58,The product matches the description and I am satisfied.,2023-06-01
+311,85,10,The product matches the description and I am satisfied.,2023-06-01
+312,83,48,The appearance design is very attractive.,2023-06-01
+313,32,199,The features are complete and it is easy to use.,2023-06-01
+314,91,28,The materials are good and the workmanship is fine.,2023-06-01
+315,12,164,Very easy to use, would buy again.,2023-06-01
+316,55,116,The features are complete and it is easy to use.,2023-06-01
+317,78,39,Very easy to use, would buy again.,2023-06-01
+318,87,123,The materials are good and the workmanship is fine.,2023-06-01
+319,80,162,Not very satisfied, there are quality issues.,2023-06-01
+320,10,169,Very easy to use, would buy again.,2023-06-01
+321,62,79,The price is affordable and the value is good.,2023-06-01
+322,73,140,The quality is average, but the price is affordable.,2023-06-01
+323,72,187,This product has great quality and is worth recommending!,2023-06-01
+324,42,32,The packaging was good and the shipping was fast.,2023-06-01
+325,87,118,Very easy to use, would buy again.,2023-06-01
+326,56,174,The packaging was good and the shipping was fast.,2023-06-01
+327,37,123,The features are complete and it is easy to use.,2023-06-01
+328,24,113,The packaging was good and the shipping was fast.,2023-06-01
+329,74,90,The product matches the description and I am satisfied.,2023-06-01
+330,35,61,Very easy to use, would buy again.,2023-06-01
+331,66,13,Very easy to use, would buy again.,2023-06-01
+332,36,121,The materials are good and the workmanship is fine.,2023-06-01
+333,68,74,The features are complete and it is easy to use.,2023-06-01
+334,78,180,The quality is average, but the price is affordable.,2023-06-01
+335,49,16,The packaging was good and the shipping was fast.,2023-06-01
+336,4,76,The price is affordable and the value is good.,2023-06-01
+337,54,53,The price is affordable and the value is good.,2023-06-01
+338,62,86,This product has great quality and is worth recommending!,2023-06-01
+339,8,158,The appearance design is very attractive.,2023-06-01
+340,99,164,The packaging was good and the shipping was fast.,2023-06-01
+341,20,49,Very easy to use, would buy again.,2023-06-01
+342,19,41,The product matches the description and I am satisfied.,2023-06-01
+343,32,67,The price is affordable and the value is good.,2023-06-01
+344,29,152,The price is affordable and the value is good.,2023-06-01
+345,8,96,The features are complete and it is easy to use.,2023-06-01
+346,90,144,Very easy to use, would buy again.,2023-06-01
+347,35,188,Very easy to use, would buy again.,2023-06-01
+348,98,32,The product matches the description and I am satisfied.,2023-06-01
+349,11,67,This product has great quality and is worth recommending!,2023-06-01
+350,55,48,The price is affordable and the value is good.,2023-06-01
+351,76,121,The quality is average, but the price is affordable.,2023-06-01
+352,58,142,The price is affordable and the value is good.,2023-06-01
+353,66,96,The price is affordable and the value is good.,2023-06-01
+354,50,160,The price is affordable and the value is good.,2023-06-01
+355,11,74,This product has great quality and is worth recommending!,2023-06-01
+356,35,103,The packaging was good and the shipping was fast.,2023-06-01
+357,96,123,The materials are good and the workmanship is fine.,2023-06-01
+358,87,106,The materials are good and the workmanship is fine.,2023-06-01
+359,41,105,The packaging was good and the shipping was fast.,2023-06-01
+360,69,175,The product matches the description and I am satisfied.,2023-06-01
+361,91,106,The quality is average, but the price is affordable.,2023-06-01
+362,7,75,Not very satisfied, there are quality issues.,2023-06-01
+363,52,150,The quality is average, but the price is affordable.,2023-06-01
+364,58,43,The materials are good and the workmanship is fine.,2023-06-01
+365,96,89,The quality is average, but the price is affordable.,2023-06-01
+366,80,151,The materials are good and the workmanship is fine.,2023-06-01
+367,32,138,The product matches the description and I am satisfied.,2023-06-01
+368,64,182,The price is affordable and the value is good.,2023-06-01
+369,79,154,The product matches the description and I am satisfied.,2023-06-01
+370,48,3,The packaging was good and the shipping was fast.,2023-06-01
+371,27,157,The materials are good and the workmanship is fine.,2023-06-01
+372,85,55,The product matches the description and I am satisfied.,2023-06-01
+373,2,109,This product has great quality and is worth recommending!,2023-06-01
+374,24,195,The quality is average, but the price is affordable.,2023-06-01
+375,73,175,The product matches the description and I am satisfied.,2023-06-01
+376,69,144,The product matches the description and I am satisfied.,2023-06-01
+377,69,45,The materials are good and the workmanship is fine.,2023-06-01
+378,55,73,This product has great quality and is worth recommending!,2023-06-01
+379,43,183,The appearance design is very attractive.,2023-06-01
+380,33,108,The appearance design is very attractive.,2023-06-01
+381,83,22,Not very satisfied, there are quality issues.,2023-06-01
+382,81,141,The product matches the description and I am satisfied.,2023-06-01
+383,50,186,The product matches the description and I am satisfied.,2023-06-01
+384,33,21,The appearance design is very attractive.,2023-06-01
+385,66,40,Not very satisfied, there are quality issues.,2023-06-01
+386,13,101,This product has great quality and is worth recommending!,2023-06-01
+387,91,51,The appearance design is very attractive.,2023-06-01
+388,20,5,Not very satisfied, there are quality issues.,2023-06-01
+389,14,77,The product matches the description and I am satisfied.,2023-06-01
+390,66,160,This product has great quality and is worth recommending!,2023-06-01
+391,78,197,The product matches the description and I am satisfied.,2023-06-01
+392,21,170,The features are complete and it is easy to use.,2023-06-01
+393,93,39,The quality is average, but the price is affordable.,2023-06-01
+394,16,38,Very easy to use, would buy again.,2023-06-01
+395,82,37,The features are complete and it is easy to use.,2023-06-01
+396,59,175,This product has great quality and is worth recommending!,2023-06-01
+397,28,65,The packaging was good and the shipping was fast.,2023-06-01
+398,61,125,The product matches the description and I am satisfied.,2023-06-01
+399,50,170,The materials are good and the workmanship is fine.,2023-06-01
+400,60,139,Very easy to use, would buy again.,2023-06-01
+401,6,12,The packaging was good and the shipping was fast.,2023-06-01
+402,43,66,The price is affordable and the value is good.,2023-06-01
+403,53,128,The quality is average, but the price is affordable.,2023-06-01
+404,19,11,This product has great quality and is worth recommending!,2023-06-01
+405,69,122,The features are complete and it is easy to use.,2023-06-01
+406,58,86,Very easy to use, would buy again.,2023-06-01
+407,38,14,This product has great quality and is worth recommending!,2023-06-01
+408,84,82,The materials are good and the workmanship is fine.,2023-06-01
+409,8,125,This product has great quality and is worth recommending!,2023-06-01
+410,75,179,This product has great quality and is worth recommending!,2023-06-01
+411,74,141,The appearance design is very attractive.,2023-06-01
+412,30,86,The materials are good and the workmanship is fine.,2023-06-01
+413,42,100,Not very satisfied, there are quality issues.,2023-06-01
+414,85,165,This product has great quality and is worth recommending!,2023-06-01
+415,55,93,This product has great quality and is worth recommending!,2023-06-01
+416,19,85,Very easy to use, would buy again.,2023-06-01
+417,23,87,The materials are good and the workmanship is fine.,2023-06-01
+418,35,188,The packaging was good and the shipping was fast.,2023-06-01
+419,34,58,Very easy to use, would buy again.,2023-06-01
+420,12,195,The price is affordable and the value is good.,2023-06-01
+421,62,197,The packaging was good and the shipping was fast.,2023-06-01
+422,18,129,Not very satisfied, there are quality issues.,2023-06-01
+423,88,194,The materials are good and the workmanship is fine.,2023-06-01
+424,100,199,The materials are good and the workmanship is fine.,2023-06-01
+425,85,84,The materials are good and the workmanship is fine.,2023-06-01
+426,39,15,Very easy to use, would buy again.,2023-06-01
+427,70,86,The product matches the description and I am satisfied.,2023-06-01
+428,37,197,The price is affordable and the value is good.,2023-06-01
+429,52,153,This product has great quality and is worth recommending!,2023-06-01
+430,52,23,The features are complete and it is easy to use.,2023-06-01
+431,81,93,The materials are good and the workmanship is fine.,2023-06-01
+432,36,189,Very easy to use, would buy again.,2023-06-01
+433,93,108,The packaging was good and the shipping was fast.,2023-06-01
+434,14,66,Not very satisfied, there are quality issues.,2023-06-01
+435,55,134,The features are complete and it is easy to use.,2023-06-01
+436,98,142,The appearance design is very attractive.,2023-06-01
+437,15,20,Very easy to use, would buy again.,2023-06-01
+438,60,130,The quality is average, but the price is affordable.,2023-06-01
+439,64,177,Very easy to use, would buy again.,2023-06-01
+440,90,120,The features are complete and it is easy to use.,2023-06-01
+441,37,161,The quality is average, but the price is affordable.,2023-06-01
+442,79,126,The quality is average, but the price is affordable.,2023-06-01
+443,7,48,Not very satisfied, there are quality issues.,2023-06-01
+444,25,7,The packaging was good and the shipping was fast.,2023-06-01
+445,27,17,The price is affordable and the value is good.,2023-06-01
+446,95,65,This product has great quality and is worth recommending!,2023-06-01
+447,78,49,This product has great quality and is worth recommending!,2023-06-01
+448,93,114,Very easy to use, would buy again.,2023-06-01
+449,56,111,Not very satisfied, there are quality issues.,2023-06-01
+450,10,4,Very easy to use, would buy again.,2023-06-01
+451,68,184,The features are complete and it is easy to use.,2023-06-01
+452,56,105,The features are complete and it is easy to use.,2023-06-01
+453,23,171,The appearance design is very attractive.,2023-06-01
+454,76,23,Not very satisfied, there are quality issues.,2023-06-01
+455,96,18,Very easy to use, would buy again.,2023-06-01
+456,3,151,The packaging was good and the shipping was fast.,2023-06-01
+457,94,82,The materials are good and the workmanship is fine.,2023-06-01
+458,87,1,The price is affordable and the value is good.,2023-06-01
+459,50,121,The appearance design is very attractive.,2023-06-01
+460,66,110,The appearance design is very attractive.,2023-06-01
+461,10,65,The product matches the description and I am satisfied.,2023-06-01
+462,45,62,The quality is average, but the price is affordable.,2023-06-01
+463,78,77,The price is affordable and the value is good.,2023-06-01
+464,28,143,The quality is average, but the price is affordable.,2023-06-01
+465,87,30,The quality is average, but the price is affordable.,2023-06-01
+466,15,121,The product matches the description and I am satisfied.,2023-06-01
+467,3,148,The product matches the description and I am satisfied.,2023-06-01
+468,9,37,The product matches the description and I am satisfied.,2023-06-01
+469,19,113,The features are complete and it is easy to use.,2023-06-01
+470,80,4,The packaging was good and the shipping was fast.,2023-06-01
+471,32,115,The price is affordable and the value is good.,2023-06-01
+472,86,44,The materials are good and the workmanship is fine.,2023-06-01
+473,17,79,The price is affordable and the value is good.,2023-06-01
+474,74,98,The packaging was good and the shipping was fast.,2023-06-01
+475,44,29,The quality is average, but the price is affordable.,2023-06-01
+476,98,13,The price is affordable and the value is good.,2023-06-01
+477,4,93,The quality is average, but the price is affordable.,2023-06-01
+478,98,15,The quality is average, but the price is affordable.,2023-06-01
+479,92,168,Very easy to use, would buy again.,2023-06-01
+480,53,94,The features are complete and it is easy to use.,2023-06-01
+481,57,58,The materials are good and the workmanship is fine.,2023-06-01
+482,88,4,The features are complete and it is easy to use.,2023-06-01
+483,99,52,The appearance design is very attractive.,2023-06-01
+484,21,119,The packaging was good and the shipping was fast.,2023-06-01
+485,27,13,The packaging was good and the shipping was fast.,2023-06-01
+486,79,18,The appearance design is very attractive.,2023-06-01
+487,32,71,The price is affordable and the value is good.,2023-06-01
+488,67,103,The appearance design is very attractive.,2023-06-01
+489,94,55,The appearance design is very attractive.,2023-06-01
+490,51,148,The packaging was good and the shipping was fast.,2023-06-01
+491,27,73,The materials are good and the workmanship is fine.,2023-06-01
+492,87,98,The price is affordable and the value is good.,2023-06-01
+493,39,135,This product has great quality and is worth recommending!,2023-06-01
+494,44,128,The materials are good and the workmanship is fine.,2023-06-01
+495,88,121,Very easy to use, would buy again.,2023-06-01
+496,47,78,The features are complete and it is easy to use.,2023-06-01
+497,12,181,The price is affordable and the value is good.,2023-06-01
+498,86,14,The product matches the description and I am satisfied.,2023-06-01
+499,63,33,The packaging was good and the shipping was fast.,2023-06-01
+500,77,71,This product has great quality and is worth recommending!,2023-06-01

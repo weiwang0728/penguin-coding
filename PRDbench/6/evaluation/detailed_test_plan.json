@@ -1,0 +1,388 @@
+[
+  {
+    "metric": "1.1 Basic Interaction: Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., `python main.py`).\n2. **Assert:** Observe whether the program successfully starts and displays a clear Chinese main menu that must include core function entries such as 'Data Import', 'Data Format Operations', 'Data Content Cleaning', 'Statistical Analysis', and 'Data Splitting and Export'.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program starts successfully and displays a clear Chinese main menu containing core function entries like 'Data Import', 'Data Format Operations', 'Data Content Cleaning', 'Statistical Analysis', 'Data Splitting and Export',etc.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "1.2 Basic Interaction: User Input Validation and Error Prompts",
+    "description": "1. **Arrange:** In the program main menu interface.\n2. **Act:** Enter an invalid option that does not exist in the menu (such as 'xyz' or '99').\n3. **Assert:** Observe whether the program captures this invalid input and provides a clear Chinese error prompt (such as 'Invalid option, please re-enter'), and the program remains stable and can continue accepting input.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/1.2_invalid_input.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Program captures invalid input and provides Chinese error prompt.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.2_invalid_input.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.3 State Management: Interactive Menu Switching",
+    "description": "1. **Arrange:** After successfully importing data, enter any sub-function menu (such as 'Missing Value Handling').\n2. **Act:** In this sub-menu, search for and test whether there is an option to directly switch to another main function module (such as 'Statistical Analysis').\n3. **Assert:** Verify whether successful switching can be achieved without first executing 'Return to Main Menu' operation.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/1.3_menu_switching.in",
+      "evaluation/test_data_simple.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Successfully switch from 'Data Content Cleaning' sub-menu to 'Data Format Operations' menu.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.3_menu_switching.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.4 State Management: Operation History Record Viewing",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for 'View Operation History' in the main menu or general menu?\n2. **Arrange:** Continuously execute 2-3 different data processing operations (such as filling missing values, formatting strings).\n3. **Act:** Select 'View Operation History'.\n4. **Assert:** Observe whether the program can sequentially list the operation sequence just executed (such as '1. Fill Missing Values: Column 'Age', Method 'Mean'').",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/1.4_history.in",
+      "evaluation/test_data_string.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Program can clearly and accurately display user's executed operation history records.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.4_history.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1 Data Import: Read .xlsx Files and Identify Worksheets",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for 'Data Import' in the main menu?\n2. **Arrange:** Prepare a `test.xlsx` file containing 3 differently named worksheets (such as 'Sales', 'Inventory', 'HR').\n3. **Act:** Select 'Data Import', and input filename `test.xlsx` as prompted.\n4. **Assert:** Observe program output, check whether all 3 worksheet names are correctly listed.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1_import_xlsx.in",
+      "evaluation/test_data.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Program correctly lists all 3 worksheet names: Sales, Inventory, HR.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1_import_xlsx.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2a Metadata Parsing: Display Field Names and Inferred Types",
+    "description": "1. **Arrange:** Prepare an Excel worksheet containing multiple data types (integer, float, string, date).\n2. **Act:** Successfully import and load this worksheet.\n3. **Assert:** Observe whether the program automatically outputs metadata information after loading, and check: (1) Whether all field names are listed; (2) Whether correct data types (numerical/categorical/date) are inferred for each field.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2ab_metadata.in",
+      "evaluation/test_data_missing.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Program automatically outputs metadata information after loading, containing all field names and inferred data types.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2ab_metadata.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2b Metadata Parsing: Display Missing Value Proportion",
+    "description": "1. **Arrange:** Prepare an Excel worksheet containing different quantities of missing values (empty cells) in multiple columns. For example, column A has 10% missing, column B has 50% missing.\n2. **Act:** Successfully import and load this worksheet.\n3. **Assert:** Observe program automatically output metadata information, check whether missing value proportion is accurately calculated and displayed for each field (e.g., displayed as 0.1 or 10%).",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2ab_metadata.in",
+      "evaluation/test_data_missing.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Program displays missing value proportion as 10.00% for Col_A_10_percent_missing and 50.00% for Col_B_50_percent_missing.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2ab_metadata.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3 Data Preview: Display First N Rows of Data",
+    "description": "1. **Arrange:** Prepare a data file with over 10 rows.\n2. **Act:** After successfully loading worksheet, call data preview function.\n3. **Assert:** Observe whether the program displays the first 10 rows of data by default in clear table format.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.3_preview.in",
+      "evaluation/test_data.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Program displays the first 5 rows of data by default in clear table format (because file only has 5 rows).",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.3_preview.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.1 Missing Value Handling: Statistics Function",
+    "description": "1. **Pre-check (User Path):** Can 'Missing Value Statistics' function be found through menu (e.g. 'Data Content Cleaning'->'Missing Value Handling')?\n2. **Arrange:** Import a data file containing missing values.\n3. **Act:** Call 'Missing Value Statistics' function.\n4. **Assert:** Observe whether output simultaneously contains missing value quantity or proportion statistics by field (column) and record (row) dimensions.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/3.1_missing_statisics.in",
+      "evaluation/test_data_missing.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Metadata information contains missing value quantity and proportion statistics by field (column) dimension.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/3.1_missing_statisics.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.2a Missing Value Handling: Fill by Mean",
+    "description": "1. **Pre-check (User Path):** Is there a 'Mean Fill' option in the missing value handling menu?\n2. **Arrange:** Prepare a data file containing numerical column `[1, 2, null, 5]`, with mean of 2.67.\n3. **Act:** Import data, navigate to fill function, select 'Mean Fill' for this numerical column.\n4. **Assert:** Use data preview function to verify whether original null position has been correctly replaced by the mean (2.67).",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, null values replaced by mean.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_fill_missing_with_mean",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "3.2b Missing Value Handling: Fill by Median",
+    "description": "1. **Pre-check (User Path):** Is there a 'Median Fill' option in the missing value handling menu?\n2. **Arrange:** Prepare a data file containing numerical column `[1, 2, null, 5, 10]`, with median of 3.5.\n3. **Act:** Import data, navigate to fill function, select 'Median Fill' for this numerical column.\n4. **Assert:** Use data preview function to verify whether original null position has been correctly replaced by the median (3.5).",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, null values replaced by median (3.5).",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_fill_missing_with_median",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "3.2c Missing Value Handling: Fill by Mode",
+    "description": "1. **Pre-check (User Path):** Is there a 'Mode Fill' option in the missing value handling menu?\n2. **Arrange:** Prepare a data file containing categorical or numerical column `['A', 'B', null, 'B', 'C']`, with mode 'B'.\n3. **Act:** Import data, navigate to fill function, select 'Mode Fill' for this column.\n4. **Assert:** Use data preview function to verify whether original null position has been correctly replaced by the mode ('B').",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, null values replaced by mode ('B').",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_fill_missing_with_mode",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "3.3 Outlier Detection: IQR Algorithm",
+    "description": "1. **Pre-check (User Path):** Can 'IQR Algorithm Detection' function be found through menu (e.g. 'Data Content Cleaning'->'Outlier Detection')?\n2. **Arrange:** Prepare a numerical column `[1, 10, 12, 11, 13, 9, 100]`, where 100 is an obvious outlier.\n3. **Act:** Perform IQR outlier detection on this column.\n4. **Assert:** Observe output, check whether program can correctly identify and mark 100 as outlier.",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, program can correctly identify and mark 100 as outlier.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_detect_outliers_iqr",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "4.1a Descriptive Statistics (Numerical): Central Tendency",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis'->'Descriptive Statistics')?\n2. **Arrange:** Import data containing numerical column `[1, 2, 3, 4, 5]`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct mean (3.0) and median (3.0).",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, both mean (3.0) and median (3.0) calculated correctly.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_descriptive_stats_numeric_central",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "4.1b Descriptive Statistics (Numerical): Dispersion",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis'->'Descriptive Statistics')?\n2. **Arrange:** Import data containing numerical column `[1, 2, 3, 4, 5]`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct standard deviation, range, and quartiles.",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, standard deviation, range, and quartiles all calculated correctly.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_descriptive_stats_numeric_dispersion",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "4.2a Descriptive Statistics (Categorical): Frequency and Rate",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis'->'Descriptive Statistics')?\n2. **Arrange:** Import data containing categorical column `['A', 'B', 'A', 'A', 'C']`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct frequency (A:3, B:1, C:1) and rate (A:0.6, B:0.2, C:0.2).",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, both frequency (A:3, B:1, C:1) and rate (A:0.6, B:0.2, C:0.2) calculated correctly.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_descriptive_stats_categorical_freq",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "4.2b Descriptive Statistics (Categorical): Mode and Unique Values",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis'->'Descriptive Statistics')?\n2. **Arrange:** Import data containing categorical column `['A', 'B', 'A', 'A', 'C']`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct mode ('A') and unique value count (3).",
+    "type": "unit_test",
+    "input_files": [
+      "evaluation/tests/test_analysis_functions.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Test passed, both mode ('A') and unique value count (3) calculated correctly.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis_functions.py::test_descriptive_stats_categorical_mode_unique",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "5.1 Data Formatting: Enumerated Value Replacement",
+    "description": "1. **Pre-check (User Path):** Can 'Enumerated Value Replacement' function be found through menu (e.g. 'Data Format Operations'->'Data Formatting')?\n2. **Arrange:** Prepare a key-value mapping file (e.g. `mapping.json`, content `{\"A\":\"Excellent\", \"B\":\"Good\"}`) and data containing column `['A', 'B', 'C']`.\n3. **Act:** Call function, provide mapping file path and column to operate as prompted.\n4. **Assert:** Use data preview to check whether column values have changed to `['Excellent', 'Good', 'C']`.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/5.1_enum_replace.in",
+      "evaluation/test_data_enum.xlsx",
+      "evaluation/mapping.json"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Data preview shows column values changed to `['Excellent', 'Good', 'C']`.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/5.1_enum_replace.in"
+      }
+    ]
+  },
+  {
+    "metric": "5.2a String Processing: Case Conversion",
+    "description": "1. **Pre-check (User Path):** Can 'String Processing' function be found through menu (e.g. 'Data Format Operations'->'Data Formatting'), and see case conversion options?\n2. **Arrange:** Import data containing string column `['Apple', 'banana', 'CAT']`.\n3. **Act:** Test 'Convert to Uppercase' and 'Convert to Lowercase' functions for this column.\n4. **Assert:** Preview data, verify 'Convert to Uppercase' result is `['APPLE', 'BANANA', 'CAT']`, 'Convert to Lowercase' result is `['apple', 'banana', 'cat']`.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/5.2a_case_transform.in",
+      "evaluation/test_data_string.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "'Convert to Uppercase' result is `['APPLE', 'BANANA', 'CAT', 'WORLD']`, 'Convert to Lowercase' result is `['apple', 'banana', 'cat', 'world']`.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/5.2a_case_transform.in"
+      }
+    ]
+  },
+  {
+    "metric": "5.2b String Processing: Trim Spaces",
+    "description": "1. **Pre-check (User Path):** Is there a 'Trim Spaces' option in the string processing menu?\n2. **Arrange:** Import data containing string column `['  hello  ', 'world ']`.\n3. **Act:** Execute 'Trim Spaces' function on this column.\n4. **Assert:** Preview data, verify result is `['hello', 'world']`.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/5.2b_trim_spaces.in",
+      "evaluation/test_data_string.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Preview data, verify result as `['Apple', 'banana', 'CAT', 'world']`.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/5.2b_trim_spaces.in"
+      }
+    ]
+  },
+  {
+    "metric": "6.1 Data Splitting and Export: Split by Field Value to Multiple Worksheets",
+    "description": "1. **Pre-check (User Path):** Can 'Data Splitting and Export' function be found through menu?\n2. **Arrange:** Import data containing a categorical field (e.g. 'Region', values 'North China', 'South China').\n3. **Act:** Select field splitting function, specify 'Region' column, and export to Excel.\n4. **Assert:** Check current directory whether new Excel file is generated, open file to verify whether it contains worksheets named 'North China' and 'South China' with correct content.",
+    "type": "file_comparison",
+    "input_files": [
+      "evaluation/6.1_split_export.in",
+      "evaluation/test_data_split.xlsx"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_split_output.xlsx"
+    ],
+    "expected_output": "Generate an Excel file containing worksheets named 'North China', 'South China', and 'East China'.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/6.1_split_export.in"
+      }
+    ]
+  },
+  {
+    "metric": "6.2a Data Export: Export as CSV (Custom Delimiter)",
+    "description": "1. **Pre-check (User Path):** Is there an 'Export as CSV' option in the export menu?\n2. **Arrange:** Import any data.\n3. **Act:** Select 'Export as CSV', and specify delimiter as '|' as prompted.\n4. **Assert:** Check generated CSV file, confirm its content uses '|' as delimiter.",
+    "type": "file_comparison",
+    "input_files": [
+      "evaluation/6.2a_export_csv_delim.in",
+      "evaluation/test_data_split.xlsx"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_output_delim.csv"
+    ],
+    "expected_output": "Generated CSV file content uses '|' as delimiter.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/6.2a_export_csv_delim.in"
+      }
+    ]
+  },
+  {
+    "metric": "6.2b Data Export: Export as CSV (Custom Encoding)",
+    "description": "1. **Pre-check (User Path):** Is encoding option provided in export as CSV process?\n2. **Arrange:** Import data containing Chinese characters.\n3. **Act:** Select 'Export as CSV', and specify encoding as 'gbk' as prompted.\n4. **Assert:** Check generated CSV file, and use encoding detection supported tool (or open with Excel on Windows) to verify file encoding is GBK and Chinese characters display correctly without garbled text.",
+    "type": "file_comparison",
+    "input_files": [
+      "evaluation/6.2b_export_csv_encoding.in",
+      "evaluation/test_data_chinese.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_output_gbk.csv"
+    ],
+    "expected_output": "Generated CSV file encoding is GBK and Chinese characters display correctly without garbled text.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/6.2b_export_csv_encoding.in"
+      }
+    ]
+  }
+]

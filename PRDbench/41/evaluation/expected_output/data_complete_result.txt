@@ -1,0 +1,19 @@
+Multiple Sequence Alignment Algorithm Performance Comparison Result
+==================================================
+
+Analysis Dimensions:
+- Algorithm Type: Dynamic Programming
+- Optimization: No
+- Sequence Type: DNA
+
+Performance Data:
+Execution Time: 0.003 seconds
+Memory Usage: 2.1MB
+Alignment Score: 15
+
+Structured Table Format:
++----------+----------+----------+----------+
+| Algorithm     | Time(s)  | Memory(MB) | Score     |
++----------+----------+----------+----------+
+| Dynamic Programming | 0.003    | 2.1      | 15       |
++----------+----------+----------+----------+

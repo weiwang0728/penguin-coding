@@ -1,4 +1,21 @@
 __pycache__/
 *.pyc
 .env
-PRDbench/
+
+# 本地工具与报告
+.vscode/
+docs/
+workspace/
+/prdbench_dev*.log
+/TEST_PLAN.md
+/TEST_REPORT*.json
+/TEST_REPORT*.md
+/TEST_RESULTS.md
+
+# PRDbench 评测运行产物（评测脚本每次运行重新生成）
+PRDbench/*/evaluation/logs/
+PRDbench/*/evaluation/outputs/
+PRDbench/*/evaluation/tests/logs/
+PRDbench/*/evaluation/test_results.*
+PRDbench/*/evaluation/test_execution_results.json
+PRDbench/*/evaluation/simple_test_results.json

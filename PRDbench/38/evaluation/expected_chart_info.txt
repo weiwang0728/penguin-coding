@@ -1,0 +1,7 @@
+GenerateChartTableFileInformation:
+- FileName: algorithm_performance_chart.png
+- ChartTableCategoryType: CalculateMethodPerformanceforBiferBarChart
+- ContainsIndicatorMark: StandardAccurateRate、RecallReturnRate、F1DivideNumber
+- CalculateMethodQuantity: 3item(s)
+- ChartChipScaleInch: 800x600PortraitElements
+- GenerateTimeBetween: 2025-08-27

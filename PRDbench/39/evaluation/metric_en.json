@@ -1,0 +1,117 @@
+[
+  {
+    "metric": "1.1 Basic Program Operability: The system can start normally and respond to basic commands",
+    "description": "1. **Act:** Execute the `python main.py` command in the command line.\n2. **Assert:** Observe whether the program starts normally and displays help information containing at least 5 main command options (such as init, location, login, search, recommend, etc.), and no error messages are output.",
+    "expected_output": "2 points: Program starts normally and displays complete help information with 5 or more main commands, no error output. 1 point: Program can start and shows help info, but fewer than 5 command options or warning messages appear. 0 points: Program fails to start, crashes or shows errors directly."
+  },
+  {
+    "metric": "1.2 Initialization Command: Supports connecting to the database and model via the init command, init_model initializes the model",
+    "description": "1. **Arrange:** Database file exists\n2. **Act:** Execute the init and init_model command functions.\n3. **Assert:** Verify that there are merchant records in the database, and the model begins training.",
+    "expected_output": "2 points: Command executes successfully, generating complete database and model files, and shows clear progress. 1 point: Command executes and generates files, but warning messages or incomplete files are present. 0 points: Command fails to execute, cannot generate data files, or shows errors directly."
+  },
+  {
+    "metric": "1.3 Location Setting Function: Supports setting user geographic location via the location command",
+    "description": "1. **Arrange:** Prepare valid latitude and longitude coordinates (e.g., 27.91,-82.71).\n2. **Act:** Execute the `location 27.91 -82.71` command.\n3. **Assert:** Observe whether the system displays a confirmation message for successful location setting, including the set coordinate values.",
+    "expected_output": "2 points: Successfully sets location and displays confirmation including the specified coordinates. 1 point: Location can be set, but confirmation info is incomplete or format is incorrect. 0 points: Cannot set location, command unrecognized, or error shown."
+  },
+  {
+    "metric": "1.4 User Login Function: Supports logging in a specified user via the login command",
+    "description": "1. **Arrange:** Prepare a valid user ID (e.g., HFECrzYDpgbS5EmTBtj2zQ).\n2. **Act:** Execute the `python main.py login HFECrzYDpgbS5EmTBtj2zQ` command.\n3. **Assert:** Observe whether the system displays successful login info, including the user ID or basic user information.",
+    "expected_output": "2 points: Login successful and displays confirmation including the user ID or basic user information. 1 point: Can log in but info displayed is incomplete. 0 points: Unable to log in, command unrecognized, or errors shown."
+  },
+  {
+    "metric": "2.1 Basic Search Function: Supports simple keyword search",
+    "description": "1. **Arrange:** Ensure data initialization is complete, prepare search keyword \"CA restaurant\".\n2. **Act:** Execute the `python main.py search \"CA restaurant\"` command.\n3. **Assert:** Observe whether at least 5 restaurant results are returned, with business names and basic information.",
+    "expected_output": "2 points: Returns 5 or more relevant Italian restaurant results, information is complete and format is clear. 1 point: Returns 1-4 relevant results, or results are less relevant but format is clear. 0 points: Search cannot be executed, no results returned, or results are completely irrelevant."
+  },
+  {
+    "metric": "2.2a Advanced Search Parameter: radius parameter functionality",
+    "description": "1. **Arrange:** Set user location, prepare search word \"coffee\" and radius parameter of 3000 meters.\n2. **Act:** Execute the `python main.py search \"coffee\" --radius 3000` command.\n3. **Assert:** Observe if all businesses in the results are within 3000 meters of the user's location.",
+    "expected_output": "2 points: All results are strictly within 3000 meters. 1 point: Most results within range, but 1-2 exceed limit. 0 points: radius parameter is invalid or ignored."
+  },
+  {
+    "metric": "2.2b Advanced Search Parameter: limit parameter functionality",
+    "description": "1. **Arrange:** Prepare search word \"restaurant\" and set limit to 15.\n2. **Act:** Execute the `python main.py search \"restaurant\" --limit 15` command.\n3. **Assert:** Observe if the number of returned results is exactly 15 (or less than 15 if not enough total results).",
+    "expected_output": "2 points: Number of results is exactly 15 or equals the actual available results (if fewer than 15). 1 point: Result count is close to 15 but deviates by 1-3. 0 points: limit parameter is invalid and the default number of results is returned."
+  },
+  {
+    "metric": "2.2c Advanced Search Parameter: sort parameter functionality",
+    "description": "1. **Arrange:** Prepare search word \"coffee\" and sort parameter \"rating\".\n2. **Act:** Execute search and specify sorting by rating.\n3. **Assert:** Observe whether results are sorted by rating from high to low, check if the ratings of the top 5 results show a decreasing trend.",
+    "expected_output": "2 points: Results are strictly sorted by rating from high to low, top 5 results show decreasing trend in rating. 1 point: Results are generally sorted by rating, but 1-2 positions incorrect. 0 points: sort parameter is invalid, sorting does not match rating."
+  },
+  {
+    "metric": "2.3 Category Search Function: Supports searching by category and subcategory",
+    "description": "1. **Arrange:** Prepare category \"Food\" and subcategory \"Chinese\".\n2. **Act:** Execute the `category \"Food\" --subcategory \"Chinese\"` command.\n3. **Assert:** Observe if all returned results are Chinese restaurants, check the category of the top 5 results.",
+    "expected_output": "2 points: All returned results belong to the Chinese restaurant category, category info is accurate. 1 point: Most results belong to the correct category, but 1-2 are inaccurate. 0 points: Category search not available or results are totally incorrect."
+  },
+  {
+    "metric": "3.1 Location-Based Sorting: Search results can be sorted by distance",
+    "description": "1. **Arrange:** Set user location, prepare search word \"coffee\".\n2. **Act:** Execute search command and specify sorting by distance.\n3. **Assert:** Check if the distances of the top 5 businesses are sorted from nearest to farthest.",
+    "expected_output": "2 points: Top 5 results are strictly sorted from nearest to farthest. 1 point: Results are generally sorted by distance, but 1 position is incorrect. 0 points: Sorting does not match distance or distance calculation error."
+  },
+  {
+    "metric": "4.1a Multi-field Matching: Merchant Name Field Matching",
+    "description": "1. **Arrange:** Prepare a known merchant name keyword.\n2. **Act:** Search for this merchant name keyword.\n3. **Assert:** Observe whether the results include a merchant matching the name and whether it's ranked in the top 3.",
+    "expected_output": "2 points: Merchants matched accurately by name and ranked in top 3. 1 point: Name matches but not at top ranks. 0 points: Cannot perform match search by merchant name."
+  },
+  {
+    "metric": "4.1b Multi-field Matching: Category Field Matching",
+    "description": "1. **Arrange:** Prepare category keyword \"pizza\".\n2. **Act:** Search \"pizza\".\n3. **Assert:** Observe if most results are merchants related to pizza.",
+    "expected_output": "2 points: Over 80% of results are pizza-related merchants. 1 point: 50%-79% pizza-related results. 0 points: Cannot match by category or matching is poor (less than 50% relevant)."
+  },
+  {
+    "metric": "4.1c Multi-field Matching: Address Field Matching",
+    "description": "1. **Arrange:** Prepare address keyword \"Highway 19N\" (an example address in the dataset).\n2. **Act:** Search for this address keyword.\n3. **Assert:** Observe whether the returned merchant addresses contain the relevant geographic info.",
+    "expected_output": "2 points: Over 80% of merchant addresses in the results contain the searched location keyword. 1 point: 50%-79% of addresses are relevant. 0 points: Cannot perform match search by address."
+  },
+  {
+    "metric": "4.2 Fuzzy Matching Ability: Supports spelling errors and partial matches",
+    "description": "1. **Arrange:** Prepare a search term with a spelling mistake \"resturant\" (correct spelling: \"restaurant\").\n2. **Act:** Search for \"resturant\".\n3. **Assert:** Observe whether restaurant-related search results can be returned.",
+    "expected_output": "2 points: Can return restaurant-related results, fault tolerance is good. 1 point: Can return some relevant results, but fault tolerance is limited. 0 points: Cannot handle spelling errors, results only with exact match."
+  },
+  {
+    "metric": "6.1 Pagination: Supports browsing large search results in pages",
+    "description": "1. **Pre-check (User Path):** When search returns many results, is there a paging option or prompt?\n2. **Arrange:** Execute a search that returns many results (e.g., \"restaurant\").\n3. **Act:** Observe if pagination is supported, try paging operations.\n4. **Assert:** Verify whether pagination works normally.",
+    "expected_output": "2 points: Pre-check passed, supports pagination and paging is smooth. 1 point: Pre-check passed, pagination exists but is not convenient. 0 points: Pre-check failed or pagination not supported."
+  },
+  {
+    "metric": "7.1 Merchant Detail Viewing: Supports viewing detailed info of a single merchant",
+    "description": "1. **Pre-check (User Path):** In the search results, is there an option or prompt to view merchant details?\n2. **Act:** In the search results, choose to view the details of a merchant.\n3. **Assert:** Observe whether detailed merchant info can be displayed, including full address, business hours, contact info, etc. Also check if the detail page contains user reviews, displaying at least 3 reviews and review statistics (such as total number of reviews, average score).",
+    "expected_output": "5 points: Pre-check passed, can display complete merchant info including address, business hours, contact info, rating, reviews. 3 points: Pre-check passed, can display merchant details but info is incomplete (missing 1-2 items). 0 points: Pre-check failed or unable to view merchant details."
+  },
+  {
+    "metric": "8.1 Search History: The system can record and display user's search history",
+    "description": "1. **Pre-check (User Path):** Is there an option to view search history in the main menu or interactive mode?\n2. **Arrange:** Perform 3 different search operations.\n3. **Act:** Try to view search history.\n4. **Assert:** Observe whether all 3 previous search records can be displayed.",
+    "expected_output": "2 points: Pre-check passed, can fully display all 3 search history records. 1 point: Pre-check passed, can display search history but records are incomplete (shows only 1-2). 0 points: Pre-check failed or no search history feature."
+  },
+  {
+    "metric": "9.1 Error Handling: The system can gracefully handle various errors",
+    "description": "1. **Arrange:** Prepare multiple erroneous inputs: invalid commands, wrong parameter formats, non-existent user IDs.\n2. **Act:** Enter these error commands and parameters one by one.\n3. **Assert:** Observe whether the system provides clear error messages, rather than crashing or displaying technical error info.",
+    "expected_output": "2 points: All error situations have clear friendly error messages, no crashes. 1 point: Most errors are prompted but some messages are not friendly. 0 points: Poor error handling, frequent crashes or useless technical error messages."
+  },
+  {
+    "metric": "9.2 Performance: Search response time is within acceptable range",
+    "description": "1. **Arrange:** Prepare 5 different search queries.\n2. **Act:** Execute these 5 searches in sequence, record response time of each.\n3. **Assert:** Observe whether each search completes within 5 seconds and if average response time is within 3 seconds.",
+    "expected_output": "2 points: All searches complete within 5 seconds, average response within 3 seconds. 1 point: Most searches within 5 seconds, but 1-2 over time or average exceeds 3 seconds. 0 points: Search response time often exceeds 5 seconds, severely impacts user experience."
+  },
+  {
+    "metric": "10.1 Nearby Search Function: Supports searching for nearby businesses via the nearby command",
+    "description": "1. **Arrange:** Set user location to 27.91,-82.71 and ensure database is initialized.\n2. **Act:** Execute `python main.py nearby` and `python main.py nearby restaurant` commands.\n3. **Assert:** Observe whether a list of nearby businesses is returned, check if all returned businesses are within 2km (default search radius), and sorted by distance from near to far.",
+    "expected_output": "2 points: nearby command works normally, can return nearby businesses, supports category parameter, results sorted by distance. 1 point: nearby command basically works but function incomplete or sorting is incorrect. 0 points: nearby command not available or cannot return correct results."
+  },
+  {
+    "metric": "12.1 Personalized Recommendation: Supports the recommend command for personalized recommendations",
+    "description": "1. **Arrange:** Prepare a user ID with review history.\n2. **Act:** Run unit test to get recommendations for this user.\n3. **Assert:** Assert in unit test that all recommended categories are related to the user's historical preferences.",
+    "expected_output": "2 points: recommend command works, returns personalized results reflecting user preferences. 1 point: recommend command usable but personalization is weak. 0 points: recommend command unavailable or returns only generic results."
+  },
+  {
+    "metric": "12.2 Cold Start Recommendation: Location-based recommendation for non-logged-in users",
+    "description": "1. **Arrange:** Ensure user is not logged in, set user geographic location.\n2. **Act:** Execute the recommend command.\n3. **Assert:** Observe whether the system provides popular business recommendations based on location, and recommended results include nearby high-rated businesses.",
+    "expected_output": "3 points: Successfully provides cold-start recommendations based on location, high quality and diverse results. 2 points: Offers cold-start recommendations but quality or diversity needs improvement. 1 point: Provides basic cold-start recommendation functionality. 0 points: Cold-start recommendation not available."
+  },
+  {
+    "metric": "13.1 System Statistics: Supports the stats command to display system statistics",
+    "description": "1. **Arrange:** Ensure the database is initialized, and there is sufficient data and user activity.\n2. **Act:** Execute the `python main.py stats` command.\n3. **Assert:** Observe whether system statistics are displayed, including total number of businesses, total users, total reviews, and other key indicators.",
+    "expected_output": "2 points: stats command works, displays complete system statistics including at least 5 key indicators. 1 point: stats command works but statistics are incomplete. 0 points: stats command unavailable or cannot display statistics."
+  }
+]

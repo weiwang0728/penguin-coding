@@ -1,0 +1,42 @@
+{
+  "next_ids": {
+    "department": 2,
+    "user": 2,
+    "category": 2,
+    "asset": 1,
+    "issue": 1,
+    "require_issue": 1
+  },
+  "departments": [
+    {
+      "id": 1,
+      "name": "Company",
+      "parent_id": null
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "password_hash": "$2b$12$Z1Sn0MgS43M6UFPkNvlocuWLNlwt7aY0pUzlkIrgY407hRmAF4OiW",
+      "department_id": 1,
+      "active": true,
+      "roles": [
+        "STAFF",
+        "IT",
+        "ASSET",
+        "SYSTEM"
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Asset",
+      "parent_id": null
+    }
+  ],
+  "assets": [],
+  "issues": [],
+  "require_issues": [],
+  "custom_attrs": []
+}

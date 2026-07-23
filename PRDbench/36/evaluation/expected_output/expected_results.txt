@@ -1,0 +1,60 @@
+Keigo HigashinoSmallnovel textminingAnalysisResult
+=====================================
+
+entity recognition extractionResult: 
+------------------
+PersonObjectImplementationIntegrated (nr):
+- Kaga Kyoichiro: OutputImplementation3Times, onunderText: "inTokyoOneitem(s)rainy night, detectiveKaga KyoichiroCorrectinAdjustinvestigateOnemysterious case"
+- Tanaka Yukiho: OutputImplementation2Times, onunderText: "victimErYesOneNamenamedTanaka Yukihoyoungwoman, sheYesOneNamenurse"
+- Ishigami Tetsuya: OutputImplementation2Times, onunderText: "and his coworker Ishigami TetsuyadiscussedCaseSituation.IshiGodYesOneNameEconomyExperienceexperienced detective"
+- Kirihara Ryoji: OutputImplementation1Times, onunderText: "OnePositionNamenamed Kirihara RyojiillnessPerson.KiriNativeYesOneNameengineer"
+
+placeProcessorImplementationIntegrated (ns):
+- Tokyo: OutputImplementation1Times, onunderText: "inTokyoOneitem(s)rainy night, detectiveKaga KyoichiroCorrectinAdjustinvestigate"
+- Shibuya District: OutputImplementation1Times, onunderText: "locationYesShibuya DistrictOnebuildingOfficeapartment building"
+
+TimeBetweenImplementationIntegrated (t):
+- March 15, 2023: OutputImplementation1Times, onunderText: "CasePieceSendNativeinMarch 15, 20238 PM"
+- 8 PM: OutputImplementation1Times, onunderText: "March 15, 20238 PM, locationYesShibuya District"
+- SecondDaymorningon: OutputImplementation1Times, onunderText: "SecondDaymorningon, PlusKagaritothe police observedbureau"
+- underPMSamPoint: OutputImplementation1Times, onunderText: "soon turned intounderPMSamPoint.PlusKagaandIshiGodContinueContinue"
+
+professionImplementationIntegrated (nn):
+- detective: OutputImplementation1Times, onunderText: "inTokyoOneitem(s)rainy night, detectiveKaga KyoichiroCorrectinAdjustinvestigate"
+- nurse: OutputImplementation2Times, onunderText: "sheYesOneNamenurse, innearby hospitalEngineeringWork"
+- police detective: OutputImplementation1Times, onunderText: "IshiGodYesOneNameEconomyExperienceexperienced detective, forthis case"
+- engineer: OutputImplementation1Times, onunderText: "KiriNativeYesOneNameengineer, CauseasEngineeringWorkexcessive pressure"
+- dean: OutputImplementation1Times, onunderText: "hospitaldeantold them, YukihoYesOneitem(s)"
+
+frequencySystemDesignAnalysisResult: 
+------------------
+PersonObjectfrequencyranking list: 
+1. Kaga Kyoichiro: 3Times
+2. Tanaka Yukiho: 2Times
+3. Ishigami Tetsuya: 2Times
+4. Kirihara Ryoji: 1Times
+
+locationfrequencyranking list: 
+1. Tokyo: 1Times
+2. Shibuya District: 1Times
+
+semantic similarity analysisResult: 
+------------------
+and"Kaga Kyoichiro"most similar person: 
+1. Ishigami Tetsuya: similarity 0.85
+2. Tanaka Yukiho: similarity 0.72
+3. Kirihara Ryoji: similarity 0.68
+
+RelatedSeriesPushProcessorAnalysisResult: 
+------------------
+recognized relationship patterns: 
+- coworker relationship: Kaga Kyoichiro ↔ Ishigami Tetsuya
+- doctor-patientRelatedSeries: Tanaka Yukiho ↔ Kirihara Ryoji
+- AdjustinvestigateRelatedSeries: Kaga Kyoichiro ↔ Tanaka Yukiho
+
+RelatedSeriesModelStyleSystemDesign: 
+- coworker relationship: 1for
+- doctor-patientRelatedSeries: 1for
+- AdjustinvestigateRelatedSeries: 1for
+
+AnalysisCompleteSuccessTimeBetween: 2023-12-01 10:30:00

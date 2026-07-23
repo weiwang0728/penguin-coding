@@ -1,0 +1,8 @@
+test_product_key
+test_device_name
+test_device_secret
+test_access_key
+test_access_secret
+./test_data
+5000
+y

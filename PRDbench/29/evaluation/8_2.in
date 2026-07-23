@@ -1,0 +1,11 @@
+init
+start
+166 155 780 780
+sleep(2)
+start
+11 11 543 70
+sleep(2)
+start
+30 422 100 600
+sleep(2)
+status

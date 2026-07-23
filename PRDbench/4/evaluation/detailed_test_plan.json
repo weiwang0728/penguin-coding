@@ -1,0 +1,312 @@
+[
+  {
+    "metric": "0.1.1 Environment and Documentation: Provide a clear README.md file",
+    "description": "1. **Assert**: Check if a `README.md` file exists in the project root directory.\n2. **Assert**: If the file exists, read its contents and verify that it contains at least three clear sections: project introduction, environment setup instructions (how to install dependencies), and program startup command.",
+    "type": "file_comparison",
+    "input_files": null,
+    "expected_output_files": "evaluation/README.md",
+    "expected_output": "The README.md file exists. Its contents are read and verified to contain at least three distinct sections: project introduction, environment setup instructions, and program startup command.",
+    "testcases": [
+      {
+        "test_command": null,
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "0.2.1 Program Operability: The program can be successfully started and display the main menu",
+    "description": "1. **Act**: Start the program according to the startup command in `README.md` (such as `python src/main.py`).\n2. **Assert**: Observe the program output and verify whether it starts successfully and displays an interactive main menu with multiple options.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Main menu related information is displayed clearly.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_0.2.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "0.3.1 Unit Testing: Provide executable unit tests",
+    "description": "1. **Arrange**: Check whether there are test files under the `tests/` directory (such as `test_*.py`).\n2. **Act**: Execute the test command (such as `pytest` or `python -m unittest discover tests`).\n3. **Assert**: Observe the test results, and verify whether the test framework can run and all detected test cases show as \"PASSED\".",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All unit tests pass successfully.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1a Create Project - Process Start",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for \"Create Project\" or similar functionality in the main menu?\n2. **Act:** In the main menu interface, interactively select \"Create Project\".\n3. **Assert:** Observe whether the program responds and begins prompting the user for the first project parameter (such as \"Please enter city\").",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program indicates a new project has been created and prompts for the first parameter.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.1a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1b Save Project",
+    "description": "1. **Pre-check (User Path):** After completing parameter input or in the main menu, is there a clear option for \"Save Project\"?\n2. **Arrange:** Complete the input of the new project's parameters.\n3. **Act:** Choose the \"Save Project\" function.\n4. **Assert:** Observe whether the program responds and saves the project information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program confirms the project has been saved successfully.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.1b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1c Load Project",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for \"Load Project\" in the main menu?\n2. **Act:** Choose the \"Load Project\" function, and follow the prompts to select an existing project.\n3. **Assert:** Observe whether the program indicates successful loading, and check via subsequent operations (such as viewing parameters) whether the data was correctly loaded into memory.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program successfully loads the project and enters the project menu.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.1c.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2a Basic Parameter Input - Location and Type",
+    "description": "1. **Act:** During the project loading process, continue input until the basic information section.\n2. **Assert:** Confirm the program prompts sequentially for the five parameters: \"city\", \"district\", \"business district type\", \"longitude\", and \"latitude\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program prompts for each basic parameter in order and confirms 'parameters updated' after input.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.2a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2b Basic Parameter Input - Category Structure",
+    "description": "1. **Act:** During the project loading process, continue input until the category structure section.\n2. **Assert:** Confirm the program prompts the user to input the names and sales proportions of 3 categories.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program supports input of 3 categories and their proportions, then indicates 'parameters updated'.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.2b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2c Basic Parameter Input - Cost Structure",
+    "description": "1. **Act:** During the project loading process, continue input until reaching the cost parameters section.\n2. **Assert:** Verify that the program prompts sequentially for the four core cost parameters: \"average transaction amount\", \"ingredient cost ratio\", \"packaging cost ratio\", and \"platform commission rate\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program prompts for each cost parameter and confirms with 'parameters updated' after input.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.2c.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.3a Parameter Range Validation",
+    "description": "1. **Arrange:** Prepare an invalid input value, such as `-1000`.\n2. **Act:** During the create project process, enter this invalid value for cost or investment parameters.\n3. **Assert:** Verify that the program detects the invalid input and displays a clear error message, requesting the user to re-enter a valid value.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display an error message (e.g., 'Invalid input') and prompt for re-entry.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.3a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.3b Reference to Industry Benchmark Values for Key Parameters",
+    "description": "1. **Act:** During the create project process, when entering key parameters such as costs or investment values.\n2. **Assert:** Verify whether the input prompt provides relevant industry benchmark values for reference (e.g., '(Industry benchmark: 25%-35%)').",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Prompts for cost parameters include industry benchmark references for guidance.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.3b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.4a CSV Template Provision",
+    "description": "1. **Act:** Execute the `ls -l src/data/` command.\n2. **Assert:** Verify that a `template.csv` file exists and that its column headers match the input items specified in the PRD (city, district, latitude/longitude, cost parameters, etc.).",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming that `src/data/template.csv` exists and headers are correct.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_documentation.py::test_csv_template_existence_and_headers",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.1.4b CSV Batch Import",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for 'Import CSV' in the main menu?\n2. **Arrange:** Copy `src/data/template.csv` to `import_test.csv` and fill in one row of valid example data.\n3. **Act:** Select the 'Import CSV' function and input the path to `import_test.csv`.\n4. **Assert:** Verify that the project is imported successfully and data is loaded correctly.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/import_test.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program confirms the project from CSV has been imported successfully.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.1.4b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.1 Subsidy Parameter Adjustment and Impact",
+    "description": "1. **Pre-check (User Path):** After loading a project, is there a menu option for 'Adjust Parameters' or 'Strategy Simulation'?\n2. **Arrange:** Load a project, run analysis, record initial 'transaction amount' and 'average daily orders'.\n3. **Act:** Increase 'merchant subsidy rate' by 5% and re-run analysis.\n4. **Assert:** Verify that 'transaction amount' and 'average daily orders' change logically (e.g., subsidy up, orders up, transaction amount may vary).",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming that adjusting subsidy rate results in logical changes in core indicators.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_subsidy_impact",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.2.2 Category Impact Factor Adjustment and Effect",
+    "description": "1. **Pre-check (User Path):** Is there an option to adjust 'Category Impact Factor' in the 'Adjust Parameters' menu?\n2. **Arrange:** Load a project, run analysis, record initial 'average daily orders'.\n3. **Act:** Increase the impact factor of one category by 10% and re-run analysis.\n4. **Assert:** Verify that 'average daily orders' changes logically.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming that daily order volume changes logically after adjusting category impact factor.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_category_factor_impact",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.3.1 Tiered Cost Setting",
+    "description": "1. **Pre-check (User Path):** Is there a menu option for setting 'tiered cost' after loading a project?\n2. **Act:** Define a cost tier for 'ingredient procurement' (e.g., unit price drops by 5% when quantity exceeds 100).\n3. **Assert:** Confirm that the system accepts the tiered cost input.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program accepts the tiered cost input and confirms the new rule is added.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py ",
+        "test_input": "evaluation/inputs_for_test_2.3.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.2 Break-even Analysis Chart Generation",
+    "description": "1. **Arrange:** Load a project with data.\n2. **Act:** Run the core analysis command.\n3. **Assert:** Verify that a break-even chart image (e.g., `break_even_chart.png`) is generated in the `evaluation/` or `reports/` directory and can be opened normally.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming that the break-even chart file is successfully generated.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_break_even_chart_generation",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.3.3 Key Decision Suggestions Generation",
+    "description": "1. **Arrange:** Load a project with data.\n2. **Act:** Run the core 'analyze' or 'predict' command.\n3. **Assert:** Verify that the output contains a 'decision suggestions' or 'optimization directions' section with 3-5 clear suggestions.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming the analysis output contains 3 or more actionable suggestions.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_suggestion_generation",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.4.1 Core Metrics Calculation and Display - 5 Key Metrics",
+    "description": "1. **Arrange:** Load a project with data.\n2. **Act:** Run the core 'analyze' or 'predict' command.\n3. **Assert:** Verify that the output displays the five key metrics: 'average daily orders', 'transaction amount', 'gross profit margin', 'net profit', and 'payback period' along with their values.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming all five core metrics are displayed correctly.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_core_metrics_calculation",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.4.2 Dynamic Break-even and Sensitivity Factor Ranking",
+    "description": "1. **Arrange:** Load a project with data.\n2. **Act:** Run the core 'analyze' or 'predict' command.\n3. **Assert:** Verify that the output contains a 'Sensitivity Analysis' section with at least 3 key factors affecting profit, sorted by impact.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming that the sensitivity analysis list is present and correctly sorted.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_sensitivity_analysis",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.4.3a Markdown Report Export - File Generation",
+    "description": "1. **Pre-check (User Path):** After analysis results are displayed, is there a clear option to 'Export Markdown Report'?\n2. **Arrange:** Load a project and complete analysis.\n3. **Act:** Select 'Export Markdown Report'.\n4. **Assert:** Verify that a markdown file is generated in the `reports/` directory with a size greater than zero.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program confirms markdown report generation, and a file named XXX_AnalysisReport_YYYY-MM-DD.md is created.",
+    "testcases": [
+      {
+        "test_command": "python evaluation/run_report_generation_test.py",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.4.3b Markdown Report Export - Content Validation",
+    "description": "1. **Arrange:** Generate a markdown report.\n2. **Act:** Open the generated markdown file.\n3. **Assert:** Verify that it contains all five key metrics and the break-even chart.",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The test passes, confirming that the markdown report contains the core metrics and the break-even chart.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_analysis.py::test_md_report_content_proxy",
+        "test_input": null
+      }
+    ]
+  }
+]

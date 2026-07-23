@@ -1,0 +1,7 @@
+start
+100 100 555 234
+sleep(2)
+start
+500 780 45 34
+sleep(2)
+status

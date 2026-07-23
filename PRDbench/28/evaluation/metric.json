@@ -1,0 +1,162 @@
+[
+  {
+    "metric": "0.1 Program Startup & Main Menu",
+    "description": "1. **Act:** Execute the program's startup command in the shell (e.g., `python main.py`).\n2. **Assert:** Verify that the program launches successfully and displays a clear main menu with at least 3 functional options (e.g., \"Enter Enterprise Information\", \"Run Financing Diagnosis\", \"View Reports\").",
+    "expected_output": "2 points: The program launches successfully and displays a main menu with 3 or more clear, functional options. 1 point: The program launches, but the menu has fewer than 3 options, is unclear, or contains garbled text. 0 points: The program fails to launch or crashes immediately after starting."
+  },
+  {
+    "metric": "2.1.1a Enterprise Information Entry - Basic Field Collection",
+    "description": "1. **Pre-check (User Path):** Verify that the main menu contains a clear option for \"Enter Enterprise Information\" or a similar function.\n2. **Act:** Select the enterprise information entry function and observe the system's prompts.\n3. **Assert:** Verify that the system sequentially prompts for input for the 4 basic fields: Enterprise Name, Date of Establishment, Registered Capital, and Enterprise Type.",
+    "expected_output": "2 points: Pre-check passes, and the system prompts for all 4 basic fields. 1 point: Pre-check passes, but the system only prompts for 2-3 basic fields. 0 points: Pre-check fails, or the system prompts for fewer than 2 basic fields."
+  },
+  {
+    "metric": "2.1.1b Enterprise Information Entry - Business Field Collection",
+    "description": "1. **Pre-check (User Path):** During the information entry process, verify that the system continues to prompt for business-related information.\n2. **Act:** Continue the information entry process.\n3. **Assert:** Verify that the system prompts for input for the 4 business fields: Main Business, Industry, Total Number of Employees, and Annual Revenue.",
+    "expected_output": "2 points: Pre-check passes, and the system prompts for all 4 business fields. 1 point: Pre-check passes, but the system only prompts for 2-3 business fields. 0 points: Pre-check fails, or the system prompts for fewer than 2 business fields."
+  },
+  {
+    "metric": "2.1.2a Data Type Validation - Numeric Fields",
+    "description": "1. **Arrange:** Prepare invalid numeric inputs (e.g., \"abc\" for Registered Capital, \"-5\" for Total Number of Employees).\n2. **Act:** Intentionally provide these invalid inputs for the corresponding numeric fields during enterprise information entry.\n3. **Assert:** Verify that the program detects the input errors and prompts the user to re-enter the data in the correct format.",
+    "expected_output": "2 points: The system effectively validates all numeric fields and provides clear error prompts. 1 point: The system validates only some numeric fields, or the error prompts are not user-friendly. 0 points: The system performs no numeric validation and accepts all inputs."
+  },
+  {
+    "metric": "2.1.2b Data Type Validation - Date Field",
+    "description": "1. **Arrange:** Prepare invalid date inputs (e.g., \"2025-13-32\" or \"abc\" for the Date of Establishment).\n2. **Act:** Intentionally provide these invalid inputs for the date field during enterprise information entry.\n3. **Assert:** Verify that the program detects the date format errors and prompts the user to re-enter the date.",
+    "expected_output": "2 points: The system accurately validates the date format and provides clear error prompts with examples of the correct format. 1 point: The system detects some date errors, but the prompts are unclear. 0 points: The system performs no date validation."
+  },
+  {
+    "metric": "2.1.3 Progress Feedback Display",
+    "description": "1. **Act:** Progress through the enterprise information entry process by filling in each field.\n2. **Assert:** Verify that the system displays the data entry progress in real-time (e.g., \"3/8 fields completed\" or \"Progress: 37.5%\").",
+    "expected_output": "2 points: The system provides clear, real-time progress feedback, showing the number of completed items or an accurate percentage. 1 point: The system provides a basic progress indicator, but it lacks detail or accuracy. 0 points: The system has no progress feedback feature."
+  },
+  {
+    "metric": "2.1.4a Innovation Capability Entry - Patents and IP",
+    "description": "1. **Pre-check (User Path):** Verify that the enterprise information entry workflow includes a section for innovation capability.\n2. **Act:** Proceed to the innovation capability data entry section.\n3. **Assert:** Verify that the system prompts for input for 2 intellectual property metrics: Number of Patents and Number of Copyrights.",
+    "expected_output": "2 points: Pre-check passes, and the system collects data for both patent and copyright metrics. 1 point: Pre-check passes, but the system collects data for only one of the two metrics. 0 points: Pre-check fails, or there is no section for IP information collection."
+  },
+  {
+    "metric": "2.1.4b Innovation Capability Entry - R&D Investment Metrics",
+    "description": "1. **Pre-check (User Path):** In the innovation capability section, verify that the system continues to prompt for R&D-related information.\n2. **Act:** Continue with the innovation capability data entry.\n3. **Assert:** Verify that the system prompts for input for 3 R&D metrics: R&D Investment Amount, R&D Investment to Revenue Ratio, and R&D Personnel Ratio.",
+    "expected_output": "2 points: Pre-check passes, and the system collects all 3 R&D metrics. 1 point: Pre-check passes, but the system collects only 1-2 R&D metrics. 0 points: Pre-check fails, or there is no section for R&D investment information collection."
+  },
+  {
+    "metric": "2.1.5a Management Compliance Assessment - Internal Control",
+    "description": "1. **Pre-check (User Path):** Verify that the enterprise information entry workflow includes a section for management compliance assessment.\n2. **Act:** Proceed to the management compliance assessment section.\n3. **Assert:** Verify that the system provides a 5-point scale (1-5) for assessing 2 items: Internal Control System and Financial Compliance.",
+    "expected_output": "2 points: Pre-check passes, and the system provides a complete 5-point scale assessment for both internal control and financial compliance. 1 point: Pre-check passes, but an assessment is provided for only one item, or the rating scale is not 1-5. 0 points: Pre-check fails, or there is no assessment for internal control."
+  },
+  {
+    "metric": "2.1.5b Management Compliance Assessment - Compliance Training",
+    "description": "1. **Pre-check (User Path):** In the management compliance section, verify that the system continues to prompt for compliance-related assessments.\n2. **Act:** Continue with the management compliance assessment.\n3. **Assert:** Verify that the system provides a 5-point scale assessment for 2 items: Compliance Training and Employment Compliance.",
+    "expected_output": "2 points: Pre-check passes, and the system provides a complete 5-point scale assessment for both compliance training and employment compliance. 1 point: Pre-check passes, but an assessment is provided for only one item, or the rating scale is incomplete. 0 points: Pre-check fails, or there is no compliance-related assessment."
+  },
+  {
+    "metric": "2.1.6 Local Data Persistence",
+    "description": "1. **Arrange:** Complete one full enterprise information entry, including all required fields.\n2. **Act:** Exit the program normally.\n3. **Assert:** Check for the creation of a local, structured data file (e.g., JSON or SQLite). Verify that the data is saved completely and can be successfully reloaded.",
+    "expected_output": "2 points: Data is saved completely in a structured format, and all information can be successfully reloaded after a program restart. 1 point: Data is saved, but the format is not well-structured, or some information is lost. 0 points: Data is not saved, or the saved format is unreadable or corrupt."
+  },
+  {
+    "metric": "2.2.1 Funding Gap Assessment",
+    "description": "1. **Pre-check (User Path):** Verify that the main menu contains an analysis option like \"Financing Diagnosis\" or \"Intelligent Analysis\".\n2. **Arrange:** Ensure that basic enterprise information, including financial data like assets, liabilities, and revenue, has been entered.\n3. **Act:** Select the financing diagnosis function and observe the analysis process.\n4. **Assert:** Verify that the system automatically calculates and displays the funding gap assessment result based on the enterprise's financial data.",
+    "expected_output": "2 points: Pre-check passes, and the system automatically calculates and clearly displays the funding gap assessment based on the input data. 1 point: Pre-check passes, but the funding gap analysis is overly simplistic or its calculation logic is unclear. 0 points: Pre-check fails, or the funding gap assessment feature is missing."
+  },
+  {
+    "metric": "2.2.2 Solvency Analysis",
+    "description": "1. **Arrange:** Ensure the enterprise information includes financial metrics such as the debt-to-asset ratio and cash flow data.\n2. **Act:** During the financing diagnosis process, observe the solvency analysis module.\n3. **Assert:** Verify that the system assesses solvency based on at least 2 financial metrics (e.g., debt-to-asset ratio, cash flow) and provides a corresponding credit status analysis.",
+    "expected_output": "2 points: The system performs a solvency analysis based on 2 or more financial metrics and provides a clear assessment and credit status. 1 point: The system provides a solvency analysis, but it is based on only one metric or lacks depth. 0 points: The solvency analysis feature is missing."
+  },
+  {
+    "metric": "2.2.3 Innovation Capability Score Calculation",
+    "description": "1. **Arrange:** Ensure that innovation capability information (e.g., number of patents, R&D investment ratio) has been entered.\n2. **Act:** During the financing diagnosis, observe the innovation capability assessment module.\n3. **Assert:** Verify that the system automatically calculates a score based on at least 2 innovation metrics (e.g., number of patents, R&D investment ratio) and displays the basis for the score.",
+    "expected_output": "2 points: The system automatically calculates a score based on 2 or more innovation metrics and provides a clear basis and explanation for the calculation. 1 point: The system provides an innovation capability score, but the calculation is based on a single metric or lacks a detailed explanation. 0 points: The innovation capability scoring feature is missing."
+  },
+  {
+    "metric": "2.2.4a Financing Channel Recommendation - Channel Matching",
+    "description": "1. **Act:** In the financing diagnosis results, view the financing channel recommendation section.\n2. **Assert:** Verify that the system recommends at least 3 different types of financing channels (e.g., bank credit, venture capital, government subsidies, guaranty agencies) based on the enterprise's industry, region, and scale.",
+    "expected_output": "2 points: The system recommends 3 or more different types of financing channels, showing diversity. 1 point: The system recommends 2 channels, or the recommended channels are not diverse. 0 points: The system recommends fewer than 2 channels, or the recommendation feature is missing."
+  },
+  {
+    "metric": "2.2.4b Financing Channel Recommendation - Availability Score",
+    "description": "1. **Act:** In the financing channel recommendations, observe the detailed information for each channel.\n2. **Assert:** Verify that each recommended financing channel includes an availability score and highlights key review requirements or potential barriers.",
+    "expected_output": "2 points: Each recommended channel includes an availability score and clearly highlights key requirements and potential barriers. 1 point: Only some recommended channels provide scoring information, or the information is not detailed. 0 points: The recommended channels have no scoring information or explanation of key requirements."
+  },
+  {
+    "metric": "2.2.5 Improvement Recommendation Generation",
+    "description": "1. **Act:** View the recommendations section of the financing diagnosis output.\n2. **Assert:** Verify that the system generates a specific list of improvement recommendations for 3 dimensions: R&D Investment, Intellectual Property, and Management Compliance.",
+    "expected_output": "2 points: The system generates a detailed and actionable list of improvement recommendations covering all 3 dimensions. 1 point: The system generates recommendations, but they cover only 1-2 dimensions or are overly simplistic. 0 points: The recommendation generation feature is missing."
+  },
+  {
+    "metric": "2.3.1a Structured Report Generation - Report Structure",
+    "description": "1. **Pre-check (User Path):** After completing a financing diagnosis, verify that a \"Generate Report\" or \"View Report\" option is available.\n2. **Act:** Select the report generation function.\n3. **Assert:** Verify that the system automatically generates a structured report containing 2 core sections: Enterprise Profile and Financing Scores.",
+    "expected_output": "2 points: Pre-check passes, and the system automatically generates a complete report containing both the Enterprise Profile and Financing Scores sections. 1 point: Pre-check passes, but the report contains only one of these sections or is poorly structured. 0 points: Pre-check fails, or the report generation feature is missing."
+  },
+  {
+    "metric": "2.3.1b Structured Report Generation - Analysis and Recommendations",
+    "description": "1. **Pre-check (User Path):** Verify that the generated report includes content related to analysis and recommendations.\n2. **Act:** View the subsequent sections of the report.\n3. **Assert:** Verify that the report contains content for 2 sections: Basic Analysis and Key Recommendations.",
+    "expected_output": "2 points: Pre-check passes, and the report contains complete content for both the Basic Analysis and Key Recommendations sections. 1 point: Pre-check passes, but the report contains only one of these sections or the content is not detailed. 0 points: Pre-check fails, or the report is missing analysis and recommendation content."
+  },
+  {
+    "metric": "2.3.2 Report File Saving",
+    "description": "1. **Pre-check (User Path):** After generating a report, verify that a \"Save Report\" or similar file-saving option is available.\n2. **Act:** Select the save report function and specify a save path.\n3. **Assert:** Verify that a local text file is successfully generated at the specified path and that its content is complete, well-formatted, and readable.",
+    "expected_output": "2 points: Pre-check passes, and the report is successfully saved as a well-formatted local text file with complete and readable content. 1 point: Pre-check passes, but the saved file is poorly formatted or some content is missing. 0 points: Pre-check fails, or the system is unable to save the report file."
+  },
+  {
+    "metric": "2.3.3a Matplotlib Chart Generation - Basic Statistical Charts",
+    "description": "1. **Arrange:** Ensure the enterprise information includes sufficient numeric data (e.g., assets, liabilities, revenue).\n2. **Act:** During the report generation process, observe the chart generation component.\n3. **Assert:** Verify that the system uses Matplotlib to generate a debt-to-asset bar chart and saves it to the specified path. Check that the chart file exists and displays correctly.",
+    "expected_output": "2 points: The system successfully generates a debt-to-asset bar chart, saves it to the specified path, and the chart data is accurate and well-formatted. 1 point: The system generates a bar chart, but its quality is poor or the data is displayed incorrectly. 0 points: The system is unable to generate a debt-to-asset bar chart."
+  },
+  {
+    "metric": "2.3.3b Matplotlib Chart Generation - Score Radar Chart",
+    "description": "1. **Arrange:** Ensure the financing diagnosis is complete and includes scoring data for each dimension.\n2. **Act:** During the report generation process, observe the radar chart generation component.\n3. **Assert:** Verify that the system uses Matplotlib to generate a score radar chart, displaying the scores for each dimension, and saves it to the specified path.",
+    "expected_output": "2 points: The system successfully generates a score radar chart, saves it to the specified path, and the chart clearly displays all dimension scores in a well-formatted manner. 1 point: The system generates a radar chart, but its quality is poor or some data is unclear. 0 points: The system is unable to generate a score radar chart."
+  },
+  {
+    "metric": "2.3.4a Reasoning Explanation Query - Inference Logic Display",
+    "description": "1. **Pre-check (User Path):** In the report viewing interface, verify that a query option like \"Reasoning Explanation\" or \"Detailed Explanation\" exists.\n2. **Act:** Select the function to query the reasoning logic for a specific conclusion (e.g., the innovation capability score).\n3. **Assert:** Verify that the system displays the data basis and an explanation of the reasoning process for that conclusion.",
+    "expected_output": "2 points: Pre-check passes, and the system provides a detailed explanation of the reasoning logic and data basis. 1 point: Pre-check passes, but the explanation is overly simplistic or unclear. 0 points: Pre-check fails, or the reasoning explanation feature is missing."
+  },
+  {
+    "metric": "2.3.4b Reasoning Explanation Query - Keyword Navigation",
+    "description": "1. **Pre-check (User Path):** In the reasoning explanation interface, verify that a keyword search or navigation feature is available.\n2. **Arrange:** Prepare a relevant keyword (e.g., \"Innovation Shortfalls,\" \"Funding Gap\").\n3. **Act:** Use the prepared keyword to perform a navigation query.\n4. **Assert:** Verify that the system can use the keyword to quickly locate the relevant analysis and strategy sections.",
+    "expected_output": "2 points: Pre-check passes, and the keyword navigation is accurate, quickly locating the relevant content sections. 1 point: Pre-check passes, but the keyword search is not precise or its functionality is limited. 0 points: Pre-check fails, or the keyword navigation feature is missing."
+  },
+  {
+    "metric": "2.3.5a Historical Report Management - Report Archiving",
+    "description": "1. **Arrange:** Generate 2-3 diagnostic reports for different time periods (can be done by modifying enterprise info and re-running the diagnosis).\n2. **Pre-check (User Path):** In the main menu or a report-related menu, verify that an option like \"Historical Reports\" or \"Report Management\" exists.\n3. **Act:** Select the historical report management function.\n4. **Assert:** Verify that the system automatically archives reports from multiple periods by timestamp and provides a clear list of historical reports.",
+    "expected_output": "2 points: Pre-check passes, and the system automatically archives reports, providing a clear list with accurate timestamp information. 1 point: Pre-check passes, but the archiving feature is incomplete or the timestamp information is inaccurate. 0 points: Pre-check fails, or the historical report management feature is missing."
+  },
+  {
+    "metric": "2.3.5b Historical Report Management - Report Comparison",
+    "description": "1. **Pre-check (User Path):** In the historical report management view, verify that a \"Compare Reports\" or similar function is available.\n2. **Arrange:** Ensure at least 2 historical reports from different periods exist.\n3. **Act:** Select 2 reports from different periods to compare.\n4. **Assert:** Verify that the system displays a comparison of the dynamic changes in the enterprise's financing capability.",
+    "expected_output": "2 points: Pre-check passes, and the system provides a detailed multi-period report comparison, clearly showing dynamic changes. 1 point: Pre-check passes, but the comparison feature is simplistic or the information displayed is limited. 0 points: Pre-check fails, or the report comparison feature is missing."
+  },
+  {
+    "metric": "2.3.6 Policy Data Query",
+    "description": "1. **Pre-check (User Path):** In the main menu or a related menu, verify that an option like \"Policy Query\" or \"Policy Information\" exists.\n2. **Act:** Select the policy query function.\n3. **Assert:** Verify that the system provides query results for at least 3 SME-related policies from its preset policy database.",
+    "expected_output": "2 points: Pre-check passes, and the system provides rich query results with 3 or more policies. 1 point: Pre-check passes, but the policy information is limited (1-2 policies), or the query function is incomplete. 0 points: Pre-check fails, or the policy query feature is missing."
+  },
+  {
+    "metric": "2.4.1 User Authentication",
+    "description": "1. **Act:** When the program starts, observe whether there is a user authentication step (e.g., a login screen, username/password prompt).\n2. **Assert:** Verify that the system provides a basic user authentication function, such as a user login or identity confirmation mechanism.",
+    "expected_output": "2 points: The system provides a complete user authentication feature, including a full workflow for user registration and login. 1 point: The system provides basic authentication, but the feature is simplistic or the mechanism is not robust. 0 points: The system has no user authentication feature."
+  },
+  {
+    "metric": "2.4.2 Operation Logging",
+    "description": "1. **Arrange:** Plan to perform a series of key operations (e.g., enterprise information entry, financing diagnosis, report generation).\n2. **Act:** Execute these key operations in sequence.\n3. **Assert:** Verify that the system has logged these key operations and check for the generation of a log file containing information such as the operation time and type.",
+    "expected_output": "2 points: The system completely logs all key operations, and the generated log file contains accurate and detailed information, including timestamps and operation types. 1 point: The system logs operations, but the information is not detailed, or some operations are not logged. 0 points: The system has no operation logging feature."
+  },
+  {
+    "metric": "3.1 Exception Handling & Fault Tolerance",
+    "description": "1. **Arrange:** Prepare various types of exceptional input data for testing (e.g., null values, oversized strings like 1000 characters, special characters like @#$%).\n2. **Act:** Use these exceptional inputs in various input sections of the system (e.g., enterprise information entry, numeric input).\n3. **Assert:** Verify that the system can properly handle exceptional inputs, providing user-friendly error messages without crashing.",
+    "expected_output": "2 points: The system properly handles all types of exceptional input and provides friendly, clear error messages. 1 point: The system handles most exceptional inputs, but in some cases, the error messages are not user-friendly or clear. 0 points: Exceptional input causes the program to crash or produces no error message."
+  },
+  {
+    "metric": "3.2 Chinese Environment Support",
+    "description": "1. **Arrange:** Prepare Chinese test data (e.g., enterprise name \"Beijing Technology Co., Ltd.\", main business \"software development\").\n2. **Act:** Use Chinese characters throughout the entire workflow in all relevant input sections.\n3. **Assert:** Verify that the system can correctly process, display, and save Chinese content. Check for garbled text issues in the UI, saved files, etc.",
+    "expected_output": "2 points: The system fully supports Chinese input, display, and storage, with no garbled text or compatibility issues in any component. 1 point: The system generally supports Chinese, but there are minor issues in some components like the UI or file saving. 0 points: The system does not support Chinese or has serious garbled text issues."
+  },
+  {
+    "metric": "3.3 Debug Mode Support",
+    "description": "1. **Act:** Start the program with the `--debug` or `-d` flag (e.g., `python main.py --debug`).\n2. **Assert:** Verify that the program starts in debug mode and outputs detailed process information and data traceability paths (displaying more internal processing information than in normal mode).",
+    "expected_output": "2 points: The system supports debug mode and outputs detailed step-by-step processing and data traceability information, which is significantly more verbose than in normal mode. 1 point: The system supports debug mode, but the debug output is limited or not detailed enough. 0 points: The system does not support debug mode, or the debug flag is ineffective."
+  }
+]

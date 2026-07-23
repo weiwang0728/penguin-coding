@@ -1,0 +1,4 @@
+entity_A	0
+entity_B	1
+entity_C	2
+entity_D	3

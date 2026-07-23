@@ -1,0 +1,36 @@
+# Latent Period Infectiousness Comparison Research Results
+# Generation Time: 2025-09-01 16:55:18.124324
+============================================================
+
+Latent Period with Infectiousness Model Results:
+------------------------------
+Basic Reproduction Number (R0): 6.0000
+Final Attack Rate: 0.9982
+Infection Peak Population: 2593
+Infection Peak Time: 76.0 days
+Epidemic Duration: 1.0 days
+
+Latent Period without Infectiousness Model Results:
+------------------------------
+Basic Reproduction Number (R0): 8.0000
+Final Attack Rate: 0.9998
+Infection Peak Population: 2930
+Infection Peak Time: 62.0 days
+Epidemic Duration: 1.0 days
+
+Difference Analysis:
+------------------------------
+Basic Reproduction Number Difference: -2.0000
+Final Attack Rate Difference: -0.0016
+Infection Peak Difference: -337 people
+Peak Time Difference: 14.0 days
+Duration Difference: 0.0 days
+
+Conclusion:
+------------------------------
+The model without latent period infectiousness predicts a higher final attack rate
+Latent period with infectiousness delays the epidemic peak
+
+Practical Significance:
+The existence of latent period infectiousness significantly affects the transmission dynamics of epidemics,
+and this factor needs to be considered when formulating prevention and control strategies.

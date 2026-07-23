@@ -1,0 +1,276 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Run the command `python src/main.py` in the shell.\n2. **Assert:** Verify that the program starts properly and displays a clear main menu with options such as 'Input Data', 'Generate Huffman Tree and Codes', 'Export Results', 'Exit', etc.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_0.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program starts successfully, displaying a clear main menu with all expected options."
+  },
+  {
+    "metric": "1.1 Menu Navigation - Main Menu Option Response",
+    "description": "1. **Act:** After launching the program, enter '1', '5', '2', '3', then an invalid option like '9' sequentially.\n2. **Assert:** Confirm that the program correctly navigates to submenus, executes actions for valid options, and provides proper feedback for invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All valid main menu options are correctly recognized, and invalid inputs prompt an appropriate message."
+  },
+  {
+    "metric": "1.2 Menu Navigation - Input Data Submenu",
+    "description": "1. **Act:** Launch the program and choose '1' from the main menu to access the input data submenu.\n2. **Assert:** Verify that the submenu shows options: 'Read from TXT file', 'Generate random text', 'Manual text input', 'Input key-value pairs', 'Return to main menu'.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The input data submenu displays all expected options correctly."
+  },
+  {
+    "metric": "1.3 Menu Navigation - Export Results Submenu",
+    "description": "1. **Act:** Launch the program and select '3' from the main menu to access the export results submenu.\n2. **Assert:** Check that the submenu includes 'Export Huffman codes to CSV', 'Export Huffman tree to JSON', 'Return to main menu'.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The export results submenu displays all expected options correctly."
+  },
+  {
+    "metric": "2.1.1a Text Import - User Path Accessibility",
+    "description": "1. **Pre-check:** After selecting '1' in the main menu, confirm that an option like 'Read from TXT file' is available.\n2. **Arrange:** Ensure a text file named `Test.txt` exists in the project root.\n3. **Act:** Choose 'Read from TXT file' and enter `Test.txt`.\n4. **Assert:** Verify that the program confirms successful file reading and frequency table creation.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.1a.in"
+      }
+    ],
+    "input_files": [
+      "Test.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program confirms the file was read successfully and the frequency table was created."
+  },
+  {
+    "metric": "2.1.2a Random Text Generation (Numbers) - User Path Accessibility",
+    "description": "1. **Pre-check:** Check that 'Generate random text' or a similar option is available in the input data menu.\n2. **Arrange:** Input length: 10, type: 'number'.\n3. **Act:** Select 'Generate random text', then input 10 for length and 'number' for type.\n4. **Assert:** Confirm that the program generates a 10-digit numeric string and displays it.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program generates a 10-digit numeric text and displays it."
+  },
+  {
+    "metric": "2.1.2b Random Text Generation (Letters) - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Generate random text' is available.\n2. **Arrange:** Input length: 15, type: 'letter'.\n3. **Act:** Select 'Generate random text', then input 15 for length and 'letter' for type.\n4. **Assert:** Confirm the program generates a 15-character alphabetic string and displays it.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program generates a 15-character letter-only text and displays it."
+  },
+  {
+    "metric": "2.1.2c Random Text Generation (String) - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Generate random text' is available.\n2. **Arrange:** Input length: 20, type: 'string'.\n3. **Act:** Select 'Generate random text', then input 20 for length and 'string' for type.\n4. **Assert:** Confirm the program generates a 20-character string including letters, numbers, and punctuation, and displays it.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2c.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program generates a 20-character mixed string and displays it."
+  },
+  {
+    "metric": "2.1.2d Random Text Generation (Chinese) - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Generate random text' is available.\n2. **Arrange:** Input length: 8, type: 'Chinese'.\n3. **Act:** Select 'Generate random text', then input 8 for length and 'Chinese' for type.\n4. **Assert:** Confirm the program generates an 8-character Chinese text and displays it.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2d.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program generates an 8-character Chinese text and displays it."
+  },
+  {
+    "metric": "2.1.3a Manual Text Input - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm that 'Manual text input' is available.\n2. **Arrange:** Prepare input text: 'AABBBCCCCDDDDDE'.\n3. **Act:** Select 'Manual text input' and enter the text.\n4. **Assert:** Verify that the program confirms the frequency table creation.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.3a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program confirms that the frequency table was created successfully."
+  },
+  {
+    "metric": "2.1.4a Key-Value Pair Input - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Input key-value pairs' is available.\n2. **Arrange:** Prepare key-value pairs: 'a:5', 'b:9', 'c:12'.\n3. **Act:** Enter each pair sequentially, then type 'done'.\n4. **Assert:** Verify that the program confirms frequency table creation.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.4a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program confirms that the frequency table was created successfully."
+  },
+  {
+    "metric": "2.2.1a Huffman Tree Construction - Normal Flow",
+    "description": "1. **Pre-check:** Confirm there is a function to build a Huffman tree from a frequency table.\n2. **Arrange:** Prepare a valid frequency table (e.g., from 'AABBBCCCCDDDDDE').\n3. **Act:** Select '2' from the main menu.\n4. **Assert:** Verify that the program confirms Huffman tree and code generation, and prints the code table.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program confirms Huffman tree and codes were generated successfully and prints the code table."
+  },
+  {
+    "metric": "2.2.1b Huffman Tree Construction - Exception Handling (Single Character)",
+    "description": "1. **Pre-check:** Confirm there is a function to build a Huffman tree.\n2. **Arrange:** Prepare a frequency table with a single character (e.g., 'A').\n3. **Act:** Select '2' from the main menu.\n4. **Assert:** Verify that the program displays a clear error message, e.g., 'Input must contain at least two characters to build a Huffman tree.'",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program displays a clear error message indicating that at least two characters are required."
+  },
+  {
+    "metric": "2.3.1 CSV Export - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Export Huffman codes to CSV' is available in the export menu.\n2. **Arrange:** Ensure Huffman codes have been generated (e.g., from 'AABBBCCCCDDDDDE').\n3. **Act:** Select export option and enter 'evaluation/exported_codes.csv'.\n4. **Assert:** Verify the program shows a successful export message and the file is created.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_exported_codes.csv"
+    ],
+    "expected_output": "The program confirms successful CSV export and the file exists."
+  },
+  {
+    "metric": "2.3.2a JSON Export (Level Order) - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Export Huffman tree to JSON' is available.\n2. **Arrange:** Ensure Huffman tree is generated.\n3. **Act:** Select export option, enter 'evaluation/exported_tree_level_order.json', and choose 'level order'.\n4. **Assert:** Verify successful export message and file creation.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_exported_tree_level_order.json"
+    ],
+    "expected_output": "The program confirms successful JSON export (level order) and the file exists."
+  },
+  {
+    "metric": "2.3.2b JSON Export (Preorder) - User Path Accessibility",
+    "description": "1. **Pre-check:** Confirm 'Export Huffman tree to JSON' is available.\n2. **Arrange:** Ensure Huffman tree is generated.\n3. **Act:** Select export option, enter 'evaluation/exported_tree_pre_order.json', and choose 'preorder'.\n4. **Assert:** Verify successful export message and file creation.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.2b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_exported_tree_pre_order.json"
+    ],
+    "expected_output": "The program confirms successful JSON export (preorder) and the file exists."
+  },
+  {
+    "metric": "3.1 Unit Test - Build Huffman Tree",
+    "description": "1. **Pre-check:** Ensure a unit test exists for `build_huffman_tree` in `src/tests/`.\n2. **Arrange:** Prepare a test dictionary: `{'a': 5, 'b': 9, 'c': 12, 'd': 13, 'e': 16, 'f': 45}`.\n3. **Act:** Run `pytest src/tests/test_huffman.py::TestHuffman::test_build_huffman_tree -v`.\n4. **Assert:** Verify that the test passes.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest src/tests/test_huffman.py::TestHuffman::test_build_huffman_tree -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes successfully."
+  },
+  {
+    "metric": "3.2 Unit Test - Generate Huffman Codes",
+    "description": "1. **Pre-check:** Ensure a unit test exists for `generate_huffman_codes` in `src/tests/`.\n2. **Arrange:** Prepare a Huffman tree and expected codes.\n3. **Act:** Run `pytest src/tests/test_huffman.py::TestHuffman::test_generate_huffman_codes -v`.\n4. **Assert:** Verify that the test passes.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest src/tests/test_huffman.py::TestHuffman::test_generate_huffman_codes -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes successfully."
+  },
+  {
+    "metric": "3.3 Unit Test - Exception Handling (Insufficient Nodes for Tree Construction)",
+    "description": "1. **Pre-check:** Ensure a unit test exists to handle invalid input for `build_huffman_tree`.\n2. **Arrange:** Prepare a dictionary with a single character: `{'a': 1}`.\n3. **Act:** Run `pytest src/tests/test_huffman.py::TestHuffman::test_build_tree_with_insufficient_nodes -v`.\n4. **Assert:** Verify that the test passes and that a `ValueError` is raised for invalid input.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest src/tests/test_huffman.py::TestHuffman::test_build_tree_with_insufficient_nodes -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes and confirms correct exception handling."
+  }
+]

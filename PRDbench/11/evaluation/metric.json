@@ -1,0 +1,67 @@
+[
+  {
+    "metric": "1.1 Numeric Comparator",
+    "description": "1. **Arrange:** Prepare three sets of input data: (a=5, b=10), (a=10, b=5), (a=5, b=5).\n2. **Act:** Call the `numeric_comparator(a, b)` function with each of the three data sets.\n3. **Assert:** Verify that the return values are -1, 1, and 0 respectively.",
+    "expected_output": "2 points: Returns correct values for all three cases: greater than, less than, and equal. 1 point: Correctly handles 1-2 cases. 0 points: Function missing or all cases handled incorrectly."
+  },
+  {
+    "metric": "1.2 Conditional Filter",
+    "description": "1. **Arrange:** Prepare a data list `data = [1, 2, 3, 4, 5, 6]` and a custom condition function `is_even(n)` to determine if a number is even.\n2. **Act:** Call `conditional_filter(data, is_even)`.\n3. **Assert:** Verify that the returned list is `[2, 4, 6]`.",
+    "expected_output": "2 points: Correctly filters out all elements that meet the custom condition function. 1 point: Filtering result is incomplete (missing or extra elements). 0 points: Function missing or implementation completely incorrect."
+  },
+  {
+    "metric": "1.3 Dynamic Adder Generator",
+    "description": "1. **Arrange:** Prepare a base addend `base_add = 10`.\n2. **Act:** Call `dynamic_adder_generator(base_add)` to generate a new addition function `adder_func`, then execute `adder_func(5)`.\n3. **Assert:** Verify that the return value of `adder_func(5)` is 15.",
+    "expected_output": "2 points: Correctly generates a parameterized addition function, and the generated function computes results correctly. 1 point: Can generate the function but computation results are incorrect. 0 points: Function missing or unable to generate function."
+  },
+  {
+    "metric": "1.4 Unique List Extractor",
+    "description": "1. **Arrange:** Prepare a list with duplicate elements `data = ['a', 'b', 'a', 'c', 'b']`.\n2. **Act:** Call `unique_list_extractor(data)`.\n3. **Assert:** Verify that the returned list is `['a', 'b', 'c']` and strictly maintains the original order of first occurrence for each element.",
+    "expected_output": "2 points: Correctly extracts all unique elements and maintains their first occurrence order. 1 point: Can deduplicate but order is incorrect, or fails to extract all unique elements. 0 points: Function missing or deduplication incorrect."
+  },
+  {
+    "metric": "1.5 Recursive Replacer",
+    "description": "1. **Arrange:** Prepare a nested list `data = [1, [2, 1, [3, 1]]]`, replacement target `target = 1`, and replacement value `replacement = 'X'`.\n2. **Act:** Call `recursive_replacer(data, target, replacement)`.\n3. **Assert:** Verify that the returned list is `['X', [2, 'X', [3, 'X']]]`.",
+    "expected_output": "2 points: Correctly recursively replaces all target elements at any depth in nested data structures. 1 point: Can only replace top-level or partial nested level elements. 0 points: Function missing or replacement incorrect."
+  },
+  {
+    "metric": "1.6 Batch Mapper & Replacer",
+    "description": "1. **Arrange:** Prepare a data list `data = ['A', 'B', 'C']` and a mapping dictionary `mapping = {'A': 'Apple', 'B': 'Banana'}`.\n2. **Act:** Call `batch_mapper(data, mapping)`.\n3. **Assert:** Verify that the returned list is `['Apple', 'Banana', 'C']`.",
+    "expected_output": "2 points: Correctly replaces all corresponding elements in the list according to the mapping dictionary. 1 point: Some elements replaced correctly, or incorrect replacements occur. 0 points: Function missing or replacement completely incorrect."
+  },
+  {
+    "metric": "2.1a Automated Unit Testing - Framework and Execution",
+    "description": "1. **Act:** Check if a `tests/` directory exists in the project root, and run unit test commands (such as `pytest`) following `README.md` instructions.\n2. **Assert:** Verify that the test command executes successfully, runs all test cases in the `tests/` directory, and exits without errors.",
+    "expected_output": "2 points: `tests/` directory exists, and all test cases can be successfully run with a single command. 1 point: `tests/` directory exists, but test cases cannot all pass or require complex manual operations to run. 0 points: Missing `tests/` directory or unable to run tests."
+  },
+  {
+    "metric": "2.1b Automated Unit Testing - Test Coverage",
+    "description": "1. **Act:** Review test file contents in the `tests/` directory.\n2. **Assert:** Verify whether independent test files are created for each of the 6 core data processing modules described in the PRD, covering normal, abnormal, and boundary scenarios.",
+    "expected_output": "2 points: Independent, comprehensive unit tests written for all 6 functional modules. 1 point: Tests written for 3-5 functional modules. 0 points: Tests written for fewer than 3 functional modules."
+  },
+  {
+    "metric": "2.2 Local Score Feedback and Reporting",
+    "description": "1. **Act:** Run the scoring script provided by the project.\n2. **Assert:** Observe script output to verify if it contains a clear, structured report including: pass status of each module, detailed scores for each scoring point, and final total score.",
+    "expected_output": "2 points: Scoring script can output a clear report containing all 3 items mentioned above. 1 point: Can output scores but information is incomplete (missing 1-2 items) or format is messy. 0 points: No scoring script provided or script cannot run."
+  },
+  {
+    "metric": "3.1 One-click Execution and Testing",
+    "description": "1. **Act:** Search for and execute the command for \"one-click execution and testing\" according to instructions in `README.md`.\n2. **Assert:** Verify whether this command can automatically and sequentially complete all core function call demonstrations and all unit test executions.",
+    "expected_output": "2 points: Provides an all-in-one command line instruction that can execute and test all core functions with one click. 1 point: Requires 2-3 commands to complete all processes. 0 points: No one-click execution script, or requires more than 3 commands."
+  },
+  {
+    "metric": "3.2 Parameterized Submission and Identity Identification",
+    "description": "1. **Arrange:** Prepare a user ID, such as `user-id-123`.\n2. **Act:** Start the program using a command like `python main.py --user-id user-id-123` following `README.md` instructions.\n3. **Assert:** Verify that the program can correctly record and display the `user-id-123` identity during execution or in final output/archive files.",
+    "expected_output": "2 points: Fully supports passing user identity through command line parameters and correctly uses and displays it during the process. 1 point: Supports parameter input but has issues in usage or display. 0 points: Does not support parameterized user identity input."
+  },
+  {
+    "metric": "4.1a Detailed Operation Documentation - Existence and Completeness",
+    "description": "1. **Act:** Check if a `README.md` file exists in the project root directory.\n2. **Assert:** Read file content to verify if it contains at least 4 core sections: (1) environment setup instructions, (2) module function introductions, (3) test execution methods, (4) command line usage.",
+    "expected_output": "2 points: `README.md` exists and completely contains all 4 core sections. 1 point: `README.md` exists but content is incomplete, missing 1-2 core sections. 0 points: Missing `README.md` file or missing more than 2 core sections."
+  },
+  {
+    "metric": "4.1b Detailed Operation Documentation - Clarity and Accuracy",
+    "description": "1. **Act:** Carefully read the \"Environment Setup\" and \"Command Line Usage\" sections in `README.md`.\n2. **Assert:** Verify whether the instructions are clear, accurate, and can be unambiguously copied and successfully executed.",
+    "expected_output": "2 points: Documentation is clear and accurate, instructions can be directly copied and successfully executed. 1 point: Documentation is basically clear but instructions contain minor errors or ambiguities requiring correction before execution. 0 points: Documentation is vague or instructions contain serious errors preventing execution."
+  }
+]

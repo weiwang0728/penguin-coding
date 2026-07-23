@@ -1,0 +1,11 @@
+user_id,age,gender,city,registration_date,activity_level
+1,25,Male,Beijing,2023-01-15,High
+2,32,Female,Shanghai,2023-02-10,Medium
+3,28,Male,Guangzhou,2023-03-05,Low
+4,35,Female,Shenzhen,2023-01-20,High
+5,29,Male,Hangzhou,2023-04-12,Medium
+6,26,Female,Chengdu,2023-02-28,High
+7,33,Male,Wuhan,2023-03-15,Low
+8,27,Female,Xi'an,2023-01-08,Medium
+9,31,Male,Beijing,2023-05-01,High
+10,24,Female,Shanghai,2023-04-20,Medium

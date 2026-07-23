@@ -1,0 +1,122 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the command `python src/main.py` in the shell.\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu containing options:  [1] Participant Management [2] Rule Configuration [3] Execute Lottery [4] Result Query [5] Exit System.",
+    "expected_output": "2 points: Program starts successfully and displays main menu with 5 clear, actionable options. 1 point: Program starts, but menu options are fewer than 5, unclear, or contain garbled characters. 0 points: Program fails to start or crashes immediately after startup."
+  },
+  {
+    "metric": "2.1.1a Add Participant - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [1] Participant Management, and after entering, is there an option [1] Add Participant?\n2. **Arrange:** Prepare participant information to add: name 'Tester', department 'Test Department', initial weight '2.5'.\n3. **Act:** Select main menu [1] to enter Participant Management, then select submenu [1] Add Participant. Follow prompts to input name 'Tester', department 'Test Department', initial weight '2.5'.\n4. **Assert:** Observe whether program prompts \"Successfully added participant: Tester\".",
+    "expected_output": "2 points: Pre-check passed, and successfully added participant with success prompt displayed. 1 point: Pre-check passed, but addition process has errors or prompt information unclear. 0 points: Pre-check failed, or unable to add participant through menu path."
+  },
+  {
+    "metric": "2.1.1b Add Participant - Name and Department Information Processing",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [1] Participant Management, and after entering, is there an option [4] View Participant List?\n2. **Act:** After completing scoring point 2.1.1a operations, select Participant Management submenu [4] View Participant List.\n3. **Assert:** Observe whether list contains participants and displays relevant department.",
+    "expected_output": "2 points: Pre-check passed, and list correctly displays name and department information. 1 point: Pre-check passed, but information display has errors or format chaotic. 0 points: Pre-check failed, or list does not display correct information."
+  },
+  {
+    "metric": "2.1.2a Delete Participant - User Path Accessibility and Secondary Confirmation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [1] Participant Management, and after entering, is there an option [2] Delete Participant?\n2. **Arrange:** Ensure a participant named 'Tester' exists in system.\n3. **Act:** Select main menu [1] to enter Participant Management, then select submenu [2] Delete Participant. Input 'Tester', during secondary confirmation input 'y' or 'yes'.\n4. **Assert:** Observe whether program prompts \"Successfully deleted participant: Tester\".",
+    "expected_output": "2 points: Pre-check passed, and successfully deleted participant with success prompt displayed, includes secondary confirmation step. 1 point: Pre-check passed, but lacks secondary confirmation or deletion successful but prompt unclear. 0 points: Pre-check failed, or unable to delete participant through menu path."
+  },
+  {
+    "metric": "2.1.3a Modify Participant Weight - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [1] Participant Management, and after entering, is there an option [3] Modify Participant Weight?\n2. **Arrange:** Ensure a participant named 'Zhang San' exists in system, record current weight.\n3. **Act:** Select main menu [1] to enter Participant Management, then select submenu [3] Modify Weight. Input 'Zhang San', modify weight to '3.0'.\n4. **Assert:** Observe whether program prompts \"Successfully modified Zhang San's weight to 3.0\".",
+    "expected_output": "2 points: Pre-check passed, and successfully modified weight with success prompt displayed. 1 point: Pre-check passed, but modification process has errors or prompt information unclear. 0 points: Pre-check failed, or unable to modify weight through menu path."
+  },
+  {
+    "metric": "2.1.3b Modify Participant Weight - Weight Value Validation (Lower Limit)",
+    "description": "1. **Act:** In modify weight function, attempt to input weight value '0.05' for any participant.\n2. **Assert:** Observe whether program displays Chinese error prompt \"Weight value must be between 0.1-10.0\".",
+    "expected_output": "2 points: When inputting illegal value, program correctly recognizes and displays specified Chinese error prompt. 1 point: Can recognize illegal value but prompt information unclear or not Chinese. 0 points: Unable to recognize illegal value or no prompt at all."
+  },
+  {
+    "metric": "2.1.3c Modify Participant Weight - Weight Value Validation (Upper Limit)",
+    "description": "1. **Act:** In modify weight function, attempt to input weight value '15.0' for any participant.\n2. **Assert:** Observe whether program displays Chinese error prompt \"Weight value must be between 0.1-10.0\".",
+    "expected_output": "2 points: When inputting illegal value, program correctly recognizes and displays specified Chinese error prompt. 1 point: Can recognize illegal value but prompt information unclear or not Chinese. 0 points: Unable to recognize illegal value or no prompt at all."
+  },
+  {
+    "metric": "2.1.4a Save Participant - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [1] Participant Management, and after entering, is there an option [5] Save Participant List to File?\n2. **Act:** Select main menu [1] to enter Participant Management, then select submenu [5] Save Participant List.\n3. **Assert:** Observe whether program prompts successful save, and check whether `participants.csv` file generated in project `data` directory.",
+    "expected_output": "2 points: Pre-check passed, and successfully saved as CSV file, file exists. 1 point: Pre-check passed, but save prompt or file content has errors. 0 points: Pre-check failed, or unable to save file."
+  },
+  {
+    "metric": "2.2.1a Create Multiple Lottery Rounds - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [2] Rule Configuration, and after entering, is there an option [1] Add Lottery Round?\n2. **Arrange:** Prepare round information: name 'First Prize', number of winners '1', participation scope 'Specified Department', select 'Technical Department'.\n3. **Act:** Select main menu [2] to enter Rule Configuration, then select submenu [1] Add Round. Follow prompts to input round name 'First Prize', number of winners '1', select participation scope as 'Specified Department' and choose 'Technical Department'.\n4. **Assert:** Observe whether program prompts \"Successfully added round: First Prize\".",
+    "expected_output": "2 points: Pre-check passed, and successfully created lottery round with success prompt displayed. 1 point: Pre-check passed, but creation process has errors or prompt information unclear. 0 points: Pre-check failed, or unable to create round through menu path."
+  },
+  {
+    "metric": "2.2.1b Create Multiple Lottery Rounds - Round Name and Number Configuration",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [2] Rule Configuration, and after entering, is there an option [3] View Lottery Round List?\n2. **Act:** After completing scoring point 2.2.1a operations, select Rule Configuration submenu [3] View Round List.\n3. **Assert:** Observe whether list contains record with name 'First Prize' and number of winners '1'.",
+    "expected_output": "2 points: Pre-check passed, and list correctly displays round name and number of winners. 1 point: Pre-check passed, but information display has errors. 0 points: Pre-check failed, or list does not display correct information."
+  },
+  {
+    "metric": "2.2.2a Special Weight Configuration - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [2] Rule Configuration, and after entering, is there an option [1] Add Lottery Round?\n2. **Arrange:** Prepare round information: name 'Weight Test', number of winners '1', participation scope 'All Participants', any lottery mode. When asked whether to configure special weights, select 'yes'.\n3. **Act:** Select main menu [2] to enter Rule Configuration, then select submenu [1] Add Round. Input basic information as prompted, when configuring special weights, select one participant (e.g., 'Wang Wu'), set weight coefficient to '3.0'.\n4. **Assert:** Observe whether program prompts \"Successfully added round: Weight Test\".",
+    "expected_output": "2 points: Pre-check passed, and successfully configured round weight coefficient for specified participant with success prompt displayed. 1 point: Pre-check passed, but configuration process has errors or prompt information unclear. 0 points: Pre-check failed, or unable to configure special weights."
+  },
+  {
+    "metric": "2.2.3a Preview Lottery Rules - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [2] Rule Configuration, and after entering, is there an option [4] Preview Lottery Rules?\n2. **Act:** Select main menu [2] to enter Rule Configuration, then select submenu [4] Preview Lottery Rules.\n3. **Assert:** Observe whether terminal outputs detailed information for all configured rounds, including name, number of winners, scope, mode, and special weights.",
+    "expected_output": "2 points: Pre-check passed, and successfully previews all rounds' detailed rules, information complete. 1 point: Pre-check passed, but preview information incomplete or format chaotic. 0 points: Pre-check failed, or unable to preview rules."
+  },
+  {
+    "metric": "2.2.4a Save Rule Configuration - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [2] Rule Configuration, and after entering, is there an option [5] Save Configuration to File?\n2. **Act:** Select main menu [2] to enter Rule Configuration, then select submenu [5] Save Configuration.\n3. **Assert:** Observe whether program prompts successful save, and check whether `lottery_config.json` file generated in project `data` directory.",
+    "expected_output": "2 points: Pre-check passed, and successfully saved as JSON file, file exists. 1 point: Pre-check passed, but save prompt or file content has errors. 0 points: Pre-check failed, or unable to save file."
+  },
+  {
+    "metric": "2.3.1 Alias Method Algorithm Implementation",
+    "description": "1. **Act:** Check `AliasMethod` class implementation in `src/alias_method.py` file.\n2. **Assert:** Through code review confirm constructor implements O(n) preprocessing, `sample` method implements O(1) sampling.",
+    "expected_output": "2 points: Code review confirms correct implementation of Alias Method algorithm, time complexity meets O(n) preprocessing, O(1) single sampling requirements. 1 point: Algorithm implemented but complexity analysis or implementation has minor flaws. 0 points: Alias Method algorithm not implemented or implementation incorrect."
+  },
+  {
+    "metric": "2.3.2a Execute Single Lottery Round - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [3] Execute Lottery, and after entering, is there an option [2] Execute Single Round?\n2. **Arrange:** Ensure at least one lottery round configured (such as 'Quarterly Star').\n3. **Act:** Select main menu [3] to enter Execute Lottery, then select submenu [2] Execute Single Round. Select 'Quarterly Star' round to execute.\n4. **Assert:** Observe whether program successfully executes and outputs lottery result.",
+    "expected_output": "2 points: Pre-check passed, and successfully executes single lottery round and outputs result. 1 point: Pre-check passed, but execution process has errors or result output abnormal. 0 points: Pre-check failed, or unable to execute single round."
+  },
+  {
+    "metric": "2.3.2b Execute Single Lottery Round - Weight Application Accuracy",
+    "description": "1. **Arrange:** Ensure system has one participant with weight significantly higher than others (e.g., 'Zhao Liu' weight 2.0, others 1.0).\n2. **Act:** Multiple times execute lottery round targeting this participant (e.g., 10 times or more).\n3. **Assert:** Count this participant's winning frequency, should be significantly higher than others, conforming to weighted probability distribution.",
+    "expected_output": "2 points: Multiple lottery results show high-weight participant winning frequency significantly higher, conforming to weighted random sampling expectation. 1 point: Some correlation but not significant or has bias. 0 points: Winning frequency has no obvious correlation with weight settings."
+  },
+  {
+    "metric": "2.3.3a Execute All Rounds - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [3] Execute Lottery, and after entering, is there an option [1] Execute All Rounds?\n2. **Arrange:** Ensure multiple lottery rounds configured (such as 'Quarterly Star' and 'Lucky Prize').\n3. **Act:** Select main menu [3] to enter Execute Lottery, then select submenu [1] Execute All Rounds.\n4. **Assert:** Observe whether program executes all rounds in order and outputs each round's result.",
+    "expected_output": "2 points: Pre-check passed, and successfully executes all rounds in order and outputs results. 1 point: Pre-check passed, but execution order, process, or results have errors. 0 points: Pre-check failed, or unable to execute all rounds."
+  },
+  {
+    "metric": "2.3.3b Execute All Rounds - No Repeat Winning Logic",
+    "description": "1. **Arrange:** Configure two-round lottery: first round draws 1 person with mode 'No Repeat Winning', second round draws all participants.\n2. **Act:** Execute all rounds.\n3. **Assert:** Observe second round's candidate list, confirm first round's winner not included.",
+    "expected_output": "2 points: In 'No Repeat Winning' mode, previous round's winner indeed excluded from subsequent rounds. 1 point: Exclusion logic exists but implementation not completely correct. 0 points: 'No Repeat Winning' mode not effective, winner can still participate in subsequent rounds."
+  },
+  {
+    "metric": "2.4.1a Historical Record Query - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option [4] Result Query?\n2. **Act:** Select main menu [4] Result Query.\n3. **Assert:** Observe whether program displays query condition menu (such as query by round name, participant name, date range).",
+    "expected_output": "2 points: Pre-check passed, and can enter query interface and display query options. 1 point: Pre-check passed, but query interface incomplete. 0 points: Pre-check failed, or unable to enter query interface."
+  },
+  {
+    "metric": "2.4.1b Historical Record Query - Query by Round Name",
+    "description": "1. **Arrange:** Ensure lottery record named 'Lucky Prize' exists.\n2. **Act:** In result query interface, select query by round name, input 'Lucky Prize'.\n3. **Assert:** Observe whether returned results only contain 'Lucky Prize' records.",
+    "expected_output": "2 points: Can accurately query by round name and return correct results. 1 point: Query function exists but results have bias. 0 points: Unable to query by round name."
+  },
+  {
+    "metric": "2.4.1c Historical Record Query - Query by Participant Name",
+    "description": "1. **Arrange:** Ensure 'Zhang San' winning record exists.\n2. **Act:** In result query interface, select query by participant name, input 'Zhang San'.\n3. **Assert:** Observe whether returned results contain all 'Zhang San' winning records.",
+    "expected_output": "2 points: Can accurately query by participant name and return correct results. 1 point: Query function exists but results have bias. 0 points: Unable to query by participant name."
+  },
+  {
+    "metric": "2.4.1d Historical Record Query - Query by Date Range",
+    "description": "1. **Arrange:** Ensure lottery records exist spanning different dates.\n2. **Act:** In result query interface, select query by date range, input date range that includes some records.\n3. **Assert:** Observe whether returned results only contain records within specified date range.",
+    "expected_output": "2 points: Can accurately query by date range and return correct results. 1 point: Query function exists but results have bias. 0 points: Unable to query by date range."
+  },
+  {
+    "metric": "2.5.1a Input Validation - Number Range Validation",
+    "description": "1. **Act:** Where number of winners input required (such as when adding round), input number outside valid range (such as '999').\n2. **Assert:** Observe whether system provides corresponding Chinese error prompt, e.g., \"Number of winners must be between 1-X\".",
+    "expected_output": "2 points: Number range input effectively validated, and provides clear, accurate Chinese prompt. 1 point: Validation exists but prompt information unclear or not Chinese. 0 points: Lacks number range validation or validation invalid."
+  },
+  {
+    "metric": "2.5.2a Secondary Confirmation - Delete Round Operation",
+    "description": "1. **Arrange:** Ensure at least one lottery round configured.\n2. **Act:** Attempt to execute delete round, at confirmation prompt input 'n' or 'no'.\n3. **Assert:** Observe whether program deletes round.",
+    "expected_output": "2 points: Clear operation has secondary confirmation step, and correctly responds to 'no' selection, cancels operation. 1 point: Has secondary confirmation but response not completely correct. 0 points: Clear operation lacks secondary confirmation."
+  }
+]

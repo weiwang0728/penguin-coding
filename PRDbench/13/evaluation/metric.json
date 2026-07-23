@@ -1,0 +1,182 @@
+[
+  {
+    "metric": "1.1 System Startup & Environment Configuration",
+    "description": "1. Act: Run the recommended system startup command in the shell (e.g., `python main.py` or `python -m recommendation_system`). 2. Assert: Check whether the program starts successfully and displays a clear main menu or status information with at least 3 actionable options (such as 'Data Preprocessing', 'Model Training', 'Recommendation Service').",
+    "expected_output": "2 points: System starts successfully and shows a clear main interface or service status, including 3 or more functional module options. 1 point: System starts but the interface is unclear or has fewer than 3 functional options. 0 points: System fails to start or crashes immediately."
+  },
+  {
+    "metric": "2.1.1a Data Collection - JSON Format Support",
+    "description": "1. Pre-check (User Path): Does the system provide an option for data import or collection? 2. Arrange: Prepare a valid JSON file containing user, product, and behavior data (at least 10 user records, 20 product records, 50 interaction records). 3. Act: Import the JSON data file through the system interface or module. 4. Assert: Verify that the system successfully parses and loads the JSON data without format errors.",
+    "expected_output": "2 points: Pre-check passes, JSON data is fully and correctly parsed, all fields recognized. 1 point: Pre-check passes but some fields fail to parse or warnings occur (failure rate <30%). 0 points: Pre-check fails or JSON data cannot be processed (failure rate ≥30%)."
+  },
+  {
+    "metric": "2.1.1b Data Collection - CSV Format Support",
+    "description": "1. Pre-check (User Path): Is CSV format supported in data import options? 2. Arrange: Prepare a valid CSV file with user, product, and behavior data (at least 10 user records, 20 product records, 50 interaction records). 3. Act: Select CSV format and import the file. 4. Assert: Check whether the system successfully parses the CSV file and correctly recognizes field types (numeric, text, date).",
+    "expected_output": "2 points: Pre-check passes and CSV data is imported correctly with ≥90% field type recognition. 1 point: Pre-check passes but parsing or field recognition accuracy is 60%-89%. 0 points: Pre-check fails, CSV format unsupported, or field recognition <60%."
+  },
+  {
+    "metric": "2.1.2a Data Cleaning - Outlier Detection",
+    "description": "1. Arrange: Prepare test data with obvious outliers (e.g., negative prices, extreme ages >200, abnormal ratings >5, at least 5 types). 2. Act: Run the outlier detection module. 3. Assert: Verify if the system identifies and handles outliers, producing a detailed report with types, counts, and handling methods.",
+    "expected_output": "2 points: Identifies ≥80% of outlier types, provides detailed report and ≥3 handling methods (delete, replace, interpolate, etc.). 1 point: Identifies 50%-79% of outlier types, handling method is single but effective. 0 points: Identification <50%, report missing or incorrect."
+  },
+  {
+    "metric": "2.1.2b Data Cleaning - Missing Value Handling",
+    "description": "1. Arrange: Prepare test data with missing values (fields missing 10%, 30%, 50%). 2. Act: Run the missing value handling function. 3. Assert: Verify whether the system offers multiple handling strategies (delete, mean fill, median fill, interpolation, etc.) and executes them correctly.",
+    "expected_output": "2 points: Provides ≥4 strategies and executes them correctly, with detailed statistics before and after processing. 1 point: Provides 2-3 strategies and executes correctly. 0 points: Provides ≤1 strategy or no handling function."
+  },
+  {
+    "metric": "2.1.2c Chinese Word Segmentation Processing",
+    "description": "1. Arrange: Prepare at least 50 Chinese product titles and validation examples covering different domains. 2. Act: Run the Chinese word segmentation module. 3. Assert: Check whether the system segments Chinese text correctly and generates word vectors/features, with ≥85% segmentation accuracy.",
+    "expected_output": "2 points: Segmentation accuracy ≥85%, processes product titles and validation examples, generates meaningful features. 1 point: Accuracy 60%-84%, basic processing achieved. 0 points: Accuracy <60% or no segmentation function."
+  },
+  {
+    "metric": "2.1.2d Data Normalization & Encoding",
+    "description": "1. Arrange: Prepare raw data with mixed feature types (5 numeric, 3 categorical, 2 text fields). 2. Act: Run normalization and encoding functions. 3. Assert: Verify numeric features are normalized (range [0,1] or standardized), categorical features are correctly encoded (one-hot, label encoding, etc.).",
+    "expected_output": "2 points: Automatically identifies ≥90% of features, applies correct normalization/encoding, supports ≥3 encoding methods. 1 point: Identifies 70%-89% of features, basic transformation applied. 0 points: Identifies <70% or no automatic normalization/encoding."
+  },
+  {
+    "metric": "2.2.1a Content-Based Recommendation - TF-IDF Implementation",
+    "description": "1. Arrange: Prepare product text data (≥100 products, each text ≥50 characters). 2. Act: Run content-based recommendation using TF-IDF. 3. Assert: Verify TF-IDF feature matrix is generated, product similarity matrix computed, dimensions correct.",
+    "expected_output": "2 points: TF-IDF correctly implemented, reasonable similarity matrix and recommendations, feature dimension ≥1000. 1 point: TF-IDF basically correct, calculation precision average or dimension <1000. 0 points: No TF-IDF or incorrect implementation."
+  },
+  {
+    "metric": "2.2.1b Content-Based Recommendation - Word2Vec/Embedding Support",
+    "description": "1. Pre-check (User Path): Is Word2Vec or Embedding available? 2. Arrange: Prepare text data (≥1000 documents). 3. Act: Train/load Word2Vec/Embedding and generate vector representations (dimension ≥100). 4. Assert: Verify vector generation is successful.",
+    "expected_output": "2 points: Feature extraction works, high-quality vectors, similar words semantically close. 1 point: Pre-check passes but vector quality or training is average. 0 points: Pre-check fails or vectorization unsupported."
+  },
+  {
+    "metric": "2.2.1c Content Recommendation - Similarity Threshold Configuration",
+    "description": "1. Act: Set thresholds (0.3, 0.5, 0.7, 0.9). 2. Assert: Verify number of recommendations changes with threshold; higher threshold should produce fewer recommendations.",
+    "expected_output": "2 points: Custom thresholds supported, all 4 thresholds show decreasing recommendations. 1 point: Threshold setting works partially, trend not clear. 0 points: No threshold config or no effect."
+  },
+  {
+    "metric": "2.2.2a Collaborative Filtering - User-Based CF (UserCF)",
+    "description": "1. Arrange: Prepare dataset (≥50 users, 100 products, 500 interactions). 2. Act: Run user-based CF. 3. Assert: Verify user similarity matrix is computed, recommendations based on similar users, using cosine or Pearson correlation.",
+    "expected_output": "2 points: Correct UserCF implementation, reasonable 50×50 similarity matrix, effective recommendations. 1 point: Algorithm basically correct, similarity or recommendation quality average. 0 points: No UserCF or incorrect implementation."
+  },
+  {
+    "metric": "2.2.2b Collaborative Filtering - Item-Based CF (ItemCF)",
+    "description": "1. Arrange: Prepare dataset (≥50 users, 100 products, 500 interactions). 2. Act: Run item-based CF. 3. Assert: Verify product similarity matrix is computed, recommendations based on similar items, matrix 100×100.",
+    "expected_output": "2 points: Correct ItemCF, reasonable similarity, high recommendation quality. 1 point: Algorithm basically correct, minor issues in similarity or recommendations. 0 points: No ItemCF or incorrect implementation."
+  },
+  {
+    "metric": "2.2.2c Matrix Factorization Algorithm - SVD/ALS Implementation",
+    "description": "1. Pre-check (User Path): Are SVD/ALS options available? 2. Arrange: Prepare sparse rating matrix (≥90% sparsity). 3. Act: Run matrix factorization. 4. Assert: Verify latent features generated for users/products, latent factors configurable (default ≥50).",
+    "expected_output": "2 points: Algorithm implemented correctly, handles sparsity, RMSE<1.0. 1 point: Pre-check passes but results average or convergence issues, RMSE≥1.0. 0 points: Pre-check fails, algorithm unavailable."
+  },
+  {
+    "metric": "2.2.3a Hybrid Recommendation - Integrated Hybrid Strategy",
+    "description": "1. Act: Configure hybrid recommendation combining ≥3 algorithms (e.g., content + UserCF + ItemCF). 2. Assert: Verify fusion of scores from multiple algorithms, supports custom weights summing to 1.0, final score weighted correctly.",
+    "expected_output": "2 points: Fully implemented, ≥3 algorithms fused, flexible weight assignment, correct fusion logic. 1 point: Supports 2 algorithms, weight adjustment incomplete. 0 points: No hybrid recommendation or only 1 algorithm."
+  },
+  {
+    "metric": "2.2.3b Hybrid Recommendation - Parallel Hybrid Strategy",
+    "description": "1. Act: Configure parallel hybrid recommendation, ≥3 algorithms generate candidate sets in parallel (top-20 each). 2. Assert: Verify merging, deduplication, sorting produces unified recommendation list.",
+    "expected_output": "2 points: Correctly merges ≥3 results, deduplication logic correct. 1 point: Merges 2 results, minor issues. 0 points: Only 1 algorithm supported or not implemented."
+  },
+  {
+    "metric": "2.2.3c Hybrid Recommendation - Pipeline Hybrid Strategy",
+    "description": "1. Act: Configure pipeline with ≥3 stages (e.g., content recall → CF re-ranking → diversity optimization). 2. Assert: Verify sequential execution, each stage's output feeds next stage.",
+    "expected_output": "2 points: Fully implemented, ≥3 stages, correct data transfer. 1 point: 2 stages supported, limited flexibility. 0 points: Only 1 stage or not implemented."
+  },
+  {
+    "metric": "2.2.4a Cold Start Handling - New User Recommendation",
+    "description": "1. Arrange: Simulate new user (not in historical data, basic attributes present). 2. Act: Request recommendations. 3. Assert: Verify ≥10 recommendations based on user attributes or popular products.",
+    "expected_output": "2 points: Cold start handled well, ≥10 recommendations with some personalization. 1 point: Only popularity-based or 5-9 recommendations. 0 points: Cold start not handled or <5 recommendations."
+  },
+  {
+    "metric": "2.2.4b Cold Start Handling - New Product Recommendation",
+    "description": "1. Arrange: Add new product (ID not in historical data, has attributes). 2. Act: Run recommendation algorithm. 3. Assert: Verify product recommended to ≥5 suitable users based on attributes.",
+    "expected_output": "2 points: Cold start handled well, recommended to ≥5 users. 1 point: Recommended to 2-4 users, effect limited. 0 points: Recommended to ≤1 user or not at all."
+  },
+  {
+    "metric": "2.2.4c Long Tail Problem Handling - Diversity Enhancement",
+    "description": "1. Arrange: Dataset with popular (≥100 interactions) and long-tail (≤10 interactions) products. 2. Act: Configure diversity parameter. 3. Assert: Verify long-tail products ≥30% in recommendations.",
+    "expected_output": "2 points: Long-tail ≥30%, diversity metrics good. 1 point: Long-tail 15%-29%. 0 points: Long-tail <15%, recommendations focused on popular items."
+  },
+  {
+    "metric": "2.3.2a Health Check API - System Status Inspection",
+    "description": "1. Act: Send GET request to `/health`. 2. Assert: Verify system health info returned, including service status, DB connection, memory usage, model loading, at least 4 indicators.",
+    "expected_output": "2 points: ≥4 indicators returned, status correct. 1 point: 2-3 indicators. 0 points: API unavailable or ≤1 indicator."
+  },
+  {
+    "metric": "2.3.2b Monitoring Metrics Recording",
+    "description": "1. Act: Call recommendation API ≥50 times, check logs or monitoring. 2. Assert: Verify key metrics recorded (call volume, avg response, hit rate, algorithm performance, ≥5 indicators).",
+    "expected_output": "2 points: ≥5 metrics recorded accurately. 1 point: 3-4 metrics recorded, not comprehensive. 0 points: ≤2 metrics or not recorded."
+  },
+  {
+    "metric": "2.4.1a Recommendation Effect Evaluation - Accuracy Metrics",
+    "description": "1. Arrange: Prepare test dataset with ≥1000 interactions, split 8:2. 2. Act: Run evaluation, calculate Precision@K, Recall@K, F1-score (K=5,10,20). 3. Assert: Verify ≥3 metrics calculated correctly.",
+    "expected_output": "2 points: Metrics correct, ≥3 K values, reasonable results (Precision@10>0.1). 1 point: 1-2 metrics, basically correct. 0 points: No evaluation or results clearly wrong."
+  },
+  {
+    "metric": "2.4.1b Recommendation Effect Evaluation - Ranking Quality Metrics",
+    "description": "1. Act: Run evaluation, calculate MAP, NDCG, etc. 2. Assert: Verify ≥2 ranking metrics calculated correctly and reasonable.",
+    "expected_output": "2 points: Ranking metrics correct, includes MAP, NDCG. 1 point: Only 1 metric, calculation basically correct. 0 points: No ranking evaluation or wrong results."
+  },
+  {
+    "metric": "2.4.1c Recommendation Effect Evaluation - Diversity & Coverage Metrics",
+    "description": "1. Act: Run evaluation, calculate novelty, diversity, coverage metrics. 2. Assert: Verify ≥3 metrics calculated correctly.",
+    "expected_output": "2 points: ≥3 metrics correct. 1 point: 1-2 metrics basically correct. 0 points: Metrics missing or calculation wrong."
+  },
+  {
+    "metric": "2.4.2a Evaluation Process - Classification Evaluation Support",
+    "description": "1. Act: Run evaluation, select grouping by user, product, category, etc. (≥3 dimensions). 2. Assert: Verify fine-grained evaluation supported for ≥3 dimensions with separate reports.",
+    "expected_output": "2 points: ≥3 dimensions supported, detailed and accurate reports. 1 point: 2 dimensions supported, limited. 0 points: ≤1 dimension supported."
+  },
+  {
+    "metric": "2.4.2b Experimental Data Import",
+    "description": "1. Pre-check: Does evaluation module allow custom data import? 2. Arrange: Prepare custom dataset (≥500 interactions). 3. Act: Import dataset. 4. Assert: Verify external data import supported.",
+    "expected_output": "2 points: Pre-check passes, supports ≥2 formats (CSV, JSON). 1 point: Only 1 format. 0 points: Pre-check fails, import not supported."
+  },
+  {
+    "metric": "2.4.3a Result Visualization - Basic Chart Support",
+    "description": "1. Act: View visualization results after evaluation. 2. Assert: Verify ≥3 chart types (line, bar, scatter) available.",
+    "expected_output": "2 points: ≥3 charts, clear visualization, complete titles/labels. 1 point: 2 charts, limited variety/effect. 0 points: No visualization or 1 chart only."
+  },
+  {
+    "metric": "2.4.3b Result Visualization - Advanced Chart Support",
+    "description": "1. Pre-check: Are advanced charts (heatmap, radar) supported? 2. Act: Generate heatmap or radar chart. 3. Assert: Verify ≥2 chart types display results correctly.",
+    "expected_output": "2 points: Advanced charts implemented correctly, ≥2 types supported. 1 point: Only 1 type or limited function. 0 points: Not supported."
+  },
+  {
+    "metric": "3.1 Tech Stack Dependency - Python Environment",
+    "description": "1. Act: Check requirements.txt or setup.py for Python version. 2. Assert: Verify Python 3.9+ required and new features used (type hints, walrus operator, etc.).",
+    "expected_output": "2 points: Python 3.9+ required, ≥3 new features used. 1 point: Version specified, 1-2 features used. 0 points: No version requirement or no new features used."
+  },
+  {
+    "metric": "3.2a Core Dependency Library - Data Processing Libraries",
+    "description": "1. Act: Check dependencies and code. 2. Assert: Verify Pandas/NumPy used with ≥5 core functions.",
+    "expected_output": "2 points: Correct use, ≥5 core functions (DataFrame, array computation, stats). 1 point: 2-4 functions, efficiency moderate. 0 points: ≤1 function or not used."
+  },
+  {
+    "metric": "3.2b Core Dependency Library - Recommendation Algorithm Libraries",
+    "description": "1. Act: Check algorithm implementation and library usage. 2. Assert: Verify Surprise, scikit-learn, etc. used for ≥3 recommendation algorithms.",
+    "expected_output": "2 points: Correct use, ≥3 algorithms implemented. 1 point: 2 algorithms implemented, not elegant. 0 points: ≤1 algorithm or incorrect."
+  },
+  {
+    "metric": "3.2c Core Dependency Library - Chinese Processing & Vectorization",
+    "description": "1. Act: Check Chinese text processing. 2. Assert: Verify jieba used for segmentation, Gensim for vectorization, complete workflow implemented.",
+    "expected_output": "2 points: Correct use, complete workflow from segmentation → vectorization → similarity. 1 point: Libraries used, effect average, workflow incomplete. 0 points: Not used or incorrect."
+  },
+  {
+    "metric": "3.2d Core Dependency Library - API Service Framework",
+    "description": "1. Act: Check API framework. 2. Assert: Verify FastAPI/Flask used, ≥3 API endpoints implemented.",
+    "expected_output": "2 points: Correct use, ≥3 endpoints fully functional. 1 point: 2 endpoints, design not standard. 0 points: ≤1 endpoint or framework not used."
+  },
+  {
+    "metric": "3.2e Core Dependency Library - Cache & Database",
+    "description": "1. Act: Check cache/database integration. 2. Assert: Verify Redis and MySQL integrated, data persistence and cache optimization implemented.",
+    "expected_output": "2 points: Correct integration, cache hit ≥80%, connection pool well configured. 1 point: Integration present, hit 60%-79%, suboptimal config. 0 points: Not integrated or hit <60%."
+  },
+  {
+    "metric": "3.3a System Architecture - Layered Design",
+    "description": "1. Act: Check code structure. 2. Assert: Verify layered architecture with ≥3 layers (data, algorithm, service), clear responsibilities.",
+    "expected_output": "2 points: ≥3 layers, clear responsibilities, well-organized code. 1 point: Concept present but unclear. 0 points: No layered architecture or chaotic."
+  },
+  {
+    "metric": "3.3b Unit Test Coverage",
+    "description": "1. Act: Check tests and run pytest. 2. Assert: Verify pytest used, covers ≥5 core modules.",
+    "expected_output": "2 points: Coverage ≥80%, tests complete, ≥5 modules. 1 point: Coverage 60%-79%, 3-4 modules. 0 points: Coverage <60%, ≤2 modules or no pytest."
+  }
+]

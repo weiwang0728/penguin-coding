@@ -1,0 +1,28 @@
+Expected descriptive statistical chart characteristics:
+
+1. File format: PNG image File
+2. FilePath: output/figures/descriptive_stats_scale_1.png
+3. Chart Content:
+   - Display descriptive statistical Information for each dimension of Scale 1 (Attention Stability)
+   - Include bar chart Display mean and standard deviation
+   - Include box plot Display quantile distribution
+   - May include grouped comparisons (by gender, grade, etc.)
+   - Clear axis labels and legend
+
+4. Technical requirements:
+   - Use matplotlib/seaborn Generate
+   - Resolution at least 300dpi
+   - Include multiple item(s) subplots showing different statistical features
+   - Clear and readable color scheme
+
+5. Statistical indicator visualization:
+   - Mean
+   - Standard Deviation
+   - Quartiles
+   - May include visualization representation of skewness and kurtosis
+
+6. Test Verify:
+   - File Success Generate and size > 0
+   - File can be Normal opened
+   - Chart Content matches descriptive statistical analysis Result
+   - Chart clearly reflects Data distribution characteristics

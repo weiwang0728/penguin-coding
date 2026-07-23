@@ -1,0 +1,17 @@
+Ticker,CompanyName,Market Value,Industry,Exchange,Daily Return Volatility,Price-Earnings Ratio (PE),Region
+AAPL,Apple Inc.,2.8e12,Technology,NASDAQ,1.5,28.5,USA
+MSFT,Microsoft Corp.,2.5e12,Technology,NASDAQ,1.2,35.2,USA
+GOOG,Alphabet Inc.,1.8e12,Technology,NASDAQ,1.8,25.0,USA
+JNJ,Johnson & Johnson,4.5e11,Healthcare,NYSE,0.8,22.1,USA
+PFE,Pfizer Inc.,2.8e11,Healthcare,NYSE,1.1,12.5,USA
+XOM,Exxon Mobil Corp.,4.2e11,Energy,NYSE,2.5,10.3,USA
+CVX,Chevron Corp.,3.0e11,Energy,NYSE,2.2,11.1,USA
+TSLA,Tesla Inc.,7.0e11,Automotive,NASDAQ,3.5,60.1,USA
+F,Ford Motor Co.,5.0e10,Automotive,NYSE,2.8,8.2,USA
+GM,General Motors,5.5e10,Automotive,NYSE,2.6,7.5,USA
+AMC,AMC Entertainment,2.5e9,Entertainment,NYSE,10.2,-5.3,USA
+GME,GameStop Corp.,8.0e9,Retail,NYSE,12.5,-150.2,USA
+RIVN,Rivian Automotive,2.0e10,Automotive,NASDAQ,7.5, -30.0,USA
+LCID,Lucid Group,1.5e10,Automotive,NASDAQ,8.1, -25.0,USA
+BABA,Alibaba Group,2.0e11,E-commerce,NYSE,4.2,15.7,China
+BIDU,Baidu Inc.,5.0e10,E-commerce,NASDAQ,4.5,18.2,China

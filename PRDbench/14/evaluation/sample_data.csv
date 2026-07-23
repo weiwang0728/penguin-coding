@@ -1,0 +1,11 @@
+id,collector,location,created_at,price_influence,satisfaction,amenities_importance,gender,age_group,frequency,preferred_venue
+1,Zhang San,Sanya,2023-10-01,3,4,5,Male,30-40 years old,Once a month,Resort
+2,Li Si,Kunming,2023-10-02,2,5,4,Female,20-30 years old,Once a quarter,Practice course
+3,Wang Wu,Haikou,2023-10-03,4,3,3,Male,40-50 years old,Once a year,Member club
+4,Zhao Liu,Dali,2023-10-04,5,2,2,Female,30-40 years old,Once a month,Public course
+5,Sun Qi,Lijiang,2023-10-05,1,5,5,Male,20-30 years old,Once a week,Resort
+6,Zhou Ba,Xiamen,2023-10-06,3,4,4,Female,40-50 years old,Once a quarter,Practice course
+7,Wu Jiu,Qingdao,2023-10-07,2,3,3,Male,30-40 years old,Once a year,Member club
+8,Zheng Shi,Hangzhou,2023-10-08,4,5,2,Female,20-30 years old,Once a month,Public course
+9,Liu Yi,Chengdu,2023-10-09,5,4,1,Male,40-50 years old,Once a week,Resort
+10,Chen Er,Xi'an,2023-10-10,1,3,5,Female,30-40 years old,Once a quarter,Practice course

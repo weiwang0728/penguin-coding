@@ -1,0 +1,112 @@
+[
+  {
+    "metric": "2.1.1 Basic Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., `python -m lottery_system.main`).\n2. **Assert:** Observe whether the program starts successfully and displays a main menu containing all 3 clear, actionable options: \"List Management\", \"Prize Configuration\", \"Start Lottery\".",
+    "expected_output": "2 points: Program starts successfully and displays a clear main menu containing all 3 specified options. 1 point: Program starts, but menu options are incomplete (missing 1-2), unclear, or contain garbled characters. 0 points: Program fails to start or crashes immediately after startup."
+  },
+  {
+    "metric": "2.1.2 Built-in List Loading",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"List Management\"? After entering, is there a \"Load Default List\" option?\n2. **Act:** Select \"Load Default List\". Then select \"View Current List\".\n3. **Assert:** Observe whether the program clearly reports \"Load Successful\", and when viewing, can display a list containing multiple records (each record includes name and department).",
+    "expected_output": "2 points: Pre-check passes, and can successfully load and display correct built-in list data. 1 point: Pre-check passes, but loaded list data is incorrect, missing, or display format is wrong. 0 points: Pre-check fails, or program reports error after loading, or list is empty."
+  },
+  {
+    "metric": "2.1.3 Custom List Upload",
+    "description": "1. **Pre-check (User Path):** In the \"List Management\" menu, is there a \"Upload Custom List\" option?\n2. **Arrange:** Create a file named `test_users.txt` with content: `\"Zhang San,Technology Department\"\n\"Li Si,Product Department\"`.\n3. **Act:** Select \"Upload Custom List\" and provide the file path for `test_users.txt`. After upload, select \"View Current List\".\n4. **Assert:** Verify the list contains two complete records: \"Zhang San (Technology Department)\" and \"Li Si (Product Department)\".",
+    "expected_output": "2 points: Pre-check passes, can successfully upload and correctly parse all personnel information (both name and department are correct). 1 point: Pre-check passes, can upload file, but parsing results are incomplete (e.g., name or department information missing). 0 points: Pre-check fails, or program reports error after uploading correctly formatted file."
+  },
+  {
+    "metric": "2.1.4a List Verification - Duplicate Names",
+    "description": "1. **Pre-check (User Path):** In the \"List Management\" menu, is there a \"Upload Custom List\" option?\n2. **Arrange:** Create a `duplicate_test.txt` with content: `\"Wang Wu,Marketing Department\"\n\"Wang Wu,Marketing Department\"`.\n3. **Act:** Upload this file.\n4. **Assert:** Observe whether the system clearly provides a prompt containing the keyword \"duplicate name\", and lists the duplicate name \"Wang Wu\".",
+    "expected_output": "2 points: Pre-check passes, system can accurately detect duplicate names and provide clear prompts including duplicate names and reasons. 1 point: Pre-check passes, detects duplicates but prompt information is vague (e.g., only prompts \"has errors\"). 0 points: Pre-check fails, or completely fails to detect duplicates."
+  },
+  {
+    "metric": "2.1.4b List Verification - Format Errors",
+    "description": "1. **Pre-check (User Path):** In the \"List Management\" menu, is there a \"Upload Custom List\" option?\n2. **Arrange:** Create a `format_error_test.txt` with content: `\"Zhao Liu-Administration Department\"` (using wrong delimiter).\n3. **Act:** Upload this file.\n4. **Assert:** Observe whether the system clearly provides a prompt containing the keyword \"format error\", and indicates which line has the error.",
+    "expected_output": "2 points: Pre-check passes, system can accurately detect format errors and provide clear prompts including line numbers and reasons. 1 point: Pre-check passes, detects errors but prompt information is vague (e.g., only prompts \"has errors\"). 0 points: Pre-check fails, or completely fails to detect format errors."
+  },
+  {
+    "metric": "2.1.4c List Verification - Manual Processing",
+    "description": "1. **Pre-check (User Path):** When the uploaded list contains invalid data (duplicate names or format errors) and triggers prompts, does the interface provide two clear options: \"Remove Invalid Data and Continue\" and \"Terminate Upload\"?\n2. **Arrange:** Use `duplicate_test.txt` or `format_error_test.txt`.\n3. **Act:** After uploading file triggers error prompt, first try selecting \"Remove Invalid Data and Continue\", then re-upload and try selecting \"Terminate Upload\".\n4. **Assert:** Assert that after selecting \"Remove\", valid data can be successfully imported; assert that after selecting \"Terminate\", the upload process ends and the list is not modified.",
+    "expected_output": "2 points: Pre-check passes, and both \"Remove\" and \"Terminate\" operations can be correctly executed. 1 point: Pre-check passes, but only one of the \"Remove\" or \"Terminate\" functions works. 0 points: Pre-check fails, or both functions are ineffective."
+  },
+  {
+    "metric": "2.1.5 Group Information View",
+    "description": "1. **Pre-check (User Path):** In the \"List Management\" menu, is there a \"View Group Information\" option?\n2. **Arrange:** Use `test_users.txt` (containing 1 person from Technology Department, 1 person from Product Department) to complete list loading.\n3. **Act:** Select \"View Group Information\".\n4. **Assert:** Observe whether the output accurately lists \"Technology Department: 1 person\" and \"Product Department: 1 person\".",
+    "expected_output": "2 points: Pre-check passes, can clearly and accurately list all groups and their corresponding correct counts. 1 point: Pre-check passes, but group list is incomplete or count statistics are inaccurate. 0 points: Pre-check fails, or no effective output after execution."
+  },
+  {
+    "metric": "2.2.1 Prize Library Management - View Presets",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a \"Prize Configuration\" option? After entering, is there a \"View All Prizes\" option?\n2. **Act:** Select \"View All Prizes\".\n3. **Assert:** Verify whether at least 3 preset prizes mentioned in the PRD (e.g., \"Third Prize - Movie Tickets\", etc.) can be seen.",
+    "expected_output": "2 points: Pre-check passes, can correctly display all preset prizes mentioned in the PRD and their quantities. 1 point: Pre-check passes, but displayed prize information is incomplete (e.g., missing prizes or quantities). 0 points: Pre-check fails, or cannot view prizes."
+  },
+  {
+    "metric": "2.2.2 Prize Library Management - Custom Addition",
+    "description": "1. **Pre-check (User Path):** In the \"Prize Configuration\" menu, is there an \"Add Prize\" option?\n2. **Arrange:** Prepare prize information: name \"Grand Prize - iPhone 17\", quantity \"1\", associated lottery person \"Li Bin\".\n3. **Act:** Select \"Add Prize\", and input the prepared information as prompted. After adding, \"View All Prizes\" again.\n4. **Assert:** Verify whether \"Grand Prize - iPhone 17\" is already in the list, and its quantity, associated lottery person information is completely correct.",
+    "expected_output": "2 points: Pre-check passes, new prize is successfully added, and all 3 pieces of information (name, quantity, associated lottery person) are completely correct. 1 point: Pre-check passes, prize is added, but 1-2 of the 3 pieces of information are incorrect. 0 points: Pre-check fails, or cannot add new prize."
+  },
+  {
+    "metric": "2.2.3 Group Avoidance Rule Configuration",
+    "description": "1. **Pre-check (User Path):** When configuring prizes (when adding or modifying), is there an option for setting \"Avoidance Groups\"?\n2. **Arrange:** Prepare to configure avoidance groups for \"Third Prize\" as \"Technology Department\" and \"Product Department\".\n3. **Act:** Enter prize configuration, add the above two avoidance groups for \"Third Prize\".\n4. **Assert:** After configuration, view the detailed information of this prize, verify whether both \"Technology Department\" and \"Product Department\" have been successfully associated as avoidance groups.",
+    "expected_output": "2 points: Pre-check passes, can successfully add, modify, or clear multiple avoidance groups for prizes. 1 point: Pre-check passes, can configure but cannot correctly save, display, or only supports single selection. 0 points: Pre-check fails, or this function is completely missing."
+  },
+  {
+    "metric": "2.2.4 Prize Sorting Function",
+    "description": "1. **Pre-check (User Path):** In the \"Prize Configuration\" menu, is there an \"Adjust Prize Order\" option?\n2. **Arrange:** Add three prizes A, B, C. Default lottery order should be A, B, C.\n3. **Act:** Select \"Adjust Prize Order\", follow prompts to adjust C to first position by inputting serial number.\n4. **Assert:** Verify whether the prize list order becomes C, A, B. Start lottery process, assert that the first round's drawn prize is indeed C.",
+    "expected_output": "2 points: Pre-check passes, can correctly adjust prize order by inputting serial numbers, and defaults to arrangement by addition order. 1 point: Pre-check passes, can adjust order, but has defects (e.g., serial number misalignment, can only move one position at a time) or default sorting is incorrect. 0 points: Pre-check fails, or no such function."
+  },
+  {
+    "metric": "2.3.1 Multi-round Lottery Execution",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a \"Start Lottery\" option?\n2. **Arrange:** Configure lottery sequence containing multiple awards (e.g., first, second, third prizes).\n3. **Act:** Select \"Start Lottery\".\n4. **Assert:** Observe whether the lottery process strictly follows the configured sequence, and at the start of each round, whether the interface clearly displays the current prize's name, quantity, and rule description (e.g., avoidance groups).",
+    "expected_output": "2 points: Pre-check passes, strictly executes lottery according to configured sequence, and accurately displays all 3 pieces of information (name, quantity, rules) each round. 1 point: Pre-check passes, sequence is basically correct but has individual errors, or the displayed 3 pieces of information are incomplete. 0 points: Pre-check fails, or does not execute according to configured sequence."
+  },
+  {
+    "metric": "2.3.2 Manual Control - Pause and Continue",
+    "description": "1. **Arrange:** Start a lottery round.\n2. **Act:** During lottery animation or countdown, input \"pause\" command. Wait a few seconds, then input \"continue\" command.\n3. **Assert:** Observe whether after inputting \"pause\", the lottery process immediately stops; after inputting \"continue\", whether the lottery resumes from where it stopped.",
+    "expected_output": "2 points: Inputting \"pause\" can immediately interrupt, inputting \"continue\" can correctly resume lottery. 1 point: Pause or continue function has obvious delay (over 2 seconds), or state after resuming is incorrect. 0 points: Does not support pause and continue commands."
+  },
+  {
+    "metric": "2.3.3 Manual Control - Terminate",
+    "description": "1. **Arrange:** Start an award requiring multiple winners (e.g., 3 people), and 1 winner has already been drawn.\n2. **Act:** During the process of drawing the 2nd winner, input \"terminate\" command.\n3. **Assert:** Observe whether the lottery immediately ends the current round and correctly enters the next round or end interface. Simultaneously verify that the 1st winner's result has been correctly saved.",
+    "expected_output": "2 points: Inputting \"terminate\" can immediately end current round and correctly jump, and already drawn results from this round are saved. 1 point: Can terminate, but jump logic is wrong or already drawn results are not saved. 0 points: Does not support terminate command."
+  },
+  {
+    "metric": "2.4.1 Basic Filtering - No Repeat Winners",
+    "description": "1. **Arrange:** Set up a list with only 2 people (A, B) and two prizes (Prize X quantity 1, Prize Y quantity 1).\n2. **Act:** Start lottery, first draw Prize X, then draw Prize Y.\n3. **Assert:** If A wins Prize X, then Prize Y's winner must be B. Final winner list has no duplicate personnel.",
+    "expected_output": "2 points: System can 100% ensure that in all rounds, previous winners will not win again. 1 point: Anti-duplication is effective within single lottery round, but fails across rounds. 0 points: Same person can win repeatedly."
+  },
+  {
+    "metric": "2.4.2 Basic Filtering - Group Avoidance",
+    "description": "1. **Arrange:** Set up list containing member A from the Technical Department and member B from the Product Department. Set up a prize named 'Product Exclusive Award' and configure its exclusion group as 'Technical Department'.\n2. **Act:** Start drawing for the 'Product Exclusive Award.'\n3. **Assert:** The winner must be B from the Product Department.",
+    "expected_output": "2 points: System can strictly execute avoidance rules, 100% correctly filter out members of specified groups. 1 point: Avoidance rules work in most cases, but have BUGs failing in specific scenarios. 0 points: Avoidance rules completely ineffective."
+  },
+  {
+    "metric": "2.4.3 Special Rule - Li Bin",
+    "description": "1. **Arrange:** Continue configuration from previous item (prize avoids \"Technology Department\"), but this time specify the prize's associated lottery person as \"Li Bin\".\n2. **Act:** Start lottery.\n3. **Assert:** At this time, the prize pool should include both \"Technology Department\" member A and \"Product Department\" member B, both could potentially win (i.e., group avoidance rules are ignored).",
+    "expected_output": "2 points: Can correctly implement \"Li Bin\"'s privilege, completely ignoring group avoidance rules. 1 point: This rule only takes effect in some scenarios, or implementation is incomplete. 0 points: This special rule not implemented."
+  },
+  {
+    "metric": "2.4.4 Fallback Mechanism - Cheng Ru Group Protection",
+    "description": "1. **Arrange:** Strictly construct scenario: list contains \"Cheng Ru Group\" member X and many other group members. Prize A (lottery person Chen Qixian) and Prize B (lottery person Jin Duo) both avoid \"Cheng Ru Group\". Prize C (lottery person Ma Jiaqi) also avoids \"Cheng Ru Group\".\n2. **Act:** Draw Prize A and B in sequence, ensure winners are not \"Cheng Ru Group\" members. Then draw Prize C.\n3. **Assert:** Although Prize C also has avoidance set, its winner must be \"Cheng Ru Group\" member X.",
+    "expected_output": "2 points: Can perfectly reproduce and correctly execute this fallback mechanism. 1 point: Fallback mechanism's trigger conditions or execution results have deviations (e.g., Ma Jiaqi's lottery prize pool not correctly limited). 0 points: This fallback mechanism completely not implemented."
+  },
+  {
+    "metric": "2.5.1a Real-time Result Display",
+    "description": "1. **Arrange:** Configure an award requiring 3 winners.\n2. **Act:** Start this lottery round.\n3. **Assert:** Observe during lottery process, whether dynamically displays \"Currently drawing the Xth winner\" progress. Whenever a winner is generated, whether immediately displays result in format \"Congratulations [Name] ([Department]) for winning [Prize Name]\".",
+    "expected_output": "2 points: Both dynamic progress and real-time winning results functions are completely and correctly implemented. 1 point: Only one of them implemented, or implementation incomplete (e.g., format error, not real-time). 0 points: Both functions missing."
+  },
+  {
+    "metric": "2.5.1b Final Result Summary Display",
+    "description": "1. **Arrange:** Complete full lottery process containing multiple awards (first, second, third prizes).\n2. **Act:** View the final winner list interface.\n3. **Assert:** Verify whether the final list strictly follows \"prize level from high to low\" and \"winning time order within same prize\" for summary display, and contains 3 pieces of information: name, department, prize name.",
+    "expected_output": "2 points: Both sorting rules for final list are correct, and contains all 3 pieces of information. 1 point: One sorting rule incorrect, or missing 1-2 pieces of information. 0 points: No final summary function, or both sorting and information incorrect."
+  },
+  {
+    "metric": "2.5.2a Result Export Function",
+    "description": "1. **Pre-check (User Path):** After lottery ends, is there an \"Export Results\" option?\n2. **Act:** Execute \"Export Results\" command.\n3. **Assert:** Check whether a file named `awards_result_YYYYMMDD.txt` (YYYYMMDD is current date) is successfully generated in the project root directory.",
+    "expected_output": "2 points: Pre-check passes, can successfully export file, and both filename and path completely meet PRD requirements. 1 point: Pre-check passes, can export file, but filename or path is wrong. 0 points: Pre-check fails, or no file generated after execution."
+  },
+  {
+    "metric": "2.5.2b Result Export Format",
+    "description": "1. **Arrange:** Successfully export an `awards_result.txt` file.\n2. **Act:** Open this file.\n3. **Assert:** Check whether file content is strict CSV format, each line contains 4 fields: `Name,Department,Prize Name,Winning Time`, and content matches lottery results.",
+    "expected_output": "2 points: File content format completely meets PRD requirements, and all 4 fields' information is accurate. 1 point: File content basically correct, but CSV format wrong, or 4 fields' information has missing/errors. 0 points: File content empty or format completely wrong."
+  }
+]

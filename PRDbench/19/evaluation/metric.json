@@ -1,0 +1,77 @@
+[
+  {
+    "metric": "4.1 System Startup and Basic Status Query",
+    "description": "1. Act: Start the system service.\n2. Act: Query the master unit status information.\n3. Assert: Check if the response is successful and verify that the returned information contains all four key fields: operating mode (mode), processing capacity (processing_capacity), scheduling algorithm (scheduling_algorithm), and standby status (status).",
+    "expected_output": "2 points: Service starts successfully, status query is successful, and the response contains all four correct default master information fields.\n1 point: Service starts, but status information is incomplete (contains 2-3 key fields) or default values are incorrect.\n0 points: Service fails to start, status cannot be queried/returns an error, or fewer than 2 key fields are returned."
+  },
+  {
+    "metric": "2.2.5a Slave Addition Functionality",
+    "description": "1. Arrange: Prepare unique slave identification information, including necessary identifier fields (e.g., ID card number and room number).\n2. Act: Send an add slave request, submitting the prepared identification information.\n3. Assert: Verify that the response indicates successful creation and contains a success message.",
+    "expected_output": "2 points: Request is successful, and a response indicating success is returned.\n1 point: After the request, the slave is actually created (verifiable via subsequent queries), but the returned response is non-standard or lacks a success message.\n0 points: Add slave request fails, or the slave is not created."
+  },
+  {
+    "metric": "2.2.5b Slave Status Query Functionality",
+    "description": "1. Arrange: Ensure a slave has been successfully added.\n2. Act: Query the status of this slave based on its identifier.\n3. Assert: Verify the response is successful and contains the slave's complete initial status information (e.g., identification info, target temperature, current temperature, wind speed).",
+    "expected_output": "2 points: Able to query the slave and returns correct information containing all key fields. 1 point: Able to query the slave, but the returned information is incomplete. 0 points: Unable to query the created slave."
+  },
+  {
+    "metric": "2.1.1 Master Mode Switching and Slave Status Reset",
+    "description": "1. Arrange: Ensure at least one slave exists in the system.\n2. Act: Set the master mode to cooling mode, then query the slave status.\n3. Assert: Verify if the slave target temperature is reset to the default value for cooling mode (22°C).\n4. Act: Set the master mode to heating mode, then query the slave status again.\n5. Assert: Verify if the slave target temperature is reset to the default value for heating mode (28°C).",
+    "expected_output": "2 points: After both mode switches, the slave target temperature is correctly reset to the specified values.\n1 point: After only one mode switch, the slave target temperature is correctly reset.\n0 points: After both mode switches, the slave target temperature is not correctly reset, or the operation fails."
+  },
+  {
+    "metric": "2.2.2 Slave Temperature Adjustment (Valid Range)",
+    "description": "1. Arrange: Ensure the master is in cooling mode (temperature range 18-25°C) and the slave is powered on.\n2. Act: Send a slave temperature adjustment request, setting the target temperature to a value within the valid range (e.g., 20°C).\n3. Assert: Query the slave status to verify if its target temperature has been updated to the requested value.",
+    "expected_output": "2 points: Request is successful, and the slave target temperature is correctly updated.\n1 point: Request returns success, but query reveals the target temperature was not updated.\n0 points: Temperature adjustment request fails or returns an error."
+  },
+  {
+    "metric": "4.3 Slave Temperature Adjustment (Invalid Range)",
+    "description": "1. Arrange: Ensure the master is in cooling mode (temperature range 18-25°C).\n2. Act: Send a slave temperature adjustment request, setting the target temperature to a value outside the valid range (e.g., 17°C).\n3. Assert: Verify if the system rejects the request and returns a response containing a clear error reason.",
+    "expected_output": "2 points: Request is rejected, returns an error status and a clear error message.\n1 point: Request is rejected, but the returned error status is non-standard or the error message is unclear.\n0 points: System accepts the out-of-range temperature value."
+  },
+  {
+    "metric": "2.3.3 Intelligent Decision - Auto Stop Fan Upon Reaching Target Temperature",
+    "description": "1. Arrange: Set the slave's current temperature close to but not reaching the target temperature. For example, in heating mode, set target temperature to 28°C, current temperature to 27°C, and wind speed to medium.\n2. Act: Wait for or simulate a temperature change until the current temperature reaches the target temperature.\n3. Assert: Monitor the slave status to verify if the wind speed automatically changes to 0 within a reasonable time after the temperature reaches or exceeds the target.",
+    "expected_output": "2 points: When current temperature reaches the target, wind speed automatically and accurately changes to 0. 1 point: Wind speed changes but does not become 0 after temperature is reached, or the auto-stop delay is significant. 0 points: No change in wind speed after temperature is reached."
+  },
+  {
+    "metric": "2.3.4a Intelligent Decision - Mode-Adaptive Stop Fan (Cooling)",
+    "description": "1. Arrange: Set the master to cooling mode. Set the slave's target temperature to a normal value (e.g., 22°C), wind speed to medium, and current temperature to a value below the target (e.g., 20°C).\n2. Act: Wait for system response or trigger a scheduling cycle.\n3. Assert: Query the slave status to verify if its wind speed automatically changes to 0.",
+    "expected_output": "2 points: In cooling mode, when current temperature is below target temperature, wind speed automatically changes to 0.\n1 point: Wind speed does not automatically become 0, but decreases.\n0 points: No change in wind speed."
+  },
+  {
+    "metric": "2.3.4b Intelligent Decision - Mode-Adaptive Stop Fan (Heating)",
+    "description": "1. Arrange: Set the master to heating mode. Set the slave's target temperature to a normal value (e.g., 28°C), wind speed to medium, and current temperature to a value above the target (e.g., 29°C).\n2. Act: Wait for system response or trigger a scheduling cycle.\n3. Assert: Query the slave status to verify if its wind speed automatically changes to 0.",
+    "expected_output": "2 points: In heating mode, when current temperature is above target temperature, wind speed automatically changes to 0. 1 point: Wind speed does not automatically become 0, but decreases. 0 points: No change in wind speed."
+  },
+  {
+    "metric": "2.5.2 Real-time Cost Calculation Accuracy",
+    "description": "1. Arrange: Query and record the slave's initial cumulative cost.\n2. Act: Request to run the slave at medium wind speed (standard power 1.0/minute) and wait precisely for one minute.\n3. Assert: Query the slave status again to obtain the new cumulative cost. Verify if the cost increase equals the theoretical value (1.0 power * 1 minute * rate), allowing a ±5% error margin.",
+    "expected_output": "2 points: Cost increase is within ±5% of the theoretical value. 1 point: Cost increases, but the error is between 5% and 20%. 0 points: No cost increase, or error exceeds 20%."
+  },
+  {
+    "metric": "2.6.5a Report Generation - Basic Functionality and Time Range",
+    "description": "1. Arrange: Prepare valid start and end time parameters.\n2. Act: Request a report for the specified time range.\n3. Assert: Verify the response is successful and the returned report includes query time range information consistent with the request parameters.",
+    "expected_output": "2 points: Report is successfully generated and correctly includes the query time range information. 1 point: Report is generated but lacks time range information or it does not match the request. 0 points: Report generation fails or returns an empty response."
+  },
+  {
+    "metric": "2.6.5b Report Generation - Slave Statistics Accuracy",
+    "description": "1. Arrange: Within a specific time period, perform 2 power-on and 2 power-off operations on a specific slave.\n2. Act: Request a report covering that time period.\n3. Assert: In the slave statistics section of the report, find the record for that slave and verify if the power-on/off count is 2 and if the total cost matches the cumulative cost in the slave's status.",
+    "expected_output": "2 points: Both the power-on/off count and total cost statistics in the report completely match the actual operations. 1 point: Only one of the two statistics is correct. 0 points: Both statistics are incorrect or missing."
+  },
+  {
+    "metric": "2.6.5c Report Generation - Content Completeness",
+    "description": "1. Arrange: Ensure there are operation records in the system.\n2. Act: Request a report.\n3. Assert: Check the report structure to see if it contains all four stipulated main sections simultaneously: Query Time Range, Slave Statistics, Cost Statistics, and Detailed Records.",
+    "expected_output": "2 points: Report structure is complete, containing all 4 sections. 1 point: Report contains 2-3 sections. 0 points: Report contains fewer than 2 sections."
+  },
+  {
+    "metric": "3.1a Data Persistence - Slave Status",
+    "description": "1. Arrange: Operate a slave to generate a non-zero cumulative cost and record the value.\n2. Act: Shut down and restart the system service.\n3. Assert: After service restart, query the slave status and verify if its cumulative cost matches the value recorded before restart.",
+    "expected_output": "2 points: After restart, key slave status like cumulative cost is fully preserved. 1 point: After restart, status is partially preserved (e.g., cost reset to zero but slave exists). 0 points: After restart, slave information is completely lost."
+  },
+  {
+    "metric": "3.1b Data Persistence - Operation Logs",
+    "description": "1. Arrange: Perform a specific operation on a slave (e.g., adjust temperature) and note the operation time.\n2. Act: Shut down and restart the system service.\n3. Assert: After service restart, request a report covering that operation time and verify if the detailed records still contain the operation record from before the restart.",
+    "expected_output": "2 points: After restart, operation logs are fully preserved and queryable via report. 1 point: After restart, logs are partially lost. 0 points: After restart, all historical logs are lost."
+  }
+]

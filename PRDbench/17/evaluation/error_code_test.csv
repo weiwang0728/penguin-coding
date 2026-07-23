@@ -1,0 +1,3 @@
+Task ID,Task Name,Test Item,Equipment Duration,Test Status,Test Type,Test Item Feedback
+TASK-M-20231001,Test Task A,Functional Test,1.5,Success,Regular,Error-404, Device Restart
+TASK-H-20231002,Test Task B,Performance Test,2.0,Success,Regular,All Normal

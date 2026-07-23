@@ -1,0 +1,493 @@
+[
+    {
+        "metric": "1.1 Application Launch and Basic Command Line Interface",
+        "description": "1. **Act:** Execute the start-up command of the application in a shell `python src/main.py`.\n2. **Assert:** Verify that the application starts successfully and displays a clear main menu of basic operations for the data analytics (such as data extraction, data cleansing, feature engineering, result display), containing at least four or more actionable options." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/1.1.auto_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should start  successfully and display:\n1. A welcome information panel with the title 'Retail Brand High-Value Store Operations Analytics v1.0'\n2. A list of functional features, including at least the following 4 items:\n   - Multi-source data integration and cleansing\n   - RFM customer segmentation analysis\n   - Time series decomposition\n   - Interactive data query\n   - Data detail link generation\n3. Data initialization information: 'Initializing data (full mode)...'\n4. Reasonable values for store and transaction numbers\n5. Success prompt: '[SUCCESS] Data initialization complete!'\n6. Summary table with basic statistics, RFM customer segmentation statistics, and value label distribution\n7. Final success message: '[SUCCESS] Data analysis complete! Program exiting automatically'"
+    },
+    {
+        "metric": "2.1.1a Multi-source Data Extraction - Store Dimension Table Reading",
+        "description": "1. **Pre-check (User Path):** In the main menu, is there a clear data extraction or similar function option?\n2. **Arrange:** Prepare a simulated data source containing the store dimension table (with fields: `store_key`, `store_id`, `brand_name`, `org_path`, `private_domain_type`).\n3. **Act:** Select the data extraction function, configure, and load the store dimension table data.\n4. **Assert:** Verify that the application reads and displays the basic information of the store dimension table (number of records, field names, etc.) successfully." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.1.1a.store_dim_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "After startup, the application  should display the data initialization process, including:\n1. '[INFO] Initializing data (full mode)...' information\n2. Successful generation and loading of store dimension table data\n3. Basic statistics should show a reasonable total number of stores\n4. The summary table should include information such as store ID, brand, organizational structure, and private domain type\n5. No error messages output, program completes data extraction normally"
+    },
+    {
+        "metric": "2.1.1b Multi-source Data Extraction - Sales Detail Table Reading",
+        "description": "1. **Arrange:** Prepare a simulated data source containing the sales detail table (with fields: `trans_date`, `store_key`, `amount`, `biz_id`).\n2. **Act:** Load sales detail table data.\n3. **Assert:** Verify that the application successfully reads and displays the basic information of the sales detail table, including the count of transaction records." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.1.1b.sales_detail_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should display sales detail table data processing information after startup:\n1. The data initialization information should show a reasonable number of transaction records\n2. Basic statistics should display the total number of transaction records\n3. Display 'Total Transaction Amount' and 'Average Transaction Amount' statistics\n4. The summary table should contain information on transaction date (trans_date), transaction amount (amount), and business group (biz_id)\n5. No error messages, program successfully reads sales detail table data"
+    },
+    {
+        "metric": "2.1.1c Multi-source Data Extraction - Warehouse Information Table Reading",
+        "description": "1. **Arrange:** Prepare a simulated data source containing the warehouse information table (with fields: `biz_id`, `git_repo`).\n2. **Act:** Load warehouse information table data.\n3. **Assert:** Verify that the application reads and displays the basic information of the warehouse information table successfully." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.1.1c.warehouse_info_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should display the processing results of the warehouse information table after startup:\n1. Successful loading of warehouse information data during data initialization\n2. The detailed data table should display information on business group (biz_id)\n3. The generated detail link should include the git_repo parameter\n4. The detail link format is 'repo://{git_repo}/detail?store_id={store_id}&date={trans_date}'\n5. No error messages, warehouse information table data successfully integrated into the final result"
+    },
+    {
+        "metric": "2.1.2a Multi-table Join Query - store_key Join Execution",
+        "description": "1. **Arrange:** Ensure that the store dimension table and sales detail table have been successfully loaded.\n2. **Act:** Execute join query between store dimension table and sales detail table (via `store_key` ).\n3. **Assert:** Verify that the join query is successfully executed without error messages." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.1.2a.store_key_join_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "During application operation, the successful association of the store dimension table and sales detail table should be reflected:\n1. No error messages of association failure during data processing\n2. The final data table contains both store dimension information (store_id, brand_name, org_path, private_domain_type) and sales information (trans_date, amount)\n3. The number of data records remains consistent with the number of transaction records\n4. Each record contains complete store and sales information without missing associations\n5. '[SUCCESS] Data initialization complete!' prompt indicates successful execution of the association query"
+    },
+    {
+        "metric": "2.1.2b Multi-table Join Query - store_key Join Result Verification",
+        "description": "1. **Act:** Check the result data of the store_key join query.\n2. **Assert:** Verify taht the the join result is correct, including the number of joined records and field integrity (should contain all fields from both the store dimension table and sales detail table)." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_data_integration.py::TestDataIntegration::test_store_key_join_result_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the results of the store_key association query:\n1. Verify that all sales records are successfully associated with store information\n2. Verify the field integrity of the store dimension table (store_name, a_value_type, private_domain_type, etc.)\n3. Verify the correctness of the high-value store filtering logic\n4. Verify that the private domain type filtering condition is correctly applied\n5. pytest shows test pass status 'PASSED'"
+    },
+    {
+        "metric": "2.1.3a Multi-table Join Query - biz_id Join Execution",
+        "description": "1. **Arrange:** Ensure that the sales detail table and warehouse information table have been successfully loaded.\n2. **Act:** Execute join query between sales detail table and warehouse information table (via `biz_id` ).\n3. **Assert:** Verify that the join query is successfully executed without error messages." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.1.3a.biz_id_join_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should reflect the successful association of the sales detail table and warehouse information table via biz_id during operation:\n1. No error messages of association during data processing\n2. Each record in the final data table contains business group (biz_id) information\n3. The generated detail link includes the correct git_repo parameter\n4. The detail link format is 'repo://{git_repo}/detail?store_id={store_id}&date={trans_date}'\n5. All sales records can be associated with corresponding warehouse information without missing data\n6. '[SUCCESS] Data initialization complete!' indicates successful biz_id association"
+
+    },
+    {
+        "metric": "2.1.3b Multi-table Join Query - biz_id Join Result Verification",
+        "description": "1. **Act:** Check the result data of the biz_id join query.\n2. **Assert:** Verify that the join result is correct, ensuring each sales record is correctly joined to the corresponding warehouse information." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_data_integration.py::TestDataIntegration::test_biz_id_join_result_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the results of the biz_id association query:\n1. Verify that all records are successfully associated with warehouse information\n2. Verify that git_repo and biz_group fields are correctly filled\n3. Verify the consistency of the same biz_id corresponding to the same git_repo\n4. The test output shows that the association verification passed\n5. pytest shows test pass status 'PASSED'"
+    },
+    {
+        "metric": "2.1.4 Conditional Filtering - High-value Store Selection",
+        "description": "1. **Arrange:** Make sure the multi-table join is completed and data contains fields `a_value_type` and `private_domain_type`.\n2. **Act:** Apply filter conditions to retain only store data with `a_value_type` = 'High-value'.\n3. **Assert:** Verify that the filtered results only contain high-value stores, and private_domain_type is 'Headquarters Direct' or 'Regional Focus'." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.1.4.condition_filter_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should reflect the high-value store filtering logic:\n1. After completing data processing, it shows value label distribution statistics\n2. The value label distribution should include various label types such as 'Growth High Value', 'Stable High Value', 'Potential High Value'\n3. Private domain type statistics should show stores of 'Head Office Managed' and 'Regional Focus' types\n4. The RFM customer segmentation statistics should show the distribution of stores across different value levels\n5. The final data table should display reasonable value label classifications in the value_tag field\n6. No data filtering errors, program completes high-value store identification normally"
+    },
+    {
+        "metric": "2.2.1a Data Cleansing - Missing Value Identification",
+        "description": "1. **Pre-check (User Path):** Is there a data cleansing option in the main menu?\n2. **Arrange:** Prepare data with missing values (brand_name empty in store dimension table, amount is NULL in sales detail table).\n3. **Act:** Select data cleansing function, execute missing value detection.\n4. **Assert:** Verify that the application accurately identifies the location and number of missing values." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.2.1a.missing_value_identify_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should automatically execute data cleaning and reflect missing value processing:\n1. Data cleansing is automatically performed during data initialization\n2. In the final data table, the brand_name field should have no empty values or display a reasonable default value\n3. All records of the monetary field should have valid values\n4. The average transaction amount in the basic statistics should be a reasonable value (non-null)\n5. No 'N/A' or blank key fields in the detailed data table\n6. Data integrity is good, with no obvious missing value problems"
+    },
+    {
+        "metric": "2.2.1b Data Cleansing - Missing Value Handling Execution",
+        "description": "1. **Act:** Fill empty brand_name in store dimension table with default value 'Unknown Brand', and remove records where amount is NULL in sales detail table.\n2. **Assert:** Verify that the handling of missing values is executed correctly." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.2.1b.missing_value_process_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should complete the missing value processing and display correct results:\n1. There should be no empty values in the brand name field, if missing, it should be filled with a reasonable default value\n2. Records with null transaction amounts should be removed, not affecting the statistical results\n3. The final number of transaction records should be the number of valid records (after removing invalid transactions)\n4. The average transaction amount calculation should be based on valid transaction records\n5. All displayed records in the data table should have complete necessary fields\n6. '[SUCCESS] Data initialization complete!' indicates successful execution of the data cleansing"
+    },
+    {
+        "metric": "2.2.2a Data Cleaning - Outlier Identification",
+        "description": "1. **Arrange:** Prepare sales detail table data with outliers (records with amount ≤ 0 or trans_date earlier than store opening date).\n2. **Act:** Execute outlier identification function.\n3. **Assert:** Verify that the application accurately identifies abnormal transaction data." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.2.2a.outlier_identify_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should automatically identify and process outliers:\n1. Automatic outlier detection during data processing\n2. All displayed transaction amounts should be positive (>0)\n3. Transaction dates should be within a reasonable range, without obviously preceding business start dates\n4. The total transaction amount and average transaction amount in the basic statistics should be reasonable positive values\n5. The monetary field in the detailed data table should show valid amounts\n6. No calculation errors or display anomalies caused by outliers"
+    },
+    {
+        "metric": "2.2.2b Data Cleaning - Outlier Filtering Execution",
+        "description": "1. **Act:** Remove abnormal transaction records in the sales detail table with amount ≤ 0 or trans_date earlier than store opening date.\n2. **Assert:** Verify that the outlier filtering rule is correctly applied, and outlier data is completely removed." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.2.2b.outlier_filter_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should successfully filter outliers:\n1. Final data set should not contain zero or negative transaction amounts\n2. All transaction dates should fall within a reasonable business time range\n3. The number of transaction records after filtering is the number of valid records\n4. The RFM calculation is based on filtered valid data\n5. The statistical results reflect cleaned high-quality data\n6. '[SUCCESS] Data initialization complete!' indicates successful execution of outlier filtering"
+    },
+    {
+        "metric": "2.2.3a Data Cleaning - Duplicate Data Identification",
+        "description": "1. **Arrange:** Prepare data containing duplicate records (based on composite key biz_id+trans_date+store_id).\n2. **Act:** Execute duplicate data detection function.\n3. **Assert:** Verify whether the program accurately identifies duplicate records." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.2.3a.duplicate_identify_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should automatically process duplicate data:\n1. Automatic deduplication during data processing\n2. Deduplication based on the composite key of business group (biz_id), transaction date (trans_date), and store ID (store_id)\n3. Final data table sorted by business group and transaction date for display\n4. Duplicate transaction records for the same store on the same date should be reasonably processed\n5. The number of transaction records matches the expected deduplicated number\n6. Data integrity and consistency are good"
+    },
+    {
+        "metric": "2.2.3b Data Cleansing - Duplicate Data Deduplication Execution",
+        "description": "1. **Act:** Deduplicate data based on composite key (biz_id+trans_date+store_id), retaining the most recent transaction record.\n2. **Assert:** Verify that the deduplication logic is correct and duplicates are retained according to the rule (keep the first record in descending trans_date order)." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.2.3b.duplicate_remove_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should correctly execute the deduplication logic:\n1. Duplicate records retained based on the latest timestamp\n2. Deduplicated data maintains business logic integrity\n3. No obvious duplicate records in the displayed final data table\n4. The RFM analysis is based on accurate deduplicated data\n5. Transaction statistics reflect the true business situation after deduplication\n6. The data quality is significantly improved, '[SUCCESS] Data initialization complete!' indicates successful deduplication"
+    },
+    {
+        "metric": "2.3.1a RFM Metric Calculation - Accessibility of Recency Calculation Function",
+        "description": "1. **Pre-check (User Path):** Is there a feature engineering or RFM analysis option in the main menu?\n2. **Assert:** Verify that the user can access the RFM calculation function via a clear menu path." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.3.1a.rfm_access_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should automatically execute the RFM analysis function:\n1. 'RFM Customer Segmentation Analysis' feature displayed in the welcome panel\n2. The application  automatically calculates and displays RFM customer segmentation statistics\n3. The RFM segmentation statistics table includes different segments and their statistical information\n4. Each segment shows the number of stores, percentage, total amount, average amount\n5. The recency calculation is reflected in the analysis of the recent purchase time interval\n6. The RFM analysis functionality is fully accessible and automatically executed"
+    },
+    {
+        "metric": "2.3.1b RFM Metric Calculation - Recency Calculation Execution",
+        "description": "1. **Arrange:** Prepare store data with different transaction dates.\n2. **Act:** Calculate store recency interval (Recency, unit: days).\n3. **Assert:** Verify that the recency calculation result is accurate, and interval calculation is correct." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_recency.py::TestRFMRecencyCalculation::test_recency_calculation_basic -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test should pass successfully, verifying the correct calculation of the Recency indicator in RFM:\n1. Test function can correctly calculate the recent purchase interval of different stores\n2. Store S001 (recent transaction 10 days ago) has a Recency of about 10 days\n3. Store S002 (recent transaction 45 days ago) has a Recency of about 45 days\n4. Store S003 (recent transaction 5 days ago) has a Recency of about 5 days\n5. All Recency values are non-negative and data types are correct\n6. Test output shows '✓ Recency calculation test passed' and specific calculation results\n7. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.3.2 RFM Metric Calculation - Frequency Calculation",
+        "description": "1. **Arrange:** Prepare store data with multiple transaction records.\n2. **Act:** Calculate transaction frequency (Frequency, unit: average monthly transactions).\n3. **Assert:** Verify that the frequency calculation result is accurate, and average monthly transaction calculation is correct." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_frequency.py::TestRFMFrequencyCalculation::test_frequency_calculation_basic -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the correct calculation of the Frequency indicator in RFM:\n1. The test function can correctly calculate the average monthly transaction frequency of different stores\n2. Store S001 (3 transactions over 60 days = 2 months) has a Frequency of about 1.5 times/month\n3. Store S002 (2 transactions over 30 days = 1 month) has a Frequency of about 2 times/month\n4. Store S003 (1 transaction calculated as at least 1 month) has a Frequency of about 1 time/month\n5. All Frequency values are positive and data types are correct\n6. Test output shows '[OK] Frequency calculation test passed' and specific calculation results\n7. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.3.3 RFM Metric Calculation - Monetary Calculation",
+        "description": "1. **Arrange:** Prepare store data with different transaction amounts.\n2. **Act:** Calculate consumption amount (Monetary, unit: average monthly transaction amount).\n3. **Assert:** Verify that the monetary calculation result is accurate, and monthly average amount calculation is correct." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_monetary.py::TestRFMMonetary::test_monetary_calculation_logic -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the correct calculation of the Monetary indicator in RFM:\n1. The test function can correctly calculate the average monthly transaction amount of different stores\n2. The monthly average amount of store S001 is calculated accurately\n3. The monthly average amount of store S002 is calculated accurately\n4. All Monetary values are positive and data types are correct\n5. It can handle single transactions and zero amount transactions\n6. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.3.4a Time Series Decomposition - STL Decomposition Execution",
+        "description": "1. **Arrange:** Prepare time series data of store average monthly transaction amount.\n2. **Act:** Apply STL decomposition to store monthly average transaction amount.\n3. **Assert:** Verify that the STL decomposition is successfully executed, without error messages." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.3.4a.stl_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should successfully execute time series decomposition:\n1. After selecting interactive mode, it displays a welcome message and mode selection\n2. After data initialization is complete, it displays summary statistical information\n3. The RFM customer segmentation statistics table displays different segments\n4. The value label distribution reflects the results of STL decomposition (e.g., Growth High Value, Stable High Value, Potential High Value)\n5. The detailed data table displays value_tag field labels based on time series analysis\n6. No error messages related to STL decomposition\n7. The application  successfully completes time series feature engineering"
+    },
+    {
+        "metric": "2.3.4b Time Series Decomposition - STL Decomposition Result Validation",
+        "description": "1. **Act:** Check STL decomposition results.\n2. **Assert:** Verify that trend, seasonal, and residual components are correctly extracted, and all three are present and reasonable." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_time_series.py::TestTimeSeriesDecomposition::test_decomposition_components_validity -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the results of STL decomposition:\n1. Verify the validity of decomposition components (trend, seasonal, residual)\n2. Verify that all components are of numerical type and non-null\n3. Verify the trend component is positive (conforms to business logic)\n4. Verify proper execution of the decomposition method\n5. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.3.5 High-value Attribute Label Generation",
+        "description": "1. **Arrange:** Ensure RFM metric calculation and STL decomposition are completed. \n2. **Act:** Combine RFM metrics and STL trend to generate label field value_tag.\n3. **Assert:** Verify the growth-type high-value, stable-type high-value, potential-type high-value, etc. labels are generated correctly." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_value_tags.py::TestValueTagGeneration::test_value_tag_generation_execution -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying high-value attribute tag generation:\n1. The test function can correctly generate value tags\n2. Verify the correctness of generated tag types (Growth High Value, Stable High Value, Potential High Value, etc.)\n3. Verify the logic of high-value tag generation\n4. Verify missing data handling mechanism\n5. Verify the reasonableness of tag distribution\n6. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.4.1a RFM Customer Segmentation Model - Accessibility",
+        "description": "1. **Pre-check (User Path):** Is there an RFM customer segmentation option?\n2. **Assert:** Verify that the user can access RFM customer segmentation via a clear menu path." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.4.1a.complete_interactive_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application should provide clear access to the RFM customer segmentation function:\n1. Display 'RFM Customer Segmentation Analysis' feature in the welcome panel\n2. After selecting interactive mode, the help command displays available data viewing and filtering commands\n3. The summary command displays a complete RFM customer segmentation statistics table\n4. The segments command displays all available RFM segment types\n5. The show command displays a detailed data table containing RFM segmentation fields\n6. The RFM customer segmentation function is fully accessible and clearly operable"
+    },
+    {
+        "metric": "2.4.1b RFM Customer Segmentation Model - Three-level Division Execution",
+        "description": "1. **Arrange:** Ensure calculation of all three RFM metrics is complete.\n2. **Act:** Divide Recency, Frequency, and Monetary into high/middle/low three levels according to industry thresholds.\n3. **Assert:** Verify that the three-level division is correct and threshold settings are reasonable." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_segmentation.py::TestRFMSegmentation::test_segment_logic_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the three-tier division of RFM:\n1. Verify the correct creation of R_score, F_score, M_score\n2. Verify score values are within the range of 1-3\n3. Verify high RFM scores are correspond to important customer's logic\n4. Verify the thresholds for three-tier division are reasonable\n5. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.4.2a RFM Customer Segmentation Model - 8-type Combination Generation",
+        "description": "1. **Act:** Based on the results of RFM three-level division, combine to generate 8 types of store segmentation.\n2. **Assert:** Verify that all 8 segmentation types (such as important value customers, important retention customers, etc.) are generated correctly." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_segmentation.py::TestRFMSegmentation::test_eight_segment_types_generation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully, verifying the generation of 8 segmentation combinations:\n1. Verify the generation of at least 6 or more segmentation types\n2. Verify the generated segmentation types are within expected range\n3. Verify inclusion of standard types such as important value customers, important retention customers, etc.\n4. Verify correctness of segmentation type names\n5. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.4.2b RFM Customer Segmentation Model - Segmentation Combination Logic Verification",
+        "description": "1. **Act:** Check RFM combination logic for each segment type.\n2. **Assert:** Verify that the combination logic is correct (e.g., high R + high F + high M = High-Value Customer)." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_segmentation.py::TestRFMSegmentation::test_segment_logic_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and validate the segmentation-combination logic:\n1. Verify the logic: high R + high F + high M = High-Value Customer\n2. Verify that the RFM-score combination rules are correct\n3. Verify the business rationality of the segmentation logic\n4. Verify the handling of edge cases\n5. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.4.3 Segmentation Result Statistics - Quantity Proportion Calculation",
+        "description": "1. **Act:** Calculate quantity proportion for each segmentation type.\n2. **Assert:** Verify that the quantity proportion calculation is accurate, the sum of each type equals 100%." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_statistics.py::TestRFMStatistics::test_segment_count_percentage_calculation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and validate the quantity-ratio calculation:\n1. Verify that the store-count ratio for each sub-type is calculated correctly\n2. Verify that the sum of all ratios equals 100 %\n3. Verify that the Champions ratio is accurate\n4. Verify the mathematical correctness of the ratio calculation\n5. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.4.4 Segmentation Result Statistics - Transaction Amount Contribution Proportion",
+        "description": "1. **Act:** Calculate transaction amount contribution proportion for each segmentation type.\n2. **Assert:** Verify that the transaction amount contribution proportion calculation is accurate, the sum of each type equals 100%." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_rfm_statistics.py::TestRFMStatistics::test_transaction_amount_contribution_percentage -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and validate the revenue-contribution ratio:\n1. Verify that the revenue-contribution ratio for each sub-type is calculated correctly\n2. Verify that the sum of all revenue ratios equals 100 %\n3. Verify that High-Value Customers hold the highest revenue-contribution ratio\n4. Verify the reasonableness of the revenue-contribution calculation\n5. pytest shall show the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.4.5 Segmentation Result Statistics - Filter by Segmentation Type",
+        "description": "1. **Arrange:** Select a specific segmentation type as a filter condition.\n2. **Act:** Execute the function to filter store data by segmentation type.\n3. **Assert:** Verify that the filter function is correct, and the filtered results only contain the specified segmentation type." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.4.5.segment_filter_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application shall correctly execute the filter-by-segment function:\n1. Select interactive mode and initialize data successfully\n2. The segments command displays all available RFM segment types\n3. The filter segment command can filter by the specified segment type\n4. The filtered data contains only the specified segment type\n5. The filter status prompt shows the current filter condition\n6. The show command displays the filtered results to verify correctness\n7. The reset command can reset the filter condition"
+    },
+    {
+        "metric": "2.5.1a CSV data export file comparison test",
+        "description": "1. **Arrange:** Prepare the test input commands, including data initialization and CSV export commands.\n2. **Act:** Run the application and execute the CSV export function to generate the actual sales report file.\n3. Assert: Verify that the generated CSV file contains the correct column structure and data format, and compare it with the expected output file." ,
+        "type": "file_comparison",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.5.1a.csv_export_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": ["evaluation/expected_sales_report.csv"],
+        "expected_output": "The application shall successfully generate a CSV report file with the following characteristics:\n1. The file contains the correct CSV header: biz_id,trans_date,store_id,brand_name,org_path,private_domain_type,amount,recency,frequency,monetary,segment,value_tag,detail_link\n2. The data rows include complete store information, RFM analysis results, and value tags\n3. The detail_link format is correct: repo://{git_repo}/detail?store_id={store_id}&date={trans_date}\n4. All numeric fields are properly formatted, and dates are in YYYY-MM-DD format\n5. The RFM segment type and value_tag fields contain reasonable classification results\n6. The CSV file structure matches the format of expected_sales_report.csv"
+    },
+    {
+        "metric": "2.5.1b Tabular Data Display - Business Group and Date Expansion",
+        "description": "1. **Act:** Expand data rows by business group (biz_id) and transaction date (trans_date).\n2. **Assert:** Verify that the data is correctly expanded by the specified dimensions and the table structure is clear." ,
+        "type": "shell_interaction",
+        "testcases": [
+            {
+                "test_command": "cd src && python main.py",
+                "test_input": "evaluation/2.5.1b.table_display_test.in"
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The application shall correctly expand data by business group and date:\n1. The data table displayed by the show command is sorted by business group (biz_id) and transaction date (trans_date)\n2. The table contains the two key dimension columns: business group and transaction date\n3. The data rows are expanded and displayed by the combination of biz_id and trans_date\n4. The table structure is clear with correct column headers (Business Group, Transaction Date, Store ID, etc.)\n5. Each row contains complete business group and date information\n6. The data expansion logic is correct and facilitates business analysis"
+    },
+    {
+        "metric": "2.5.2a Tabular Data Display - Required Columns Integrity Check",
+        "description": "1. **Act:** Check table column information.\n2. **Assert:** Verify that the table contains all 7 required columns: Store ID, Brand, Organization Structure, Private Domain Type, RFM Segmentation Type, Monthly Average Transaction Amount, and value_tag." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_display_functionality.py::TestDisplayFunctionality::test_table_display_required_columns_completeness -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and verify the completeness of required table columns:\n1. Verify the Store ID (store_id) column exists\n2. Verify the Brand Name (brand_name) column exists\n3. Verify the Organization Path (org_path) column exists\n4. Verify the Private Domain Type (private_domain_type) column exists\n5. Verify the RFM Segment Type (segment) column exists\n6. Verify the Monthly Average Transaction Amount (monetary) column exists\n7. Verify the Value Tag (value_tag) column exists\n8. Verify the correctness of data types\n9. Verify that no key column is entirely null\n10. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.5.2b Tabular Data Display - Data Integrity Validation",
+        "description": "1. **Act:** Check data contents in the table.\n2. **Assert:** Verify that the data in each column is complete, with no obvious missing or abnormal values." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_display_functionality.py::TestDisplayFunctionality::test_table_display_data_integrity_validation -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and verify table data integrity:\n1. Verify that the processed data is not empty\n2. Verify that the Store ID–Date combination contains no duplicates\n3. Verify that amount data are positive and contain no missing values\n4. Verify the reasonableness of RFM metrics (monetary>0, frequency>0, recency>=0)\n5. Verify that segment types are valid values (Champions, Key Customers to Retain, etc.)\n6. Verify that there are no obvious outliers or missing values\n7. Verify the correctness of data types\n8. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.5.3a Data Detail Link Generation - Link Format Validation",
+        "description": "1. **Act:** Generate data detail link column at the end of the table.\n2. **Assert:** Verify that the link format is correct, should be: repo://{git_repo}/detail?store_id={store_id}&date={trans_date}." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_detail_links.py::TestDetailLinks::test_detail_link_format -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and verify the data-detail-link format:\n1. Verify that every generated link starts with 'repo://'\n2. Verify that the link contains the correct git_repo parameter\n3. Verify that the link contains the correct store_id parameter\n4. Verify that the link contains the correct date parameter in YYYY-MM-DD format\n5. Verify that the link structure conforms to 'repo://{git_repo}/detail?store_id={store_id}&date={trans_date}'\n6. The test output shall display '✓ Link-format validation test passed'\n7. pytest shall display the test status as 'PASSED'"
+    },
+    {
+        "metric": "2.5.3b Data Detail Link Generation - Parameter Filling Validation",
+        "description": "1. **Act:** Check the parameters in the generated data-detail links.\n2. **Assert:** Verify that the parameters in the links are correctly populated (git_repo, store_id, and trans_date should all be actual data values)." ,
+        "type": "unit_test",
+        "testcases": [
+            {
+                "test_command": "cd evaluation && python -m pytest tests/test_detail_links.py::TestDetailLinks::test_detail_link_parameter_filling -v",
+                "test_input": null
+            }
+        ],
+        "input_files": null,
+        "expected_output_files": null,
+        "expected_output": "The test shall pass successfully and verify the parameter substitution in data-detail links:\n1. Verify that the git_repo parameter is correctly substituted into the link\n2. Verify that the store_id parameter is correctly substituted into the link\n3. Verify that the trans_date parameter is correctly substituted into the link\n4. Verify that the parameter values exactly match the source data\n5. Verify that all parameters in the link are actual data values, not placeholders\n6. The test output shall display '✓ Parameter-substitution validation test passed'\n7. pytest shall display the test status as 'PASSED'"
+    }
+]

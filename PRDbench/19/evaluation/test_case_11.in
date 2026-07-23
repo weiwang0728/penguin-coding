@@ -1,0 +1,7 @@
+curl --noproxy "*"  -X DELETE http://localhost:8080/slave/delete_all
+curl --noproxy "*"  -X POST -H "Content-Type: application/json" -d "{\"card_id\": \"test_card_for_11\"}" http://localhost:8080/slave/
+curl --noproxy "*"  -X POST -H "Content-Type: application/json" -d "{\"power\": 3, \"scheduling\": 1, \"status\": 1}" http://localhost:8080/machine/set
+curl --noproxy "*"  -X GET http://localhost:8080/machine/open
+curl --noproxy "*"  -X GET http://localhost:8080/slave/speed/high/1
+sleep 3
+curl --noproxy "*"  -X POST -H "Content-Type: application/json" -d "{\"startDate\": \"{{TODAY}}\", \"endDate\": \"{{TODAY}}\"}" http://localhost:8080/log/

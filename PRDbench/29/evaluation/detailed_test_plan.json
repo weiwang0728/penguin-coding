@@ -1,0 +1,392 @@
+[
+  {
+    "metric": "1.1 Program Startup and Basic Operation",
+    "description": "1. **Act:** Execute the program's startup command in the command line.\n2. **Assert:** Verify that the program starts successfully and displays a command prompt or welcome interface, with no crashes or import errors.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/1_1.in",
+        "test_input": "evaluation/1_1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program starts normally and displays a clear interface or prompt."
+  },
+  {
+    "metric": "1.2a System Initialization",
+    "description": "1. **Act:** After starting the program, enter the status command.\n2. **Assert:** Check if the output shows system funds as 700 and the number of riders as 1.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/1_2.in",
+        "test_input": "evaluation/1_2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Accurately displays funds as 700 and the number of riders as 1."
+  },
+  {
+    "metric": "2.1a Command Recognition - start Command",
+    "description": "1. **Pre-check (User Path):** After starting the program, can the order input function be accessed by entering the `start` command?\n2. **Act:** Enter the `start` command.\n3. **Assert:** Observe whether the program correctly recognizes the command and prompts for coordinate input, rather than displaying an \"unknown command\" error.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_1a.in",
+        "test_input": "evaluation/2_1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The `start` command is correctly recognized and prompts for input."
+  },
+  {
+    "metric": "2.1b Command Recognition - status Command",
+    "description": "1. **Pre-check (User Path):** Can the system status be viewed by entering the `status` command?\n2. **Act:** Enter the `status` command.\n3. **Assert:** Observe whether the program correctly recognizes the command and displays system status information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_1b.in",
+        "test_input": "evaluation/2_1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The `status` command is correctly recognized and displays the system status."
+  },
+  {
+    "metric": "2.1c Command Recognition - orders Command",
+    "description": "1. **Pre-check (User Path):** Can order details be viewed by entering the `orders` command?\n2. **Act:** Enter the `orders` command.\n3. **Assert:** Observe whether the program correctly recognizes the command and displays order information.if the list is empty, verify that a clear prompt (e.g., \"No orders found\") is displayed.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_1c.in",
+        "test_input": "evaluation/2_1c.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The `orders` command is correctly recognized and provides an appropriate response."
+  },
+  {
+    "metric": "2.1d Command Recognition - riders Command",
+    "description": "1. **Pre-check (User Path):** Can rider details be viewed by entering the `riders` command?\n2. **Act:** Enter the `riders` command.\n3. **Assert:** Observe whether the program correctly recognizes the command and displays rider history information (even if empty).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_1d.in",
+        "test_input": "evaluation/2_1d.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The `riders` command is correctly recognized and provides an appropriate response."
+  },
+  {
+    "metric": "2.1e Command Recognition - quit Command",
+    "description": "1. **Pre-check (User Path):** Can the program be exited by entering `quit` or `exit`?\n2. **Act:** Enter the `quit` command.\n3. **Assert:** Observe whether the program correctly recognizes the command and prepares to exit.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_1e.in",
+        "test_input": "evaluation/2_1e.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The `quit` command is correctly recognized."
+  },
+  {
+    "metric": "2.2 Order Coordinate Input Format",
+    "description": "1. **Arrange:** Prepare four valid numeric coordinates (e.g., 100 200 300 400).\n2. **Act:** Enter the `start` command, then enter the four prepared coordinates as prompted.\n3. **Assert:** Observe whether the program can correctly receive and process these coordinate inputs.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_2.in",
+        "test_input": "evaluation/2_2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Correctly accepts and processes all 4 integer coordinates."
+  },
+  {
+    "metric": "2.3 Coordinate Range Validation",
+    "description": "1. **Arrange:** Prepare out-of-range coordinates (e.g., -100, 900, -50, 850).\n2. **Act:** Enter the prepared invalid coordinates after the `start` command.\n3. **Assert:** Observe whether the program detects the range errors and provides a prompt.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/2_3.in",
+        "test_input": "evaluation/2_3.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Coordinate values must be between 0 and 800."
+  },
+  {
+    "metric": "3.1 Automatic Rider Recruitment Trigger",
+    "description": "1. **Arrange:** Confirm initial funds are 1000 (>= 400).\n2. **Act:** Enter two valid orders, requiring assignment to two riders.\n3. **Assert:** Check if a new rider is automatically created and if system funds decrease by 300.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/3_1.in",
+        "test_input": "evaluation/3_1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "A new rider is automatically created, and system funds decrease by 300."
+  },
+  {
+    "metric": "3.2a Rider Initial Attributes - Position",
+    "description": "1. **Act:** After creating a rider, check the rider info via the `status` command.\n2. **Assert:** Check if the rider's position is displayed as (435, 385).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_initialization.py::test_rider_initial_position",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "3.2b Rider Initial Attributes - Speed",
+    "description": "1. **Act:** After creating a rider, check the rider info via the `status` command.\n2. **Assert:** Check if the rider's speed is displayed as 10 units/tick.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_initialization.py::test_rider_initial_speed",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "3.2c Rider Initial Attributes - Status",
+    "description": "1. **Act:** After creating a rider, check the rider info via the `status` command.\n2. **Assert:** Check if the rider's status is displayed as idle (0 or relevant text).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_initialization.py::test_rider_initial_state",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "4.1 Nearest Rider Assignment Algorithm",
+    "description": "1. **Arrange:** Create at least 2 riders and prepare one set of order coordinates.\n2. **Act:** Enter the order and observe the system's assignment result.\n3. **Assert:** Verify that the order is assigned to the rider closest to the restaurant.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_order_assignment.py::test_find_best_rider_for_order",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "4.2 Rider Status Transition Logic",
+    "description": "1. **Arrange:** Assign an order to a rider.\n2. **Act:** Observe the rider's status changes by repeatedly entering the `status` command.\n3. **Assert:** Check if the status transitions in the order: idle -> picking up -> delivering -> idle.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_state_transition.py::test_rider_state_transition",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "5.1a `start` Command Return - Grid Coordinate Display",
+    "description": "1. **Arrange:** Prepare order coordinates such as 150, 250, 350, 450.\n2. **Act:** Enter the `start` command and the prepared coordinates.\n3. **Assert:** Check whether the returned result displays the converted grid coordinates for the restaurant and customer.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/5_1a.in",
+        "test_input": "evaluation/5_1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Accurately displays the converted grid coordinates for the restaurant and customer."
+  },
+  {
+    "metric": "5.1b `start` Command Return - Assigned Rider Details",
+    "description": "1. **Arrange:** Ensure there is at least 1 rider in the system.\n2. **Act:** Enter an order.\n3. **Assert:** Check if the `start` command return includes the speed and estimated delivery time for the assigned rider.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/5_1b.in",
+        "test_input": "evaluation/5_1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Completely displays the assigned rider's speed and estimated delivery time."
+  },
+  {
+    "metric": "5.1d `start` Command Return - ASCII Route Map Display",
+    "description": "1. **Act:** Enter an order.\n2. **Assert:** Check whether the `start` command result includes an ASCII character map, and if the map correctly marks rider (R), restaurant (S), and customer (C) positions with different symbols, as well as line segments for the assigned rider's path.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/5_1d.in",
+        "test_input": "evaluation/5_1d.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays a clear ASCII route map, including connecting line segments and position markers."
+  },
+  {
+    "metric": "5.2 Rider Movement Simulation",
+    "description": "1. **Arrange:** After assigning an order, record the rider's initial position.\n2. **Act:** Observe the rider's position changes with consecutive `status` commands.\n3. **Assert:** Verify that the rider moves along the expected path and that the speed is 10 units/tick.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_movement.py::test_rider_movement",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "6.1a `status` Command - System Status Display",
+    "description": "1. **Act:** Enter the `status` command.\n2. **Assert:** Check if the output contains current system funds and rider status information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/6_1a.in",
+        "test_input": "evaluation/6_1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Accurately displays the current system funds, and fully displays the status and assigned orders for all riders."
+  },
+  {
+    "metric": "6.2a `orders` Command - Basic Order Info",
+    "description": "1. **Arrange:** Create at least 1 order.\n2. **Act:** Enter the `orders` command.\n3. **Assert:** Check whether the order's start time, restaurant location, customer location, distance, duration, and assigned rider information are shown.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/6_2a.in",
+        "test_input": "evaluation/6_2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Accurately displays the time and location information for all orders, as well as the distance, duration, and assigned rider for each."
+  },
+  {
+    "metric": "6.3a `riders` Command - Rider State Change Records",
+    "description": "1. **Arrange:** Create orders so riders go through state changes (accept order, pickup, deliver).\n2. **Act:** Enter the `riders` command.\n3. **Assert:** Check whether each rider's state change is recorded, including timestamps for accepting an order, arriving at the pickup point, and delivering to the customer.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_history.py::test_rider_history",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "6.3b `riders` Command - Detailed History Info",
+    "description": "1. **Arrange:** Ensure at least one rider has completed a delivery.\n2. **Act:** Enter the `riders` command.\n3. **Assert:** Check whether each state change record includes time, location, order number, and other details.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_rider_history.py::test_rider_history",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "8.1 Order Completion Handling",
+    "description": "1. **Arrange:** Wait for or simulate a rider completing the full delivery process.\n2. **Act:** Observe system state changes after the rider arrives at the customer's location.\n3. **Assert:** Verify whether the order is removed from the rider's order list and the rider's status becomes idle.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_order_completion.py::test_order_completion",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed."
+  },
+  {
+    "metric": "8.2 Concurrent Multi-Rider Management",
+    "description": "1. **Arrange:** Create at least 3 orders to generate multiple riders.\n2. **Act:** Observe the running state of multiple riders via the `status` command.\n3. **Assert:** Verify whether the system can track and manage all riders' statuses and tasks concurrently.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/8_2.in",
+        "test_input": "evaluation/8_2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Correctly handles concurrent deliveries for 3 or more riders."
+  },
+  {
+    "metric": "9.1 Input Error Handling",
+    "description": "1. **Arrange:** Prepare various invalid inputs: invalid commands, non-numeric coordinates, empty input.\n2. **Act:** Enter these invalid data in sequence.\n3. **Assert:** Observe whether the program provides clear error prompts and does not crash.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/9_1_empty_input.in",
+        "test_input": "evaluation/9_1_empty_input.in"
+      },
+      {
+        "test_command": "python src/main.py < evaluation/9_1_invalid_command.in",
+        "test_input": "evaluation/9_1_invalid_command.in"
+      },
+      {
+        "test_command": "python src/main.py < evaluation/9_1_non_numeric.in",
+        "test_input": "evaluation/9_1_non_numeric.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Provides clear prompts for all three types of invalid input, and the program remains stable."
+  },
+  {
+    "metric": "9.2 Program Exit Functionality",
+    "description": "1. **Act:** Enter the `quit` or `exit` command.\n2. **Assert:** Observe whether the program can exit gracefully, with no zombie processes or error messages.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/9_2_exit.in",
+        "test_input": "evaluation/9_2_exit.in"
+      },
+      {
+        "test_command": "python src/main.py < evaluation/9_2_quit.in",
+        "test_input": "evaluation/9_2_quit.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Exits gracefully and normally, with no errors."
+  }
+]

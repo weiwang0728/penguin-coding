@@ -1,0 +1,2 @@
+relation_X	0
+relation_Y	1

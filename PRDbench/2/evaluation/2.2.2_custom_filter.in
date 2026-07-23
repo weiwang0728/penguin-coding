@@ -1,0 +1,22 @@
+1
+evaluation/sample_data.csv
+
+2
+SELECT * FROM df
+
+y
+
+3
+2
+8
+>=
+5000000000
+8
+<=
+8000000000
+
+AND
+y
+q
+
+6

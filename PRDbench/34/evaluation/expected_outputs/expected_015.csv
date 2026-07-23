@@ -1,0 +1,6 @@
+Name,Birth Place,Birth Date,Death Date,Height,Education Level,Occupation,Highest Position,Relative,Relationship,Gender
+Wang Wu,Guangzhou,19800808,0,172.0,Bachelor's Degree,Teacher,Principal,,0,Male
+Zhao Liu,Shenzhen,19750315,0,165.0,High School,Salesperson,Sales Manager,Wang Wu,0,Female
+Sun Qi,Hangzhou,20100101,0,120.0,Elementary School,Student,,Wang Wu,1,Male
+Li Ba,Chengdu,20050505,0,115.0,Elementary School,Student,,Wang Wu,1,Female
+Li Si,Shanghai,19850505,0,168.0,Graduate Degree,Product Manager,Department Manager,Wang Wu,1,Female

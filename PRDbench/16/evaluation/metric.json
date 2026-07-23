@@ -1,0 +1,67 @@
+[
+  {
+    "metric": "1.1.1 Basic Usability - Command-Line Help Information",
+    "description": "1. **Act:** Execute `python src/main.py --help` in the shell.\n2. **Assert:** Verify that the program executes successfully and outputs clear, well-formatted help information without garbled characters. The information must include descriptions for the three core functions: `--analyze`, `--generate`, and `--evaluate`.",
+    "expected_output": "2 points: The command executes successfully, displaying clear and well-formatted help information that fully describes the three core functions (`--analyze`, `--generate`, `--evaluate`). 1 point: The help information is incomplete, missing descriptions for 1-2 core functions, or is poorly formatted and difficult to read. 0 points: The command returns an error or produces no output."
+  },
+  {
+    "metric": "2.1.1a Password Strength Assessment - Low Strength (Keystroke Pattern)",
+    "description": "1. **Pre-check (User Path):** Verify that the main menu contains a clear option for 'Password Strength Assessment' or a similar function.\n2. **Act:** Select this function and, when prompted, enter the password `qwertyuiop`.\n3. **Assert:** Observe the output and confirm that the final score returned is a definitive low-strength score (e.g., less than 40/100).",
+    "expected_output": "2 points: Pre-check passes, and the assessment score correctly reflects a low strength. 1 point: Pre-check passes, but the assessment score is inaccurate (e.g., medium or high). 0 points: Pre-check fails, or the program execution fails."
+  },
+  {
+    "metric": "2.1.1b Password Strength Assessment - High Strength (Complex Combination)",
+    "description": "1. **Pre-check (User Path):** Verify that the main menu contains a clear option for 'Password Strength Assessment' or a similar function.\n2. **Act:** Select this function and, when prompted, enter the password `MyP@ssw0rd_!@#`.\n3. **Assert:** Observe the output and confirm that the final score returned is a definitive high-strength score (e.g., greater than 70/100).",
+    "expected_output": "2 points: Pre-check passes, and the assessment score correctly reflects a high strength. 1 point: Pre-check passes, but the assessment score is inaccurate (e.g., medium or low). 0 points: Pre-check fails, or the program execution fails."
+  },
+  {
+    "metric": "2.2.1a Assessment Interpretability - Length Score",
+    "description": "1. **Act:** Use the password assessment function to evaluate an arbitrary password (e.g., `12345`).\n2. **Assert:** Inspect the detailed score breakdown in the output to verify that it clearly includes a 'Length Score' component or a similarly named metric.",
+    "expected_output": "2 points: The output clearly includes a 'Length Score' component. 1 point: N/A. 0 points: The output does not include a 'Length Score' component."
+  },
+  {
+    "metric": "2.2.1b Assessment Interpretability - Diversity Score",
+    "description": "1. **Act:** Use the password assessment function to evaluate an arbitrary password (e.g., `aB1@`).\n2. **Assert:** Inspect the detailed score breakdown in the output to verify that it clearly includes a 'Diversity Score' component (accounting for uppercase/lowercase, numbers, symbols) or a similarly named metric.",
+    "expected_output": "2 points: The output clearly includes a 'Diversity Score' component. 1 point: N/A. 0 points: The output does not include a 'Diversity Score' component."
+  },
+  {
+    "metric": "2.2.1c Assessment Interpretability - Keystroke Pattern Penalty",
+    "description": "1. **Act:** Use the password assessment function to evaluate a keystroke pattern password (e.g., `asdfgh`).\n2. **Assert:** Inspect the detailed score breakdown in the output to verify that it clearly includes a 'Keystroke Pattern Penalty' component or a similarly named metric.",
+    "expected_output": "2 points: The output clearly includes a 'Keystroke Pattern Penalty' component. 1 point: N/A. 0 points: The output does not include a 'Keystroke Pattern Penalty' component."
+  },
+  {
+    "metric": "3.1.1a Password Generation - Row/Column Pattern",
+    "description": "1. **Pre-check (User Path):** Verify that the main menu contains a clear option for 'Password Generation' or a similar function.\n2. **Act:** Select the function, choose the 'Row/Column (same-row)' mode, and follow the prompts to generate 3 passwords of length 8.\n3. **Assert:** Observe the output to confirm that 3 passwords of length 8 are successfully generated and that all characters in each password belong to the same row on a QWERTY keyboard (e.g., `fghjkl;p` or `zxcvbnm,`).",
+    "expected_output": "2 points: Pre-check passes, and the generated passwords are correct in quantity, length, and pattern. 1 point: Pre-check passes, but 1-2 of the generated passwords fail to meet the quantity, length, or pattern requirements. 0 points: Pre-check fails, or the output completely fails to meet requirements."
+  },
+  {
+    "metric": "3.1.1b Password Generation - Zigzag/Diagonal Pattern",
+    "description": "1. **Pre-check (User Path):** Verify that the password generation menu includes a 'Zigzag/Diagonal (zigzag)' mode option.\n2. **Act:** Select this function and follow the prompts to generate 3 passwords of length 8.\n3. **Assert:** Observe the output to confirm that 3 passwords of length 8 are successfully generated and that the characters in each password form a clear diagonal path on the keyboard (e.g., `1qaz2wsx`).",
+    "expected_output": "2 points: Pre-check passes, and the generated passwords are correct in quantity, length, and pattern. 1 point: Pre-check passes, but 1-2 of the generated passwords fail to meet the quantity, length, or pattern requirements. 0 points: Pre-check fails, or the output completely fails to meet requirements."
+  },
+  {
+    "metric": "3.1.1c Password Generation - Jump Pattern",
+    "description": "1. **Pre-check (User Path):** Verify that the password generation menu includes a 'Jump (jump)' mode option.\n2. **Act:** Select this function and follow the prompts to generate 3 passwords of length 8.\n3. **Assert:** Observe the output to confirm that 3 passwords of length 8 are successfully generated and that the characters in each password form a clear jump pattern on the keyboard (e.g., `a1s2d3f4`).",
+    "expected_output": "2 points: Pre-check passes, and the generated passwords are correct in quantity, length, and pattern. 1 point: Pre-check passes, but 1-2 of the generated passwords fail to meet the quantity, length, or pattern requirements. 0 points: Pre-check fails, or the output completely fails to meet requirements."
+  },
+  {
+    "metric": "4.1.1a Batch Analysis - Correctly Classify 'Row/Column' Pattern",
+    "description": "1. **Pre-check (User Path):** Verify that the main menu contains a clear option for 'Batch Analysis' or a similar function.\n2. **Arrange:** Create a test file `src/test_input.txt` with three lines, each containing one password: `asdfghjkl` (row), `1qaz2wsx` (diagonal), `a1s2d3f4` (jump).\n3. **Act:** Select the batch analysis function, provide the input file path `src/test_input.txt` when prompted, and specify the output path for row patterns as `src/test_samerow.txt`.\n4. **Assert:** Verify that the file `src/test_samerow.txt` is created successfully and contains only the password `asdfghjkl`.",
+    "expected_output": "2 points: Pre-check passes, and the output file is created with the correct content. 1 point: Pre-check passes, but the file content is incorrect (e.g., contains other passwords or is empty). 0 points: Pre-check fails, or the output file is not created."
+  },
+  {
+    "metric": "4.1.1b Batch Analysis - Correctly Classify 'Zigzag/Diagonal' Pattern",
+    "description": "1. **Arrange:** Reuse the `src/test_input.txt` file created in test 4.1.1a.\n2. **Act:** Within the batch analysis function, specify the output path for zigzag/diagonal patterns as `src/test_zigzag.txt`.\n3. **Assert:** Verify that the file `src/test_zigzag.txt` is created successfully and contains only the password `1qaz2wsx`.",
+    "expected_output": "2 points: The output file is created successfully with the correct content. 1 point: The file is created, but its content is incorrect. 0 points: The output file is not created, or the program fails."
+  },
+  {
+    "metric": "4.1.1c Batch Analysis - Correctly Classify 'Jump' Pattern",
+    "description": "1. **Arrange:** Reuse the `src/test_input.txt` file created in test 4.1.1a.\n2. **Act:** Within the batch analysis function, specify the output path for jump patterns as `src/test_jump.txt`.\n3. **Assert:** Verify that the file `src/test_jump.txt` is created successfully and contains only the password `a1s2d3f4`.",
+    "expected_output": "2 points: The output file is created successfully with the correct content. 1 point: The file is created, but its content is incorrect. 0 points: The output file is not created, or the program fails."
+  },
+  {
+    "metric": "5.1.1 Frequency Statistics and Sorting",
+    "description": "1. **Arrange:** Create a test file `src/test_freq_input.txt` with the following content:\nasdf\nqwer\nasdf\nasdf\nqwer\n2. **Act:** Use the batch analysis function to analyze `src/test_freq_input.txt` and specify `src/freq_output.txt` as the output file for frequency statistics.\n3. **Assert:** Verify the content of `src/freq_output.txt`. It should contain `asdf   3` and `qwer   2`, with `asdf` listed before `qwer` (sorted in descending order of frequency).",
+    "expected_output": "2 points: The output file is completely correct in terms of passwords, counts, and descending sort order. 1 point: The counts are correct but the sort order is wrong, or the sort order is correct but the counts are wrong. 0 points: The program fails, or the output file content is completely incorrect."
+  }
+]

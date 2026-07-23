@@ -1,0 +1,290 @@
+[
+  {
+    "metric": "1.1 Robustness - Return usage instructions for invalid parameters",
+    "description": "Verify that the program returns clear usage instructions when no parameters or invalid parameters are provided.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py --help",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py --unknown-arg",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display clear usage instructions, including detailed explanations and available options for --model and --input parameters."
+  },
+  {
+    "metric": "1.2 Robustness - Invalid model parameter",
+    "description": "1. **Arrange:** Prepare a valid matrix data file, such as `data/LU.txt`.\\n2. **Act:** Run `python src/main.py --model INVALIDMODEL --input evaluation/data/LU.txt`, where `INVALIDMODEL` is an algorithm name not defined in the PRD.\\n3. **Assert:** Check whether the program returns a clear error message stating \"invalid parameter\" or similar text, and lists all available algorithm options (LU, QR, HR, GR, URV).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py --model INVALIDMODEL --input evaluation/data/LU.txt",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/LU.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should return a clear error message indicating the model parameter is invalid and list all available algorithm options [LU,QR,HR,GR,URV]."
+  },
+  {
+    "metric": "1.3 Robustness - Invalid file path",
+    "description": "1. **Arrange:** Ensure the file `non_existent_file.txt` does not exist in the execution path.\\n2. **Act:** Run `python src/main.py --model LU --input non_existent_file.txt`.\\n3. **Assert:** Check whether the program returns a clear file error message, such as \"File not found\", \"Path error\", or other user-friendly information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py --model LU --input non_existent_file.txt",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should return a clear file error message, such as 'File not found' or 'Path error' or other user-friendly information."
+  },
+  {
+    "metric": "2.1a Core Functionality - LU Decomposition: Correctness of Calculation",
+    "description": "1. **Arrange:** Prepare an exact input matrix (such as in `data/LU.txt`) and pre-calculate its standard L and U matrices for reference.\\n2. **Act:** Run `python src/main.py --model LU --input evaluation/data/LU.txt`.\\n3. **Assert:** Compare the program output for L and U matrices with the standard results. The error in each matrix entry should be within an acceptable range (e.g., 1e-6).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_lu_correctness.py::test_lu_factorization_correctness -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/LU.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The LU decomposition results should match the standard calculation results within numerical precision; P*L*U should equal the original matrix A."
+  },
+  {
+    "metric": "2.1b Core Functionality - LU Decomposition: Output Format Standardization",
+    "description": "1. **Arrange:** Prepare an input matrix with varying decimal places.\\n2. **Act:** Run `python src/main.py --model LU --input evaluation/data/LU.txt`.\\n3. **Assert:** Inspect the output L and U matrices to confirm all values are formatted with a unified decimal precision (e.g., 4 decimal places).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_output_format.py::test_lu_output_format -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/LU.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "All elements in the output matrices should be formatted strictly with a unified precision of 4 decimal places."
+  },
+  {
+    "metric": "2.1c Core Functionality - LU Decomposition: Matrix Rank Calculation",
+    "description": "1. **Arrange:** Prepare an input matrix with known rank (for example, a 3x3 non-singular matrix of rank 3).\\n2. **Act:** Call the auxiliary.rank_of_matrix function to calculate the matrix rank.\\n3. **Assert:** Verify the calculated matrix rank matches the result from numpy.linalg.matrix_rank.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_matrix_rank.py::test_lu_matrix_rank -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/LU.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The auxiliary.rank_of_matrix function should correctly calculate the rank of the matrix, consistent with results from numpy's standard library."
+  },
+  {
+    "metric": "2.2a Core Functionality - QR Decomposition: Correctness of Calculation",
+    "description": "1. **Arrange:** Prepare an exact input matrix (`data/GramSchmidt.txt`) and pre-calculate standard Q and R matrices.\\n2. **Act:** Run `python src/main.py --model QR --input evaluation/data/GramSchmidt.txt`.\\n3. **Assert:** Compare the program's output Q and R matrices with the standard results; element error should be within an acceptable range.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_qr_correctness.py::test_qr_factorization_correctness -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/GramSchmidt.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The results of the QR decomposition should match the standard calculation results within numerical precision; Q*R should equal the original matrix A."
+  },
+  {
+    "metric": "2.2b Core Functionality - QR Decomposition: Output Format Standardization",
+    "description": "1. **Act:** Run `python src/main.py --model QR --input evaluation/data/GramSchmidt.txt`.\\n2. **Assert:** Inspect the output Q and R matrices to confirm all values are formatted to a unified decimal precision.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_output_format.py::test_qr_output_format -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/GramSchmidt.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "All elements in the output matrices should be formatted strictly with a unified precision of 4 decimal places."
+  },
+  {
+    "metric": "2.2c Core Functionality - QR Decomposition: Matrix Rank Calculation",
+    "description": "1. **Arrange:** Prepare an input matrix with known rank.\\n2. **Act:** Call the auxiliary.rank_of_matrix function to calculate the matrix rank.\\n3. **Assert:** Verify the calculated matrix rank matches the result from numpy.linalg.matrix_rank.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_matrix_rank.py::test_qr_matrix_rank -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/GramSchmidt.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The auxiliary.rank_of_matrix function should correctly calculate the rank of the matrix, consistent with results from numpy's standard library."
+  },
+  {
+    "metric": "2.3a Core Functionality - HR Decomposition: Correctness of Calculation",
+    "description": "1. **Arrange:** Prepare an exact input matrix (`data/Household.txt`) and pre-calculate the standard result.\\n2. **Act:** Run `python src/main.py --model HR --input evaluation/data/Household.txt`.\\n3. **Assert:** Compare the program's output matrix with the standard result; element error should be within an acceptable range.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_hr_correctness.py::test_hr_factorization_correctness -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/Household.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Householder reflection decomposition results should match the standard calculation results within numerical precision; Q*R should equal the original matrix A."
+  },
+  {
+    "metric": "2.3b Core Functionality - HR Decomposition: Output Format Standardization",
+    "description": "1. **Act:** Run `python src/main.py --model HR --input evaluation/data/Household.txt`.\\n2. **Assert:** Inspect the output matrix to confirm all values are formatted to a unified decimal precision.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_output_format.py::test_hr_output_format -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/Household.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "All elements in the output matrices should be formatted strictly with a unified precision of 4 decimal places."
+  },
+  {
+    "metric": "2.3c Core Functionality - HR Decomposition: Matrix Rank Calculation",
+    "description": "1. **Arrange:** Prepare an input matrix with known rank.\\n2. **Act:** Call the auxiliary.rank_of_matrix function to calculate the matrix rank.\\n3. **Assert:** Verify the calculated matrix rank matches the result from numpy.linalg.matrix_rank.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_matrix_rank.py::test_hr_matrix_rank -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/Household.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The auxiliary.rank_of_matrix function should correctly calculate the rank of the matrix, consistent with results from numpy's standard library."
+  },
+  {
+    "metric": "2.4a Core Functionality - GR Decomposition: Correctness of Calculation",
+    "description": "1. **Arrange:** Prepare an exact input matrix (`data/Givens.txt`) and pre-calculate the standard result.\\n2. **Act:** Run `python src/main.py --model GR --input evaluation/data/Givens.txt`.\\n3. **Assert:** Compare the program's output matrix with the standard result; element error should be within an acceptable range.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_gr_correctness.py::test_gr_factorization_correctness -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/Givens.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Givens rotation decomposition results should match the standard calculation results within numerical precision; Q*R should equal the original matrix A."
+  },
+  {
+    "metric": "2.4b Core Functionality - GR Decomposition: Output Format Standardization",
+    "description": "1. **Act:** Run `python src/main.py --model GR --input evaluation/data/Givens.txt`.\\n2. **Assert:** Inspect the output matrix to confirm all values are formatted to a unified decimal precision.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_output_format.py::test_gr_output_format -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/Givens.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "All elements in the output matrices should be formatted strictly with a unified precision of 4 decimal places."
+  },
+  {
+    "metric": "2.4c Core Functionality - GR Decomposition: Matrix Rank Calculation",
+    "description": "1. **Arrange:** Prepare an input matrix with known rank.\\n2. **Act:** Call the auxiliary.rank_of_matrix function to calculate the matrix rank.\\n3. **Assert:** Verify the calculated matrix rank matches the result from numpy.linalg.matrix_rank.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_matrix_rank.py::test_gr_matrix_rank -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/Givens.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The auxiliary.rank_of_matrix function should correctly calculate the rank of the matrix, consistent with results from numpy's standard library."
+  },
+  {
+    "metric": "2.5a Core Functionality - URV Decomposition: Correctness of Calculation",
+    "description": "1. **Arrange:** Prepare an exact input matrix (`data/URV.txt`) and pre-calculate the standard U, R, V matrices.\\n2. **Act:** Run `python src/main.py --model URV --input evaluation/data/URV.txt`.\\n3. **Assert:** Compare the program's output U, R, V matrices with the standard results; element error should be within an acceptable range.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_urv_correctness.py::test_urv_factorization_correctness -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/URV.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "URV decomposition results should match the standard calculation results within numerical precision; U*R*V^T should equal the original matrix A."
+  },
+  {
+    "metric": "2.5b Core Functionality - URV Decomposition: Output Format Standardization",
+    "description": "1. **Act:** Run `python src/main.py --model URV --input evaluation/data/URV.txt`.\\n2. **Assert:** Inspect the output U, R, V matrices to confirm all values are formatted to a unified decimal precision.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_output_format.py::test_urv_output_format -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/URV.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "All elements in the output matrices should be formatted strictly with a unified precision of 4 decimal places."
+  },
+  {
+    "metric": "2.5c Core Functionality - URV Decomposition: Matrix Rank Calculation",
+    "description": "1. **Arrange:** Prepare an input matrix with known rank.\\n2. **Act:** Call the auxiliary.rank_of_matrix function to calculate the matrix rank.\\n3. **Assert:** Verify the calculated matrix rank matches the result from numpy.linalg.matrix_rank.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_matrix_rank.py::test_urv_matrix_rank -v",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/data/URV.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The auxiliary.rank_of_matrix function should correctly calculate the rank of the matrix, consistent with results from numpy's standard library."
+  }
+]

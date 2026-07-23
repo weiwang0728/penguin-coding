@@ -1,0 +1,544 @@
+[
+  {
+    "metric": "0.1 System Startup and Function Availability",
+    "description": "1. **Act:** Execute the command `cd src && python main.py` in the shell. 2. **Assert:** Observe whether the program starts successfully and displays the message 'Main interface initialization completed' in the console output.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_0.1.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/inputs/inputs_for_test_0.1.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program starts successfully and can exit normally."
+  },
+  {
+    "metric": "2.1.1 User Login - Username and Password Verification",
+    "description": "1. **Arrange:** Ensure a user exists in the database, e.g., username 'admin', password '123456'. 2. **Act:** On the login interface, enter the username 'admin' and password '123456', then click the login button. 3. **Assert:** Check if the login is successful, entering the main interface, and the interface displays the current user as 'admin'.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.1.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/inputs/inputs_for_test_2.1.1.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "User logs in successfully, and the program correctly displays the information."
+  },
+  {
+    "metric": "2.1.2 User Login - Incorrect Password Handling",
+    "description": "1. **Arrange:** Ensure a user exists in the database, e.g., username 'admin'. 2. **Act:** On the login interface, enter the username 'admin' and an incorrect password 'wrongpassword', then click the login button. 3. **Assert:** Check if the interface displays a prompt for incorrect password and remains on the login interface.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/inputs/inputs_for_test_2.1.2.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program prompts that the username or password is incorrect."
+  },
+  {
+    "metric": "2.1.3 User Logout",
+    "description": "1. **Arrange:** First, perform a successful login operation to enter the main interface. 2. **Act:** Click the logout button on the interface or select the logout menu item. 3. **Assert:** Check if the system successfully returns to the login interface. Then attempt to access main interface functions directly; it should be redirected to the login interface.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.3.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/inputs/inputs_for_test_2.1.3.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "User logs out successfully."
+  },
+  {
+    "metric": "2.1.4 Get Current User Information",
+    "description": "1. **Arrange:** First, perform a successful login operation to enter the main interface. 2. **Act:** Check the top of the main interface or the user information area. 3. **Assert:** Check if the interface displays the current user's 'name', 'role', and 'department' information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.4.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/inputs/inputs_for_test_2.1.4.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program correctly displays the current user information."
+  },
+  {
+    "metric": "2.1.5a User List Query - SYSTEM Permission",
+    "description": "1. **Arrange:** Ensure there is a user with SYSTEM permission and at least two users exist. 2. **Act:** Log in using the SYSTEM user, enter the user management interface, and view the user list. 3. **Assert:** Check if the user list includes all users, and each user's information contains the fields 'name', 'department', 'role', and 'is_active'.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_list_users_with_system_permission",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.1.5b User List Query - STAFF Permission",
+    "description": "1. **Arrange:** Ensure there is a regular user with STAFF permission. 2. **Act:** Log in using the STAFF user and attempt to access the user management interface. 3. **Assert:** Check if access to the user management interface is denied, or the interface displays a no-permission prompt.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_list_users_with_staff_permission",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.1.6 Add New User",
+    "description": "1. **Arrange:** Ensure there is a user with SYSTEM permission, and prepare a new user's name (e.g., 'testuser'), department ID, and role list (e.g., ['IT']). 2. **Act:** Log in using the SYSTEM user, enter the user management interface, click the 'Add User' button, fill out the form, and submit. 3. **Assert:** Check if a success prompt appears and the new user is visible in the user list. Then attempt to log in with the new user's credentials to verify successful creation (default password: 123456).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_add_user",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.1.7 Edit User Information",
+    "description": "1. **Arrange:** Ensure there is a user with SYSTEM permission and a test user to be edited. Prepare new department IDs and role lists. 2. **Act:** Log in using the SYSTEM user, enter the user management interface, find the test user, click the edit button, modify the department and role information, and save. 3. **Assert:** Check if an edit success prompt appears, and the user's department and role are updated in the user list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_edit_user",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.1.8 Delete User",
+    "description": "1. **Arrange:** Ensure there is a user with SYSTEM permission and a test user to be deleted. 2. **Act:** Log in using the SYSTEM user, enter the user management interface, find the test user, click the delete button, and confirm the deletion. 3. **Assert:** Check if a deletion success prompt appears and the user no longer exists in the user list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_delete_user",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.1.9 Lock orUnlock User",
+    "description": "1. **Arrange:** Ensure there is a user with SYSTEM permission and a regular user to be locked. 2. **Act:** Log in using the SYSTEM user, enter the user management interface, find the test user, and click the lock button. Then attempt to log in using the testuser credentials. 3. **Assert:** Check if the lock operation is successful and a prompt indicates the user is locked during login. Then perform the unlock operation and attempt to log in again; it should succeed.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_lock_unlock_user",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.1.10 Change Own Password",
+    "description": "1. **Arrange:** Ensure there is a regular user (e.g., 'testuser' with password '123456'). 2. **Act:** Log in with this user, find the change password option in personal settings or a similar interface, enter the old password '123456' and the new password 'newpassword123', and save. After logging out, log in again using the new password. 3. **Assert:** Check if a password change success prompt appears and login with the new password is successful.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_user_management.py::test_change_own_password",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.2.1a Department Tree Structure - Create Root Department",
+    "description": "1. **Arrange:** Ensure there is a user with SYSTEM permission. 2. **Act:** Log in using the SYSTEM user, enter the department management interface, and create a root department named 'RootDept'. 3. **Assert:** Check if a creation success prompt appears and the newly created root department is visible in the department tree.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_department_management.py::test_create_root_department",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.2.1b Department Tree Structure - Create Child Department",
+    "description": "1. **Arrange:** Ensure a root department named 'RootDept' already exists. 2. **Act:** In the department management interface, select the 'RootDept' department and create a child department named 'ChildDept'. 3. **Assert:** Check if a creation success prompt appears and the 'ChildDept' child department is visible under 'RootDept' in the department tree.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_department_management.py::test_create_child_department",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.2.2 Department Asset Manager Configuration",
+    "description": "1. **Arrange:** Ensure there is a department 'DeptA' and a user 'AssetUser' with ASSET permission, and that 'AssetUser' belongs to 'DeptA'. 2. **Act:** In the department management interface, find the 'DeptA' department and configure its asset manager as 'AssetUser'. 3. **Assert:** Check if the configuration is saved successfully and the asset manager is shown as 'AssetUser' in the department information.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_department_management.py::test_department_asset_manager_configuration",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.3.1a Asset Category Tree - Create Root Category",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission. 2. **Act:** Log in using the ASSET user, enter the asset category management interface, and create a root asset category named 'RootCategory'. 3. **Assert:** Check if a creation success prompt appears and the newly created root category is visible in the asset category tree.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_category.py::test_create_root_asset_category",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.3.1b Asset Category Tree - Create Child Category",
+    "description": "1. **Arrange:** Ensure a root category named 'RootCategory' already exists. 2. **Act:** In the asset category management interface, select the 'RootCategory' category and create a child category named 'ChildCategory'. 3. **Assert:** Check if a creation success prompt appears and the 'ChildCategory' child category is visible under 'RootCategory' in the asset category tree.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_category.py::test_create_child_asset_category",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.3.2a Custom Attributes - Create Attribute",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission. 2. **Act:** In the custom attribute management interface, create a custom attribute named 'Brand'. 3. **Assert:** Check if a creation success prompt appears and the 'Brand' attribute is visible in the attribute list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_category.py::test_create_custom_attribute",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.3.2b Custom Attributes - Add Attribute Value to Asset",
+    "description": "1. **Arrange:** Ensure an asset and a custom attribute named 'Brand' already exist. 2. **Act:** In the asset management interface, edit the asset, set the value of the 'Brand' attribute field to 'Dell', and save. 3. **Assert:** Check if a save success prompt appears and the 'Brand' attribute value is displayed as 'Dell' in the asset details.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_category.py::test_add_custom_attribute_to_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.1a Asset Creation",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission and a valid asset category. 2. **Act:** Log in using the ASSET user, enter the asset management interface, click the 'Create Asset' button, fill in required information such as asset name, value, category, etc., and save. 3. **Assert:** Check if a creation success prompt appears and the newly created asset is visible in the asset list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_management.py::test_add_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.1b Asset Query",
+    "description": "1. **Arrange:** Ensure at least one asset exists. 2. **Act:** Log in using the ASSET user, enter the asset management interface, and view the asset list. 3. **Assert:** Check if the asset list includes the created asset(s) with complete and accurate information.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_management.py::test_query_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.1c Asset Editing",
+    "description": "1. **Arrange:** Ensure an asset and a user with ASSET permission exist. 2. **Act:** Log in using the ASSET user, enter the asset management interface, find the target asset, click the edit button, modify fields such as asset name, description, etc., and save. 3. **Assert:** Check if an edit success prompt appears and the asset's information is updated in the asset list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_management.py::test_edit_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.1d Asset Deletion",
+    "description": "1. **Arrange:** Ensure an asset and a user with ASSET permission exist. 2. **Act:** Log in using the ASSET user, enter the asset management interface, find the target asset, click the delete button, and confirm the deletion. 3. **Assert:** Check if a deletion success prompt appears and the asset no longer exists in the asset list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_management.py::test_delete_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.2a Asset Tree Structure - Set Parent Asset",
+    "description": "1. **Arrange:** Ensure two assets, AssetA and AssetB, exist. 2. **Act:** In the asset management interface, edit AssetB, select AssetA in the parent asset field, and save. 3. **Assert:** Check if a save success prompt appears and AssetB is displayed as a child asset of AssetA in the asset tree structure.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_tree_and_value.py::test_set_parent_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.2b Asset Tree Structure - Query Parent Asset",
+    "description": "1. **Arrange:** Ensure two assets with a parent-child relationship, AssetA and AssetB, exist. 2. **Act:** In the asset management interface, view the detailed information of AssetB. 3. **Assert:** Check if the asset details correctly display the parent asset as AssetA.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_tree_and_value.py::test_query_parent_asset",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.2c Asset Tree Structure - Query Child Assets",
+    "description": "1. **Arrange:** Ensure two assets with a parent-child relationship, AssetA and AssetB, exist. 2. **Act:** In the asset management interface, view the detailed information of AssetA. 3. **Assert:** Check if the asset details correctly display that the child assets include AssetB.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_tree_and_value.py::test_query_child_assets",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.3 Asset Value Calculation and Depreciation",
+    "description": "1. **Arrange:** Create an asset, set its original value to 1000, useful life to 5 years, and entry time to 5 years ago. 2. **Act:** In the asset management interface, view the detailed information of this asset. 3. **Assert:** Check if the 'Current Value' field in the asset details is 0 (because it has expired) or the correct value calculated according to the formula.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_tree_and_value.py::test_asset_value_calculation_and_depreciation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.4.4 Asset Retirement",
+    "description": "1. **Arrange:** Ensure an asset and a user with ASSET permission exist. 2. **Act:** Log in using the ASSET user, enter the asset management interface, find the target asset, click the retirement button, and confirm the retirement operation. 3. **Assert:** Check if a retirement success prompt appears, the status in the asset details displays as 'Retired', and the current value is 0.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_asset_tree_and_value.py::test_asset_retirement",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.1a Issue Initiation - Requisition",
+    "description": "1. **Arrange:** Ensure there is a user with STAFF permission and an asset category. 2. **Act:** Log in using the STAFF user, enter the issue management interface, click to initiate a requisition issue, select the asset category, fill in the application reason, and submit. 3. **Assert:** Check if an initiation success prompt appears and the newly initiated requisition issue is visible in the issue list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_initiate_require_issue",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.1b Issue Initiation - Maintenance",
+    "description": "1. **Arrange:** Ensure there is a user with STAFF permission and an asset. 2. **Act:** Log in using the STAFF user, enter the issue management interface, click to initiate a maintenance issue, select the target asset, and submit. 3. **Assert:** Check if an initiation success prompt appears and the newly initiated maintenance issue is visible in the issue list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_initiate_maintenance_issue",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.1c Issue Initiation - Transfer",
+    "description": "1. **Arrange:** Ensure there is a user with STAFF permission, an asset, and another target user. 2. **Act:** Log in using the STAFF user, enter the issue management interface, click to initiate a transfer issue, select the target asset and the target user, and submit. 3. **Assert:** Check if an initiation success prompt appears and the newly initiated transfer issue is visible in the issue list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_initiate_transfer_issue",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.1d Issue Initiation - Return",
+    "description": "1. **Arrange:** Ensure there is a user with STAFF permission and an asset under their name. 2. **Act:** Log in using the STAFF user, enter the issue management interface, click to initiate a return issue, select the target asset, and submit. 3. **Assert:** Check if an initiation success prompt appears and the newly initiated return issue is visible in the issue list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_initiate_return_issue",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.2a Issue Handling - Query Pending Items",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission and a pending issue. 2. **Act:** Log in using the ASSET user, enter the issue management interface, and view the pending issues list. 3. **Assert:** Check if the pending issues list includes the pending issue.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_query_pending_issues",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.2b Issue Handling - Process Issue",
+    "description": "1. **Arrange:** Ensure there is a user with ASSET permission and a pending issue. 2. **Act:** Log in using the ASSET user, enter the issue management interface, find the pending issue, click the process button, select a processing result (e.g., Approve), and submit. 3. **Assert:** Check if a processing success prompt appears and the status in the issue details is updated to 'Approved' or 'Rejected'. View the issue details again to verify the status.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_process_issue",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.5.3 Issue Conflict Handling",
+    "description": "1. **Arrange:** Ensure there is a user with STAFF permission and an asset. 2. **Act:** Log in using the STAFF user and attempt to initiate a maintenance issue for the same asset twice consecutively. 3. **Assert:** Check if the second initiation operation is rejected and displays an issue conflict prompt message.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_issue_management.py::test_issue_conflict_handling",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.6.1 Asset Change History Record",
+    "description": "1. **Arrange:** Ensure an asset exists and has been modified at least once (e.g., name changed). 2. **Act:** In the asset management interface, view the change history record of this asset. 3. **Assert:** Check if the history record includes the modification time, modifying user, change type (e.g., Modify), and change details (e.g., name changed from 'A' to 'B').",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_logging_and_history.py::test_asset_change_history_recording",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.6.2 System Operation Log",
+    "description": "1. **Arrange:** Perform a series of user operations (e.g., login, logout, add, delete, modify assets or users). 2. **Act:** Enter the system log interface and view the operation log list. 3. **Assert:** Check if the log list includes the time, user, and details of these operations.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_logging_and_history.py::test_system_operation_logging",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  },
+  {
+    "metric": "2.7.1 Data Permission - Department Data Isolation",
+    "description": "1. **Arrange:** Create two departments, DeptA and DeptB, and users UserA and UserB belonging to these two departments respectively. Create assets AssetA and AssetB under DeptA and DeptB respectively. 2. **Act:** Log in using UserA and view the asset list. Then log in using UserB and view the asset list. 3. **Assert:** Verify that UserA can only see AssetA (or assets from their department), and UserB can only see AssetB (or assets from their department).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_data_permission.py::test_department_data_isolation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test passes"
+  }
+]

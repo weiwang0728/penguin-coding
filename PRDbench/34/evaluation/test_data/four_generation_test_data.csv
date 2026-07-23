@@ -1,0 +1,9 @@
+Name,Birthplace,Birth Date,Death Date,Height,Education,Occupation,Highest Position,Relative,Relationship,Gender
+Wang Laoye,Beijing,19300101,20100315,170.0,Elementary School,Farmer,Village Chief,,0,Male
+Li Nainai,Tianjin,19350303,20150520,160.0,Elementary School,Homemaker,,Wang Laoye,0,Female
+Wang Daming,Guangzhou,19550808,0,172.0,High School,Worker,Workshop Director,Wang Laoye,1,Male
+Zhang Meihua,Shenzhen,19580315,0,165.0,Middle School,Textile Worker,Group Leader,Wang Daming,0,Female
+Wang Xiaoqiang,Hangzhou,19800101,0,175.0,Bachelor's Degree,Engineer,Project Manager,Wang Daming,1,Male
+Li Xiaoli,Chengdu,19820505,0,162.0,Bachelor's Degree,Teacher,Class Teacher,Wang Xiaoqiang,0,Female
+Wang Baobao,Shanghai,20100101,0,120.0,Elementary School,Student,,Wang Xiaoqiang,1,Male
+Wang Niuniu,Guangzhou,20120505,0,115.0,Elementary School,Student,,Wang Xiaoqiang,1,Female

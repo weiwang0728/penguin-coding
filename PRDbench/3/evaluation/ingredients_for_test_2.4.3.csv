@@ -1,0 +1,6 @@
+name,category,unit,purchase_price,stock_quantity,processing_loss_rate
+rice,staple,kg,10,100,0
+chicken,protein,kg,20,50,10
+broccoli,vegetable,kg,15,30,5
+beef,protein,kg,40,10,15
+lettuce,vegetable,kg,8,80,5

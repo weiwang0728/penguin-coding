@@ -1,0 +1,137 @@
+[
+  {
+    "metric": "1.1 Program Startup and Basic Operation",
+    "description": "1. **Act:** Execute the program startup command in the command line.\n2. **Assert:** Observe if the program starts successfully and displays the command prompt or welcome interface, with no crash or import errors.",
+    "expected_output": "2 points: Program starts normally and displays a clear interface or prompt. 1 point: Program starts but with warning messages or unclear interface. 0 points: Program fails to start or crashes directly."
+  },
+  {
+    "metric": "1.2a System Initialization",
+    "description": "1. **Act:** After starting the program, enter the status command.\n2. **Assert:** Check if the output shows the system funds as 700 yuan and the number of riders as 1.",
+    "expected_output": "2 points: Displays funds and rider count accurately. 3 points: Displays but the values are incorrect. 1 point: Cannot view or completely incorrect. 0 points."
+  },
+  {
+    "metric": "2.1a Command Recognition - start command",
+    "description": "1. **Pre-check (User Path):** After starting the program, can you access the order entry function by entering the start command?\n2. **Act:** Enter the start command.\n3. **Assert:** Observe whether the program correctly recognizes the command and prompts for coordinate input, instead of showing \"unknown command\".",
+    "expected_output": "2 points: Pre-check passes, start command is correctly recognized and prompts for input. 1 point: Pre-check passes but response is unclear. 0 points: Pre-check fails or command is not recognized."
+  },
+  {
+    "metric": "2.1b Command Recognition - status command",
+    "description": "1. **Pre-check (User Path):** Can you access the system status view function by entering the status command?\n2. **Act:** Enter the status command.\n3. **Assert:** Observe whether the program correctly recognizes the command and displays system status information.",
+    "expected_output": "2 points: Pre-check passes, status command is correctly recognized and displays status. 1 point: Pre-check passes but displayed information is incomplete. 0 points: Pre-check fails or command is not recognized."
+  },
+  {
+    "metric": "2.1c Command Recognition - orders command",
+    "description": "1. **Pre-check (User Path):** Can you access the order details view function by entering the orders command?\n2. **Act:** Enter the orders command.\n3. **Assert:** Observe whether the program correctly recognizes the command and displays order information (even if empty).",
+    "expected_output": "2 points: Pre-check passes, orders command is correctly recognized and shows appropriate display. 1 point: Pre-check passes but response is unclear. 0 points: Pre-check fails or command is not recognized."
+  },
+  {
+    "metric": "2.1d Command Recognition - riders command",
+    "description": "1. **Pre-check (User Path):** Can you access the rider details view function by entering the riders command?\n2. **Act:** Enter the riders command.\n3. **Assert:** Observe whether the program correctly recognizes the command and displays rider history information (even if empty).",
+    "expected_output": "2 points: Pre-check passes, riders command is correctly recognized and shows appropriate display. 1 point: Pre-check passes but response is unclear. 0 points: Pre-check fails or command is not recognized."
+  },
+  {
+    "metric": "2.1e Command Recognition - quit command",
+    "description": "1. **Pre-check (User Path):** Can you exit the program by entering quit or exit command?\n2. **Act:** Enter the quit command.\n3. **Assert:** Observe whether the program correctly recognizes the command and prepares to exit.",
+    "expected_output": "2 points: Pre-check passes, quit command is correctly recognized. 1 point: Pre-check passes but exit process has problems. 0 points: Pre-check fails or command is not recognized."
+  },
+  {
+    "metric": "2.2 Order Coordinate Input Format",
+    "description": "1. **Arrange:** Prepare four valid coordinate numbers (e.g., 100 200 300 400).\n2. **Act:** Enter the start command, then input the prepared four coordinates as prompted.\n3. **Assert:** Observe if the program correctly receives and processes these coordinate inputs.",
+    "expected_output": "2 points: Correctly accepts all 4 integer coordinates and processes them. 1 point: Accepts coordinates but format requirements are unclear or processing issue. 0 points: Cannot correctly accept coordinate inputs or errors directly."
+  },
+  {
+    "metric": "2.3 Coordinate Range Validation",
+    "description": "1. **Arrange:** Prepare out-of-range coordinates (e.g., -100, 900, -50, 850).\n2. **Act:** Enter the prepared invalid coordinates in the start command.\n3. **Assert:** Observe if the program detects range errors and gives a prompt.",
+    "expected_output": "2 points: Detects all 4 coordinate range errors and gives a clear prompt. 1 point: Detects some coordinate errors or prompt is not clear. 0 points: No range validation or validation completely fails."
+  },
+  {
+    "metric": "3.1 Automatic Rider Recruitment Trigger",
+    "description": "1. **Arrange:** Ensure initial funds are 1000 yuan (≥400 yuan).\n2. **Act:** Enter two valid orders, which need to be assigned to two riders.\n3. **Assert:** Check whether a new rider is automatically created and the system funds are reduced by 300 yuan.",
+    "expected_output": "2 points: Correctly triggers rider recruitment, funds accurately reduced by 300 yuan. 1 point: Can create rider but fund calculation is wrong. 0 points: Cannot automatically recruit rider."
+  },
+  {
+    "metric": "3.2a Initial Rider Attributes - Position Coordinates",
+    "description": "1. **Act:** After creating rider, check rider information via status command.\n2. **Assert:** Check whether the rider's position is shown as (435, 3385).",
+    "expected_output": "2 points: Rider position is accurately shown as (435, 3385). 1 point: Position is shown but values are incorrect. 0 points: Cannot view rider position or display error."
+  },
+  {
+    "metric": "3.2b Initial Rider Attributes - Movement Speed",
+    "description": "1. **Act:** After creating rider, check rider information via status command.\n2. **Assert:** Check if the rider's speed is shown as 10 units/frame.",
+    "expected_output": "2 points: Rider speed is accurately shown as 10. 1 point: Speed is shown but value is incorrect. 0 points: Cannot view rider speed or display error."
+  },
+  {
+    "metric": "3.2c Initial Rider Attributes - Status Setting",
+    "description": "1. **Act:** After creating rider, check rider information via status command.\n2. **Assert:** Check if the rider status is shown as idle (0 or corresponding text description).",
+    "expected_output": "2 points: Rider status is accurately shown as idle. 1 point: Status is shown but description is not accurate. 0 points: Cannot view rider status or display error."
+  },
+  {
+    "metric": "4.1 Nearest Distance Assignment Algorithm",
+    "description": "1. **Arrange:** Create at least 2 riders, prepare one order coordinate.\n2. **Act:** Enter the order, observe the system allocation result.\n3. **Assert:** Verify if the order is assigned to the rider closest to the restaurant.",
+    "expected_output": "2 points: Order is accurately assigned to the closest rider. 1 point: There is an assignment logic but not optimal distance algorithm. 0 points: Random assignment or logic is completely wrong."
+  },
+  {
+    "metric": "4.2 Rider Status Transition Logic",
+    "description": "1. **Arrange:** Assign an order to a rider.\n2. **Act:** Observe the rider's status changes with multiple status commands.\n3. **Assert:** Check whether status changes follow the sequence: idle → pick up → deliver → idle.",
+    "expected_output": "2 points: Status changes completely follow idle → pick up → deliver → idle. 1 point: Status changes but there is one error in sequence or logic. 0 points: Status change logic is wrong or does not update."
+  },
+  {
+    "metric": "5.1a start command return - Grid Coordinate Display",
+    "description": "1. **Arrange:** Prepare order coordinates such as 150, 250, 350, 450.\n2. **Act:** Enter start command and prepared coordinates.\n3. **Assert:** Check if the return result displays the converted restaurant and customer grid coordinates.",
+    "expected_output": "2 points: Accurately displays grid coordinate conversion results for restaurant and customer. 1 point: Shows coordinates but conversion is inaccurate or format unclear. 0 points: Does not display grid coordinate conversion results."
+  },
+  {
+    "metric": "5.1b start command return - Current Rider Status",
+    "description": "1. **Arrange:** Ensure there is at least 1 rider in the system.\n2. **Act:** Enter an order.\n3. **Assert:** Check if the start command return includes order-taking rider's speed and estimated delivery time information.",
+    "expected_output": "2 points: Fully displays all rider information. 3 points: Displays rider information but partially missing. 1 point: Does not display current rider status information."
+  },
+  {
+    "metric": "5.1d start command return - ASCII Route Map Display",
+    "description": "1. **Act:** Enter an order.\n2. **Assert:** Check if the start command return includes an ASCII character map, marking positions for rider (R), restaurant (S), customer (C) with different symbols, and shows line segments for the route from the order-taking rider to the restaurant and customer.",
+    "expected_output": "2 points: Displays a clear ASCII route map with connection lines and position markers. 4 points: Route is shown but connection lines unclear or markers incomplete. 2 points: No ASCII map with route planning is displayed."
+  },
+  {
+    "metric": "5.2 Rider Movement Simulation",
+    "description": "1. **Arrange:** Record rider's initial position after assigning order.\n2. **Act:** Observe rider position changes by entering status command continuously.\n3. **Assert:** Verify whether rider position moves along expected path and speed is 10 units/frame.",
+    "expected_output": "2 points: Rider movement path and speed are completely correct. 1 point: Movement is basically correct but path or speed has detail issues. 0 points: Rider does not move or movement logic is completely wrong."
+  },
+  {
+    "metric": "6.1a status command - System Funds Display",
+    "description": "1. **Act:** Enter the status command.\n2. **Assert:** Check if output includes current system funds information and rider status information.",
+    "expected_output": "2 points: Accurately displays current system funds and rider status information. 2 points: Information is displayed but format is unclear. 1 point: No information displayed."
+  },
+  {
+    "metric": "6.2a orders command - Basic Order Information",
+    "description": "1. **Arrange:** Create at least 1 order.\n2. **Act:** Enter the orders command.\n3. **Assert:** Check if the order's start time, restaurant location, customer location, distance, time taken, and delivery rider information are displayed.",
+    "expected_output": "2 points: Accurately displays all order information. 1 point: Basic order information is displayed but partially missing or inaccurate. 0 points: Does not display basic order information."
+  },
+  {
+    "metric": "6.3a riders command - Rider Status Change Log",
+    "description": "1. **Arrange:** Create an order so rider experiences status changes (order taken, pick up, delivery).\n2. **Act:** Enter the riders command.\n3. **Assert:** Check if the rider's each status change is recorded, including order-taking, arrival at pick-up point, and delivery to customer time points.",
+    "expected_output": "2 points: Fully records all 3 types of status changes (order taken, pick up, delivery) time points. 1 point: Records 2 types of status change time points. 0 points: Records fewer than 2 types or none."
+  },
+  {
+    "metric": "6.3b riders command - Detailed History Information",
+    "description": "1. **Arrange:** Ensure at least one rider has completed an order delivery.\n2. **Act:** Enter the riders command.\n3. **Assert:** Check if each status change record contains time, location, order number and other detailed information.",
+    "expected_output": "2 points: Each status change record contains complete time, location, order number information. 1 point: Status change record contains partial details but missing. 0 points: Status change record lacks key details or format is messy."
+  },
+  {
+    "metric": "8.1 Order Completion Handling",
+    "description": "1. **Arrange:** Wait for or simulate a rider completing a full delivery process.\n2. **Act:** Observe system status change after rider reaches customer location.\n3. **Assert:** Verify if the order is removed from the rider's order list and the rider's status becomes idle.",
+    "expected_output": "2 points: Order is correctly removed and rider status correctly becomes idle. 1 point: Order processing is basically correct but status update is delayed or incomplete. 0 points: Cannot correctly process order completion or status not updated."
+  },
+  {
+    "metric": "8.2 Concurrent Multiple Rider Management",
+    "description": "1. **Arrange:** Create at least 3 orders to generate multiple riders.\n2. **Act:** Observe the simultaneous operating status of multiple riders via status command.\n3. **Assert:** Verify whether the system can simultaneously track and manage all riders' statuses and tasks.",
+    "expected_output": "2 points: Can perfectly handle concurrent deliveries by 3 or more riders. 1 point: Can handle multiple riders but with performance issues or state confusion. 0 points: Cannot correctly handle multiple rider scenarios or system crashes."
+  },
+  {
+    "metric": "9.1 Input Error Handling",
+    "description": "1. **Arrange:** Prepare various invalid inputs: invalid commands, non-numeric coordinates, empty input.\n2. **Act:** Input these invalid data one by one.\n3. **Assert:** Observe whether the program gives clear error prompts without crashing.",
+    "expected_output": "2 points: All 3 kinds of error inputs have clear prompts and the program is stable. 1 point: 2 kinds of error inputs are appropriately handled. 0 points: Fewer than 2 kinds handled or program easily crashes."
+  },
+  {
+    "metric": "9.2 Program Exit Functionality",
+    "description": "1. **Act:** Enter quit or exit command.\n2. **Assert:** Observe whether the program can exit gracefully, with no zombie processes or error messages.",
+    "expected_output": "2 points: Can exit gracefully and normally, no errors. 1 point: Can exit but with warning messages or not graceful enough. 0 points: Cannot exit normally or errors on exit."
+  }
+]

@@ -1,0 +1,42 @@
+[
+    {
+        "character": null,
+        "frequency": 15,
+        "position": "root"
+    },
+    {
+        "character": null,
+        "frequency": 6,
+        "position": "left_child"
+    },
+    {
+        "character": "A",
+        "frequency": 3,
+        "position": "left_child"
+    },
+    {
+        "character": null,
+        "frequency": 3,
+        "position": "right_child"
+    },
+    {
+        "character": "B",
+        "frequency": 3,
+        "position": "left_child"
+    },
+    {
+        "character": "C",
+        "frequency": 3,
+        "position": "right_child"
+    },
+    {
+        "character": "D",
+        "frequency": 3,
+        "position": "left_child"
+    },
+    {
+        "character": "E",
+        "frequency": 9,
+        "position": "right_child"
+    }
+]

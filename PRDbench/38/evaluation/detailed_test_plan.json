@@ -1,0 +1,428 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., `python main.py`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu with at least 4 actionable options (such as \"Data Management\", \"Recommendation Algorithm\", \"Experimental Evaluation\", \"Log Viewing\").",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && echo \"0\" | python main.py",
+        "test_input": "0"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program starts successfully, displays system title banner, shows 'System initialization complete!' message, then displays main menu containing at least 4 options: 1. Data Management, 2. Recommendation Features, 3. User Analysis, 4. Product Analysis, 5. Algorithm Evaluation, 6. Text Mining, 7. System Management, 8. Help Instructions, 0. Exit System"
+  },
+  {
+    "metric": "2.1.1a User Information Management - CSV Data Import",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"User Data Management\" or similar functionality?\n2. **Arrange:** Create a CSV test file containing user ID, age, gender, and historical purchase records.\n3. **Act:** Select the data import function and import the test CSV file.\n4. **Assert:** Verify the data is successfully imported and imported user records can be viewed.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_csv_import_complete.py",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "test_users.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Main menu has user data management option; Arrange: Successfully created CSV test file containing user ID, age, gender, and historical purchase records; Act: Data import function executed successfully; Assert: CSV data imported successfully, shows number of imported records, verifies data successfully imported and user records can be viewed"
+  },
+  {
+    "metric": "2.1.1b User Information Management - CSV Data Export",
+    "description": "1. **Pre-check (User Path):** In the user data management interface, is there an \"Export Data\" option?\n2. **Arrange:** Ensure the system already has user data.\n3. **Act:** Select the data export function and specify the export path.\n4. **Assert:** Verify the exported CSV file exists and its content matches the system data.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_csv_export_complete.py",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "test_users_for_export.csv"
+    ],
+    "expected_output_files": [
+      "exported_users_complete.csv"
+    ],
+    "expected_output": "Pre-check passed: User data management interface has export option; Arrange: Ensure system already has user data; Act: Data export function executed successfully; Assert: Exported CSV file exists and content completely matches system data (record count, user ID and other key fields match)"
+  },
+  {
+    "metric": "2.1.2a Product Attribute Management - Add Product",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a \"Product Management\" or similar option?\n2. **Arrange:** Prepare complete information for a new product (product ID, name, category, price, brand).\n3. **Act:** Select the add product function and input the prepared product information.\n4. **Assert:** Verify the product is successfully added to the system and can be viewed in the product list.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_product_management.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Main menu has product management related options; Arrange: Successfully prepared complete new product information (product ID, name, category, price, brand); Act: Add product function executed successfully; Assert: Product successfully added to system and can be viewed in product list"
+  },
+  {
+    "metric": "2.1.2b Product Attribute Management - View Product List",
+    "description": "1. **Pre-check (User Path):** In the product management interface, is there a \"View Product List\" or similar option?\n2. **Arrange:** Ensure the system has at least 5 product records.\n3. **Act:** Select the view product list function.\n4. **Assert:** Verify the product list displays correctly, including key information such as product ID, name, category, price, and brand.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_product_management.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Product management interface has view product list option; Arrange: Ensure system has at least 5 product records; Act: View product list function executed successfully; Assert: Product list viewed successfully, correctly displays product list including product ID, name, category, price, brand and other key information"
+  },
+  {
+    "metric": "2.1.2c Product Attribute Management - Modify Product Attributes",
+    "description": "1. **Pre-check (User Path):** In the product management interface, is there a \"Modify Product\" or \"Edit\" option?\n2. **Arrange:** Select an existing product and prepare to modify its price and category information.\n3. **Act:** Select the modify function and change the product's price and category.\n4. **Assert:** Verify the modified product information is correctly updated and new information displays correctly in the product list.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_product_modification_interactive.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Product management interface has modify product or edit option; Arrange: Selected existing product, prepared to modify price and category information; Act: Modify function executed successfully, changed product price and category; Assert: Modified product information correctly updated, new information displays correctly in product list"
+  },
+  {
+    "metric": "2.1.2d Product Attribute Management - Delete Product Record",
+    "description": "1. **Pre-check (User Path):** In the product management interface, is there a \"Delete Product\" option?\n2. **Arrange:** Ensure there are test products in the system that can be deleted.\n3. **Act:** Select the delete function and delete the specified product.\n4. **Assert:** Verify the product is successfully deleted from the system and no longer appears in the product list.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_product_deletion_interactive.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Product management interface has delete product option; Arrange: Ensure system has test products that can be deleted; Act: Delete function executed successfully, deleted specified product; Assert: Product successfully deleted from system and no longer appears in product list"
+  },
+  {
+    "metric": "2.2.1 TF-IDF Matrix Transformation - Rating Matrix Reconstruction",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a \"Recommendation Algorithm\" or \"Matrix Transformation\" related option?\n2. **Arrange:** Prepare user-product rating data file (containing at least 10 users and 20 products' rating records).\n3. **Act:** Select the TF-IDF matrix transformation function and execute the conversion from user-product ratings to user-attribute ratings.\n4. **Assert:** Verify the generated user-attribute rating matrix file exists, matrix dimensions are correct, and contains normalized attribute weights.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_tfidf_transform.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "tfidf_output.csv"
+    ],
+    "expected_output": "Pre-check passed: Main menu has recommendation algorithm or matrix transformation related options; Arrange: Successfully prepared user-product rating data file (at least 10 users and 20 products' rating records); Act: TF-IDF matrix transformation function executed successfully; Assert: Generated user-attribute rating matrix file, matrix dimensions correct, contains normalized attribute weights"
+  },
+  {
+    "metric": "2.2.2 User Attribute Preference Modeling - Preference Vector Generation",
+    "description": "1. **Pre-check (User Path):** In the recommendation algorithm interface, is there a \"User Preference Modeling\" option?\n2. **Arrange:** Ensure user behavior data and rating data are available.\n3. **Act:** Execute the user attribute preference modeling function.\n4. **Assert:** Verify the system generates user attribute preference vector file, vectors contain preference weights for each attribute, and supports viewing preference vector content.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_user_preference_modeling_interactive.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "user_preferences.json"
+    ],
+    "expected_output": "Pre-check passed: Recommendation algorithm interface has user preference modeling option; Arrange: Ensure user behavior data and rating data are available; Act: User attribute preference modeling function executed successfully; Assert: Generated user attribute preference vector file, vectors contain attribute preference weights, supports viewing preference vector content"
+  },
+  {
+    "metric": "2.2.3 Cold Start User Handling - Attribute Distribution Initialization",
+    "description": "1. **Pre-check (User Path):** In the user preference modeling interface, is there a \"Cold Start Handling\" option?\n2. **Arrange:** Create completely new user data (user ID not in historical data).\n3. **Act:** Execute attribute preference modeling for this new user.\n4. **Assert:** Verify the system can automatically initialize attribute preferences for the new user based on global attribute distribution, generating reasonable initial preference vector.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_cold_start.py::test_cold_start_attribute_initialization -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: User preference modeling interface has cold start handling option; Arrange: Successfully created completely new user data (user ID not in historical data); Act: Attribute preference modeling for new user executed successfully; Assert: System automatically initializes attribute preferences for new user based on global attribute distribution, generating reasonable initial preference vector"
+  },
+  {
+    "metric": "2.3.1 Attribute Utility Aggregation Recommendation - Recommendation Explanation Feature",
+    "description": "1. **Pre-check (User Path):** In the recommendation algorithm interface, is there an \"Attribute Utility Aggregation Recommendation\" option?\n2. **Arrange:** Prepare an existing user ID and corresponding attribute preference data.\n3. **Act:** Select the attribute utility aggregation recommendation algorithm, input user ID and execute recommendation.\n4. **Assert:** Verify output Top-N recommendation list (at least 5 products), each recommendation includes detailed explanation: hit attribute preferences, utility score breakdown, attribute contribution.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_recommendation.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Recommendation algorithm interface has attribute utility aggregation recommendation option; Arrange: Successfully prepared user ID and attribute preference data; Act: Attribute utility recommendation algorithm executed successfully; Assert: Generated Top-N recommendation list (at least 5 products), each recommendation includes detailed explanation: hit attribute preferences, utility score breakdown, attribute contribution"
+  },
+  {
+    "metric": "2.3.2 Lightweight Neural Network Recommendation - MLPRegressor Usage",
+    "description": "1. **Pre-check (User Path):** In the recommendation algorithm selection interface, is there a \"Neural Network Recommendation\" option?\n2. **Arrange:** Prepare training dataset.\n3. **Act:** Select the neural network recommendation algorithm and observe training process output information.\n4. **Assert:** Verify the log clearly shows using scikit-learn's MLPRegressor, training completed on CPU, and outputs training loss and recommendation results.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_neural_network.py::TestNeuralNetwork::test_mlp_regressor_usage -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Recommendation algorithm selection interface has neural network recommendation option; Arrange: Successfully prepared training dataset; Act: Neural network recommendation algorithm training process executed successfully; Assert: Log clearly shows using scikit-learn's MLPRegressor, training completed on CPU, outputs training loss and recommendation results"
+  },
+  {
+    "metric": "2.3.3a Collaborative Filtering Recommendation - Cosine Similarity",
+    "description": "1. **Pre-check (User Path):** In the recommendation algorithm interface, is there a \"Collaborative Filtering Recommendation\" option?\n2. **Arrange:** Prepare user-product rating data.\n3. **Act:** Select collaborative filtering recommendation, set similarity calculation method to cosine similarity.\n4. **Assert:** Verify the cosine similarity method works correctly, generates recommendation results, and shows similar user or product information.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_collaborative_filtering.py::TestCollaborativeFiltering::test_cosine_similarity -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Recommendation algorithm interface has collaborative filtering recommendation option; Arrange: Successfully prepared user-product rating data; Act: Collaborative filtering recommendation executed successfully, similarity method set to cosine similarity; Assert: Cosine similarity method works correctly, generates recommendation results, shows similar user or product information"
+  },
+  {
+    "metric": "2.3.3b Collaborative Filtering Recommendation - Pearson Correlation Coefficient",
+    "description": "1. **Pre-check (User Path):** In the collaborative filtering recommendation interface, is there a \"Pearson Correlation Coefficient\" option?\n2. **Arrange:** Use the same test data as cosine similarity.\n3. **Act:** Set similarity calculation method to Pearson correlation coefficient.\n4. **Assert:** Verify the Pearson correlation coefficient method works correctly, generating recommendation results different from cosine similarity.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_collaborative_filtering.py::TestCollaborativeFiltering::test_pearson_similarity -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Collaborative filtering recommendation interface has Pearson correlation coefficient option; Arrange: Use the same test data as cosine similarity; Act: Similarity calculation method successfully set to Pearson correlation coefficient; Assert: Pearson correlation coefficient method works correctly, generates recommendation results different from cosine similarity"
+  },
+  {
+    "metric": "2.3.3c Collaborative Filtering Recommendation - Euclidean Distance",
+    "description": "1. **Pre-check (User Path):** In the collaborative filtering recommendation interface, is there a \"Euclidean Distance\" option?\n2. **Arrange:** Use the same test data.\n3. **Act:** Set similarity calculation method to Euclidean distance.\n4. **Assert:** Verify the Euclidean distance method works correctly and generates recommendation results.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_collaborative_filtering.py::TestCollaborativeFiltering::test_euclidean_similarity -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Collaborative filtering recommendation interface has Euclidean distance option; Arrange: Use the same test data; Act: Similarity calculation method successfully set to Euclidean distance; Assert: Euclidean distance method works correctly and generates recommendation results"
+  },
+  {
+    "metric": "2.3.4 Sparse Matrix Handling - Operational Report Generation",
+    "description": "1. **Pre-check (User Path):** In the recommendation algorithm interface, is there a \"Sparse Matrix Handling\" or \"Operational Report\" option?\n2. **Arrange:** Prepare sparse user-product rating data (data sparsity >80%).\n3. **Act:** Use sparse data to execute recommendation algorithm.\n4. **Assert:** Verify the system automatically outputs sparse matrix handling report, including sparsity statistics, fill rate, cold start trigger rate and other 3 key operational metrics.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"5\\n4\\n0\\n0\" | python main.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "results/sparse_analysis.txt"
+    ],
+    "expected_output": "Pre-check passed: Recommendation algorithm interface has sparse matrix handling or operational report option; Arrange: Successfully prepared sparse user-product rating data (sparsity >80%); Act: Sparse data recommendation algorithm executed successfully; Assert: Automatically outputs sparse matrix handling report, including sparsity statistics, fill rate, cold start trigger rate and other 3 key operational metrics"
+  },
+  {
+    "metric": "2.4.1 Jieba Tokenization Handling - Attribute Word Recognition",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a \"Review Mining\" or \"Text Processing\" option?\n2. **Arrange:** Create a text file containing product reviews, with clear attribute words in reviews (such as performance, appearance, price, etc.).\n3. **Act:** Execute review tokenization function.\n4. **Assert:** Verify jieba tokenization results are correct, can recognize product attribute keywords, and tokenization results are saved to file.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_jieba_segmentation.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Main menu has review mining or text processing option; Arrange: Successfully created text file containing product reviews with clear attribute words; Act: Review tokenization function executed successfully; Assert: Jieba tokenization results correct, recognizes product attribute keywords, tokenization results saved to file"
+  },
+  {
+    "metric": "2.4.2 Sentiment Analysis - Attribute-Sentiment Pair Recognition",
+    "description": "1. **Pre-check (User Path):** In the review mining interface, is there a \"Sentiment Analysis\" option?\n2. **Arrange:** Prepare reviews with clear sentiment tendency (such as positive reviews, negative reviews).\n3. **Act:** Execute sentiment analysis function on review data.\n4. **Assert:** Verify the system can recognize attribute-sentiment pairs (such as portability/positive review, cooling/negative review), using sentiment lexicon rather than pre-trained model.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_sentiment_analysis.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Review mining interface has sentiment analysis option; Arrange: Successfully prepared reviews with clear sentiment tendency; Act: Sentiment analysis function executed successfully; Assert: Recognizes attribute-sentiment pairs, uses sentiment lexicon rather than pre-trained model, sentiment score calculation correct"
+  },
+  {
+    "metric": "2.4.3 Review Weight Fusion - Preference Vector Update",
+    "description": "1. **Pre-check (User Path):** In the review mining interface, is there a \"Weight Fusion\" or \"Preference Update\" option?\n2. **Arrange:** Prepare the same user's review data and initial preference vector.\n3. **Act:** Execute review weight fusion for this user.\n4. **Assert:** Verify after fusing review analysis results, the user's attribute preference vector changes reasonably, weight updates reflect attribute mention frequency and sentiment in reviews.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_comment_weight_fusion.py::test_comment_weight_fusion -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Review mining interface has weight fusion or preference update option; Arrange: Successfully prepared the same user's review data and initial preference vector; Act: Review weight fusion function executed successfully; Assert: After fusing review analysis results, user's attribute preference vector changes reasonably, weight updates reflect attribute mention frequency and sentiment in reviews"
+  },
+  {
+    "metric": "2.4.4 Recommendation Explanation - Review Evidence Display",
+    "description": "1. **Pre-check (User Path):** In the recommendation result interface, is recommendation explanation information displayed?\n2. **Arrange:** Prepare recommendation request for a user with review data.\n3. **Act:** Generate recommendation for this user.\n4. **Assert:** Verify recommendation results display explanations based on reviews, such as: Based on your frequent mention of certain attribute tendency in reviews, recommending this product to you.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"2\\n1\\n1\\n1\\n5\\ny\\n0\\n0\" | python main.py",
+        "test_input": "2\\n1\\n1\\n1\\n5\\ny\\n0\\n0"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Recommendation result interface displays recommendation explanation information; Arrange: Successfully prepared recommendation request for user with review data; Act: Recommendation generated for user successfully; Assert: Recommendation results display explanations based on reviews, including recommendation basis based on attribute tendency mentioned in reviews"
+  },
+  {
+    "metric": "2.5.1a Recommendation Algorithm Performance Evaluation - Precision and Recall",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there an \"Experimental Evaluation\" or \"Performance Evaluation\" option?\n2. **Arrange:** Prepare test dataset, select at least 2 different recommendation algorithms.\n3. **Act:** Perform offline algorithm evaluation.\n4. **Assert:** Verify output includes precision, recall, F1 score these 3 core metrics, each metric has specific numerical value.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_evaluation_metrics.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Main menu has experimental evaluation or performance evaluation option; Arrange: Successfully prepared test dataset, selected at least 2 different recommendation algorithms; Act: Offline algorithm evaluation performed successfully; Assert: Output includes precision, recall, F1 score these 3 core metrics, each metric has specific numerical value"
+  },
+  {
+    "metric": "2.5.1b Recommendation Algorithm Performance Evaluation - Coverage and Diversity",
+    "description": "1. **Pre-check (User Path):** In the performance evaluation interface, is there an \"Advanced Metrics\" or \"Diversity Analysis\" option?\n2. **Arrange:** Use the same test data and algorithms.\n3. **Act:** Calculate recommendation system's coverage and diversity metrics.\n4. **Assert:** Verify output includes coverage, recommendation diversity, cold start hit rate these 3 advanced metrics.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "cd evaluation && python test_scripts/test_evaluation_metrics.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Performance evaluation interface has advanced metrics or diversity analysis option; Arrange: Use the same test data and algorithms; Act: Recommendation system coverage and diversity metrics calculation executed successfully; Assert: Output includes coverage, recommendation diversity, cold start hit rate these 3 advanced metrics"
+  },
+  {
+    "metric": "2.5.2 Matplotlib Chart Generation - File Saving",
+    "description": "1. **Pre-check (User Path):** In the experimental evaluation interface, is there a \"Generate Chart\" or \"Visualization\" option?\n2. **Arrange:** Ensure algorithm performance evaluation is completed, evaluation data is available.\n3. **Act:** Select to generate evaluation result visualization charts.\n4. **Assert:** Verify using matplotlib to generate clear charts (such as algorithm performance comparison chart, metric trend chart), charts automatically saved as PNG format to specified file path.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"5\\n5\\n1\\n0\\n0\" | python main.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "results/algorithm_comparison_charts.png"
+    ],
+    "expected_output": "Pre-check passed: Experimental evaluation interface has generate chart or visualization option; Arrange: Ensure algorithm performance evaluation completed, evaluation data available; Act: Evaluation result visualization chart generation executed successfully; Assert: Using matplotlib generates clear charts (algorithm performance comparison chart, metric trend chart), charts automatically saved as PNG format to specified file path"
+  },
+  {
+    "metric": "2.5.3 User Decision Complexity Evaluation - Process Recording",
+    "description": "1. **Pre-check (User Path):** In the experimental evaluation interface, is there a \"Decision Analysis\" or \"Process Evaluation\" option?\n2. **Arrange:** Prepare complete recommendation process test scenario.\n3. **Act:** Fully execute one user recommendation process (from data import to obtaining recommendation result).\n4. **Assert:** Verify the system records decision process time, number of steps, processing time per step, and provides decision complexity analysis report.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"2\\n1\\n1\\n1\\n5\\ny\\n0\\n0\" | python main.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "results/complexity_analysis.json"
+    ],
+    "expected_output": "Pre-check passed: Experimental evaluation interface has decision analysis or process evaluation option; Arrange: Successfully prepared complete recommendation process test scenario; Act: Fully executed user recommendation process (from data import to obtaining recommendation result); Assert: System records decision process time, number of steps, processing time per step, and provides decision complexity analysis report"
+  },
+  {
+    "metric": "2.5.4 A or B Testing - Algorithm Comparison Experiment",
+    "description": "1. **Pre-check (User Path):** In the experimental evaluation interface, is there an \"A/B Testing\" option?\n2. **Arrange:** Select two different recommendation algorithms (such as collaborative filtering vs neural network).\n3. **Act:** Set up and execute A/B comparison test.\n4. **Assert:** Verify the system can run both algorithms simultaneously, output comparison result table, showing differences and statistical significance for each metric.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"5\\n2\\n1\\n2\\n0\\n0\" | python main.py",
+        "test_input": "5\\n2\\n1\\n2\\n0\\n0"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passed: Experimental evaluation interface has A/B testing option; Arrange: Successfully selected two different recommendation algorithms (collaborative filtering vs neural network); Act: Set up and executed A/B comparison test successfully; Assert: System runs both algorithms simultaneously, outputs comparison result table, showing differences and statistical significance for each metric"
+  },
+  {
+    "metric": "2.6.1 Core Operation Log - Complete Recording",
+    "description": "1. **Arrange:** Plan a series of operations: data import, matrix transformation, recommendation algorithm, review processing.\n2. **Act:** Execute these operations sequentially.\n3. **Assert:** Check the generated log file, verify it contains detailed records of all operations: operation time, input parameters, processing results, operating user and other 4 types of key information.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"1\\n3\\ny\\n0\\n0\" | python main.py && cat logs/system.log",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "logs/system.log"
+    ],
+    "expected_output": "Generated log file logs/system.log contains detailed records of all operations: operation time, input parameters, processing results, operating user and other 4 types of key information"
+  },
+  {
+    "metric": "2.6.2 Permission Management - Role Difference Control",
+    "description": "1. **Pre-check (User Path):** In the system, is there user role switching or login functionality?\n2. **Arrange:** Prepare regular user and system administrator two types of accounts.\n3. **Act:** Log in as both identities respectively, test function access permissions.\n4. **Assert:** Verify system administrator has additional permissions: model training supervision, log export, cold start process quality inspection and other 3 management functions, regular users cannot access these functions.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "cd src && echo -e \"7\\n5\\n1\\n5\\n2\\nadmin123\\n0\\n0\" | python main.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "logs/permission_test.log"
+    ],
+    "expected_output": "Pre-check passed: System has user role switching or login functionality; Arrange: Successfully prepared regular user and system administrator two types of accounts; Act: Logged in as both identities respectively, tested function access permissions; Assert: System administrator has additional permissions (model training supervision, log export, cold start process quality inspection and other 3 management functions), regular users cannot access these functions"
+  },
+  {
+    "metric": "3.1 Exception Data Handling - Fault Tolerance Mechanism",
+    "description": "1. **Arrange:** Create test data containing 4 types of exceptions: missing values, format errors, encoding issues, oversized files.\n2. **Act:** Attempt to import these exception data sequentially.\n3. **Assert:** Verify the program can gracefully handle all 4 types of exceptions, display friendly error prompt information, won't crash or display technical error stack.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_exception_handling.py::test_exception_data_handling -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Arrange: Successfully created test data containing 4 types of exceptions (missing values, format errors, encoding issues, oversized files); Act: Attempted to import these exception data sequentially; Assert: Program gracefully handles all 4 types of exceptions, displays friendly error prompt information, won't crash or display technical error stack"
+  },
+  {
+    "metric": "3.2 Configuration File Management - Parameter Driven",
+    "description": "1. **Arrange:** Locate system configuration file, prepare to modify 3 key parameters: recommendation quantity, similarity threshold, learning rate.\n2. **Act:** Modify these 3 parameters in configuration file, then restart the program.\n3. **Assert:** Verify after modifying configuration file, program behavior indeed changes accordingly, all 3 parameter modifications take effect.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_config_management.py::test_config_parameter_driven -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Arrange: Successfully located system configuration file, prepared to modify 3 key parameters (recommendation quantity, similarity threshold, learning rate); Act: Modified these 3 parameters in configuration file, then restarted program; Assert: After modifying configuration file, program behavior indeed changes accordingly, all 3 parameter modifications take effect"
+  }
+]

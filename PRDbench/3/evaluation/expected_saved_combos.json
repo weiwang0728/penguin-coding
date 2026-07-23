@@ -1,0 +1,25 @@
+[
+  {
+    "combo_name": "single_meal Nutrition Combo 1",
+    "ingredients": [
+      {
+        "ingredient_name": "rice",
+        "usage": 0.15
+      },
+      {
+        "ingredient_name": "chicken",
+        "usage": 0.1
+      },
+      {
+        "ingredient_name": "lettuce",
+        "usage": 0.12
+      }
+    ],
+    "total_cost": 6.21,
+    "suggested_price": 15,
+    "discount": 0.9,
+    "discounted_price": 13.5,
+    "profit_rate": 54.0,
+    "nutrition_score": 5
+  }
+]

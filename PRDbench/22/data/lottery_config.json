@@ -1,0 +1,44 @@
+[
+  {
+    "round_id": "round_1",
+    "name": "Quarterly Star",
+    "draw_count": 2,
+    "scope_type": "all",
+    "scope_value": "",
+    "allow_repeat": false,
+    "participant_weights": {
+      "Zhang San": 2.0
+    }
+  },
+  {
+    "round_id": "round_2",
+    "name": "Lucky Prize",
+    "draw_count": 3,
+    "scope_type": "department",
+    "scope_value": "Technical Department",
+    "allow_repeat": true,
+    "participant_weights": {}
+  },
+  {
+    "round_id": "round_3",
+    "name": "Pattern Test",
+    "draw_count": 1,
+    "scope_type": "all",
+    "scope_value": "",
+    "allow_repeat": false,
+    "participant_weights": {
+      "Zhang San": 8.0
+    }
+  },
+  {
+    "round_id": "round_4",
+    "name": "Weight Test",
+    "draw_count": 1,
+    "scope_type": "all",
+    "scope_value": "",
+    "allow_repeat": false,
+    "participant_weights": {
+      "Zhang San": 3.0
+    }
+  }
+]

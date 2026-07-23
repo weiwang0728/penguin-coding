@@ -1,0 +1,13 @@
+Multiple Sequence Alignment Algorithm Performance Comparison Result
+==================================================
+
+Algorithm Configuration:
+- Algorithm Type: Dynamic Programming Algorithm
+- Match Score: 0
+- Mismatch Penalty: 5
+- Gap Penalty: 3
+
+Test Case:
+- Input File: evaluation/input_files/valid_sequence.txt
+- Sequence Count: 2
+- Test Time: 2025-01-29

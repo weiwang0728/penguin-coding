@@ -1,0 +1,9 @@
+[
+  {
+    "StudentId": "IMPORT001",
+    "Name": "ImportUser1",
+    "Password": "password123",
+    "IsAdmin": 0,
+    "tel": "import1@test.com"
+  }
+]

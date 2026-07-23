@@ -1,0 +1,147 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (such as `python main.py`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu containing at least 4 actionable options (such as \"Data Management\", \"Recommendation Algorithms\", \"Experiment Evaluation\", \"Log Viewing\").",
+    "expected_output": "2 points: Program starts successfully and displays main menu with 4 or more clear, actionable options. 1 point: Program starts, but menu options fewer than 4, unclear or contain garbled characters. 0 points: Program cannot start or crashes immediately after startup."
+  },
+  {
+    "metric": "2.1.1a User Information Management - CSV Data Import",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"User Data Management\" or similar function?\n2. **Arrange:** Create CSV test file containing user ID, age, gender, historical purchase records.\n3. **Act:** Select data import function, import test CSV file.\n4. **Assert:** Verify data successfully imported, can view imported user records.",
+    "expected_output": "2 points: Pre-check passes, and CSV data completely correctly imported. 1 point: Pre-check passes, but import process has partial errors or data loss. 0 points: Pre-check fails, or import function unavailable."
+  },
+  {
+    "metric": "2.1.1b User Information Management - CSV Data Export",
+    "description": "1. **Pre-check (User Path):** In user data management interface, is there \"Export Data\" option?\n2. **Arrange:** Ensure user data already exists in system.\n3. **Act:** Select data export function, specify export path.\n4. **Assert:** Verify exported CSV file exists and content consistent with system data.",
+    "expected_output": "2 points: Pre-check passes, and exported CSV file complete and accurate. 1 point: Pre-check passes, but exported file has format issues or incomplete data. 0 points: Pre-check fails, or cannot export data."
+  },
+  {
+    "metric": "2.1.2a Product Attribute Management - Add Product",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there \"Product Management\" or similar option?\n2. **Arrange:** Prepare new product's complete information (product ID, name, category, price, brand).\n3. **Act:** Select add product function, input prepared product information.\n4. **Assert:** Verify product successfully added to system, can view newly added product in product list.",
+    "expected_output": "2 points: Pre-check passes, and can successfully add product, all fields correctly saved. 1 point: Pre-check passes, but addition process has field errors or incomplete saving. 0 points: Pre-check fails, or cannot add product."
+  },
+  {
+    "metric": "2.1.2b Product Attribute Management - View Product List",
+    "description": "1. **Pre-check (User Path):** In product management interface, is there \"View Product List\" or similar option?\n2. **Arrange:** Ensure system already has at least 5 product records.\n3. **Act:** Select view product list function.\n4. **Assert:** Verify can correctly display product list, containing product ID, name, category, price, brand and other key information.",
+    "expected_output": "2 points: Pre-check passes, and product list display complete, containing all 5 key fields. 1 point: Pre-check passes, but product list missing 1-2 key fields. 0 points: Pre-check fails, or cannot view product list."
+  },
+  {
+    "metric": "2.1.2c Product Attribute Management - Modify Product Attributes",
+    "description": "1. **Pre-check (User Path):** In product management interface, is there \"Modify Product\" or \"Edit\" option?\n2. **Arrange:** Select an existing product, prepare to modify its price and category information.\n3. **Act:** Select modify function, change product's price and category.\n4. **Assert:** Verify modified product information correctly updated, new information correctly displayed in product list.",
+    "expected_output": "2 points: Pre-check passes, and can successfully modify product attributes, update correctly effective. 1 point: Pre-check passes, but after modification partial information not correctly updated. 0 points: Pre-check fails, or cannot modify product attributes."
+  },
+  {
+    "metric": "2.1.2d Product Attribute Management - Delete Product Record",
+    "description": "1. **Pre-check (User Path):** In product management interface, is there \"Delete Product\" option?\n2. **Arrange:** Ensure system has deletable test product.\n3. **Act:** Select delete function, delete specified product.\n4. **Assert:** Verify product successfully deleted from system, no longer appears in product list.",
+    "expected_output": "2 points: Pre-check passes, and can successfully delete product, product list correctly updated. 1 point: Pre-check passes, but delete operation has confirmation prompt missing or interface update delay. 0 points: Pre-check fails, or cannot delete product."
+  },
+  {
+    "metric": "2.2.1 TF-IDF Matrix Transformation - Rating Matrix Reconstruction",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there \"Recommendation Algorithms\" or \"Matrix Transformation\" related option?\n2. **Arrange:** Prepare user-product rating data file (at least containing 10 users and 20 products rating records).\n3. **Act:** Select TF-IDF matrix transformation function, execute user-product rating to user-attribute rating conversion.\n4. **Assert:** Verify generated user-attribute rating matrix file exists, matrix dimensions correct, containing normalized attribute weights.",
+    "expected_output": "2 points: Pre-check passes, and successfully converted and generated correct format user-attribute rating matrix. 1 point: Pre-check passes, but matrix format or content has partial errors. 0 points: Pre-check fails, or matrix conversion function cannot work."
+  },
+  {
+    "metric": "2.2.2 User Attribute Preference Modeling - Preference Vector Generation",
+    "description": "1. **Pre-check (User Path):** In recommendation algorithm interface, is there \"User Preference Modeling\" option?\n2. **Arrange:** Ensure already have user behavior data and rating data.\n3. **Act:** Execute user attribute preference modeling function.\n4. **Assert:** Verify system generates user attribute preference vector file, vector contains each attribute's preference weight, supports viewing preference vector content.",
+    "expected_output": "2 points: Pre-check passes, and successfully generated complete user attribute preference vector. 1 point: Pre-check passes, but generated preference vector content incomplete. 0 points: Pre-check fails, or cannot generate user attribute preference vector."
+  },
+  {
+    "metric": "2.2.3 Cold Start User Processing - Attribute Distribution Initialization",
+    "description": "1. **Pre-check (User Path):** In user preference modeling interface, is there \"Cold Start Processing\" option?\n2. **Arrange:** Create a completely new user data (user ID not in historical data).\n3. **Act:** Execute attribute preference modeling for this new user.\n4. **Assert:** Verify system can automatically initialize attribute preference for new user based on global attribute distribution, generate reasonable initial preference vector.",
+    "expected_output": "2 points: Pre-check passes, and successfully initialized attribute distribution for new user, preference vector reasonable. 1 point: Pre-check passes, but can process new user but initialization effect poor. 0 points: Pre-check fails, or cannot process cold start user."
+  },
+  {
+    "metric": "2.3.1 Attribute Utility Aggregation Recommendation - Recommendation Explanation Function",
+    "description": "1. **Pre-check (User Path):** In recommendation algorithm interface, is there \"Attribute Utility Aggregation Recommendation\" option?\n2. **Arrange:** Prepare an existing user ID and corresponding attribute preference data.\n3. **Act:** Select attribute utility aggregation recommendation algorithm, input user ID execute recommendation.\n4. **Assert:** Verify output Top-N recommendation list (at least 5 products), each recommendation contains detailed explanation: hit attribute preferences, utility score details, attribute contribution.",
+    "expected_output": "2 points: Pre-check passes, and generates recommendation list and provides detailed attribute contribution explanation. 1 point: Pre-check passes, but has recommendation list but explanation not detailed enough. 0 points: Pre-check fails, or recommendation function unavailable or no explanation."
+  },
+  {
+    "metric": "2.3.2 Lightweight Neural Network Recommendation - MLPRegressor Usage",
+    "description": "1. **Pre-check (User Path):** In recommendation algorithm selection interface, is there \"Neural Network Recommendation\" option?\n2. **Arrange:** Prepare training dataset.\n3. **Act:** Select neural network recommendation algorithm, observe training process output information.\n4. **Assert:** Verify log clearly displays using scikit-learn's MLPRegressor, training completed on CPU, can output training loss and recommendation results.",
+    "expected_output": "2 points: Pre-check passes, and clearly uses MLPRegressor, CPU training successful, outputs recommendation results. 1 point: Pre-check passes, but uses neural network but implementation details unclear. 0 points: Pre-check fails, or does not support neural network recommendation."
+  },
+  {
+    "metric": "2.3.3a Collaborative Filtering Recommendation - Cosine Similarity",
+    "description": "1. **Pre-check (User Path):** In recommendation algorithm interface, is there \"Collaborative Filtering Recommendation\" option?\n2. **Arrange:** Prepare user-product rating data.\n3. **Act:** Select collaborative filtering recommendation, set similarity calculation method as cosine similarity.\n4. **Assert:** Verify cosine similarity method can work normally, generates recommendation results, displays similar user or product information.",
+    "expected_output": "2 points: Pre-check passes, and cosine similarity calculation correct, recommendation results reasonable. 1 point: Pre-check passes, but similarity calculation has minor deviation. 0 points: Pre-check fails, or cosine similarity function unavailable."
+  },
+  {
+    "metric": "2.3.3b Collaborative Filtering Recommendation - Pearson Correlation Coefficient",
+    "description": "1. **Pre-check (User Path):** In collaborative filtering recommendation interface, is there \"Pearson Correlation Coefficient\" option?\n2. **Arrange:** Use same test data as cosine similarity.\n3. **Act:** Set similarity calculation method as Pearson correlation coefficient.\n4. **Assert:** Verify Pearson correlation coefficient method can work normally, generates recommendation results different from cosine similarity.",
+    "expected_output": "2 points: Pre-check passes, and Pearson correlation coefficient calculation correct, recommendation results have reasonable differences with cosine method. 1 point: Pre-check passes, but calculation accuracy average. 0 points: Pre-check fails, or Pearson method unavailable."
+  },
+  {
+    "metric": "2.3.3c Collaborative Filtering Recommendation - Euclidean Distance",
+    "description": "1. **Pre-check (User Path):** In collaborative filtering recommendation interface, is there \"Euclidean Distance\" option?\n2. **Arrange:** Use same test data.\n3. **Act:** Set similarity calculation method as Euclidean distance.\n4. **Assert:** Verify Euclidean distance method can work normally, generates recommendation results.",
+    "expected_output": "2 points: Pre-check passes, and Euclidean distance calculation correct, recommendation results reasonable. 1 point: Pre-check passes, but distance calculation has deviation. 0 points: Pre-check fails, or Euclidean distance method unavailable."
+  },
+  {
+    "metric": "2.3.4 Sparse Matrix Processing - Operation Report Generation",
+    "description": "1. **Pre-check (User Path):** In recommendation algorithm interface, is there \"Sparse Matrix Processing\" or \"Operation Report\" option?\n2. **Arrange:** Prepare sparse user-product rating data (data sparsity >80%).\n3. **Act:** Use sparse data execute recommendation algorithm.\n4. **Assert:** Verify system automatically outputs sparse matrix processing report, containing sparsity statistics, filling rate, cold start trigger rate and other 3 key operation indicators.",
+    "expected_output": "2 points: Pre-check passes, and generates complete sparse matrix processing report containing all 3 key indicators. 1 point: Pre-check passes, but report only contains 1-2 indicators. 0 points: Pre-check fails, or no sparse matrix processing capability."
+  },
+  {
+    "metric": "2.4.1 Jieba Word Segmentation Processing - Attribute Word Recognition",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there \"Review Mining\" or \"Text Processing\" option?\n2. **Arrange:** Create text file containing product reviews, reviews containing obvious attribute words (such as performance, appearance, price, etc.).\n3. **Act:** Execute review word segmentation processing function.\n4. **Assert:** Verify jieba segmentation results correct, can recognize product attribute keywords, segmentation results saved to file.",
+    "expected_output": "2 points: Pre-check passes, and correctly uses jieba segmentation, accurately recognizes attribute words. 1 point: Pre-check passes, but segmentation function available but attribute word recognition accuracy not high. 0 points: Pre-check fails, or segmentation function unavailable."
+  },
+  {
+    "metric": "2.4.2 Sentiment Analysis - Attribute-Sentiment Pair Recognition",
+    "description": "1. **Pre-check (User Path):** In review mining interface, is there \"Sentiment Analysis\" option?\n2. **Arrange:** Prepare reviews containing obvious sentiment tendency (such as positive review, negative review).\n3. **Act:** Execute sentiment analysis function on review data.\n4. **Assert:** Verify system can recognize attribute-sentiment pairs (such as portability/positive review, heat dissipation/negative review), uses sentiment dictionary rather than pre-trained model.",
+    "expected_output": "2 points: Pre-check passes, and accurately recognizes attribute-sentiment pairs, uses dictionary method. 1 point: Pre-check passes, but can perform sentiment analysis but accuracy average. 0 points: Pre-check fails, or no sentiment analysis function."
+  },
+  {
+    "metric": "2.4.3 Review Weight Fusion - Preference Vector Update",
+    "description": "1. **Pre-check (User Path):** In review mining interface, is there \"Weight Fusion\" or \"Preference Update\" option?\n2. **Arrange:** Prepare same user's review data and initial preference vector.\n3. **Act:** Execute review weight fusion for that user.\n4. **Assert:** Verify after fusing review analysis results, user attribute preference vector has reasonable changes, weight updates reflect attribute mention frequency and sentiment in reviews.",
+    "expected_output": "2 points: Pre-check passes, and review fusion effect obvious, weight update reasonable. 1 point: Pre-check passes, but has fusion function but effect not obvious. 0 points: Pre-check fails, or cannot perform review weight fusion."
+  },
+  {
+    "metric": "2.4.4 Recommendation Explanation - Review Basis Display",
+    "description": "1. **Pre-check (User Path):** In recommendation result interface, does it display recommendation explanation information?\n2. **Arrange:** Prepare recommendation requests for users with review data.\n3. **Act:** Generate recommendations for the user.\n4. **Assert:** Verify recommendation results display explanations based on reviews, such as: based on your multiple mentions of certain attribute tendency in reviews, recommend this product to you.",
+    "expected_output": "2 points: Pre-check passes, and recommendation explanations clearly cite review basis. 1 point: Pre-check passes, but has review-based explanations but not clear enough. 0 points: Pre-check fails, or recommendation explanations do not contain review basis."
+  },
+  {
+    "metric": "2.5.1a Recommendation Algorithm Performance Evaluation - Precision Recall",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there \"Experiment Evaluation\" or \"Performance Evaluation\" option?\n2. **Arrange:** Prepare test dataset, select at least 2 different recommendation algorithms.\n3. **Act:** Perform offline algorithm evaluation.\n4. **Assert:** Verify output contains precision, recall, F1 score these 3 core indicators, each indicator has specific numerical values.",
+    "expected_output": "2 points: Pre-check passes, and completely calculates and displays all 3 core indicators. 1 point: Pre-check passes, but only calculated 2 indicators. 0 points: Pre-check fails, or core indicators fewer than 2."
+  },
+  {
+    "metric": "2.5.1b Recommendation Algorithm Performance Evaluation - Coverage Diversity",
+    "description": "1. **Pre-check (User Path):** In performance evaluation interface, is there \"Advanced Indicators\" or \"Diversity Analysis\" option?\n2. **Arrange:** Use same test data and algorithms.\n3. **Act:** Calculate recommendation system's coverage and diversity indicators.\n4. **Assert:** Verify output contains coverage, recommendation diversity, cold start hit rate these 3 advanced indicators.",
+    "expected_output": "2 points: Pre-check passes, and completely calculates and displays all 3 advanced indicators. 1 point: Pre-check passes, but only displays 1-2 advanced indicators. 0 points: Pre-check fails, or no advanced evaluation indicators."
+  },
+  {
+    "metric": "2.5.2 Matplotlib Chart Generation - File Saving",
+    "description": "1. **Pre-check (User Path):** In experiment evaluation interface, is there \"Generate Charts\" or \"Visualization\" option?\n2. **Arrange:** Ensure already completed algorithm performance evaluation, has evaluation data.\n3. **Act:** Select generate evaluation result visualization charts.\n4. **Assert:** Verify uses matplotlib to generate clear charts (such as algorithm performance comparison chart, indicator trend chart), charts automatically saved as PNG format to specified file path.",
+    "expected_output": "2 points: Pre-check passes, and generates clear charts and correctly saves to PNG file. 1 point: Pre-check passes, but can generate charts but format or saving has issues. 0 points: Pre-check fails, or no chart generation function."
+  },
+  {
+    "metric": "2.5.3 User Decision Complexity Evaluation - Process Recording",
+    "description": "1. **Pre-check (User Path):** In experiment evaluation interface, is there \"Decision Analysis\" or \"Process Evaluation\" option?\n2. **Arrange:** Prepare complete recommendation process test scenario.\n3. **Act:** Completely execute one user recommendation process (from data import to obtaining recommendation results).\n4. **Assert:** Verify system records decision process time consumption, step count, each step's processing time, and provides decision complexity analysis report.",
+    "expected_output": "2 points: Pre-check passes, and completely records decision process and provides complexity analysis. 1 point: Pre-check passes, but records partial process information. 0 points: Pre-check fails, or no decision complexity evaluation function."
+  },
+  {
+    "metric": "2.5.4 A/B Testing - Algorithm Comparison Experiment",
+    "description": "1. **Pre-check (User Path):** In experiment evaluation interface, is there \"A/B Testing\" option?\n2. **Arrange:** Select two different recommendation algorithms (such as collaborative filtering vs neural network).\n3. **Act:** Set and execute A/B comparison test.\n4. **Assert:** Verify system can simultaneously run two algorithms, outputs comparison result tables, displays each indicator's differences and statistical significance.",
+    "expected_output": "2 points: Pre-check passes, and complete A/B test comparison, results clear. 1 point: Pre-check passes, but can perform algorithm comparison but result display not clear enough. 0 points: Pre-check fails, or no A/B testing function."
+  },
+  {
+    "metric": "2.6.1 Core Operation Logs - Complete Recording",
+    "description": "1. **Arrange:** Plan series of operations: data import, matrix transformation, recommendation algorithms, review processing.\n2. **Act:** Sequentially execute these operations.\n3. **Assert:** Check generated log file, verify contains all operations' detailed records: operation time, input parameters, processing result, operator user and other 4 key information types.",
+    "expected_output": "2 points: Log records complete and detailed, containing all 4 key information types. 1 point: Log records exist but only contain 2-3 key information types. 0 points: No operation log function or information less than 2 types."
+  },
+  {
+    "metric": "2.6.2 Permission Management - Role Difference Control",
+    "description": "1. **Pre-check (User Path):** In the system, is there user role switching or login function?\n2. **Arrange:** Prepare regular user and system administrator two types of accounts.\n3. **Act:** Respectively login system with two identities, test function access permissions.\n4. **Assert:** Verify system administrator has additional permissions: model training supervision, log export, cold start process quality inspection and other 3 management functions, regular users cannot access these functions.",
+    "expected_output": "2 points: Pre-check passes, and permission control strict, administrator possesses all 3 additional permissions. 1 point: Pre-check passes, but administrator only possesses 1-2 additional permissions. 0 points: Pre-check fails, or no permission management or all users have same permissions."
+  },
+  {
+    "metric": "3.1 Exception Data Processing - Fault Tolerance Mechanism",
+    "description": "1. **Arrange:** Create test data containing 4 types of exceptions: missing values, format errors, encoding issues, oversized files.\n2. **Act:** Sequentially attempt to import these exception data.\n3. **Assert:** Verify program can gracefully handle all 4 types of exceptions, displays friendly error prompt information, will not crash or display technical error stack.",
+    "expected_output": "2 points: Gracefully handles all 4 types of exceptions, error prompts friendly. 1 point: Can handle 3 types of exceptions, but prompts not friendly enough. 0 points: Can handle exceptions fewer than 3 types or program crashes."
+  },
+  {
+    "metric": "3.2 Configuration File Management - Parameter Driven",
+    "description": "1. **Arrange:** Locate system configuration file, prepare modify 3 key parameters: recommendation quantity, similarity threshold, learning rate.\n2. **Act:** Modify these 3 parameters in configuration file, then restart program.\n3. **Assert:** Verify after modifying configuration file, program behavior indeed has corresponding changes, all 3 parameter modifications take effect.",
+    "expected_output": "2 points: Supports complete configuration file management, all 3 parameter modifications effective. 1 point: Supports configuration file, but only 1-2 parameter modifications take effect. 0 points: Parameters hard-coded, does not support configuration file or no parameters effective."
+  }
+]

@@ -1,0 +1,5 @@
+entity_A	entity_B	relation_X
+entity_B	entity_C	relation_Y
+entity_C	entity_D	relation_X
+entity_A	entity_C	relation_Y
+entity_B	entity_D	relation_X

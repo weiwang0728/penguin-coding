@@ -1,0 +1,6 @@
+# CRC-16 Test Data
+# Format: Input Data, Expected CRC Value
+01111110,0x1234
+11111111,0x5678
+10101010,0x9ABC
+00000000,0xFFFF

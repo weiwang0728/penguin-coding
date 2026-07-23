@@ -1,0 +1,47 @@
+# Infectious Disease Model Comparison Analysis Results
+# Generation Time: 2025-09-01 16:55:13.975152
+============================================================
+
+Model Basic Parameter Comparison:
+------------------------------
+SIR Model:
+  Basic Reproduction Number (R0): 0.5000
+  Final Attack Rate: 0.0002
+  Infection Peak Population: 1
+  Infection Peak Time: 0.0 days
+  Epidemic Duration: 1.0 days
+
+SEIR Model:
+  Basic Reproduction Number (R0): 6.0000
+  Final Attack Rate: 0.9982
+  Infection Peak Population: 2593
+  Infection Peak Time: 76.0 days
+  Epidemic Duration: 1.0 days
+
+Model Fitting Quality Comparison:
+------------------------------
+SIR Model Fitting Quality:
+  Infected Fitting - MSE: 6.10e+08, MAE: 1.79e+04, R^2: -1.0964
+  Recovered Fitting - MSE: 2.04e+09, MAE: 3.64e+04, R^2: -1.8457
+
+SEIR Model Fitting Quality:
+  Exposed Fitting - MSE: 7.12e+07, MAE: 5.06e+03, R^2: -0.3850
+  Infected Fitting - MSE: 6.08e+08, MAE: 1.79e+04, R^2: -1.0896
+  Recovered Fitting - MSE: 1.96e+09, MAE: 3.58e+04, R^2: -1.7330
+
+Fitting Quality Assessment:
+SIR Model Overall R^2: -1.4711
+SEIR Model Overall R^2: -1.0692
+Conclusion: SEIR model has better fitting performance
+
+Model Feature Analysis:
+------------------------------
+SIR Model:
+  - Simple structure, fewer parameters
+  - Suitable for diseases with short latent periods
+  - High computational efficiency
+
+SEIR Model:
+  - Considers latent period, more realistic
+  - Suitable for diseases with obvious latent periods
+  - More accurate predictions

@@ -1,0 +1,4 @@
+﻿Task ID,Task Name,Test Item,Equipment Duration,Test Status,Test Type,Test Content,Test Item Feedback,Anomaly Identifier
+TASK-H-20231001,Task A,Item 1,1.0,Success,Valid,Trial conducted for 1.00 hours, no anomalies,Normal,
+TASK-L-20231003,Task C,Item 3,3.0,Success,Valid,Trial conducted for 3.00 hours, no anomalies,Normal,
+TASK-M-20231002,Task B,Item 2,2.0,Failure,Valid,Trial conducted for 2.00 hours, no anomalies,Anomaly,

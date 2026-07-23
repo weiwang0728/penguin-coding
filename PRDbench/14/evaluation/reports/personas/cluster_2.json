@@ -1,0 +1,46 @@
+{
+  "cluster_id": 2,
+  "cluster_name": "Low-Frequency Premium Consumers",
+  "sample_count": 2,
+  "demographics": {
+    "gender_distribution": {
+      "Female": 100.0
+    },
+    "age_group_distribution": {
+      "30-40 years old": 50.0,
+      "40-50 years old": 50.0
+    },
+    "dominant_age_group": "30-40 years old"
+  },
+  "motivations": {
+    "price_sensitivity": {
+      "average_score": 4.0,
+      "description": "More price-sensitive, tends to choose cost-effective options"
+    },
+    "satisfaction_level": {
+      "average_score": 3.0,
+      "description": "Moderate satisfaction, with basic service requirements"
+    },
+    "amenities_importance": {
+      "average_score": 3.0,
+      "description": "Values supporting facilities, but not the primary consideration"
+    }
+  },
+  "consumption_patterns": {
+    "frequency_distribution": {
+      "Once a month": 50.0,
+      "Once a quarter": 50.0
+    },
+    "dominant_frequency": "Once a quarter",
+    "spending_behavior": "Low to moderate frequency consumption, pursuing quality experience"
+  },
+  "venue_preferences": {
+    "preferred_venue_distribution": {
+      "Public course": 50.0,
+      "Practice range": 50.0
+    },
+    "dominant_preference": "Public course",
+    "preference_description": "Prefers public venues, focuses on convenience and cost-effectiveness"
+  },
+  "persona_summary": "This user group is relatively mature in age, with a balanced gender distribution. They have low consumption frequency, but high expectations for each visit. Although their current satisfaction is not high, they value supporting facilities and professional services, preferring membership golf courses and other premium venues. They are typical low-frequency premium consumers who require service quality improvements to meet their stringent requirements."
+}

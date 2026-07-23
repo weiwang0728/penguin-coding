@@ -1,0 +1,4 @@
+module,type,title,options
+Personal Basic Information,Single Choice,"What is your age group?","18-25 years old,26-35 years old,36-45 years old,45 years old and above"
+Consumption Status,Multiple Choice,"What booking channels do you commonly use?","Phone reservation,WeChat official account,Third-party App,Walk-in"
+Tourism Motivation,Scale,"How attractive is the natural scenery to you?","1,5"

@@ -1,0 +1,7 @@
+1
+segments
+filter segment Important Value Customer
+show 5
+reset
+show 5
+quit

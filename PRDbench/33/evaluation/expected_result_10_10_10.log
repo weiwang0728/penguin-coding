@@ -1,0 +1,8 @@
+[2024-01-15 12:20:33] Experiment: clients=10, rounds=10, epochs=10
+[2024-01-15 12:20:34] Round: 1, Test Loss: 2.0123, Accuracy: 0.2567
+[2024-01-15 12:20:35] Round: 2, Test Loss: 1.8901, Accuracy: 0.3678
+[2024-01-15 12:20:36] Round: 3, Test Loss: 1.7890, Accuracy: 0.4789
+[2024-01-15 12:20:37] Round: 4, Test Loss: 1.6789, Accuracy: 0.5890
+[2024-01-15 12:20:38] Round: 5, Test Loss: 1.5678, Accuracy: 0.6901
+[2024-01-15 12:20:39] Best model saved with accuracy: 0.6901
+[2024-01-15 12:20:40] Experiment completed successfully

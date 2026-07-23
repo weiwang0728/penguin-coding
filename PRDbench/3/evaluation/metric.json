@@ -1,0 +1,117 @@
+[
+  {
+    "metric": "0.1 System Startup and Main Menu Display",
+    "description": "Execute the startup command. Observe whether the command-line interface starts without errors and displays a main menu with five clearly distinguishable top-level options: 'Data Management', 'Cost Calculation', 'Combo Generation', 'Combo Evaluation', and 'Exit'.",
+    "expected_output": "2 points: Program starts successfully and clearly displays all 5 main menu options. 1 point: Program starts, but the main menu is missing 1-2 options, or options display with garbled text/unclear formatting. 0 points: Program fails to start, crashes immediately after startup, or the main menu is missing more than 2 options."
+  },
+  {
+    "metric": "2.5.2 Menu Navigation and Exit Logic",
+    "description": "1. Precondition Check (User Path): Verify that the 'Data Management', 'Cost Calculation', 'Combo Generation', and 'Combo Evaluation' submenus are accessible from the main menu. 2. Preparation: Navigate into the 'Data Management', 'Cost Calculation', 'Combo Generation', and 'Combo Evaluation' submenus respectively. 3. Execution: At each submenu interface, input 'q' and press Enter. 4. Assertion: Verify that after each operation, the program correctly returns to the main menu interface, rather than exiting the program or becoming unresponsive.",
+    "expected_output": "2 points: Inputting 'q' returns to the main menu from all (4) submenus. 1 point: Inputting 'q' returns to the main menu from 1-2 submenus, but fails in at least one submenu or causes the program to exit. 0 points: The 'q' return function is ineffective in all submenus."
+  },
+  {
+    "metric": "2.1.1a Ingredient CSV Data Successful Import",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Import Ingredient CSV' option. If inaccessible, score 0. 2. Preparation: Create a file named `ingredients.csv` containing 5 rows of data fully compliant with PRD specifications. 3. Execution: Navigate to the 'Import Ingredient CSV' function and enter the path to `ingredients.csv` when prompted. 4. Assertion: Verify if the command line outputs a clear message indicating 'Successfully imported 5 ingredient records'.",
+    "expected_output": "2 points: Successfully identifies and imports all 5 data records completely, providing a success message with the correct count. 1 point: Import is possible, but imports fewer than 5 records, or lacks a success message. 0 points: Precondition check fails, or cannot import the compliant CSV file, or the import process causes a program crash."
+  },
+  {
+    "metric": "2.1.1b Ingredient CSV Data Import Failure Validation",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Import Ingredient CSV' option. If inaccessible, score 0. 2. Preparation: Create a file named `bad_ingredients.csv` where the 'Purchase Unit Price' column in the 2nd row contains non-numeric text (e.g., 'abc'). 3. Execution: Attempt to import `bad_ingredients.csv`. 4. Assertion: Verify if the program fails to import and displays a Chinese error message containing keywords such as 'Line 2', 'unit price', or 'format error'.",
+    "expected_output": "2 points: Import fails and can precisely indicate the error occurs at 'Line 3' along with the specific reason (e.g., 'Unit price format error'). 1 point: An error is indicated, but the message lacks either the accurate line number or the specific reason (missing one of them). 0 points: Precondition check fails, or importing the malformed CSV causes a program crash, or there is no error message."
+  },
+  {
+    "metric": "2.1.2a Manual Ingredient Entry - Success Path",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Manual Ingredient Entry' option. If inaccessible, score 0. 2. Preparation: Prepare a complete set of valid ingredient data (e.g., I100, Potato, Vegetable, kg, 5, 10). 3. Execution: Enter the 'Manual Ingredient Entry' function and input all prepared valid data step by step as prompted. 4. Assertion: Verify if all data can be successfully entered and if a final 'Ingredient entry successful' prompt is received.",
+    "expected_output": "2 points: Guides the user through entering all fields, successfully saves the data, and finally provides a success prompt. 1 point: Completes entry and saving, but lacks the final success prompt. 0 points: Precondition check fails, or the function errors out/cannot complete entry during the input of valid data."
+  },
+  {
+    "metric": "2.1.2b Manual Ingredient Entry - Input Validation",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Manual Ingredient Entry' option. If inaccessible, score 0. 2. Preparation: Enter the 'Manual Ingredient Entry' function. 3. Execution: When prompted for 'Processing Loss Rate (%)', input an invalid value, e.g., '50'. 4. Assertion: Verify if the system displays a Chinese error prompt (containing keywords like 'between 0-30') and allows the user to re-enter this field.",
+    "expected_output": "2 points: For an invalid loss rate input, displays a clear Chinese error prompt and allows re-entry. 1 point: Has an error prompt but the content is unclear (e.g., only 'Input error'), or does not allow re-entry after prompting. 0 points: Precondition check fails, or inputting an invalid value causes a program crash, or accepts the invalid value directly without any reaction."
+  },
+  {
+    "metric": "2.1.3a Ingredient Data Query - By Name",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Query Ingredients' option. If inaccessible, score 0. 2. Preparation: Ensure an ingredient named 'Wuchang Rice' exists in the database. 3. Execution: Enter the 'Query Ingredients' function, select query by name, and input 'Wuchang Rice'. 4. Assertion: Verify if the query result correctly displays all information for 'Wuchang Rice', including unit price, loss rate, remaining stock, etc.",
+    "expected_output": "2 points: Can query precisely by name and display the complete information for that ingredient. 1 point: Can retrieve the result, but the displayed information is incomplete (e.g., missing 1-2 fields). 0 points: Precondition check fails, or cannot query an existing ingredient, or the query process errors."
+  },
+  {
+    "metric": "2.1.3b Ingredient Data Query - By Category",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Query Ingredients' option. If inaccessible, score 0. 2. Preparation: Ensure at least 2 ingredients categorized as 'Staple' exist in the database. 3. Execution: Enter the 'Query Ingredients' function, select query by category, and input 'Staple food'. 4. Assertion: Verify if the query result displays a list showing information for all ingredients belonging to the 'Staple food' category.",
+    "expected_output": "2 points: Can query and list all (2) ingredients under that category. 1 point: Can query and get results, but lists only one of the ingredients. 0 points: Precondition check fails, or cannot query any results, or the query process errors."
+  },
+  {
+    "metric": "2.1.4 Add Additional Cost Item",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Data Management' and confirm the presence of a clearly distinguishable 'Manage Additional Costs' or similar option. 2. Preparation: Enter this function, select 'Add'. 3. Execution: Input the name and amount for the new cost item as prompted. 4. Assertion: Verify if the system displays an 'Add successful' prompt. Furthermore, verify that this new cost item becomes available for selection during the 'Combo Cost Calculation' process.",
+    "expected_output": "2 points: Successfully guides the user to input and save the new cost item, provides a success prompt, and the new item appears as selectable in cost calculation. 1 point: Saves successfully, but lacks a prompt or the new item is unavailable in cost calculation. 0 points: Precondition check fails, or the add process errors/fails to save."
+  },
+  {
+    "metric": "2.2.1 Single Ingredient Cost Calculation",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Cost Calculation' and confirm the presence of a clearly distinguishable 'Create New Combo' option. If inaccessible, score 0. 2. Preparation: Assume ingredient 'Wuchang Rice' has a unit price of 10 RMB/kg and a loss rate of 10%. 3. Execution: Enter 'Create New Combo', add ingredient 'Wuchang Rice', input quantity '0.15'. 4. Assertion: Verify if the system calculates the cost for this item as 10 * 0.15 * (1 + 10/100) = 1.65 RMB.",
+    "expected_output": "2 points: Can correctly create the combo, supports decimal quantity input, and accurately calculates the single item cost including loss rate (result rounded to two decimal places). 1 point: Can calculate cost, but uses an incorrect formula (e.g., does not include loss rate), or does not support decimal quantities, or result precision is incorrect. 0 points: Precondition check fails, or cannot add ingredient, or cannot calculate single item cost."
+  },
+  {
+    "metric": "2.2.2a Total Cost Calculation - Cost Summarization",
+    "description": "1. Precondition Check (User Path): Confirm the 'Create New Combo' function is accessible. 2. Preparation: Within a combo, add two ingredients with calculated costs of 1.65 RMB and 5.25 RMB respectively. Packaging box cost is fixed at 1.5 RMB. 3. Execution: Complete ingredient addition and proceed to the cost summary step. 4. Assertion: Verify if the total cost displayed by the system sums to 1.65 + 5.25 + 1.5 = 8.40 RMB.",
+    "expected_output": "2 points: Correctly summarizes all ingredient costs and the preset packaging box cost. 1 point: Total cost calculation is inaccurate, e.g., fails to include packaging box cost. 0 points: Precondition check fails, or cannot calculate total cost."
+  },
+  {
+    "metric": "2.2.2b Total Cost Calculation - Dynamic Adjustment",
+    "description": "1. Precondition Check (User Path): Confirm the 'Create New Combo' function is accessible and total cost can be calculated. 2. Preparation: In a combo with a total cost of 8.40 RMB, the disposable utensils cost is 0.8 RMB. 3. Execution: When selecting additional cost items, choose 'y' for disposable utensils and 'n' for others. 4. Assertion: Verify if the final total cost is updated to 8.40 + 0.8 = 9.20 RMB.",
+    "expected_output": "2 points: Can dynamically incorporate selected additional cost items and correctly update the total cost. 1 point: Selection is possible, but the total cost is not updated or updated incorrectly. 0 points: Precondition check fails, or does not provide the functionality to dynamically adjust additional costs."
+  },
+  {
+    "metric": "2.2.3 Cost Detail Report Formatting",
+    "description": "1. Precondition Check (User Path): Confirm combo cost can be successfully calculated. 2. Preparation: Complete a combo cost calculation involving at least 2 ingredients. 3. Execution: View the final output cost detail report. 4. Assertion: Verify if the report is presented as a table with clear borders and headers (e.g., Ingredient, Quantity, Cost), and all data columns are vertically aligned.",
+    "expected_output": "2 points: Output is a clearly formatted table with good alignment and bordered headers. 1 point: A report is output but not formatted as a table, or the format is messy/data is misaligned. 0 points: Precondition check fails, or no cost detail report is output."
+  },
+  {
+    "metric": "2.3.1a Smart Combo Generation - Parameter Input",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Combo Generation' and confirm access to the function. If inaccessible, score 0. 2. Preparation: Prepare a set of valid generation parameters (e.g., Single Combo, 10% discount (0.9), 30% profit margin, High Stock Priority). 3. Execution: Enter the 'Combo Generation' module and input all valid parameters sequentially. 4. Assertion: Verify that all parameters can be successfully input and the process proceeds to the subsequent combo generation stage, rather than reporting an error or stalling.",
+    "expected_output": "2 points: Successfully accepts all valid parameters defined in the PRD and proceeds smoothly to the next step. 1 point: Accepts most parameters, but one valid parameter cannot be input or causes an error. 0 points: Precondition check fails, or cannot input any parameters."
+  },
+  {
+    "metric": "2.3.1b Smart Combo Generation - Parameter Validation",
+    "description": "1. Precondition Check (User Path): From the main menu, select 'Combo Generation' and confirm access to the function. If inaccessible, score 0. 2. Preparation: Enter the 'Combo Generation' module. 3. Execution: When prompted for 'Discount Rate', input an invalid value '1.1'. 4. Assertion: Verify if the system displays a Chinese error prompt (containing keywords like 'between 0.1-1.0') and requests re-entry.",
+    "expected_output": "2 points: For invalid discount input, displays a clear Chinese error prompt and allows re-entry. 1 point: Has an error prompt but the content is unclear, or does not allow re-entry after prompting. 0 points: Precondition check fails, or inputting the invalid value causes a program crash, or there is no reaction to the invalid value."
+  },
+  {
+    "metric": "2.3.2 Core Combination Logic and Nutritional Constraints",
+    "description": "1. Precondition Check (User Path): Confirm the 'Combo Generation' function is accessible and parameters can be input. 2. Preparation: Ensure the ingredient library contains sufficient ingredients in the Staple, Protein, and Vegetable categories. Request generation of a 'Single Combo'. 3. Execution: Observe the generated 3-5 candidate combos. 4. Assertion: Check all generated candidate combos to verify if each one strictly and simultaneously contains: at least 1 Staple (≥0.1kg), at least 1 Protein (≥0.08kg), and at least 1 Vegetable (≥0.1kg).",
+    "expected_output": "2 points: All (100%) generated candidate combos strictly meet all nutritional category and minimum quantity constraints. 1 point: More than 50% but less than 100% of the generated combos meet all constraints. 0 points: Precondition check fails, or the proportion of combos meeting all constraints is 50% or lower, or unable to generate combos."
+  },
+  {
+    "metric": "2.3.3a Suggested Selling Price - Basic Calculation",
+    "description": "1. Precondition Check (User Path): Confirm combos can be successfully generated. 2. Preparation: Generate a combo, note its total cost is 20.5 RMB. Set profit margin to 30%. 3. Execution: View the suggested selling price for this combo. 4. Assertion: Verify if the base selling price calculated by the system equals 20.5 * (1 + 0.3) ≈ 29.25 RMB. Allow a 0.01 tolerance.",
+    "expected_output": "2 points: The suggested selling price calculation fully conforms to the 'Cost * (1 + Profit Margin)' formula. 1 point: A suggested price is calculated and displayed, but deviates from the formula result by more than 0.01 RMB. 0 points: Precondition check fails, or the suggested price calculation is completely wrong, or not displayed."
+  },
+  {
+    "metric": "2.3.3b Suggested Selling Price - Constraints and Rounding",
+    "description": "1. Precondition Check (User Path): Confirm combos can be generated and the base price can be calculated. 2. Preparation: A Single Combo has a calculated base price below the minimum price constraint of 28 RMB. 3. Execution: View the final displayed suggested selling price. 4. Assertion: Verify if the final price, after satisfying the minimum price constraint (≥28), is also rounded to the nearest integer.",
+    "expected_output": "2 points: Correctly handles both the rounding logic and the minimum price constraint simultaneously. 1 point: Only one logic is handled correctly (e.g., rounding correct but minimum price ignored, or vice versa). 0 points: Precondition check fails, or neither logic is handled correctly."
+  },
+  {
+    "metric": "2.4.1a Combo Evaluation - Profit Margin Calculation",
+    "description": "1. Precondition Check (User Path): Confirm the candidate combo list can be successfully generated and displayed. 2. Preparation: Select any candidate combo, record its total cost C, selling price S, discount D (e.g., 0.9). 3. Execution: View the profit margin displayed by the system. 4. Assertion: Verify if the displayed profit margin equals the result of (S*D - C) / C (displayed as a percentage, allow 0.1% tolerance).",
+    "expected_output": "2 points: Profit margin calculation formula is completely correct and displayed accurately for all candidate combos. 1 point: Profit margin calculation exists but deviates from the formula result by more than 0.1%. 0 points: Precondition check fails, or profit margin calculation is completely wrong, or not displayed."
+  },
+  {
+    "metric": "2.4.1b Combo Evaluation - Nutrition Score Calculation",
+    "description": "1. Precondition Check (User Path): Confirm the candidate combo list can be successfully generated and displayed. 2. Preparation: Select any candidate combo containing 4 distinct ingredient types. 3. Execution: View the nutrition score displayed by the system. 4. Assertion: Verify if its nutrition score equals 5 + (4 - 3) = 6 points.",
+    "expected_output": "2 points: Nutrition score calculation formula is completely correct and displayed accurately for all candidate combos. 1 point: Nutrition score calculation exists but does not match the formula result. 0 points: Precondition check fails, or nutrition score calculation is completely wrong, or not displayed."
+  },
+  {
+    "metric": "2.4.2a Result Output - Profit Margin Sorting",
+    "description": "1. Precondition Check (User Path): Confirm the candidate combo list can be successfully generated and displayed. 2. Preparation: Generate at least 3 candidate combos. 3. Execution: View the generated candidate combo list. 4. Assertion: Verify if the list is strictly sorted in descending order based on 'Profit Margin'.",
+    "expected_output": "2 points: List is strictly sorted by profit margin from highest to lowest. 1 point: List exists but is not sorted in any order, or sorted by the wrong rule. 0 points: Precondition check fails, or no result output."
+  },
+  {
+    "metric": "2.4.2b Result Output - Tabular Display",
+    "description": "1. Precondition Check (User Path): Confirm the candidate combo list can be successfully generated and displayed. 2. Preparation: Generate candidate combos. 3. Execution: View the generated candidate combo list. 4. Assertion: Verify if the entire list is displayed in a table format with borders and headers, containing at least 5 key data columns such as Combo Number, Cost, Selling Price, Profit Margin, Nutrition Score, and ensure data alignment.",
+    "expected_output": "2 points: Displayed in a clear table format and includes all 5 or more key data columns. 1 point: Displayed in table format but includes fewer than 5 key data columns (e.g., missing 2-3 columns). 0 points: Precondition check fails, or output format is unstructured plain text, or missing more than 3 key data columns."
+  },
+  {
+    "metric": "2.4.3 Combo Save Functionality",
+    "description": "1. Precondition Check (User Path): Confirm the candidate combo list can be successfully generated and displayed. 2. Preparation: Within the generated candidate combo list, ensure a combo numbered '1' exists. 3. Execution: Follow prompts to input combo number '1' for saving. 4. Assertion: Verify if the program provides a clear save success prompt, and if the prompt includes the auto-generated combo name (e.g., 'Single Nutritious Combo 1').",
+    "expected_output": "2 points: Can successfully execute the save operation and provide a clear success prompt containing the new combo name. 1 point: Can save, but lacks any prompt, or the prompt message does not include the new combo name. 0 points: Precondition check fails, or the save function is ineffective, or causes a program error during saving."
+  }
+]

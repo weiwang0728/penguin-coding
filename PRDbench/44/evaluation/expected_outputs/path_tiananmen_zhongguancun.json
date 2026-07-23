@@ -1,0 +1,32 @@
+{
+  "query": {
+    "start_station": "Tiananmen East",
+    "end_station": "Zhongguancun"
+  },
+  "result": {
+    "path": [
+      "Tiananmen East",
+      "Tiananmen West",
+      "Xidan",
+      "Lingjing Hutong",
+      "Xisi",
+      "Ping'anli",
+      "Xinjiekou",
+      "Xizhimen",
+      "Dazhongsi",
+      "Renmin University",
+      "Haidian Huangzhuang",
+      "Zhongguancun"
+    ],
+    "total_distance": 13771,
+    "fare": 5,
+    "estimated_time": 41,
+    "transfer_count": 4,
+    "lines_involved": [
+      "Line 12",
+      "Line 4",
+      "Line 13",
+      "Line 1"
+    ]
+  }
+}

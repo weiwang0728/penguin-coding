@@ -1,0 +1,7 @@
+dish_id,ingredient_name,quantity,unit,cost_per_unit,allergen
+1,Beef,0.5,kg,80,
+1,Chili,0.05,kg,15,
+1,Spices,0.02,kg,50,
+2,Tofu,0.4,kg,8,Soybean
+2,Minced Beef,0.05,kg,80,
+2,Doubanjiang,0.03,kg,25,Soybean

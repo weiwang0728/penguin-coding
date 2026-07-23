@@ -1,0 +1,16 @@
+1
+evaluation/sample_data.csv
+
+2
+SELECT Ticker FROM df LIMIT 1
+y
+
+2
+SELECT CompanyName FROM df LIMIT 1
+y
+
+5
+2
+y
+
+6

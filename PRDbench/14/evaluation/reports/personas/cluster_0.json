@@ -1,0 +1,51 @@
+{
+  "cluster_id": 0,
+  "cluster_name": "Price-Sensitive Vacation Enthusiasts",
+  "sample_count": 5,
+  "demographics": {
+    "gender_distribution": {
+      "Male": 60.0,
+      "Female": 40.0
+    },
+    "age_group_distribution": {
+      "30-40 years old": 60.0,
+      "40-50 years old": 20.0,
+      "20-30 years old": 20.0
+    },
+    "dominant_age_group": "30-40 years old"
+  },
+  "motivations": {
+    "price_sensitivity": {
+      "average_score": 2.8,
+      "description": "Moderate price sensitivity, more focused on value matching"
+    },
+    "satisfaction_level": {
+      "average_score": 3.6,
+      "description": "Overall satisfaction is high, with certain requirements for service quality"
+    },
+    "amenities_importance": {
+      "average_score": 3.6,
+      "description": "Values supporting facilities and expects a complete service experience"
+    }
+  },
+  "consumption_patterns": {
+    "frequency_distribution": {
+      "Once a month": 40.0,
+      "Once a year": 40.0,
+      "Once a quarter": 20.0
+    },
+    "dominant_frequency": "Once a year",
+    "spending_behavior": "Low consumption frequency, but high expectations for each visit"
+  },
+  "venue_preferences": {
+    "preferred_venue_distribution": {
+      "Membership golf course": 40.0,
+      "Resort": 20.0,
+      "Public course": 20.0,
+      "Practice range": 20.0
+    },
+    "dominant_preference": "Membership golf course",
+    "preference_description": "Prefers membership golf courses and other professional venues, pursuing professional and private experiences"
+  },
+  "persona_summary": "This user group is mainly composed of young and middle-aged people aged 30-40, with a male majority. They are relatively price-sensitive, but also place great importance on the completeness of supporting facilities. Their consumption frequency is primarily once a month, and they prefer resort-type golf venues, pursuing a comprehensive leisure vacation experience. They are rational consumers who consider cost-effectiveness while pursuing quality."
+}

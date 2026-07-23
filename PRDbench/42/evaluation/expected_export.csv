@@ -1,0 +1,9 @@
+SurveyID,Respondent,Department,Position,ManagementLevel,LeadershipMotivationSkills,PlanningOrganizationCoordinationSkills,DecisionInnovationSkills,ProfessionalControlSkills,CreatedTime
+CLIImport_20240115_120000,Zhang San,Technical Dept,Department Manager,Middle,4.2,4.0,3.8,4.5,2024-01-15 12:00:00
+CLIImport_20240115_120000,Li Si,Marketing Dept,Project Manager,Junior,3.5,3.8,4.0,3.2,2024-01-15 12:00:00
+CLIImport_20240115_120000,Wang Wu,HR Dept,Team Leader,Senior,4.8,4.5,4.2,4.0,2024-01-15 12:00:00
+CLIImport_20240115_120000,Zhao Liu,Finance Dept,Department Manager,Middle,3.8,4.2,3.5,4.1,2024-01-15 12:00:00
+CLIImport_20240115_120000,Qian Qi,Technical Dept,Project Manager,Junior,3.2,3.5,3.8,3.6,2024-01-15 12:00:00
+CLIImport_20240115_120000,Sun Ba,Marketing Dept,Team Leader,Middle,4.1,3.9,4.3,3.7,2024-01-15 12:00:00
+CLIImport_20240115_120000,Zhou Jiu,HR Dept,Department Manager,Senior,4.6,4.3,4.1,4.2,2024-01-15 12:00:00
+CLIImport_20240115_120000,Wu Shi,Finance Dept,Project Manager,Junior,3.4,3.7,3.3,3.9,2024-01-15 12:00:00

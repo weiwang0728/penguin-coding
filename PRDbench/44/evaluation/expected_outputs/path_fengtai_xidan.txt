@@ -1,0 +1,13 @@
+
+--- Path Query Result ---
+Start Station: Fengtai East Street
+End Station: Xidan
+
+Detailed Path:
+  Line 9: Fengtai East Street → Qilizhuang → Liuliqiao → Liuliqiao East → Beijing West Railway Station → Military Museum [Transfer Station]
+  Line 1: Military Museum → Muxidi → Nanlishilu → Fuxingmen → Xidan
+
+Total Distance: 11451 meters (11.45 km)
+Estimated Fare: 4 yuan
+Estimated Travel Time: 22 minutes
+Transfer Count: 1 time

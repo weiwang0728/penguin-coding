@@ -1,0 +1,11 @@
+﻿id,collector,location,created_at,price_influence,satisfaction,amenities_importance,gender,age_group,frequency,preferred_venue,Factor_1,Factor_2
+1,Zhang San,Sanya,2023-10-01,3,4,5,Male,30-40 years old,Once a month,Resort,-0.5584625648302777,-0.44342087402053926
+2,Li Si,Kunming,2023-10-02,2,5,4,Female,20-30 years old,Once a quarter,Practice course,-0.6146280024780407,0.541203835128794
+3,Wang Wu,Haikou,2023-10-03,4,3,3,Male,40-50 years old,Once a year,Member club,0.5326979927270187,-0.4349770129106923
+4,Zhao Liu,Dali,2023-10-04,5,2,2,Female,30-40 years old,Once a month,Public course,1.2788601769811374,-0.7575560085539055
+5,Sun Qi,Lijiang,2023-10-05,1,5,5,Male,20-30 years old,Once a week,Resort,-1.3284643490061934,0.4327043468502229
+6,Zhou Ba,Xiamen,2023-10-06,3,4,4,Female,40-50 years old,Once a quarter,Practice course,-0.2134641915270999,-0.1123980172674792
+7,Wu Jiu,Qingdao,2023-10-07,2,3,3,Male,30-40 years old,Once a year,Member club,-0.20497795372293107,0.010069724038285491
+8,Zheng Shi,Hangzhou,2023-10-08,4,5,2,Female,20-30 years old,Once a month,Public course,0.8130446905782647,0.7582028116859362
+9,Liu Yi,Chengdu,2023-10-09,5,4,1,Male,40-50 years old,Once a week,Resort,1.559206874832383,0.43562381604272304
+10,Chen Er,Xi'an,2023-10-10,1,3,5,Female,30-40 years old,Once a quarter,Practice course,-1.2638126735542614,-0.4294526209933457

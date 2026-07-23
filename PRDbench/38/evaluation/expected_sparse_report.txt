@@ -1,0 +1,17 @@
+SparseMatrixProcessingReport
+==============================
+GenerateTimeBetween: 2025-08-27
+
+DataSparseRepublicSystemDesign:
+- MatrixSparsityRepublic: 85.2%
+- DataFillRateRate: 78.5% 
+- ColdStartTouchSendRate: 15.3%
+
+ProcessingDetails:
+- TotalUserNumber: 100
+- TotalProductBrandNumber: 50
+- ScoreRecordNumber: 742
+- SparseSingleUnitsNumber: 4258
+
+Recommendation:
+RecommendationIncreasePlusUserLineasReceiveSetByDecreaseLowSparseRepublic

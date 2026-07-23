@@ -1,0 +1,172 @@
+[
+  {
+    "metric": "2.1.1 REPL basic startup functionality: correctly start the interactive environment via command line",
+    "description": "1. **Arrange:** Prepare a terminal or command line window.\n2. **Act:** Execute the `python src/repl.py` command in the command line.\n3. **Assert:** Observe whether the REPL environment starts successfully and displays the prompt `>`.",
+    "expected_output": "2 points: The program starts successfully and displays the correct prompt `>`. 1 point: The program starts but the prompt is not `>` or it displays abnormally. 0 points: The program fails to start or crashes immediately upon startup."
+  },
+  {
+    "metric": "2.1.2 REPL read-only mode: support starting read-only mode via parameter",
+    "description": "1. **Arrange:** Prepare a terminal or command line window.\n2. **Act:** Execute the `python src/repl.py --read` command in the command line.\n3. **Assert:** Observe whether the read-only mode starts successfully, and whether the parsed result is shown instead of the executed result when entering expressions.",
+    "expected_output": "2 points: Successfully starts read-only mode and correctly displays the parsed result of the expression. 1 point: Able to start read-only mode but parsed result is incomplete or has errors. 0 points: Unable to recognize the --read parameter or read-only mode is unavailable."
+  },
+  {
+    "metric": "2.1.3a REPL exit functionality: support exiting the program via Ctrl+C",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Press the Ctrl+C key combination.\n3. **Assert:** Observe whether the program exits normally without error messages.",
+    "expected_output": "2 points: The program exits immediately and normally after pressing Ctrl+C. 1 point: Multiple Ctrl+C presses are needed to exit or error messages appear upon exiting. 0 points: Ctrl+C cannot exit the program."
+  },
+  {
+    "metric": "2.1.3b REPL exit functionality: support exiting the program via Ctrl+D",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Press the Ctrl+D key combination.\n3. **Assert:** Observe whether the program exits normally without error messages.",
+    "expected_output": "2 points: The program exits immediately and normally after pressing Ctrl+D. 1 point: Multiple Ctrl+D presses are needed to exit or error messages appear upon exiting. 0 points: Ctrl+D cannot exit the program."
+  },
+  {
+    "metric": "2.2.1a Lexical analysis number support: integer recognition",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter the integer expressions `42` and `-7` consecutively.\n3. **Assert:** Verify whether the interpreter can correctly recognize and return these integer values.",
+    "expected_output": "2 points: Correctly recognizes and returns all tested integers, including negative numbers. 1 point: Only recognizes positive integers or has recognition errors. 0 points: Unable to recognize integers at all."
+  },
+  {
+    "metric": "2.2.1b Lexical analysis number support: floating point recognition",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter the floating point expressions `3.14` and `-0.5` consecutively.\n3. **Assert:** Verify whether the interpreter can correctly recognize and return these floating point values.",
+    "expected_output": "2 points: Correctly recognizes and returns all tested floating point numbers, including negatives. 1 point: Only recognizes certain forms of floating point numbers or has recognition errors. 0 points: Unable to recognize floating point numbers at all."
+  },
+  {
+    "metric": "2.2.2a Lexical analysis identifier support: ordinary variable name recognition",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter ordinary identifiers such as `x`, `var1`, etc.\n3. **Assert:** Observe whether the interpreter can correctly recognize these identifiers (it may prompt undefined, but should recognize them as identifiers).",
+    "expected_output": "2 points: Correctly recognizes all ordinary variable names. 1 point: Recognizes some variable names, but certain cases have errors. 0 points: Cannot correctly recognize ordinary variable names."
+  },
+  {
+    "metric": "2.2.2b Lexical analysis identifier support: identifiers starting with underscore",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter identifiers starting with underscore such as `_y`, `_var2`, etc.\n3. **Assert:** Observe whether the interpreter can correctly recognize these identifiers.",
+    "expected_output": "2 points: Correctly recognizes all identifiers starting with underscore. 1 point: Recognizes some but certain cases have errors. 0 points: Unable to recognize identifiers starting with underscore."
+  },
+  {
+    "metric": "2.2.3 Lexical analysis error handling: provide detailed syntax error messages",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter illegal characters such as `@#$` or unclosed parentheses such as `(1+2`.\n3. **Assert:** Observe whether error messages are provided indicating the error location and specific reason.",
+    "expected_output": "2 points: Error messages include specific error location (such as line number or character position) and a clear reason explanation. 1 point: Error message is provided but lacks location information or the reason is unclear. 0 points: No error message provided or program crashes directly."
+  },
+  {
+    "metric": "2.3.1a Syntax analysis basic expression: numeric literal",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter numeric literals such as `42` and `3.14`.\n3. **Assert:** Verify whether the interpreter can correctly parse and return these numeric values.",
+    "expected_output": "2 points: Correctly parses and returns all tested numeric literals. 1 point: Only parses certain numerical forms or has parsing errors. 0 points: Unable to correctly parse numeric literals."
+  },
+  {
+    "metric": "2.3.1b Syntax analysis basic expression: name expression",
+    "description": "1. **Arrange:** Start the REPL environment and define variables (for example, via lambda expression or built-in function).\n2. **Act:** Enter the defined variable name.\n3. **Assert:** Verify whether the interpreter can correctly parse the name expression and return the corresponding value.",
+    "expected_output": "2 points: Correctly parses the name expression and returns the variable value. 1 point: Recognizes the variable name but the returned value is incorrect. 0 points: Unable to parse name expressions at all."
+  },
+  {
+    "metric": "2.3.2a Syntax analysis call expression: basic function call",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter a basic function call such as `add(1, 2)`.\n3. **Assert:** Verify whether the interpreter can correctly parse and execute the function call.",
+    "expected_output": "2 points: Correctly parses and executes basic function calls. 1 point: Parses but executes incorrectly or format requirements are too strict. 0 points: Unable to parse basic function calls."
+  },
+  {
+    "metric": "2.3.2b Syntax analysis call expression: nested function calls",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter nested function calls such as `mul(add(1, 2), 3)`.\n3. **Assert:** Verify whether the interpreter can correctly parse and execute nested function calls.",
+    "expected_output": "2 points: Correctly parses and executes nested function calls of various complexity. 1 point: Can parse simple nesting but fails with more complex nesting. 0 points: Unable to parse nested function calls at all."
+  },
+  {
+    "metric": "2.3.3a Syntax analysis lambda expression: parameterless lambda",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter a parameterless lambda expression such as `lambda: 42`.\n3. **Assert:** Verify whether the interpreter can correctly parse the lambda expression.",
+    "expected_output": "2 points: Correctly parses parameterless lambda expression. 1 point: Parsing has minor errors or requires specific format. 0 points: Unable to parse parameterless lambda expression."
+  },
+  {
+    "metric": "2.3.3b Syntax analysis lambda expression: lambda with parameters",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter a lambda expression with parameters such as `lambda x: add(x, 1)`.\n3. **Assert:** Verify whether the interpreter can correctly parse the lambda expression.",
+    "expected_output": "2 points: Correctly parses lambda expression with parameters. 1 point: Parsing has minor errors or requires specific format. 0 points: Unable to parse lambda expression with parameters."
+  },
+  {
+    "metric": "2.4.1a Expression evaluation basic operations: addition and subtraction",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter expressions `add(1, 2)` and `sub(10, 5)`.\n3. **Assert:** Verify whether the calculation results are 3 and 5, respectively.",
+    "expected_output": "2 points: Both addition and subtraction operations calculate correctly. 1 point: Only one operation calculates correctly. 0 points: Both operations are calculated incorrectly."
+  },
+  {
+    "metric": "2.4.1b Expression evaluation basic operations: multiplication and division",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter expressions `mul(3, 4)` and `truediv(10, 2)`.\n3. **Assert:** Verify whether the calculation result are 12 and 5, respectively.",
+    "expected_output": "2 points: Both multiplication and division operations calculate correctly. 1 point: Only one operation calculates correctly. 0 points: Both operations are calculated incorrectly."
+  },
+  {
+    "metric": "2.4.2a Expression evaluation complex operation: nested function calls",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter a nested expression like `add(mul(2, 3), truediv(8, 4))`.\n3. **Assert:** Verify whether the calculation result is 8 (i.e. 6+2).",
+    "expected_output": "2 points: Correctly executes three or deeper levels of nested calls. 1 point: Can execute two-level nesting but fails on more complex nesting. 0 points: Cannot handle any nested calls."
+  },
+  {
+    "metric": "2.4.2b Expression evaluation complex operation: multi-argument function calls",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter multi-argument function call like `max(1, 2, 3, 4, 5)`.\n3. **Assert:** Verify whether the result is 5.",
+    "expected_output": "2 points: Correctly executes function calls with 3 or more arguments. 1 point: Only able to handle function calls with 2 arguments. 0 points: Unable to handle multi-argument function calls."
+  },
+  {
+    "metric": "2.4.3a Expression evaluation error handling: type error handling",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter a type error expression such as `add(1, lambda: 42)`.\n3. **Assert:** Verify whether clear error information indicating type mismatch is provided.",
+    "expected_output": "2 points: Provides detailed type error information, including expected type and actual type. 1 point: Indicates type error but not detailed. 0 points: Does not report type error or crashes directly."
+  },
+  {
+    "metric": "2.4.3b Expression evaluation error handling: undefined variable handling",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Enter expressions that reference undefined variables such as `x` or `add(x, 1)`.\n3. **Assert:** Verify whether clear error messages indicating undefined variable are provided.",
+    "expected_output": "2 points: Provides detailed undefined variable error information, including the variable name. 1 point: Indicates undefined variable but not detailed. 0 points: Does not report undefined error or crashes directly."
+  },
+  {
+    "metric": "2.5.1a Built-in functions basic arithmetic: addition, subtraction, multiplication and division",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Test `add(5, 3)`, `sub(5, 3)`, `mul(5, 3)`, and `truediv(6, 3)` one by one.\n3. **Assert:** Verify whether the calculation result are 8, 2, 15 and 2, respectively.",
+    "expected_output": "2 points: All four basic arithmetic functions return the correct result. 1 point: Two or three functions work normally. 0 points: Only zero or one function works normally."
+  },
+  {
+    "metric": "2.5.1b Built-in functions basic arithmetic: integer division, modulo and power",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Test `floordiv(7, 2)`, `mod(7, 3)` and `pow(2, 3)` one by one.\n3. **Assert:** Verify whether the calculation result are 3, 1 and 8, respectively.",
+    "expected_output": "2 points: All three functions return the correct result. 1 point: One or two functions work normally. 0 points: None of the functions work normally."
+  },
+  {
+    "metric": "2.5.2a Built-in functions advanced arithmetic: absolute value and extreme value",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Test `abs(-5)`, `max(1, 5, 3)` and `min(1, 5, 3)` one by one.\n3. **Assert:** Verify whether the calculation result are 5, 5 and 1, respectively.",
+    "expected_output": "2 points: All three functions return the correct result. 1 point: One or two functions work normally. 0 points: None of the functions work normally."
+  },
+  {
+    "metric": "2.5.2b Built-in functions advanced arithmetic: type conversion",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Test `int(3.14)` and `float(42)` one by one.\n3. **Assert:** Verify whether the calculation result are 3 and 42.0, respectively.",
+    "expected_output": "2 points: Both type conversion functions return correct results. 1 point: Only one function works normally. 0 points: Neither function works normally."
+  },
+  {
+    "metric": "2.6.1a Lambda expressions basic definition: parameterless lambda",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Define and call a parameterless Lambda: `(lambda: 42)()`.\n3. **Assert:** Verify whether the returned result is 42.",
+    "expected_output": "2 points: Can correctly define and call parameterless lambda. 1 point: Definition is correct but there are issues with calling. 0 points: Cannot define or call parameterless lambda."
+  },
+  {
+    "metric": "2.6.1b Lambda expressions basic definition: single-parameter lambda",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Define and call a single-parameter lambda: `(lambda x: add(x, 1))(5)`.\n3. **Assert:** Verify whether the returned result is 6.",
+    "expected_output": "2 points: Can correctly define and call single-parameter lambda. 1 point: Definition is correct but there are issues with calling. 0 points: Cannot define or call single-parameter lambda."
+  },
+  {
+    "metric": "2.6.2 Lambda expressions multiple parameters: support multi-parameter lambda definition",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Define and call multi-parameter lambda: `(lambda x, y: add(x, y))(3, 4)`.\n3. **Assert:** Verify whether the returned result is 7.",
+    "expected_output": "2 points: Able to correctly define and call lambda functions with 2 or more parameters. 1 point: Syntax is supported but argument handling has issues. 0 points: Does not support multi-parameter lambda functions."
+  },
+  {
+    "metric": "2.6.3 Lambda expression closure feature: support capturing external environment variables",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Define a nested lambda that uses an external variable: `(lambda x: (lambda y: add(x, y)))(5)(3)`.\n3. **Assert:** Verify whether the returned result is 8, demonstrating that the inner lambda correctly captures the outer lambda's parameter x.",
+    "expected_output": "2 points: Fully supports closure, able to correctly capture and use external variables. 1 point: Simple closures work but complex closures have issues. 0 points: Does not support closures or implementation is severely flawed."
+  },
+  {
+    "metric": "2.6.4a Lambda expression higher-order function: function as argument",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Test function as argument: `(lambda f, x: f(x))(lambda y: add(y, 1), 5)`.\n3. **Assert:** Verify whether the returned result is 6.",
+    "expected_output": "2 points: Fully supports passing functions as arguments. 1 point: Simple cases work, but complex cases have issues. 0 points: Does not support functions as arguments."
+  },
+  {
+    "metric": "2.6.4b Lambda expression higher-order function: function as return value",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Test function as return value: `(lambda x: lambda y: add(x, y))(5)(3)`.\n3. **Assert:** Verify whether the returned result is 8.",
+    "expected_output": "2 points: Fully supports returning functions as return value. 1 point: Simple cases work, but complex cases have issues. 0 points: Does not support functions as return value."
+  },
+  {
+    "metric": "3.1 Friendly error messages: provide error messages in Chinese",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Intentionally enter various erroneous expressions, such as unclosed parentheses, undefined variable, type error, etc.\n3. **Assert:** Verify whether the error messages are in Chinese and clearly instructive.",
+    "expected_output": "2 points: All tested error cases (at least 5 types) provide clear error messages in Chinese. 1 point: Some error messages are in Chinese or are not clear enough (2-4 types). 0 points: Error messages are all in English or not instructive (0-1 type in Chinese)."
+  },
+  {
+    "metric": "3.2 Formatted output: formatted display of results and error information",
+    "description": "1. **Arrange:** Start the REPL environment.\n2. **Act:** Execute various correct expressions and error operations, observe output format.\n3. **Assert:** Verify whether the output is standardized, consistent, and easy to read.",
+    "expected_output": "2 points: All outputs have a consistent format, are clear and easy to read. Error messages are distinctly separated from normal output. 1 point: Output is basically readable but format is inconsistent or not aesthetic. 0 points: Output is messy and hard to read."
+  },
+  {
+    "metric": "3.3 Debug mode: support viewing Python representation of the expression",
+    "description": "1. **Arrange:** Start the REPL in read-only mode: `python src/repl.py --read`.\n2. **Act:** Enter a complex expression such as `lambda x: add(mul(x, 2), 3)`.\n3. **Assert:** Verify whether the Python internal representation of the expression is displayed.",
+    "expected_output": "2 points: Read-only mode fully displays the Python representation of the expression, including all syntax structures and nesting relationships. 1 point: Displays part of the representation, but information is incomplete. 0 points: Does not provide expression's Python representation function."
+  }
+]

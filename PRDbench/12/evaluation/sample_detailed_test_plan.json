@@ -1,0 +1,289 @@
+[
+    {
+      "metric": "0.1.1 Environment and Documentation: Provide clear documentation (README.md)",
+      "description": "1. **Assert**: Check if `README.md` file exists in the project root directory.\n2. **Assert**: If the file exists, read its content and verify it contains at least three clear sections: project introduction, environment setup instructions (how to install dependencies), program launch instructions.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": null,
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "README.md file exists, read its content, verify it contains at least three clear sections: project introduction, environment setup instructions (how to install dependencies), program launch instructions."
+    },
+    {
+      "metric": "0.2.1 Program Runnability: Program can successfully start and display main menu",
+      "description": "1. **Execute**: Execute the program according to the launch instructions in `README.md` (e.g., `python main.py`).\n2. **Assert**: Observe program output, verify it successfully starts and displays an interactive main menu with multiple options.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_0.2.1.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program successfully starts and displays a clear main menu with options including 'Create/Edit Requirement Template', 'Generate Product PRD Based on Template', and 'Exit Tool'"
+    },
+    {
+      "metric": "2.1.1 Template Creation - Basic Information Input",
+      "description": "1. **Pre-check (User Path):** Select '1. Create/Edit Requirement Template' option in main menu, can it enter template creation process?\n2. **Arrange:** Prepare product name \"Test Product\" and target users \"Young Users\".\n3. **Act:** In template creation process, enter product name and target users in sequence.\n4. **Assert:** Does the program correctly receive and save this information?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.1.1.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly receive and save product name and target user information"
+    },
+    {
+      "metric": "2.1.2 Template Creation - Style Keyword Input",
+      "description": "1. **Pre-check (User Path):** In template creation process, is there a step to input style keywords?\n2. **Arrange:** Prepare style keywords \"Minimalism, Modern\".\n3. **Act:** Input style keywords as prompted.\n4. **Assert:** Does the program correctly parse and save these keywords?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.1.2.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly parse and save multiple style keywords"
+    },
+    {
+      "metric": "2.1.3 Template Creation - Color Emotion Preference Selection",
+      "description": "1. **Pre-check (User Path):** In template creation process, is there a step to select color emotion preference?\n2. **Arrange:** Prepare selection \"Cool Tone - Professional\" (corresponds to option 1).\n3. **Act:** Select color emotion preference as prompted.\n4. **Assert:** Does the program correctly save the selected color emotion preference?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.1.3.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly save color emotion preference selection"
+    },
+    {
+      "metric": "2.1.4 Template Save - Naming and Overwrite Confirmation",
+      "description": "1. **Pre-check (User Path):** After template creation, is there a step to save the template?\n2. **Arrange:** Prepare template name \"test_template\".\n3. **Act:** Input template name, and choose whether to overwrite if template already exists.\n4. **Assert:** Does the program correctly save the template and create corresponding files in the file system?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.1.4.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly save template and create file at specified path"
+    },
+    {
+      "metric": "2.1.5 Template Validation - Required Field Check",
+      "description": "1. **Arrange:** Create a template missing required fields (e.g., not entering product name).\n2. **Act:** Try to save this template.\n3. **Assert:** Does the program refuse to save and prompt that the corresponding field cannot be empty?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.1.5.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly identify missing required fields and provide clear prompts"
+    },
+    {
+      "metric": "2.1.6 Template File Format Validation",
+      "description": "1. **Arrange:** Create and save a template.\n2. **Act:** Open the saved template file with a text editor.\n3. **Assert:** Verify the file is in valid JSON format and contains all input field information.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/main.py\n1\nTest Product\nYoung Users\nMinimalism, Modern\n1\ntest_template_json\ny",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": [
+        "evaluation/expected_template.json"
+      ],
+      "expected_output": "Template file is in valid JSON format, contains all input information"
+    },
+    {
+      "metric": "2.2.1 Image Path Validation",
+      "description": "1. **Pre-check (User Path):** In PRD generation process, is there a step to input image path?\n2. **Arrange:** Prepare a non-existent image path.\n3. **Act:** Input this path.\n4. **Assert:** Can the program correctly identify and reject invalid paths?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.2.1.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly identify valid paths and reject invalid paths"
+    },
+    {
+      "metric": "2.2.2 Image Format Validation",
+      "description": "1. **Pre-check (User Path):** In PRD generation process, does the program validate image format?\n2. **Arrange:** Prepare a TXT file.\n3. **Act:** Try to use this file to generate PRD.\n4. **Assert:** Does the program reject the TXT file?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.2.2.in"
+        }
+      ],
+      "input_files": [
+        "evaluation/Test.txt"
+      ],
+      "expected_output_files": null,
+      "expected_output": "Program can correctly validate image format and reject files that don't meet requirements"
+    },
+    {
+      "metric": "2.2.3 Image Preprocessing - Metadata Cleaning",
+      "description": "1. **Arrange:** Prepare an image with EXIF information.\n2. **Act:** Use this image to generate PRD.\n3. **Assert:** Check if the processed image has EXIF information removed.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "pytest evaluation/tests/test_image_processor.py::test_exif_removal",
+          "test_input": null
+        }
+      ],
+      "input_files": [
+        "evaluation/EXIF.jpg"
+      ],
+      "expected_output_files": null,
+      "expected_output": "Program can pass this unit test"
+    },
+    {
+      "metric": "2.3.1 Dominant Color Extraction Accuracy",
+      "description": "1. **Arrange:** Prepare multiple images with different colors but obvious dominant colors.\n2. **Act:** Use these images to generate PRD.\n3. **Assert:** Check if the dominant color information in the PRD document accurately reflects the main colors of the images.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "pytest evaluation/tests/test_feature_extractor.py::test_dominant_colors_extraction",
+          "test_input": null
+        }
+      ],
+      "input_files": [
+        "evaluation/Red.jpg",
+        "evaluation/Green.jpg",
+        "evaluation/Yellow.jpg"
+      ],
+      "expected_output_files": null,
+      "expected_output": "Program can pass this unit test"
+    },
+    {
+      "metric": "2.3.2 Texture Feature Recognition Accuracy",
+      "description": "1. **Arrange:** Prepare two images with obvious texture differences (one smooth, one rough).\n2. **Act:** Use these two images to generate PRD separately.\n3. **Assert:** Check if the texture feature labels in the PRD documents match the actual textures of the images.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "pytest evaluation/tests/test_feature_extractor.py::test_texture_extraction",
+          "test_input": null
+        }
+      ],
+      "input_files": [
+        "evaluation/Smooth.jpg",
+        "evaluation/Rough.jpg"
+      ],
+      "expected_output_files": null,
+      "expected_output": "Program can pass this unit test"
+    },
+    {
+      "metric": "2.3.3 Style Description Generation",
+      "description": "1. **Pre-check (User Path):** In PRD generation process, is there a step to input API key?\n2. **Arrange:** Prepare a valid OpenAI API key (or use 'skip' to skip).\n3. **Act:** Input API key (or 'skip') and complete PRD generation.\n4. **Assert:** Check if the PRD document contains style description (or skip explanation).",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.3.3.in"
+        }
+      ],
+      "input_files": [
+        "evaluation/Test.jpeg"
+      ],
+      "expected_output_files": null,
+      "expected_output": "Program can successfully call API to generate style description or correctly handle skip operation"
+    },
+    {
+      "metric": "2.4.1 PRD Document Structure Completeness",
+      "description": "1. **Arrange:** Generate a PRD document.\n2. **Act:** Open the generated document with a text editor.\n3. **Assert:** Verify the document contains the following sections: product overview, image resource specifications, core feature descriptions, development schedule recommendations.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/main.py\n2\n1\nevaluation/Test.jpeg\nskip\ntest_prd",
+          "test_input": null
+        }
+      ],
+      "input_files": [
+        "evaluation/Test.jpeg"
+      ],
+      "expected_output_files": [
+        "evaluation/expected_prd.md"
+      ],
+      "expected_output": "Document structure is complete, contains the following sections: product overview, image resource specifications, core feature descriptions, development schedule recommendations."
+    },
+    {
+      "metric": "2.4.2 Document Output Path and Prompt",
+      "description": "1. **Pre-check (User Path):** In PRD generation process, is there a step to specify document name?\n2. **Arrange:** Prepare document name \"test_prd\".\n3. **Act:** Input document name and complete PRD generation.\n4. **Assert:** Check if the document is saved in src/output directory, and verify if the program displays 'Document generation completed' prompt.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.4.3.in"
+        }
+      ],
+      "input_files": [
+        "evaluation/Test.jpeg"
+      ],
+      "expected_output_files": null,
+      "expected_output": "Document saved to correct path with generation completion prompt"
+    },
+    {
+      "metric": "2.5.1a User Input Validation - Menu Selection Invalid Input",
+      "description": "1. **Arrange:** Prepare negative number as menu option.\n2. **Act:** Input negative number in main menu.\n3. **Assert:** Observe if program can correctly identify and reject invalid numeric input.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.5.1a.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly identify and reject invalid menu option input"
+    },
+    {
+      "metric": "2.5.1b User Input Validation - API Key Format Validation",
+      "description": "1. **Arrange:** Prepare API key with incorrect format (e.g., contains special characters or insufficient length).\n2. **Act:** Input API key with invalid format in PRD generation process.\n3. **Assert:** Observe if program can correctly identify and reject API key input with invalid format.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.5.1b.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Program can correctly identify and reject API key input with incorrect format"
+    },
+    {
+      "metric": "2.5.2 Error Handling and User Prompts",
+      "description": "1. **Arrange:** Prepare some inputs that will cause errors (e.g., non-existent template name).\n2. **Act:** Input these contents in the corresponding steps.\n3. **Assert:** Observe if the program displays error prompts and allows users to re-enter.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/main.py",
+          "test_input": "evaluation/inputs_for_test_2.5.2.in"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "All errors have prompts and support re-entry"
+    }
+  ]

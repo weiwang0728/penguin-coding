@@ -1,0 +1,9 @@
+# Expected chart File placeholder
+# This item(s) File is used to Test chart generation Success ability
+# In actual Test should Check Generate PNG File exists and has reasonable size
+
+Chart type: Descriptive statistical chart
+Expected Content: Contains histogram, box plot, violin plot and other statistical charts
+File format: PNG
+Expected size: > 10KB
+Expected resolution: 300 DPI

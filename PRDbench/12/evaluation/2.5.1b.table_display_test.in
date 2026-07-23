@@ -1,0 +1,5 @@
+1
+show 20
+filter date 2023-01-01 2023-12-31
+show 10
+quit

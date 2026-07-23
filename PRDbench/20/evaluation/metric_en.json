@@ -1,0 +1,122 @@
+[
+  {
+    "metric": "1.1 Program Startup and Main Menu Display",
+    "description": "1. **Act:** Execute `python main.py` in the command line to start the program.\n2. **Assert:** Check whether the program starts successfully and displays a clear menu with at least 5 main functional options (such as Certificate Management, User Management, CRL Management, System Configuration, Exit Program).",
+    "expected_output": "2 points: Program starts successfully and main menu displays 5 or more clear, functional options, interface is tidy and without garbled text. 1 point: Program starts, but menu options are fewer than 5 or the interface is unclear. 0 points: Program fails to start or crashes immediately after starting."
+  },
+  {
+    "metric": "2.1.1a CA Key Pair Generation - 5120-bit RSA Key Generation",
+    "description": "1. **Pre-check (User Path):** Confirm CA key pair generation function is accessible.\n2. **Act:** Perform CA key pair generation operation.\n3. **Assert:** Validate that the generated RSA key length is 5120 bits and check that the public and private key files exist and are correctly formatted.",
+    "expected_output": "2 points: Pre-check passed, 5120-bit RSA key pair generated, file formats correct. 1 point: Pre-check passed, but key length is not 5120 bits or file format is problematic. 0 points: Pre-check failed, or unable to generate valid key pair."
+  },
+  {
+    "metric": "2.1.1b CA Key Pair Generation - PEM Format Storage",
+    "description": "1. **Arrange:** Ensure CA key pair has been generated.\n2. **Act:** Check generated CA public and private key files.\n3. **Assert:** Verify that key files are stored using standard PEM format, with correct header and footer identifiers (e.g., -----BEGIN RSA PRIVATE KEY-----).",
+    "expected_output": "2 points: Key files fully comply with PEM format standards with correct header and footer identifiers. 1 point: Key files are basically in PEM format but have minor formatting issues. 0 points: Key files do not meet PEM format standards."
+  },
+  {
+    "metric": "2.1.2a User Certificate Application - Menu Access Path",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear \"User Certificate Application\" or \"Apply Digital Certificate\" option?\n2. **Act:** Select the corresponding menu option to enter the user certificate application feature.\n3. **Assert:** Check if you can successfully enter the user certificate application interface.",
+    "expected_output": "2 points: Pre-check passed, clear menu path allows access to the user certificate application feature. 1 point: Pre-check passed, but menu option naming is not clear enough. 0 points: Pre-check failed, unable to access this feature via the menu."
+  },
+  {
+    "metric": "2.1.2b User Certificate Application - Digital Certificate Generation",
+    "description": "1. **Arrange:** Ensure user information is correctly entered and CA key pair exists.\n2. **Act:** Complete the user certificate application process.\n3. **Assert:** Verify if a digital certificate file containing user identity information is successfully generated, the certificate format is correct and includes validity period.",
+    "expected_output": "2 points: Digital certificate for user generated successfully, containing complete identity information and validity period. 1 point: Certificate file generated, but information is incomplete or format has issues. 0 points: Failed to generate valid user digital certificate."
+  },
+  {
+    "metric": "2.2.1a Identity Authentication Verification - Menu Access Path",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear \"Identity Authentication\" or \"Certificate Verification\" option?\n2. **Act:** Select the corresponding menu option to enter the identity authentication feature.\n3. **Assert:** Check if you can successfully enter the identity authentication interaction interface.",
+    "expected_output": "2 points: Pre-check passed, clear menu path allows access to identity authentication feature. 1 point: Pre-check passed, but menu option naming is not clear enough. 0 points: Pre-check failed, unable to access this feature via the menu."
+  },
+  {
+    "metric": "2.2.1b Identity Authentication Verification - Certificate Existence Verification",
+    "description": "1. **Pre-check (User Path):** Confirm identity authentication feature is accessible.\n2. **Arrange:** Prepare a valid user certificate file and a non-existent certificate file name.\n3. **Act:** Verify certificates that exist or do not exist respectively.\n4. **Assert:** Validate that the system can correctly identify whether the certificate file exists and gives appropriate prompts.",
+    "expected_output": "2 points: Pre-check passed, accurate detection of certificate existence, correct feedback for both cases. 1 point: Pre-check passed, but existence detection is not accurate enough or feedback is unclear. 0 points: Pre-check failed or unable to accurately detect certificate existence."
+  },
+  {
+    "metric": "2.2.1c Identity Authentication Verification - Certificate Validity Period Verification",
+    "description": "1. **Arrange:** Prepare a certificate within its validity period and an expired certificate (if possible).\n2. **Act:** Verify certificates with different validity statuses.\n3. **Assert:** Validate the system can correctly check certificate validity period and gives warnings for expired certificates.",
+    "expected_output": "2 points: Accurately checks certificate validity period, correct judgments for valid and expired certificates. 1 point: Validity period checking possible, but logic is not perfect. 0 points: Unable to correctly check certificate validity period."
+  },
+  {
+    "metric": "2.3.1a Certificate Revocation Management - Menu Access Path",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear \"Certificate Revocation\" or \"Revoke Certificate\" option?\n2. **Act:** Select the corresponding menu option to enter the certificate revocation feature.\n3. **Assert:** Check if you can successfully enter the certificate revocation interface.",
+    "expected_output": "2 points: Pre-check passed, clear menu path allows access to certificate revocation feature. 1 point: Pre-check passed, but menu option naming is not clear enough. 0 points: Pre-check failed, unable to access this feature via the menu."
+  },
+  {
+    "metric": "2.3.1b Certificate Revocation Management - Revocation Application Handling",
+    "description": "1. **Pre-check (User Path):** Confirm certificate revocation feature is accessible.\n2. **Arrange:** Prepare a valid user certificate and revocation reason.\n3. **Act:** Submit a certificate revocation application and enter the reason for revocation.\n4. **Assert:** Validate that the system correctly receives the revocation application and records the reason and timestamp.",
+    "expected_output": "2 points: Pre-check passed, and revocation application is fully processed, reason and timestamp are recorded. 1 point: Pre-check passed, but revocation application handling is incomplete or information is missing. 0 points: Pre-check failed or unable to properly process revocation application."
+  },
+  {
+    "metric": "2.4.1a File Encryption Feature - Menu Access Path",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear \"File Encryption\" option?\n2. **Act:** Select the corresponding menu option to enter the file encryption feature.\n3. **Assert:** Check if you can successfully enter the file encryption interface.",
+    "expected_output": "2 points: Pre-check passed, clear menu path allows access to file encryption feature. 1 point: Pre-check passed, but menu option naming is not clear enough. 0 points: Pre-check failed, unable to access this feature via the menu."
+  },
+  {
+    "metric": "2.4.1b File Encryption Feature - File Path Validation",
+    "description": "1. **Pre-check (User Path):** Confirm file encryption feature is accessible.\n2. **Arrange:** Prepare one existing file path and one non-existent file path.\n3. **Act:** Enter both valid and invalid file paths respectively.\n4. **Assert:** Validate the system can correctly check the validity of file paths and gives error messages for invalid paths.",
+    "expected_output": "2 points: Pre-check passed, and accurately checks file path validity, correct feedback for both valid and invalid paths. 1 point: Pre-check passed, but validation not strict or feedback unclear. 0 points: Pre-check failed or unable to correctly validate file paths."
+  },
+  {
+    "metric": "2.4.1c File Encryption Feature - RSA Encryption and Storage",
+    "description": "1. **Arrange:** Prepare a small file (e.g., text file) and a valid user public key.\n2. **Act:** Use the user's public key to perform RSA encryption on the file.\n3. **Assert:** Validate the encryption process completes normally and an encrypted file is generated. Also verify the encrypted file is stored correctly and integrity is ensured.",
+    "expected_output": "2 points: Successfully encrypts file using RSA algorithm, encrypted file is valid. 1 point: Encryption can be performed, but process or result has issues. 0 points: Unable to correctly perform RSA encryption."
+  },
+  {
+    "metric": "2.5.1a File Decryption Feature - Menu Access Path",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear \"File Decryption\" option?\n2. **Act:** Select the corresponding menu option to enter the file decryption feature.\n3. **Assert:** Check if you can successfully enter the file decryption interface.",
+    "expected_output": "2 points: Pre-check passed, clear menu path allows access to file decryption feature. 1 point: Pre-check passed, but menu option naming is not clear enough. 0 points: Pre-check failed, unable to access this feature via the menu."
+  },
+  {
+    "metric": "2.5.1d File Decryption Feature - RSA Decryption Processing",
+    "description": "1. **Arrange:** Prepare an encrypted file and the corresponding user private key.\n2. **Act:** Use the user's private key to perform RSA decryption on the encrypted file.\n3. **Assert:** Validate that decryption is completed normally and original file content is restored.",
+    "expected_output": "2 points: Successfully decrypts file using RSA algorithm and fully restores original file content. 1 point: Decryption operation can be performed, but result has issues or is incomplete. 0 points: Unable to correctly perform RSA decryption."
+  },
+  {
+    "metric": "2.5.1c File Decryption Feature - Private Key Acquisition and Validation",
+    "description": "1. **Arrange:** Prepare user's private key file path.\n2. **Act:** System reads and validates the user's private key file.\n3. **Assert:** Validate that system can correctly read the private key file and verify its format and integrity.",
+    "expected_output": "2 points: Can correctly read and validate private key file, ensuring format is correct and integrity is intact. 1 point: Can read private key file, but validation mechanism is not perfect. 0 points: Unable to correctly read or validate private key file."
+  },
+  {
+    "metric": "2.6.1a Security Protection - Replay Attack Prevention",
+    "description": "1. **Arrange:** Prepare the same operation request data.\n2. **Act:** Send the same operation request repeatedly within a short period.\n3. **Assert:** Validate system can detect and block replay attacks using timestamp verification mechanism to prevent duplicate actions.",
+    "expected_output": "2 points: System effectively detects and rejects replay attacks, timestamp verification mechanism is perfect. 1 point: System has basic replay attack protection, but mechanism is not complete. 0 points: System lacks replay attack protection mechanism."
+  },
+  {
+    "metric": "2.6.1b Security Protection - Birthday Attack Prevention",
+    "description": "1. **Act:** Check the system's generated key length and randomness.\n2. **Assert:** Validate system uses 5120-bit RSA keys, key space is large enough to effectively defend against birthday attacks.",
+    "expected_output": "2 points: Uses 5120-bit RSA keys, key space large enough, effectively defends against birthday attacks. 1 point: Key length is sufficient, but randomness checking is incomplete. 0 points: Key length is insufficient or lacks birthday attack protection."
+  },
+  {
+    "metric": "2.6.1c Security Protection - Dictionary Attack Prevention",
+    "description": "1. **Act:** Check the system's requirements for key complexity and validation mechanism.\n2. **Assert:** Validate system can enforce sufficiently complex keys and has ability to detect dictionary attacks.",
+    "expected_output": "2 points: System enforces complex keys, has complete dictionary attack detection and prevention mechanism. 1 point: System has basic key complexity requirements, but prevention mechanism is not complete. 0 points: System lacks dictionary attack prevention mechanism."
+  },
+  {
+    "metric": "2.7.1a System Monitoring and Logging - Operation Log Recording",
+    "description": "1. **Act:** Perform various system operations (certificate application, verification, revocation etc.).\n2. **Assert:** Validate system records user operation behavior completely, logs include timestamp, operation type, result and other key information.",
+    "expected_output": "2 points: System records all key operations completely, log information is detailed and format is standardized. 1 point: System records main operations, but log information is incomplete or format is not standardized. 0 points: System lacks operation log recording function."
+  },
+  {
+    "metric": "3.1 Technical Implementation - Python Version Compatibility",
+    "description": "1. **Act:** Check system's Python version requirements and dependency package configuration.\n2. **Assert:** Validate system supports Python 3.6+ version, dependencies are correctly and fully configured.",
+    "expected_output": "2 points: System fully supports Python 3.6+, dependencies fully configured and versions compatible. 1 point: System basically supports required Python version, but dependency configuration has minor issues. 0 points: System does not support required Python version or dependency configuration is wrong."
+  },
+  {
+    "metric": "3.2 Technical Implementation - Encryption Library Usage",
+    "description": "1. **Act:** Check the encryption libraries used by the system (such as rsa, cryptography, etc.).\n2. **Assert:** Validate system correctly uses standard encryption libraries to implement RSA encryption, hash algorithms, etc.",
+    "expected_output": "2 points: Correct use of standard encryption libraries, encryption functions implemented fully and securely. 1 point: Uses encryption libraries, but implementation is not comprehensive or has security risks. 0 points: Does not correctly use standard encryption libraries or encryption implementation is seriously problematic."
+  },
+  {
+    "metric": "4.1 Data Storage - File Structure Organization",
+    "description": "1. **Act:** Check the file storage structure of the system.\n2. **Assert:** Validate system organizes file structure according to standards, includes necessary directories such as data, logs, config, and files are reasonably classified.",
+    "expected_output": "2 points: File structure fully meets specifications, directories are well organized, file classification is clear. 1 point: File structure is basically reasonable, but has minor organization issues. 0 points: File structure is chaotic and does not meet requirements."
+  },
+  {
+    "metric": "4.2 Data Storage - File Format Standards",
+    "description": "1. **Act:** Check formats of generated key, certificate and related files.\n2. **Assert:** Validate all files comply with relevant standard formats (PEM, X.509 etc.).",
+    "expected_output": "2 points: All files fully comply with relevant standard formats, format is standardized and highly compatible. 1 point: Files basically meet standard formats, but have minor formatting issues. 0 points: File format does not meet standards or has serious formatting errors."
+  }
+]

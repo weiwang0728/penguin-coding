@@ -1,0 +1,419 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu Display",
+    "description": "1. **Act:** Execute `python src/main.py` in the command line.\n2. **Assert:** Observe whether the program successfully starts and displays a complete interface containing the \"Business Travel Intelligent Planning System\" title and at least 6 main menu options (Create New Itinerary, Load Saved Itinerary, Use Itinerary Template, View Current Itinerary, System Settings, Exit System).",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Program successfully starts, displays main menu",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_0.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "0.2 Unit Testing: Executable Unit Tests Provided",
+    "description": "1. **Arrange:** Check if test files exist (such as `test_*.py`) in the `tests/` directory.\n2. **Act:** Execute test commands (such as `pytest` or `python -m unittest discover tests`).\n3. **Assert:** Observe test results, verify whether the test framework can run, and whether all discovered test cases show as \"PASSED\".",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All unit tests passed",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_file_export.py",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "1.1 Create New Itinerary Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"Create New Itinerary\" option in the main menu?\n2. **Arrange:** Prepare itinerary name \"Test Itinerary\".\n3. **Act:** Select \"1\", input the prepared itinerary name.\n4. **Assert:** Observe whether the system displays successful creation prompt and automatically jumps to the itinerary planning menu.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully created itinerary and jumped to planning menu",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1a City Input - Valid City Recognition",
+    "description": "1. **Pre-check (User Path):** Is there an \"Add Itinerary Segment\" option in the itinerary planning menu?\n2. **Arrange:** Prepare valid city name list: \"Beijing\", \"Shanghai\", \"Guangzhou\".\n3. **Act:** Select add itinerary segment, sequentially input the prepared city names as departure and arrival cities.\n4. **Assert:** Observe whether the system can correctly recognize and accept all 3 valid city names.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Correctly recognize valid city names",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.1a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1b City Input - Invalid City Verification",
+    "description": "1. **Arrange:** Prepare invalid city name list: \"Non-existent City\", \"XXXX\", \"123\".\n2. **Act:** In the city input process, sequentially input the prepared invalid city names.\n3. **Assert:** Observe whether the system provides clear error prompts for all 3 invalid inputs and requires re-entry.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide error prompts for invalid cities",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.1b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2a Stay Duration Setting - Integer Hour Support",
+    "description": "1. **Arrange:** Prepare integer stay durations: \"24\", \"48\", \"72\".\n2. **Act:** During the process of adding itinerary segments, sequentially input the prepared stay duration values.\n3. **Assert:** Observe whether the system can correctly receive and process all 3 integer hour values.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Correctly process integer hour inputs",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2b Stay Duration Setting - Decimal Hour Support",
+    "description": "1. **Arrange:** Prepare decimal stay durations: \"2.5\", \"4.5\", \"0.5\".\n2. **Act:** In the stay duration input process, sequentially input the prepared decimal values.\n3. **Assert:** Observe whether the system can correctly receive and process all 3 decimal hour values.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Correctly process decimal hour inputs",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.3a Time Window Constraint - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is there a \"2. Set Time Constraints\" option in the itinerary planning menu?\n2. **Arrange:** Ensure at least 1 itinerary segment has been added.\n3. **Act:** Select \"2\" to enter time constraint settings.\n4. **Assert:** Observe whether it can successfully enter the time constraint settings interface and display the existing itinerary segment list.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully entered time constraint settings interface",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.3a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.3b Time Window Constraint - Constraint Setting Function",
+    "description": "1. **Arrange:** Prepare time constraints: earliest arrival \"2024-12-01 09:00\", latest arrival \"2024-12-01 18:00\".\n2. **Act:** Set the prepared time constraints for the added itinerary segment.\n3. **Assert:** Observe whether the system can successfully save constraints and display setup success prompt.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully set time constraints",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.3b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.4a Itinerary Template - Save Function",
+    "description": "1. **Pre-check (User Path):** Is there a function entry to save itinerary as template in the system?\n2. **Arrange:** Create a complete itinerary containing 2 itinerary segments.\n3. **Act:** Find and use template save function, save current itinerary as template.\n4. **Assert:** Observe whether template save success prompt is displayed.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully saved itinerary template",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.4a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.4b Itinerary Template - Load Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"3. Use Itinerary Template\" option in the main menu?\n2. **Arrange:** Ensure at least 1 itinerary template is saved.\n3. **Act:** Select \"3\", choose and load the saved template from template list.\n4. **Assert:** Observe whether it can successfully load template content and jump to itinerary planning menu.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully loaded itinerary template",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.4b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.1a Transportation Data - High-speed Rail Data Display",
+    "description": "1. **Pre-check (User Path):** Is there a \"3. Plan Route\" option in the itinerary planning menu?\n2. **Arrange:** Add Beijing to Shanghai itinerary segment.\n3. **Act:** Select \"3\" to plan route.\n4. **Assert:** Observe whether high-speed rail options are displayed, containing train number, departure time, arrival time, price and at least 4 pieces of information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Display high-speed rail options and complete information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.1a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.1b Transportation Data - Flight Data Display",
+    "description": "1. **Arrange:** Use Beijing to Shanghai itinerary segment.\n2. **Act:** View transportation options in route planning.\n3. **Assert:** Observe whether flight options are displayed, containing flight number, departure time, arrival time, price and at least 4 pieces of information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Display flight options and complete information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.1b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.2a Optimization Target - Time-Optimal Plan",
+    "description": "1. **Arrange:** Prepare itinerary segment containing multiple transportation options.\n2. **Act:** Select \"Time Optimal\" optimization target in route planning.\n3. **Assert:** Observe whether the generated plan prioritizes the route combination with shortest total duration.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide time-optimal plan",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.2a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.2b Optimization Target - Cost-Optimal Plan",
+    "description": "1. **Arrange:** Use the same multi-option itinerary segment.\n2. **Act:** Select \"Cost Optimal\" optimization target in route planning.\n3. **Assert:** Observe whether the generated plan prioritizes the route combination with lowest total cost.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide cost-optimal plan",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.2b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.2c Optimization Target - Balanced Plan",
+    "description": "1. **Arrange:** Use the same multi-option itinerary segment.\n2. **Act:** Select \"Balanced Plan\" optimization target in route planning.\n3. **Assert:** Observe whether the generated plan achieves balance between time and cost, showing clear differences from the previous two plans.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide balanced plan",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.2c.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.3 Transfer Count Limit Setting",
+    "description": "1. **Pre-check (User Path):** Is there a transfer count setting option during route planning process?\n2. **Arrange:** Prepare long-distance itinerary segment requiring multiple transfers.\n3. **Act:** Set maximum transfer count to 1 time, then plan route.\n4. **Assert:** Observe whether all generated route plans comply with the 1 transfer limit.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Comply with transfer count limit",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.1 Itinerary Conflict Detection Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"4. Detect Conflicts\" option in the itinerary planning menu?\n2. **Arrange:** Create itinerary containing time conflicts (such as transfer time less than 60 minutes).\n3. **Act:** Select \"4\" to run conflict detection.\n4. **Assert:** Observe whether the system can identify and report time conflicts, providing conflict location and description information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Detect and report time conflicts",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.2a Hard Conflict Identification - High-speed Rail to Flight",
+    "description": "1. **Arrange:** Create high-speed rail to flight itinerary with transfer time of 60 minutes (less than 90-minute standard).\n2. **Act:** Run conflict detection.\n3. **Assert:** Observe whether the system identifies this as hard conflict and clearly marks conflict type.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Identify high-speed rail to flight hard conflict",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.2a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.2b Hard Conflict Identification - Flight to High-speed Rail",
+    "description": "1. **Arrange:** Create flight to high-speed rail itinerary with transfer time of 60 minutes.\n2. **Act:** Run conflict detection.\n3. **Assert:** Observe whether the system identifies this as hard conflict.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Identify flight to high-speed rail hard conflict",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.2b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.3 Soft Conflict Identification - Insufficient Rest Time",
+    "description": "1. **Arrange:** Create consecutive itineraries with rest time of 2 hours between them (less than 4-hour standard).\n2. **Act:** Run conflict detection.\n3. **Assert:** Observe whether the system identifies this as soft conflict and clearly marks conflict type.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Identify insufficient rest time soft conflict",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.4a Conflict Resolution - Time Adjustment Suggestions",
+    "description": "1. **Arrange:** Use itinerary with detected conflicts.\n2. **Act:** View conflict detection results.\n3. **Assert:** Observe whether the system provides specific time adjustment suggestions (such as changing train/flight).",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide time adjustment suggestions",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.4a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.4b Conflict Resolution - Itinerary Split Suggestions",
+    "description": "1. **Arrange:** Use conflict itinerary requiring splitting.\n2. **Act:** View conflict detection results.\n3. **Assert:** Observe whether the system provides itinerary split suggestions (such as adding intermediate accommodation).",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide itinerary split suggestions",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.4b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.4.1a Decision Analysis - Multi-attribute Evaluation",
+    "description": "1. **Pre-check (User Path):** Is there a \"5. Decision Analysis\" option in the itinerary planning menu?\n2. **Arrange:** Create itinerary containing multiple route plans.\n3. **Act:** Select \"5\" for decision analysis.\n4. **Assert:** Observe whether evaluation results are displayed containing at least 3 dimensions including time efficiency, economic cost, comfort, reliability, transfer convenience.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Display multi-attribute evaluation results",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.4.1a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.4.1b Decision Analysis - Quantitative Scoring",
+    "description": "1. **Arrange:** Use itinerary with multiple plans.\n2. **Act:** View decision analysis results.\n3. **Assert:** Observe whether each evaluation dimension provides quantitative scoring or percentage values.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide quantitative scoring",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.4.1b.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.4.2 Plan Priority Sorting",
+    "description": "1. **Arrange:** Ensure there are more than 3 route plans.\n2. **Act:** View plan sorting in decision analysis.\n3. **Assert:** Observe whether the system performs clear priority sorting for all plans based on comprehensive scoring.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Provide plan priority sorting",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.4.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.5.1 Export Function - Markdown Format",
+    "description": "1. **Pre-check (User Path):** Is there a \"7. Export Itinerary\" option in the itinerary planning menu?\n2. **Arrange:** Create itinerary with complete route.\n3. **Act:** Select \"7\", choose Markdown format export.\n4. **Assert:** Observe whether .md file is successfully generated and contains itinerary timeline and transportation details.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully exported Markdown file",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.5.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.6.1 Input Validation - Menu Selection",
+    "description": "1. **Arrange:** Prepare invalid menu selections: \"9\", \"a\", \"@\" (assuming menu only has 1-6 options).\n2. **Act:** Input prepared invalid selections in main menu.\n3. **Assert:** Observe whether the system provides error prompts for all 3 invalid selections and redisplays menu.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Validate menu selection errors",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.6.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.6.2a Date Format - Standard Format Support",
+    "description": "1. **Arrange:** Prepare standard date formats: \"2024-12-01\", \"2024-12-01 14:30\".\n2. **Act:** Input prepared date formats in time constraint settings.\n3. **Assert:** Observe whether the system can correctly parse and accept all 2 standard formats.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Support standard date format",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.6.2a.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.6.2b Date Format - Relative Date Support",
+    "description": "1. **Arrange:** Prepare relative dates: \"Tomorrow\", \"Day after tomorrow\".\n2. **Act:** Input prepared relative dates during date input process.\n3. **Assert:** Observe whether the system can correctly parse and convert all 2 relative dates to specific dates.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Support relative date format",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.6.2b.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.1.1 Itinerary Save - Save Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"Save Itinerary\" option in itinerary planning menu?\n2. **Arrange:** Create complete itinerary with 2 itinerary segments, prepare file name \"Test Save\".\n3. **Act:** Select \"6\", input prepared file name to save itinerary.\n4. **Assert:** Observe whether save success prompt is displayed.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully saved itinerary",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.1.2 Itinerary Save - Load Verification",
+    "description": "1. **Pre-check (User Path):** Is there a \"Load Saved Itinerary\" option in the main menu?\n2. **Arrange:** Use saved itinerary file.\n3. **Act:** Select \"2\", choose from list and load saved itinerary.\n4. **Assert:** Observe whether loaded itinerary content completely matches when saved.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output": "Successfully loaded itinerary",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1.2.in"
+      }
+    ]
+  }
+]

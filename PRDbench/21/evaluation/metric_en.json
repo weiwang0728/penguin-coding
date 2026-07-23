@@ -1,0 +1,102 @@
+[
+  {
+    "metric": "1.1 Program Startup and Main Interface",
+    "description": "1. **Act:** Execute the program launch command in the command line (such as `python main.py` or `python lottery_system.py`).\n2. **Assert:** Check whether the program starts successfully and displays a clear main menu or help information containing at least three functional options (such as \"Import List\", \"Configure Lottery\", \"Start Lottery\").",
+    "expected_output": "2 points: Program starts successfully and displays a main menu with 3 or more clear functional options. 1 point: Program starts but menu options are less than 3 or unclear. 0 points: Program fails to start or crashes immediately after starting."
+  },
+  {
+    "metric": "2.1.1a Import List - CSV Format Support",
+    "description": "1. **Pre-check (User Path):** Does the main interface have a clear option such as \"Import List\", \"Load Employee Data\", or similar?\n2. **Arrange:** Prepare a standard CSV file containing four fields: Name, Employee ID, Participation Points (integer), and Length of Employment (months), with at least 5 employee records.\n3. **Act:** Select the list import function and specify the prepared CSV file path.\n4. **Assert:** Check whether the program successfully reads the file and displays a confirmation of successful import.",
+    "expected_output": "2 points: Pre-check passes, CSV file can be successfully imported, and confirmation is displayed. 1 point: Pre-check passes, but import has errors or confirmation is unclear. 0 points: Pre-check fails, or unable to import CSV file."
+  },
+  {
+    "metric": "2.1.1b Import List - Text Format Support",
+    "description": "1. **Pre-check (User Path):** Does the list import function support selection of text format files?\n2. **Arrange:** Prepare an employee list file in text format, containing the same four fields.\n3. **Act:** Select text format import option and specify file path.\n4. **Assert:** Check whether the program can successfully parse the text format file.",
+    "expected_output": "2 points: Pre-check passes, and text format file can be successfully imported. 1 point: Pre-check passes, but there are issues with parsing text format. 0 points: Pre-check fails, or text format not supported."
+  },
+  {
+    "metric": "2.1.2a Field Validation - Required Field Completeness Check",
+    "description": "1. **Arrange:** Prepare a CSV file missing a required field (such as missing employee ID column).\n2. **Act:** Try to import the file.\n3. **Assert:** Check whether the program detects missing fields and displays a Chinese error message such as \"Missing required field: Employee ID\".",
+    "expected_output": "2 points: Accurately detects missing fields and displays a clear Chinese error message. 1 point: Can detect field issue but the message is unclear. 0 points: Cannot detect missing fields or program crashes."
+  },
+  {
+    "metric": "2.1.2b Field Validation - Data Format Error Check",
+    "description": "1. **Arrange:** Prepare a CSV file containing data with format errors (such as the points field containing \"abc\" or other non-numeric content).\n2. **Act:** Try to import the file.\n3. **Assert:** Check whether the program detects format errors and displays a Chinese error message such as \"Points field must be an integer\".",
+    "expected_output": "2 points: Accurately detects format errors and displays a clear Chinese error message. 1 point: Can detect format issue but the message is not accurate enough. 0 points: Cannot detect format error or program crashes."
+  },
+  {
+    "metric": "2.1.3 Statistics Display - Total Number, Department Ratio, Points Distribution",
+    "description": "1. **Arrange:** Import an employee list containing employee IDs of different departments (such as 3 IDs starting with 01, 2 starting with 02), points ranging 50-200.\n2. **Act:** After import, view statistics information.\n3. **Assert:** Verify whether the program correctly displays: (a) Total number: 5 employees, (b) Correctly parses the first two characters of employee ID as department code and calculates each department's ratio (01 department 60%, 02 department 40%), (c) Maximum, minimum, and average points statistics.",
+    "expected_output": "2 points: Correctly displays total number, department ratio, and points statistics. 1 point: Displays statistics but some calculations have errors. 0 points: No statistics displayed or function missing."
+  },
+  {
+    "metric": "2.1.4 List Preview - Sort by Length of Employment (Ascending and Descending)",
+    "description": "1. **Pre-check (User Path):** In the list management function, is there an option for \"Preview List\" or \"View Employees\"?\n2. **Arrange:** Ensure the imported employee list contains employees with different lengths of employment.\n3. **Act:** Select the list preview function, first select ascending sort by length of employment, then select descending sort.\n4. **Assert:** Verify whether the program provides ascending/descending choices, in ascending order sorts length of employment from smallest to largest, in descending order from largest to smallest.",
+    "expected_output": "2 points: Pre-check passes, and both ascending and descending sort functions work correctly. 1 point: Pre-check passes, but sort logic is incorrect or only supports one sort order. 0 points: Pre-check fails, or unable to sort list preview."
+  },
+  {
+    "metric": "2.1.5 Employee ID Exact Search Function",
+    "description": "1. **Pre-check (User Path):** In the list management function, is there an option for \"Search Employee\" or \"Employee ID Search\"?\n2. **Arrange:** Remember the employee ID of one imported employee.\n3. **Act:** Select the search function and enter this employee ID.\n4. **Assert:** Verify whether the program returns the complete information for this employee (Name, Employee ID, Points, Length of Employment).",
+    "expected_output": "2 points: Pre-check passes, and can accurately search by employee ID and return complete employee information. 1 point: Pre-check passes, but search result information is incomplete. 0 points: Pre-check fails, or unable to implement employee ID search."
+  },
+  {
+    "metric": "2.2.1 Prize Configuration - Add Prize, Name Uniqueness, Quantity Validation",
+    "description": "1. **Pre-check (User Path):** In the main interface, is there a clear option for \"Configure Prize\", \"Set Lottery\", or similar?\n2. **Act:** Select the prize configuration function, then test in turn: (a) Add new prize basic function, (b) Try adding a prize with duplicate name, (c) Enter a non-positive integer prize quantity.\n3. **Assert:** Verify whether the program: (a) Provides input interface for prize name and quantity, (b) Detects duplicate name and refuses to add with a message, (c) Refuses invalid quantity and requires re-entry of positive integer.",
+    "expected_output": "2 points: Pre-check passes, and fully implements prize add, name uniqueness validation, and quantity validation functions, with clear messages. 1 point: Pre-check passes, but some validation is not complete or messages are not clear enough. 0 points: Pre-check fails, or missing key validation functions."
+  },
+  {
+    "metric": "2.2.2 Weight Rule and Repeat Winning Configuration Function",
+    "description": "1. **Pre-check (User Path):** During prize configuration, is there an interface for selecting weight calculation rule and repeat winning configuration?\n2. **Act:** Sequentially test three weight options (equal weight, points weighted, employment duration weighted) and repeat winning configuration (allowed, not allowed).\n3. **Assert:** Verify whether the program provides a complete weight rule selection interface, contains three weight options with relevant explanations, and repeat winning configuration options.",
+    "expected_output": "2 points: Pre-check passes, and provides a complete weight rule selection interface and repeat winning configuration, each option has relevant explanation. 1 point: Pre-check passes, but some options or explanations are not clear enough. 0 points: Pre-check fails, or missing weight rule or repeat winning configuration options."
+  },
+  {
+    "metric": "2.2.3 Prize Quantity Restriction Validation",
+    "description": "1. **Act:** Add 5 prizes.\n2. **Assert:** Verify whether the program stops providing add option after reaching 5 prizes, thus implementing prize quantity restriction.",
+    "expected_output": "2 points: Correctly restricts prize quantity to 5, no add option after 5 prizes. 1 point: Has quantity restriction but implementation is not perfect. 0 points: No prize quantity restriction."
+  },
+  {
+    "metric": "2.2.4 Rule Summary - List of Prizes, Total Prize Quantity, Repeat Winning Risk Reminder",
+    "description": "1. **Arrange:** Configure multiple prizes, with repeat winning allowed settings (such as First Prize 1, Second Prize 2, Third Prize 3, some allowed repeat).\n2. **Act:** View rule summary.\n3. **Assert:** Verify whether the summary: (a) Fully lists all configured prize names and quantities, (b) Correctly displays total quantity as 6, (c) Contains reminders about repeat winning risk.",
+    "expected_output": "2 points: Fully displays prize list, correctly computes total quantity, and clearly displays repeat winning risk reminder (all 3 functions). 1 point: Implements 2 functions or some functions are not complete. 0 points: Implements less than 2 functions or functions are severely flawed."
+  },
+  {
+    "metric": "2.3.1 Lottery Execution, Result Display & File Saving Comprehensive Function",
+    "description": "1. **Pre-check (User Path):** After prize configuration, is there a clear execution option like \"Start Lottery\", \"Execute Lottery\"? After lottery completion, is there an option like \"Save Result\", \"Export Report\"?\n2. **Arrange:** Configure 3 prizes with different priorities (First, Second, Third Prize).\n3. **Act:** Select start lottery function, execute full lottery process, observe entire process and result display, then select result save function.\n4. **Assert:** Verify whether the program: (a) Successfully starts lottery process, (b) Draws strictly in First Prize → Second Prize → Third Prize order, (c) Displays dynamic progress and waiting messages, (d) Shows results grouped by prize, (e) Each winner shows full serial number, name, employee ID and department information, (f) Successfully generates TXT result file.",
+    "expected_output": "2 points: Pre-check passes, fully implements lottery launch, ordered execution, progress display, grouped result display, winner info display, file save — all 6 functions. 1 point: Pre-check passes, implements 4-5 functions or some functions have flaws. 0 points: Pre-check fails, or implements fewer than 4 functions."
+  },
+  {
+    "metric": "2.3.2 Weighted Random Sampling Implementation",
+    "description": "1. **Arrange:** Configure a points-weighted prize, employee list includes clear high score (200 points) and low score (50 points) employees.\n2. **Act:** Repeat the lottery 20 times, record the number of wins for high and low score employees.\n3. **Assert:** Verify whether high score employee's win frequency is significantly higher than low score (ratio should roughly match points proportion).",
+    "expected_output": "2 points: High score employees win significantly more frequently than low score, matches weighted expectation. 1 point: Slight weighted tendency but not obvious enough. 0 points: Lottery is fully random, no weighting effect."
+  },
+  {
+    "metric": "2.3.3 Repeat Winning Auto-Exclusion Mechanism",
+    "description": "1. **Arrange:** Configure multiple prizes with repeat winning disallowed, total employees fewer than total prizes.\n2. **Act:** Run full lottery process.\n3. **Assert:** Verify whether there are absolutely no repeat wins in final results.",
+    "expected_output": "2 points: No repeat winners at all, exclusion mechanism works perfectly. 1 point: Very rare repeat winners. 0 points: Obvious repeat winners."
+  },
+  {
+    "metric": "2.3.4 Handling Mechanism When Candidate Pool is Insufficient",
+    "description": "1. **Arrange:** Configure prizes exceeding total employees (e.g. 10 people with 15 prizes).\n2. **Act:** Run lottery process.\n3. **Assert:** Verify whether program gives alert and correctly ends current prize draw when candidate pool is insufficient.",
+    "expected_output": "2 points: Accurately detects insufficiency and gives clear reminder, correctly ends lottery. 1 point: Can detect but handling is flawed. 0 points: Cannot handle the situation or program crashes."
+  },
+  {
+    "metric": "2.4.1 Fairness Report - Z Test and Chi-square Test Implementation",
+    "description": "1. **Arrange:** Complete a lottery including points weighting and multiple department employees.\n2. **Act:** View auto-generated fairness report.\n3. **Assert:** Verify whether the report includes: (a) Z-test results of mean points of winners for each prize vs overall mean, including p-value, (b) Chi-square test results of department win ratio vs department population ratio, including χ² and p-value.",
+    "expected_output": "2 points: Correctly implements Z and Chi-square tests, shows p-value, χ² and statistical conclusion. 1 point: Has statistical test but calculation or display is wrong. 0 points: Statistical test function not implemented."
+  },
+  {
+    "metric": "2.4.2 Randomness Auto-Tagging Function",
+    "description": "1. **Arrange:** Run a lottery and ensure a fairness report is generated.\n2. **Act:** View p-value in report.\n3. **Assert:** When Z or Chi-square test p-value > 0.05, verify whether program auto-tags \"Statistical result meets randomness requirement\".",
+    "expected_output": "2 points: Correct implementation of p-value logic, auto-adds randomness tag. 1 point: Tagging function exists but logic not accurate. 0 points: No auto-tagging feature."
+  },
+  {
+    "metric": "2.4.3a Result Saving - File Name Format Specification",
+    "description": "1. **Act:** After result file is generated, check file name.\n2. **Assert:** Verify file name strictly follows \"Lottery_Result_YYYYMMDD_HHMMSS.txt\" format (e.g. \"Lottery_Result_20240315_143022.txt\").",
+    "expected_output": "2 points: File name fully meets requirements and contains correct date/time. 1 point: File name mostly meets format but with minor errors. 0 points: File name completely does not meet requirements."
+  },
+  {
+    "metric": "2.4.3b Result Saving - File Content Integrity",
+    "description": "1. **Act:** Open the generated result TXT file.\n2. **Assert:** Verify whether file contains both the complete winning results and fairness report sections.",
+    "expected_output": "2 points: File contains complete winning results and fairness report. 1 point: File is mostly complete but has some missing parts. 0 points: File is seriously incomplete or empty."
+  }
+]

@@ -1,0 +1,29 @@
+# Infectious Disease Model Parameter Estimation Results
+# Generation Time: 2025-09-01 17:46:08.235227
+# Data Source: Hubei Province COVID-19 Epidemic Data
+============================================================
+
+SEIR Model Parameter Estimation Results:
+------------------------------
+Transmission Rate (beta): 0.170396
+Latent Period Conversion Rate (sigma): 0.500000
+Recovery Rate (gamma): 0.157247
+Basic Reproduction Number (R0): 1.0836
+Average Latent Period: 2.0 days
+Average Infectious Period: 6.4 days
+Final Fitting Error: 7.553670
+
+Fitting Quality Assessment:
+Exposed Fitting - MSE: 5.94e+07, MAE: 4.77e+03, R2: -0.1563
+Infected Fitting - MSE: 4.41e+08, MAE: 1.54e+04, R2: -0.5164
+Recovered Fitting - MSE: 6.79e+07, MAE: 7.15e+03, R2: 0.9054
+
+Parameter Explanation:
+------------------------------
+beta: Transmission rate, indicating the average number of susceptible individuals infected by one infected individual per unit time
+gamma: Recovery rate, indicating the rate at which infected individuals transition to recovered
+sigma: Latent period conversion rate, indicating the rate at which exposed individuals transition to infected
+R0: Basic reproduction number, indicating the average number of people infected by one infected individual in a fully susceptible population
+MSE: Mean squared error, smaller values indicate better fitting
+MAE: Mean absolute error, smaller values indicate better fitting
+R2: Coefficient of determination, values closer to 1 indicate better fitting

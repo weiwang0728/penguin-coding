@@ -1,0 +1,72 @@
+{
+  "timestamp": "2025-08-14T10:56:00+08:00",
+  "tests_directory": "src/tests",
+  "expected_functions": [
+    "compare_numbers",
+    "filter_data",
+    "create_adder",
+    "extract_unique",
+    "recursive_replace",
+    "batch_map_replace"
+  ],
+  "test_files": [
+    {
+      "file": "test_utils.py",
+      "test_methods": [
+        "test_compare_numbers",
+        "test_filter_data",
+        "test_create_adder",
+        "test_extract_unique",
+        "test_recursive_replace",
+        "test_batch_map_replace"
+      ],
+      "imported_functions": [
+        "compare_numbers",
+        "filter_data",
+        "create_adder",
+        "extract_unique",
+        "recursive_replace",
+        "batch_map_replace"
+      ]
+    }
+  ],
+  "coverage_summary": {
+    "compare_numbers": {
+      "has_test_function": true,
+      "is_imported": true,
+      "fully_covered": true
+    },
+    "filter_data": {
+      "has_test_function": true,
+      "is_imported": true,
+      "fully_covered": true
+    },
+    "create_adder": {
+      "has_test_function": true,
+      "is_imported": true,
+      "fully_covered": true
+    },
+    "extract_unique": {
+      "has_test_function": true,
+      "is_imported": true,
+      "fully_covered": true
+    },
+    "recursive_replace": {
+      "has_test_function": true,
+      "is_imported": true,
+      "fully_covered": true
+    },
+    "batch_map_replace": {
+      "has_test_function": true,
+      "is_imported": true,
+      "fully_covered": true
+    }
+  },
+  "overall_stats": {
+    "total_functions": 6,
+    "fully_covered_functions": 6,
+    "coverage_percentage": 100.0,
+    "total_test_files": 1,
+    "total_test_methods": 6
+  }
+}

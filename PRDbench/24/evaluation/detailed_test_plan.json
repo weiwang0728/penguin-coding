@@ -1,0 +1,210 @@
+[
+  {
+    "metric": "1.1.1 Excel File Reading: Successfully Read Input Data Files",
+    "description": "1. **Arrange:** Ensure that src/mdl4.xlsx and src/AfterClustering.xlsx files exist in the root directory of the AHAU-logistics-GM project.\n2. **Act:** Execute the command `python -c \"import pandas as pd; data1=pd.read_excel('src/mdl4.xlsx'); data2=pd.read_excel('src/AfterClustering.xlsx'); print(f'mdl4 data rows: {len(data1)}, columns: {len(data1.columns)}'); print(f'clustered data rows: {len(data2)}, columns: {len(data2.columns)}')\"`. \n3. **Assert:** Observe whether the row and column count information for both files is successfully output.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -c \"import pandas as pd; data1=pd.read_excel('src/mdl4.xlsx'); data2=pd.read_excel('src/AfterClustering.xlsx'); print(f'mdl4 data rows: {len(data1)}, columns: {len(data1.columns)}'); print(f'clustered data rows: {len(data2)}, columns: {len(data2.columns)}')\"",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/mdl4.xlsx",
+      "src/AfterClustering.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Console outputs row and column count information for both Excel files, in the format \"mdl4 data rows: XX, columns: XX\" and \"clustered data rows: XX, columns: XX\""
+  },
+  {
+    "metric": "1.1.2 Data Field Integrity: Verify Excel File Contains 4 Core Fields",
+    "description": "1. **Arrange:** Ensure the src/AfterClustering.xlsx file is readable.\n2. **Act:** Execute the command `python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); print('column count:', len(data.columns)); print('data types:', data.dtypes.tolist())\"`.\n3. **Assert:** Verify the file contains 4 or more columns and the data types are reasonable.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); print('column count:', len(data.columns)); print('data types:', data.dtypes.tolist())\"",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/AfterClustering.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Console outputs column count ≥ 4, and the first 4 columns have reasonable data types (including string and numeric types)"
+  },
+  {
+    "metric": "1.1.3 Coordinate Validity Verification: Verify Longitude and Latitude Coordinates Are Within Valid Ranges",
+    "description": "1. **Arrange:** Ensure the src/AfterClustering.xlsx file is readable.\n2. **Act:** Execute the command `python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); lon_col=data.iloc[:,1]; lat_col=data.iloc[:,2]; print('longitude range:', lon_col.min(), '-', lon_col.max()); print('latitude range:', lat_col.min(), '-', lat_col.max()); lon_valid=(lon_col >= 73) & (lon_col <= 135); lat_valid=(lat_col >= 3) & (lat_col <= 54); print('valid longitude count:', lon_valid.sum(), '/', len(lon_col)); print('valid latitude count:', lat_valid.sum(), '/', len(lat_col))\"`.\n3. **Assert:** Verify the proportion of longitudes within 73-135 and latitudes within 3-54.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); lon_col=data.iloc[:,1]; lat_col=data.iloc[:,2]; print('longitude range:', lon_col.min(), '-', lon_col.max()); print('latitude range:', lat_col.min(), '-', lat_col.max()); lon_valid=(lon_col >= 73) & (lon_col <= 135); lat_valid=(lat_col >= 3) & (lat_col <= 54); print('valid longitude count:', lon_valid.sum(), '/', len(lon_col)); print('valid latitude count:', lat_valid.sum(), '/', len(lat_col))\"",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/AfterClustering.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Console outputs longitude range, latitude range, and valid coordinate count statistics, with 100% of longitudes within 73-135 and 100% of latitudes within 3-54"
+  },
+  {
+    "metric": "1.1.4 Weight Data Non-negativity: Verify Weight Data Is Non-negative",
+    "description": "1. **Arrange:** Ensure the src/AfterClustering.xlsx file is readable.\n2. **Act:** Execute the command `python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); weight_col=data.iloc[:,3]; print('weight range:', weight_col.min(), '-', weight_col.max()); non_negative_count=(weight_col >= 0); print('non-negative weight count:', non_negative_count.sum(), '/', len(weight_col))\"`.\n3. **Assert:** Verify the proportion of non-negative weight data.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); weight_col=data.iloc[:,3]; print('weight range:', weight_col.min(), '-', weight_col.max()); non_negative_count=(weight_col >= 0); print('non-negative weight count:', non_negative_count.sum(), '/', len(weight_col))\"",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/AfterClustering.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Console outputs weight range and non-negative weight count statistics, with 100% of weight data being non-negative"
+  },
+  {
+    "metric": "1.2.1 Single Centroid Method Algorithm: Calculate Global Optimal Logistics Center Coordinates",
+    "description": "1. **Arrange:** Ensure the src/AfterClustering.xlsx file exists.\n2. **Act:** Execute the command `python src/SingleCentroidMethod.py`.\n3. **Assert:** Observe whether the console outputs \"Centroid Longitude:\" and \"Centroid Latitude:\" two lines of centroid coordinate information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/SingleCentroidMethod.py",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/AfterClustering.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Console outputs \"Centroid Longitude: XXX\" and \"Centroid Latitude: XXX\" two lines with centroid coordinates"
+  },
+  {
+    "metric": "1.2.2 Single Centroid Method Coordinate Rationality and Visualization: Verify Centroid Coordinate Rationality and Generate Complete Scatter Plot",
+    "description": "1. **Arrange:** Ensure matplotlib can display charts normally and the src/AfterClustering.xlsx file exists.\n2. **Act:** Execute unit tests to verify coordinate rationality and execute scripts to generate visualization charts.\n3. **Assert:** Verify centroid longitude is within 115-120, latitude within 30-35, and the scatter plot includes blue store points, red centroid point, axis labels, and legend.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_centroid_coordinates.py::test_centroid_in_anhui_range",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/AfterClustering.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Centroid longitude within 115-120, latitude within 30-35, and displays a complete scatter plot with blue store points, red centroid point, axis labels, and legend"
+  },
+  {
+    "metric": "1.3.1 Silhouette Coefficient Analysis and Visualization: Calculate Optimal K Value and Generate Relationship Chart",
+    "description": "1. **Arrange:** Ensure src/mdl4.xlsx file exists and matplotlib can display charts normally.\n2. **Act:** Execute the command `python src/SilhouetteCoefficient.py`.\n3. **Assert:** Observe console output of \"Maximum silhouette coefficient:\" and \"Corresponding K value:\" (K value within 2-92), and the K value vs. silhouette coefficient relationship chart pops up with Chinese labels displayed correctly.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/SilhouetteCoefficient.py",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/mdl4.xlsx",
+      "src/HarmonyOS_Sans_SC_Black.ttf"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Console outputs \"Maximum silhouette coefficient: XXX\" and \"Corresponding K value: XXX\" (K value within 2-92), and displays complete K value vs. silhouette coefficient relationship chart with Chinese labels displayed correctly without garbled characters"
+  },
+  {
+    "metric": "1.3.2 K-means Clustering Comprehensive Functionality: Calculate Cluster Centers, Generate Excel File and Visualize Scatter Plot",
+    "description": "1. **Arrange:** Ensure src/mdl4.xlsx file exists and matplotlib can display charts normally.\n2. **Act:** Execute the command `python src/ClusteringAlgorithm.py`.\n3. **Assert:** Verify console outputs 14 cluster center coordinates, generates cluster_points.xlsx file, and displays complete cluster scatter plot with colored store points and red X markers.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/ClusteringAlgorithm.py",
+        "test_input": null
+      }
+    ],
+    "input_files": ["src/mdl4.xlsx", "src/HarmonyOS_Sans_SC_Black.ttf"],
+    "expected_output_files": ["evaluation/expected_cluster_points.xlsx"],
+    "expected_output": "Console outputs 14 rows of cluster center coordinates, generates cluster_points.xlsx file in project root directory, and displays complete cluster scatter plot with colored store points, 14 red X markers, color bar, and Chinese labels"
+  },
+  {
+    "metric": "1.3.3 K-means Clustering Coordinate Rationality: Cluster Center Coordinates Within Anhui Province Range",
+    "description": "1. **Arrange:** Execute src/ClusteringAlgorithm.py to obtain cluster center coordinates.\n2. **Act:** Check all output cluster center coordinates.\n3. **Assert:** Verify all longitudes are within 115-120 and latitudes within 30-35.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_cluster_coordinates.py::test_cluster_centers_in_anhui_range",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/mdl4.xlsx"
+    ],
+   "expected_output_files": null,
+    "expected_output": "All 14 cluster center coordinates are within Anhui Province geographical range (longitude 115-120, latitude 30-35)"
+  },
+  {
+    "metric": "1.3.4 Coordinate Standardization Processing: Use StandardScaler for Coordinate Standardization",
+    "description": "1. **Arrange:** Open src/ClusteringAlgorithm.py file.\n2. **Act:** Execute the command `python -c \"with open('src/ClusteringAlgorithm.py', 'r', encoding='utf-8') as f: content=f.read(); print('Contains StandardScaler:', 'StandardScaler' in content); print('Contains fit_transform:', 'fit_transform' in content)\"`.\n3. **Assert:** Verify whether the code imports and uses StandardScaler.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_code_analysis.py::test_standard_scaler_usage",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/ClusteringAlgorithm.py"
+    ],
+   "expected_output_files": null,
+    "expected_output": "Code clearly imports and uses StandardScaler for coordinate standardization processing"
+  },
+  {
+    "metric": "1.3.5 Excel Worksheet Structure: Contains Multiple Cluster Worksheets",
+    "description": "1. **Arrange:** Ensure cluster_points.xlsx file has been generated.\n2. **Act:** Execute the command `python -c \"import openpyxl; wb=openpyxl.load_workbook('cluster_points.xlsx'); print('Worksheet count:', len(wb.sheetnames)); print('First 5 worksheets:', wb.sheetnames[:5])\"`.\n3. **Assert:** Observe whether output shows worksheet count ≥ 14 and worksheet names contain \"Cluster\".",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -c \"import openpyxl; wb=openpyxl.load_workbook('cluster_points.xlsx'); print('Worksheet count:', len(wb.sheetnames)); print('First 5 worksheets:', wb.sheetnames[:5])\"",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "cluster_points.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Console outputs worksheet count ≥ 14 and worksheet names in \"Cluster X\" format"
+  },
+  {
+    "metric": "2.1 Weight Normalization Processing: Normalize Weight Data",
+    "description": "1. **Arrange:** Open src/SingleCentroidMethod.py file.\n2. **Act:** Execute the command `python -c \"with open('src/SingleCentroidMethod.py', 'r', encoding='utf-8') as f: content=f.read(); print('Contains weight normalization:', 'weights /=' in content or 'weights = weights /' in content or 'np.sum(weights)' in content)\"`.\n3. **Assert:** Verify whether the code contains weight normalization processing logic.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_code_analysis.py::test_weight_normalization",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/SingleCentroidMethod.py"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Code clearly contains weight normalization processing logic"
+  },
+  {
+    "metric": "3.1 Output Result Consistency: Multiple Runs Produce Stable Results",
+    "description": "1. **Arrange:** Ensure src/SingleCentroidMethod.py can execute normally.\n2. **Act:** Execute `python src/SingleCentroidMethod.py` twice consecutively, recording centroid coordinates from both outputs.\n3. **Assert:** Compare whether longitude and latitude coordinates from both runs are identical (accurate to 6 decimal places).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_consistency.py::test_centroid_consistency",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "src/AfterClustering.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Results from both runs are completely consistent, with coordinates identical to 6 decimal places"
+  }
+]

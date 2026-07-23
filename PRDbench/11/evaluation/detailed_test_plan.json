@@ -1,0 +1,206 @@
+[
+  {
+    "metric": "1.1 Numeric Comparator",
+    "description": "1. **Arrange:** Prepare three sets of input data: (a=5, b=10), (a=10, b=5), (a=5, b=5).\\n2. **Act:** Call the `numeric_comparator(a, b)` function with each set of data.\\n3. **Assert:** Verify that the return values are -1, 1, and 0 respectively.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_numeric_comparator.py::test_numeric_comparator -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": ""
+  },
+  {
+    "metric": "1.2 Conditional Filter",
+    "description": "1. **Arrange:** Prepare a data list `data = [1, 2, 3, 4, 5, 6]` and a custom condition function `is_even(n)` to determine if a number is even.\\n2. **Act:** Call `conditional_filter(data, is_even)`.\\n3. **Assert:** Verify that the returned list is `[2, 4, 6]`.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_conditional_filter.py::test_conditional_filter -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verified that the conditional filter correctly filters out even numbers [2, 4, 6] based on the is_even function."
+  },
+  {
+    "metric": "1.3 Dynamic Adder Generator",
+    "description": "1. **Arrange:** Prepare a base addend `base_add = 10`.\\n2. **Act:** Call `dynamic_adder_generator(base_add)` to generate a new addition function `adder_func`, then execute `adder_func(5)`.\\n3. **Assert:** Verify that the return value of `adder_func(5)` is 15.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_dynamic_adder.py::test_dynamic_adder_generator -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verified that the dynamic adder generator can create a correct addition function, adder_func(5) returns 15."
+  },
+  {
+    "metric": "1.4 Unique List Extractor",
+    "description": "1. **Arrange:** Prepare a list with duplicate elements `data = ['a', 'b', 'a', 'c', 'b']`.\\n2. **Act:** Call `unique_list_extractor(data)`.\\n3. **Assert:** Verify that the returned list is `['a', 'b', 'c']`, and strictly maintains the original order of first occurrence for each element.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_unique_extractor.py::test_unique_list_extractor -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verified that the dynamic adder generator can create a correct addition function, adder_func(5) returns 15."
+  },
+  {
+    "metric": "1.5 Recursive Replacer",
+    "description": "1. **Arrange:** Prepare a nested list `data = [1, [2, 1, [3, 1]]]`, replacement target `target = 1`, and replacement value `replacement = 'X'`.\\n2. **Act:** Call `recursive_replacer(data, target, replacement)`.\\n3. **Assert:** Verify that the returned list is `['X', [2, 'X', [3, 'X']]]`.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_recursive_replacer.py::test_recursive_replacer -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verified that the unique list extractor can correctly extract unique elements ['a', 'b', 'c'] and maintain the order of first appearance."
+  },
+  {
+    "metric": "1.6 Batch Mapper & Replacer",
+    "description": "1. **Arrange:** Prepare a data list `data = ['A', 'B', 'C']` and a mapping dictionary `mapping = {'A': 'Apple', 'B': 'Banana'}`.\\n2. **Act:** Call `batch_mapper(data, mapping)`.\\n3. **Assert:** Verify that the returned list is `['Apple', 'Banana', 'C']`.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_batch_mapper.py::test_batch_mapper_replacer -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verified that the batch mapper & replacer can correctly replace elements according to the mapping dictionary, returning ['Apple', 'Banana', 'C']."
+  },
+  {
+    "metric": "2.1a Automated Unit Testing - Framework and Execution",
+    "description": "1. **Act:** Check if a `tests/` directory exists in the project root, and run unit test commands (such as `pytest`) following `README.md` instructions.\\n2. **Assert:** Verify that the test command can execute successfully, run all test cases in the `tests/` directory, and exit without errors.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && python -m unittest tests/test_utils.py -v",
+        "test_input": null
+      },
+      {
+        "test_command": "cd src && python -m unittest discover tests -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Terminal should display test execution process, including execution status of test cases for all 6 core function modules (test_compare_numbers, test_filter_data, test_create_adder, test_extract_unique, test_recursive_replace, test_batch_map_replace). Each test method should display OK status, final output should show success message like 'Ran X tests in Y.Zs OK', command exit code 0 indicates all tests passed."
+  },
+  {
+    "metric": "2.1b Automated Unit Testing - Test Coverage",
+    "description": "1. **Act:** Review test file contents in the `tests/` directory.\\n2. **Assert:** Verify whether independent test files are created for each of the 6 core data processing function modules described in the PRD, covering normal, abnormal, and boundary scenarios.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_coverage_analyzer.py src/tests evaluation/actual_test_coverage_report.json",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/test_coverage_analyzer.py"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_test_coverage_report.json"
+    ],
+    "expected_output": "Generated test coverage report file actual_test_coverage_report.json should match expected_test_coverage_report.json content, showing all 6 core function modules (compare_numbers, filter_data, create_adder, extract_unique, recursive_replace, batch_map_replace) have corresponding test methods, overall coverage is 100%, including 1 test file and 6 test methods."
+  },
+  {
+    "metric": "2.2 Local Score Feedback and Reporting",
+    "description": "1. **Act:** Run the scoring script provided by the project.\\n2. **Assert:** Observe script output to verify if it contains a clear, structured report including: pass status of each module, detailed scores for each scoring point, final total score.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && python score.py",
+        "test_input": null
+      },
+      {
+        "test_command": "cd src && python -c \"import subprocess; result = subprocess.run(['python', '-m', 'unittest', 'tests/test_utils.py'], capture_output=True, text=True); print('Test results:'); print(result.stdout); print('=' * 50); failed = result.returncode != 0; status = 'Failed' if failed else 'Passed'; print(f'Overall status: {status}'); print(f'Exit code: {result.returncode}')\" ",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Terminal should display structured test report including: 1) Test execution status for each functional module (compare_numbers, filter_data, create_adder, extract_unique, recursive_replace, batch_map_replace); 2) Detailed pass status for each test point; 3) Test statistics (such as number of tests run, number passed, number failed); 4) Final overall score or status summary. If score.py doesn't exist, fallback command will display unittest detailed execution results and exit status."
+  },
+  {
+    "metric": "3.1 One-click Execution and Testing",
+    "description": "1. **Act:** According to instructions in `README.md`, search for and execute the command for one-click execution and testing.\\n2. **Assert:** Verify whether this command can automatically and continuously complete all core function call demonstrations and all unit test executions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && python main.py test",
+        "test_input": null
+      },
+      {
+        "test_command": "cd src && python -m unittest tests/test_utils.py",
+        "test_input": null
+      },
+      {
+        "test_command": "cd src && python main.py compare --a 5 --b 10 && python main.py filter --data '[1,2,3,4,5,6]' --condition 'x > 2' && python main.py adder --n 10 --x 5 && python main.py unique --data '[\"a\",\"b\",\"a\",\"c\",\"b\"]' && python main.py replace --data '[1,[2,1,[3,1]]]' --old '1' --new '\"X\"' && python main.py batch --data '[\"A\",\"B\",\"C\"]' --mapping '{\"A\":\"Apple\",\"B\":\"Banana\"}'",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Terminal should display: 1) All 6 core function call demonstration results: numeric comparison (-1), conditional filtering ([3,4,5,6]), dynamic adder (15), unique list ([\"a\",\"b\",\"c\"]), recursive replacement ([\"X\",[2,\"X\",[3,\"X\"]]]), batch mapping ([\"Apple\",\"Banana\",\"C\"]); 2) Complete unit test execution process and results; 3) All commands should execute successfully, exit without errors. This verifies program's core functions work normally and test framework runs correctly."
+  },
+  {
+    "metric": "3.2 Parameterized Submission and Identity Identification",
+    "description": "1. **Arrange:** Prepare a user ID, for example `user-id-123`.\\n2. **Act:** Start the program using a command like `python main.py --user-id user-id-123` following `README.md` instructions.\\n3. **Assert:** Verify that the program can correctly record and display the `user-id-123` identity during execution or in final output/archive files.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "cd src && python main.py test --user user-id-123 --name Zhang-San",
+        "test_input": null
+      },
+      {
+        "test_command": "cd src && python main.py test --user test-user-456",
+        "test_input": null
+      },
+      {
+        "test_command": "cd src && python main.py test --name TestUser",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Terminal should display output containing user identity information: 1) When using both --user and --name parameters, should display 'User: user-id-123, Name: Zhang-San'; 2) When using only --user parameter, should display 'User: test-user-456, Name: None'; 3) When using only --name parameter, should display 'User: None, Name: TestUser'. This verifies program can correctly receive, process, and display user identity parameters."
+  },
+  {
+    "metric": "4.1a Detailed Operation Documentation - Existence and Completeness",
+    "description": "1. **Act:** Check if a `README.md` file exists in the project root directory.\\n2. **Assert:** Read file content to verify if it contains at least 4 core sections: (1) environment setup instructions, (2) module function introductions, (3) test execution methods, (4) command line usage.",
+    "type": "file_comparison",
+    "testcases": [
+      {}
+    ],
+    "input_files": null,
+    "expected_output_files": "evaluation/README.md",
+    "expected_output": ""
+  },
+  {
+    "metric": "4.1b Detailed Operation Documentation - Clarity and Accuracy",
+    "description": "1. **Act:** Carefully read the environment setup and command line usage sections in `README.md`.\\n2. **Assert:** Verify whether the instructions are clear, accurate, and can be unambiguously copied and successfully executed.",
+    "type": "file_comparison",
+    "testcases": [
+      {}
+    ],
+    "input_files": null,
+    "expected_output_files": "evaluation/README.md",
+    "expected_output": ""
+  }
+]

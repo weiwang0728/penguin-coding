@@ -1,0 +1,72 @@
+[
+  {
+    "metric": "1.1 Program Startup and Help Information",
+    "description": "1. **Act:** In the project root directory, execute [python main.py --help] or `python main.py -h`.\n2. **Assert:** Check if the program executes successfully and displays help information, with explicit instructions for launching core functions such as data processing, model training, and link prediction evaluation.",
+    "expected_output": "2 points: The program executes successfully and displays complete help information, including instructions for launching all core functions. 1 point: The program executes and displays help information, but is missing instructions for 1-2 core functions or has unclear formatting. 0 points: The program cannot execute or does not display help information."
+  },
+  {
+    "metric": "2.1.1 Data Loading - Mapping File Generation",
+    "description": "1. **Pre-check (User Path):** Execute [python main.py --help], and check whether there is a clear data processing subcommand (such as [process_data] or `preprocess`).\n2. **Arrange:** Ensure the FB15K-237 dataset files exist in the specified directory (e.g. [./data/FB15K-237/]).\n3. **Act:** Execute the data processing command, such as [python main.py process_data --input ./data/FB15K-237/ --output ./output/].\n4. **Assert:** Check whether the output directory generates [entity2id.txt] and [relation2id.txt] files, and verify that the file formats are each line \"entity name\\tID\" and \"relation name\\tID\" respectively.",
+    "expected_output": "2 points: Pre-check passes, command executes successfully, and correctly formatted entity and relation mapping files are generated. 1 point: Pre-check passes, files are generated but formatting has minor issues. 0 points: Pre-check fails, or command execution fails, or files are not generated."
+  },
+  {
+    "metric": "2.1.2 Data Integrity Verification and Exception Handling",
+    "description": "1. **Arrange:** Create a test dataset containing illegal triples, where the training file contains entity IDs not present in the entity mapping.\n2. **Act:** Use the test dataset to run the data processing command.\n3. **Assert:** Check whether the program detects the exception and outputs specific error messages (such as the illegal entity name or line number), and exits with a nonzero status code.",
+    "expected_output": "2 points: Program accurately detects the exception, outputs detailed error information, and exits normally. 1 point: Program detects the exception but the error information is insufficiently detailed. 0 points: Program fails to detect the exception or crashes directly."
+  },
+  {
+    "metric": "3.1 TransE Model Training Startup and Parameter Configuration",
+    "description": "1. **Pre-check (User Path):** Execute [python main.py --help], and check whether there is a clear model training subcommand (such as [train]).\n2. **Arrange:** Ensure data preprocessing is completed and the output directory contains the necessary mapping files.\n3. **Act:** Execute the training command, such as [python main.py train --input ./output/], and test parameter configuration such as [python main.py train --input ./output/ --epochs 2].\n4. **Assert:** Check whether the program starts training and continuously outputs training logs including epoch and loss values, and whether the training runs according to the specified epochs parameter.",
+    "expected_output": "2 points: Pre-check passes, training starts normally and continuously outputs training progress information, program fully follows the specified epochs parameter. 1 point: Pre-check passes, training starts but log information is incomplete, or parameter configuration has minor biases. 0 points: Pre-check fails, or training fails to start, or cannot configure parameters via command line."
+  },
+  {
+    "metric": "3.2 Vector Initialization Verification",
+    "description": "1. **Act:** Start the training process.\n2. **Assert:** Check the training logs or generated vector files to verify whether the entity and relation vectors are 50-dimensional and initialized using a uniform distribution.",
+    "expected_output": "2 points: Vector dimension is correctly 50 and uniform distribution is used for initialization. 1 point: Vector dimension is correct but initialization method is unclear or has slight deviation. 0 points: Vector dimension is incorrect or initialization method is incorrect."
+  },
+  {
+    "metric": "3.3 Loss Value Calculation and Monitoring",
+    "description": "1. **Act:** Run the training process for at least 3 epochs.\n2. **Assert:** Check whether loss values are continuously output in the training log and show an overall downward trend.",
+    "expected_output": "2 points: Loss values are continuously output and show an overall downward trend. 1 point: Loss values are output but update frequency is unstable or trend is unclear. 0 points: No loss values are output or loss calculation is wrong."
+  },
+  {
+    "metric": "4.1 Link Prediction Functionality",
+    "description": "1. **Pre-check (User Path):** Execute [python main.py --help], and check whether there is a clear evaluation or prediction subcommand (such as [evaluate] or `predict`).\n2. **Arrange:** Ensure model training is completed and trained vector files exist.\n3. **Act:** Run the evaluation command, such as [python main.py evaluate --input ./output/].\n4. **Assert:** Check whether the program can successfully perform link prediction and output prediction results.",
+    "expected_output": "2 points: Pre-check passes, link prediction executes successfully and outputs the result. 1 point: Pre-check passes, prediction function is usable but result format is irregular. 0 points: Pre-check fails or prediction function cannot execute."
+  },
+  {
+    "metric": "4.2 Evaluation Metric Calculation - MeanRank",
+    "description": "1. **Act:** Run the evaluation command.\n2. **Assert:** Check whether the evaluation output or generated report file contains a numerical value for the MeanRank metric.",
+    "expected_output": "2 points: Successfully calculates and outputs the accurate MeanRank metric value. 1 point: MeanRank is output but the value format or precision has issues. 0 points: MeanRank metric is not calculated or not output."
+  },
+  {
+    "metric": "4.3 Evaluation Metric Calculation - Hit@10",
+    "description": "1. **Act:** Run the evaluation command.\n2. **Assert:** Check whether the evaluation output or generated report file contains a numerical value for the Hit@10 metric.",
+    "expected_output": "2 points: Successfully calculates and outputs the accurate Hit@10 metric value. 1 point: Hit@10 is output but the value format or precision has issues. 0 points: Hit@10 metric is not calculated or not output."
+  },
+  {
+    "metric": "5.1 Vector File Output",
+    "description": "1. **Act:** Finish model training.\n2. **Assert:** Check whether the output directory contains entity vector files (such as [entity_vec.txt]) and relation vector files (such as [relation_vec.txt]), and verify that the file format contains 1 ID and 50 floating point numbers per line (total 51 columns).",
+    "expected_output": "2 points: Entity and relation vector files are generated with completely correct format, each line has 51 columns (ID + 50-dimensional vector). 1 point: Files are generated but the format has minor errors (such as incorrect column count). 0 points: Vector files are not generated or have severe format errors."
+  },
+  {
+    "metric": "5.2 Loss Curve Visualization",
+    "description": "1. **Act:** Finish model training.\n2. **Assert:** Check whether the output directory contains a PNG format loss curve image file (such as loss_curve.png).",
+    "expected_output": "2 points: Successfully generates PNG format loss curve image file. 1 point: Image file is generated but the format is not PNG or the file name is irregular. 0 points: No loss curve image file is generated."
+  },
+  {
+    "metric": "5.3a Evaluation Report Generation - File Format",
+    "description": "1. **Act:** Run the evaluation command.\n2. **Assert:** Check whether the output directory contains a JSON format evaluation report file (such as report.json), and verify that the file content is valid JSON.",
+    "expected_output": "2 points: Generates a valid JSON format evaluation report file. 1 point: Report file is generated but the JSON format has minor errors. 0 points: Report file is not generated or has severe format errors."
+  },
+  {
+    "metric": "5.3b Evaluation Report Content - Contains Key Metrics",
+    "description": "1. **Act:** Run the evaluation command.\n2. **Assert:** Check whether the generated JSON report file contains both MeanRank and Hit@10 key metric fields.",
+    "expected_output": "2 points: Report file contains both the MeanRank and Hit@10 metric fields and the values are numeric. 1 point: Contains both metric fields but one value is not a number or is empty. 0 points: Missing any key metric field."
+  },
+  {
+    "metric": "6.1 Error Handling and Prompt",
+    "description": "1. **Arrange:** Prepare incorrect input parameters (such as non-existent file paths).\n2. **Act:** Execute various commands with incorrect parameters.\n3. **Assert:** Check whether the program gives meaningful error messages rather than crashing directly.",
+    "expected_output": "2 points: The program gracefully handles various exceptions and gives clear error messages. 1 point: The program handles exceptions but the error messages are not friendly or detailed enough. 0 points: The program crashes directly or gives meaningless error messages when an exception occurs."
+  }
+]

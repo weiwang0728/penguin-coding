@@ -1,0 +1,121 @@
+{
+  "SME_Preferential_Policy": {
+    "policy_name": "Tax Preferential Policy for Small and Micro Enterprises",
+    "applicable_to": "Small and Low-Profit Enterprises",
+    "policy_content": "For annual taxable income not exceeding 1 million yuan, it is reduced to 25% for taxable income calculation and subject to corporate income tax at a rate of 20%",
+    "application_requirements": [
+      "Number of employees not exceeding 300",
+      "Total assets not exceeding 50 million yuan",
+      "Annual taxable income not exceeding 3 million yuan"
+    ],
+    "required_materials": [
+      "Annual Corporate Income Tax Return",
+      "Financial Statements",
+      "Employee Count Verification Documents"
+    ],
+    "policy_duration": "Long-term effective",
+    "consultation_phone": "12366"
+  },
+  "Tech_SME_RD_Deduction": {
+    "policy_name": "R&D Expense Super Deduction Policy for Technology-based SMEs",
+    "applicable_to": "Technology-based Small and Medium Enterprises",
+    "policy_content": "For R&D expenses actually incurred in R&D activities, if not forming intangible assets and recorded as current profit or loss, an additional 100% of the actual amount can be deducted before tax on the basis of prescribed deduction",
+    "application_requirements": [
+      "Obtained Technology-based SME certification",
+      "Established R&D expense subsidiary account",
+      "Actually engaged in R&D activities"
+    ],
+    "required_materials": [
+      "Technology-based SME Certification",
+      "R&D Expense Subsidiary Account",
+      "R&D Project Proposal Report"
+    ],
+    "policy_duration": "January 1, 2018 to December 31, 2027",
+    "consultation_phone": "12366"
+  },
+  "Entrepreneurship_Guarantee_Loan": {
+    "policy_name": "Entrepreneurship Guarantee Loan Interest Subsidy Policy",
+    "applicable_to": "Qualified individuals and small and micro enterprises",
+    "policy_content": "Individual loan limit up to 200,000 yuan, small and micro enterprise loan limit up to 3 million yuan, with interest subsidy provided by finance departments",
+    "application_requirements": [
+      "Within legal working age with full civil capacity",
+      "Good personal credit record",
+      "Entrepreneurial intention and capability",
+      "Comply with national industrial policies"
+    ],
+    "required_materials": [
+      "Entrepreneurship Guarantee Loan Application Form",
+      "Identity Proof",
+      "Business License",
+      "Business Location Proof"
+    ],
+    "policy_duration": "Long-term effective",
+    "consultation_phone": "Local Human Resources and Social Security Department"
+  },
+  "High_Tech_Enterprise_Certification": {
+    "policy_name": "High-tech Enterprise Certification and Tax Preferential Treatment",
+    "applicable_to": "High-tech Enterprises",
+    "policy_content": "Certified as high-tech enterprise, subject to corporate income tax at a reduced rate of 15%",
+    "application_requirements": [
+      "Enterprise must be registered for more than one year at the time of application",
+      "Enterprise has obtained ownership of intellectual property that plays a core supporting role in technology for its main products (services) through independent R&D, transfer, donation, acquisition, etc.",
+      "Technology that plays a core supporting role for the enterprise's main products (services) belongs to the scope specified in the 'National Key Supported High-tech Fields'",
+      "Scientific and technical personnel engaged in R&D and related technological innovation activities account for no less than 10% of the total number of employees in the current year",
+      "The ratio of total R&D expenses for the past three fiscal years to total sales revenue during the same period meets requirements",
+      "High-tech product (service) revenue in the most recent year accounts for no less than 60% of the enterprise's total revenue during the same period",
+      "Enterprise innovation capability evaluation should meet corresponding requirements",
+      "The enterprise has not experienced major safety accidents, major quality accidents, or serious environmental violations in the year prior to application"
+    ],
+    "required_materials": [
+      "High-tech Enterprise Certification Application",
+      "Registration certificates proving legal establishment of the enterprise",
+      "Intellectual property related materials",
+      "Personnel situation proof materials",
+      "Enterprise financial accounting reports",
+      "R&D expense structure detail table"
+    ],
+    "policy_duration": "High-tech enterprise certificate is valid for three years",
+    "consultation_phone": "Local Science and Technology Authority"
+  },
+  "Specialized_Little_Giant": {
+    "policy_name": "Specialized and Sophisticated 'Little Giant' Enterprise Cultivation Support Policy",
+    "applicable_to": "Specialized and Sophisticated 'Little Giant' Enterprises",
+    "policy_content": "Central finance provides reward support funds to specialized and sophisticated 'Little Giant' enterprises at no more than 60% of the approved support standard",
+    "application_requirements": [
+      "Engaged in specific niche market for more than 2 years",
+      "Operating revenue in the previous year exceeds 10 million yuan",
+      "Average growth rate of main business revenue or net profit in the past 2 years reaches more than 5%",
+      "Enterprise debt-to-asset ratio not higher than 70%",
+      "Compound annual growth rate of operating revenue in the past 2 years not less than 5% or compound annual growth rate of operating revenue in the past 2 years not less than 10%"
+    ],
+    "required_materials": [
+      "Specialized and Sophisticated 'Little Giant' Enterprise Application Form",
+      "Enterprise Business License",
+      "Audit report for the previous year",
+      "Intellectual property proof materials",
+      "Main product testing reports"
+    ],
+    "policy_duration": "Implemented according to annual notice",
+    "consultation_phone": "Local Industry and Information Technology Authority"
+  },
+  "SME_Development_Special_Fund": {
+    "policy_name": "SME Development Special Fund Support Policy",
+    "applicable_to": "Small and Medium Enterprises",
+    "policy_content": "Support the construction of SME public service system and financing service system, guide social resources to serve SMEs",
+    "application_requirements": [
+      "SME registered within the territory of the People's Republic of China",
+      "Has independent legal entity status",
+      "Sound financial management system",
+      "No adverse credit records"
+    ],
+    "required_materials": [
+      "Project Application Form",
+      "Enterprise Business License",
+      "Project Feasibility Study Report",
+      "Enterprise Financial Statements",
+      "Project Budget"
+    ],
+    "policy_duration": "Implemented according to annual notice",
+    "consultation_phone": "Local SME Authority"
+  }
+}

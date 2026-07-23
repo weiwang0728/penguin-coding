@@ -1,0 +1,41 @@
+Multiple Sequence Alignment Algorithm Performance Comparison Result
+==================================================
+
+Algorithm Configuration:
+- Algorithm Type: Dynamic Programming Algorithm
+- Match Score: 0
+- Mismatch Penalty: 5
+- Gap Penalty: 3
+
+Test Case:
+- Input File: evaluation/input_files/valid_sequence.txt
+- Sequence Count: 2
+- Sequence Length Range: 8-12
+
+Performance Data:
+Execution Time: 0.003 seconds
+Memory Usage: 2.1MB
+Alignment Score: 15
+Optimization Status: No Optimization
+=====================================
+
+Algorithm Configuration:
+- Dynamic Programming Algorithm: Enabled
+- A* Search Algorithm: Enabled
+- Genetic Algorithm: Enabled
+
+Test Case:
+- Sequence File: evaluation/input_files/valid_sequence.txt
+- Sequence Count: 3
+- Sequence Type: DNA
+
+Performance Metrics:
+Algorithm Name        Execution Time(s)    Memory Usage(MB)   Alignment Score
+Dynamic Programming        0.125         15.2          45
+A* Search         0.089         12.8          47
+Genetic Algorithm        0.234         18.5          43
+
+Optimization Results:
+- Fastest Algorithm: A* Search (0.089s)
+- Best Alignment: Genetic Algorithm (Score 43)
+- Lowest Memory: A* Search (12.8MB)

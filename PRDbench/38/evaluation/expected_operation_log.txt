@@ -1,0 +1,8 @@
+2025-08-27 16:45:00 - INFO - SystemStart
+2025-08-27 16:45:01 - INFO - UserLogin: user_1
+2025-08-27 16:45:05 - DATA - Data Import: test_users.csv, 5records
+2025-08-27 16:45:10 - ALGO - MatrixConvertizationStarting: TF-IDF
+2025-08-27 16:45:12 - ALGO - MatrixConvertizationCompleteSuccess: Outputtotfidf_matrix.csv
+2025-08-27 16:45:15 - RECOM - RecommendationRequestRequest: user_1, CalculateMethod=AttributeEffectUse
+2025-08-27 16:45:16 - RECOM - RecommendationResult: 5item(s)ProductBrand, Score[4.2-4.8]
+2025-08-27 16:45:20 - INFO - UserExit: user_1

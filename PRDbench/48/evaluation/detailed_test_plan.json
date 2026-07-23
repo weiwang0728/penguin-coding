@@ -1,0 +1,312 @@
+[
+  {
+    "metric": "0.1 Basic Environment Verification: Core Module File Existence Check",
+    "description": "1. **Arrange:** Determine a list of 10 core files to check: maze_generator.py, path_finder.py, maze_validator.py, dfs_generator.py, prim_generator.py, dfs_solver.py, bfs_solver.py, astar_solver.py, data_manager.py, performance.py.\n2. **Act:** Use the ls command to check if each file exists, then attempt to import each module with a Python import statement.\n3. **Assert:** Verify that all 10 core files exist and can be successfully imported, with no ImportError exceptions.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_environment.py::test_core_modules_exist",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All 10 core module files exist and can be successfully imported, with no ImportError exceptions"
+  },
+  {
+    "metric": "1.1 DFS Maze Generation: Basic Generation Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear command line entry or menu option to access the DFS maze generation function?\n2. **Arrange:** Prepare default parameters to call the DFS maze generation function: size=10.\n3. **Act:** Call the DFS maze generation function to generate a 10x10 maze using default parameters.\n4. **Assert:** Verify that the result contains 4 required components: maze matrix (numpy.ndarray, dtype=uint8, values only 0 and 1), generation time statistics, start coordinates, end coordinates.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/dfs_basic_generate.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully generates a 10x10 maze, displays generation time, start coordinates, end coordinates, and shows maze graphics"
+  },
+  {
+    "metric": "1.2 DFS Maze Generation: Custom Start Point Functionality",
+    "description": "1. **Pre-check (User Path):** Does the DFS maze generation function support user input or setting a custom start coordinate?\n2. **Arrange:** Prepare custom start coordinates [2,2] and maze size 10x10.\n3. **Act:** Generate a maze using DFS algorithm with the start point specified as [2,2].\n4. **Assert:** Verify that the returned start coordinate is [2,2], and that position in the maze matrix is 0 (path).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/dfs_custom_start.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Maze is generated successfully, start coordinate is [3,3], displays maze graphics"
+  },
+  {
+    "metric": "1.3 DFS Maze Generation: Maze Connectivity Verification",
+    "description": "1. **Arrange:** Prepare to generate 5 different 10x10 mazes using the DFS algorithm.\n2. **Act:** Generate 5 mazes in sequence, use a simple BFS or DFS algorithm to check connectivity from start to end for each maze.\n3. **Assert:** Verify that all 5 mazes have a valid path from start to end.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_maze_generation.py::test_dfs_connectivity",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All 5 generated DFS mazes have a valid path from start to end"
+  },
+  {
+    "metric": "2.1 PRIM Maze Generation: Basic Generation Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear command line entry or menu option to access the PRIM maze generation function?\n2. **Arrange:** Prepare default parameters to call the PRIM maze generation function: size=10.\n3. **Act:** Call the PRIM maze generation function to generate a 10x10 maze using default parameters.\n4. **Assert:** Verify that the result contains 4 required components: maze matrix (numpy.ndarray, dtype=uint8, values only 0 and 1), generation time statistics, start coordinates, end coordinates.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/prim_basic_generate.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully generates a 10x10 maze, displays generation time, start coordinates, end coordinates, and shows maze graphics"
+  },
+  {
+    "metric": "2.2 PRIM Maze Generation: Custom Start Point Functionality",
+    "description": "1. **Pre-check (User Path):** Does the PRIM maze generation function support user input or setting a custom start coordinate?\n2. **Arrange:** Prepare custom start coordinates [1,3] and maze size 10x10.\n3. **Act:** Generate a maze using PRIM algorithm with the start point specified as [1,3].\n4. **Assert:** Verify that the returned start coordinate is [1,3], and that position in the maze matrix is 0 (path).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/prim_custom_start.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Maze is generated successfully, start coordinate is [1,3], displays maze graphics"
+  },
+  {
+    "metric": "3.1 Maze Post-processing: Wall Removal Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry point for wall removal or maze post-processing functionality?\n2. **Arrange:** Prepare a generated maze matrix and parameter for wall removal wall_count=5.\n3. **Act:** Call the wall removal function, specifying removal of 5 walls.\n4. **Assert:** Compare the maze matrix before and after processing, verify that walls have indeed been removed (1 becomes 0), and the number of removals is close to the specified value (allow ±1 error).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_maze_processing.py::test_wall_removal",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Wall removal function works as expected, number of walls removed is within allowed error range"
+  },
+  {
+    "metric": "4.1 DFS Path Finding: Basic Solution Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear entry for the DFS path finding function?\n2. **Arrange:** Prepare a known solvable 10x10 maze matrix, start coordinate [0,0], end coordinate [9,9].\n3. **Act:** Call the DFS path finding algorithm to solve the maze.\n4. **Assert:** Verify that the result contains 4 required components: path coordinate list, number of explored nodes, search time, path length, and that the path is not empty.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/dfs_solve_basic.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully finds path, displays search time, path length, explored nodes, and shows maze with path"
+  },
+  {
+    "metric": "4.2 DFS Path Finding: Path Validity Verification",
+    "description": "1. **Arrange:** Use the path coordinate list returned by the DFS algorithm in 4.1.\n2. **Act:** Check each coordinate in the path individually: verify the value at each coordinate in the maze is 0 (path), confirm adjacent coordinates have a distance of 1 (continuity), and that the start and end points are correct.\n3. **Assert:** Verify that all coordinates in the path are on the path, all adjacent coordinates are continuous, start and end points are correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_path_validation.py::test_dfs_path_validity",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All coordinates in the DFS path are on the path and continuous, start and end points are correct"
+  },
+  {
+    "metric": "5.1 BFS Path Finding: Shortest Path Guarantee",
+    "description": "1. **Arrange:** Prepare the same known solvable maze and solve it using both DFS and BFS algorithms.\n2. **Act:** Run DFS and BFS algorithms 3 times each on the same maze and record the path lengths each time.\n3. **Assert:** Verify that the average BFS path length is less than or equal to the average DFS path length, and in all 3 tests, the BFS path length does not exceed DFS.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_path_algorithms.py::test_bfs_shortest_path",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "BFS finds the shortest path in all tests and the length does not exceed DFS"
+  },
+  {
+    "metric": "5.2 BFS Path Finding: Statistics Completeness",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear entry for the BFS path finding function?\n2. **Arrange:** Prepare a known solvable maze matrix, start and end coordinates.\n3. **Act:** Call the BFS path finding algorithm.\n4. **Assert:** Verify that the result contains 4 required components: shortest path coordinate list, explored nodes statistics, search time statistics, path length statistics, and that data types are correct.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/bfs_solve_basic.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Successfully finds path, displays complete statistical information: path length, explored nodes, search time"
+  },
+  {
+    "metric": "6.1 A* Path Finding: Optimal Path Guarantee",
+    "description": "1. **Arrange:** Prepare a complex 20x20 maze and solve it with both BFS and A* algorithms.\n2. **Act:** Run BFS and A* algorithms 3 times each on the same maze and record path lengths and number of explored nodes.\n3. **Assert:** Verify that A* finds an optimal path of the same length as BFS in all 3 tests, and the average number of nodes explored by A* is less than 80% of BFS.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_path_algorithms.py::test_astar_optimal_path",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "A* finds the optimal path and the number of nodes explored is less than 80% of BFS"
+  },
+  {
+    "metric": "6.2 A* Path Finding: Heuristic Function Implementation",
+    "description": "1. **Arrange:** Prepare a large maze (50x50) and solve with both BFS and A* algorithms.\n2. **Act:** Run BFS and A* algorithms 5 times each on the 50x50 maze and record the number of nodes explored.\n3. **Assert:** Verify that the average number of nodes explored by A* is less than 50% of the average number explored by BFS, showing the significant advantage of heuristic-based search.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_path_algorithms.py::test_astar_heuristic",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "On large mazes, A* explores less than 50% of the nodes compared to BFS"
+  },
+  {
+    "metric": "7.1 Data Saving Functionality: Basic Saving Capability",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry point for saving maze data?\n2. **Arrange:** Prepare a generated maze matrix and a save path 'test_maze.npy'.\n3. **Act:** Call the data saving function to save the maze to the specified path.\n4. **Assert:** Verify that the file 'test_maze.npy' is successfully created, and the result includes save success status and file size information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/data_save_test.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Maze saved successfully, displaying save success information and file size"
+  },
+  {
+    "metric": "7.2 Data Loading Functionality: Basic Loading Capability",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry point for loading maze data?\n2. **Arrange:** Prepare the previously saved 'test_maze.npy' file and the original maze matrix for comparison.\n3. **Act:** Call the data loading function to load maze data from 'test_maze.npy'.\n4. **Assert:** Verify that the maze matrix is loaded successfully, data is identical to the original matrix, and the result includes maze matrix, metadata information, and loading status.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/data_load_test.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Maze loaded successfully, displaying load success info, file info, and maze"
+  },
+  {
+    "metric": "7.3 Data Validation Functionality: Maze Format Checking",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry point for data validation?\n2. **Arrange:** Prepare 3 invalid maze matrices: a matrix with non-0/non-1 values, a matrix with incorrect data types, and a matrix with incorrect shape.\n3. **Act:** Call the data validation function on each of the 3 invalid matrices in turn.\n4. **Assert:** Verify that all 3 format errors can be correctly identified and clear error descriptions are returned.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_data_validation.py::test_format_validation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All 3 format errors can be correctly identified, returns clear error descriptions"
+  },
+  {
+    "metric": "7.4 Data Validation Functionality: Connectivity Checking",
+    "description": "1. **Pre-check (User Path):** Does the data validation function include an option for connectivity checking?\n2. **Arrange:** Prepare a maze matrix that is not reachable from start to end (manually constructed or modified existing maze).\n3. **Act:** Call the connectivity check of the data validation function on the non-connected maze.\n4. **Assert:** Verify that connectivity issues can be correctly identified, returning a failed validation status and connectivity error information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/validate_connectivity.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/inputs/disconnected_maze.npy"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Connectivity problem correctly identified, displays validation failure and connectivity error information"
+  },
+  {
+    "metric": "8.1 Algorithm Performance Comparison: Multi-Algorithm Comparison",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry point for algorithm performance comparison?\n2. **Arrange:** Prepare a test maze and a list of 3 algorithms to compare: DFS, BFS, A*.\n3. **Act:** Call the performance comparison function to test all 3 algorithms.\n4. **Assert:** Verify that a complete performance comparison report is returned, including time performance statistics, explored node count comparison, and path length comparison for all 3 algorithms.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/performance_compare.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays a complete performance comparison report with detailed statistics for all 3 algorithms"
+  },
+  {
+    "metric": "8.2 Algorithm Performance Comparison: Recommendation Suggestions",
+    "description": "1. **Arrange:** Use the performance comparison results from 8.1.\n2. **Act:** Check whether the performance comparison function provides algorithm recommendation suggestions.\n3. **Assert:** Verify that reasonable algorithm recommendations are provided, based on performance data and in line with algorithm characteristics (e.g., BFS for shortest paths, A* for complex mazes, etc).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_performance.py::test_algorithm_recommendations",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Provides reasonable algorithm recommendation suggestions, based on performance data and matching algorithm characteristics"
+  },
+  {
+    "metric": "8.3 Maze Complexity Assessment: Comprehensive Scoring",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry point for maze complexity assessment?\n2. **Arrange:** Prepare 2 mazes of different complexity: a simple 10x10 maze and a complex 30x30 maze.\n3. **Act:** Call the complexity assessment function on both mazes separately.\n4. **Assert:** Verify that complete assessment information is returned: complexity score, detailed statistics (path length, number of branch points, number of dead ends), difficulty level, and the complexity score of the 30x30 maze is higher than that of the 10x10 maze.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/complexity_test.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays complete complexity assessment information, including scores, statistics, and difficulty level"
+  },
+  {
+    "metric": "9.1 Data Format Specification: Coordinate System Consistency",
+    "description": "1. **Arrange:** Collect all function inputs and outputs involving coordinates: start, end, path coordinates.\n2. **Act:** Run maze generation, path search, and other functions, record the format of all coordinate data.\n3. **Assert:** Verify that all coordinates use [row, column] format, data type is numpy.ndarray or list, and the format is fully consistent.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_data_format.py::test_coordinate_consistency",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All coordinate formats are fully consistent, meeting the [row, column] format requirement"
+  },
+  {
+    "metric": "9.2 Error Handling: Exceptional Input Handling",
+    "description": "1. **Arrange:** Prepare 5 types of exceptional input: negative maze size (-5), out-of-bounds start coordinate [20,20], invalid maze matrix (containing strings), empty maze matrix, incorrect data type.\n2. **Act:** Input these 5 types of exceptional data into various function modules one by one and observe program response.\n3. **Assert:** Verify that all 5 types of exceptional input are gracefully handled, meaningful error messages are returned, and the program does not crash.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_error_handling.py::test_exception_handling",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All exceptional input is gracefully handled, clear error messages returned, and program does not crash"
+  }
+]

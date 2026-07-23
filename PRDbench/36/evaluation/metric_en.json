@@ -1,0 +1,207 @@
+[
+  {
+    "metric": "0.1 Program Launch and Main Menu Display",
+    "description": "1. **Execute (Act):** Run the program start command in the command line.\n2. **Assert:** Observe if the program successfully starts and displays a full menu with 7 options: [1] Input novel file path [2] Entity recognition extraction [3] Frequency statistics analysis [4] Semantic similarity analysis [5] Relationship inference analysis [6] View history [7] Exit.",
+    "expected_output": "2 points: The program successfully starts and displays all 7 menu options with clear formatting. 1 point: The program starts, but the menu options are incomplete (missing 1-2 options) or the format is problematic. 0 points: The program fails to start or does not display the menu."
+  },
+  {
+    "metric": "1.1 File Path Entry - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is option 1 \"Enter novel file path\" available in the main menu?\n2. **Execute (Act):** Select menu option 1.\n3. **Assert:** Observe if the program enters the file path input interface and prompts the user to input a file path.",
+    "expected_output": "2 points: Pre-check passed, able to enter the file path input interface normally. 1 point: Pre-check passed, but the interface prompt is unclear. 0 points: Pre-check fails, unable to access the feature through the menu."
+  },
+  {
+    "metric": "1.2 File Path Validity Check",
+    "description": "1. **Prepare (Arrange):** Prepare a path of an existing txt file and a non-existent file path.\n2. **Execute (Act):** In the file path input interface, first enter the non-existent file path, then enter the existing file path.\n3. **Assert:** Observe if the program provides a Chinese error message for the invalid path and correctly accepts the valid path.",
+    "expected_output": "2 points: Correctly identifies file existence and provides a clear Chinese error message for invalid paths. 1 point: Identifies file existence, but the message is unclear or not in Chinese. 0 points: Unable to validate file path existence or program crashes."
+  },
+  {
+    "metric": "1.3 Automatic File Encoding Detection",
+    "description": "1. **Prepare (Arrange):** Prepare test files with the same content encoded in GBK and UTF-8.\n2. **Execute (Act):** Enter files of both encoding types.\n3. **Assert:** Observe if the program correctly displays Chinese content with both encoding types without garbled text.",
+    "expected_output": "2 points: Correctly handles both GBK and UTF-8 encoding formats without garbled text. 1 point: Can handle only one of the encoding formats. 0 points: Unable to handle the encoding correctly or results in garbled text."
+  },
+  {
+    "metric": "2.1 Entity Recognition Extraction - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is option 2 \"Entity Recognition Extraction\" available in the main menu?\n2. **Execute (Act):** Select menu option 2.\n3. **Assert:** Observe if the program enters the entity recognition function interface.",
+    "expected_output": "2 points: Pre-check passed, able to enter the entity recognition function normally. 1 point: Pre-check passed, but the interface prompt is unclear. 0 points: Pre-check fails, unable to access the function through the menu."
+  },
+  {
+    "metric": "2.2a Entity Recognition - Character Name Recognition",
+    "description": "1. **Execute (Act):** Perform entity recognition on text containing obvious character names.\n2. **Assert:** Check if the output contains character name entities labeled as (nr) type.",
+    "expected_output": "2 points: Accurately recognizes character names and correctly labels them as nr type. 1 point: Recognizes character names but labels incorrectly or recognition is incomplete. 0 points: Unable to recognize character name entities."
+  },
+  {
+    "metric": "2.2b Entity Recognition - Geographical Name Recognition",
+    "description": "1. **Execute (Act):** Perform entity recognition on text containing geographical names.\n2. **Assert:** Check if the output contains geographical name entities labeled as (ns) type.",
+    "expected_output": "2 points: Accurately recognizes geographical names and correctly labels them as ns type. 1 point: Recognizes geographical names but labels incorrectly or recognition is incomplete. 0 points: Unable to recognize geographical name entities."
+  },
+  {
+    "metric": "2.2c Entity Recognition - Time Expression Recognition",
+    "description": "1. **Execute (Act):** Perform entity recognition on text containing time expressions.\n2. **Assert:** Check if the output contains time expression entities labeled as (t) type.",
+    "expected_output": "2 points: Accurately recognizes time expressions and correctly labels them as t type. 1 point: Recognizes time expressions but labels incorrectly or recognition is incomplete. 0 points: Unable to recognize time expression entities."
+  },
+  {
+    "metric": "2.2d Entity Recognition - Professional Title Recognition",
+    "description": "1. **Execute (Act):** Perform entity recognition on text containing professional titles.\n2. **Assert:** Check if the output contains professional title entities labeled as (nn) type.",
+    "expected_output": "2 points: Accurately recognizes professional titles and correctly labels them as nn type. 1 point: Recognizes professional titles but labels incorrectly or recognition is incomplete. 0 points: Unable to recognize professional title entities."
+  },
+  {
+    "metric": "2.3 Entity Extraction Progress Display",
+    "description": "1. **Execute (Act):** Execute the entity recognition function.\n2. **Assert:** Observe if a dynamic progress prompt is displayed during processing, such as \"Processing the Xth novel: Y%\".",
+    "expected_output": "2 points: Displays a clear progress prompt, including percentage and current file information. 1 point: There is a progress prompt but information is insufficient (missing percentage or file info). 0 points: No progress prompt."
+  },
+  {
+    "metric": "2.4 Entity Extraction Interruption Support",
+    "description": "1. **Execute (Act):** Press Ctrl+C during entity recognition processing.\n2. **Assert:** Observe whether the program can be interrupted normally and safely return to the main menu without crashing.",
+    "expected_output": "2 points: Can normally respond to Ctrl+C interruption and safely return to the main menu. 1 point: Can interrupt but not gracefully (e.g., error message but no crash). 0 points: Cannot interrupt or program crashes."
+  },
+  {
+    "metric": "2.5 Entity Extraction Status Feedback",
+    "description": "1. **Prepare (Arrange):** Prepare a file with an incorrect format or a corrupted file.\n2. **Execute (Act):** Perform entity recognition on the erroneous file.\n3. **Assert:** Observe if the program provides specific reasons for the failure (e.g., file encoding error, tokenization failure, insufficient memory, etc.).",
+    "expected_output": "2 points: Accurately identifies failure reasons and provides specific Chinese error messages. 1 point: Identifies failure but error message is not specific. 0 points: Cannot handle the error correctly or no error message."
+  },
+  {
+    "metric": "2.6 History Records Save and Reuse",
+    "description": "1. **Pre-check (User Path):** Is option 6 \"View History\" available in the main menu?\n2. **Prepare (Arrange):** Execute the entity recognition function multiple times (at least 3 times).\n3. **Execute (Act):** Select menu option 6 to view history, then try to reuse a history record using its number.\n4. **Assert:** Observe if the history list is displayed and can successfully reuse it via number.",
+    "expected_output": "2 points: Pre-check passed, can save history records and supports number reuse. 1 point: Pre-check passed, can save history records but reuse function is problematic. 0 points: Pre-check fails or cannot save history records."
+  },
+  {
+    "metric": "2.7a Entity Output Format - Entity Name and Type",
+    "description": "1. **Execute (Act):** View the output of entity recognition.\n2. **Assert:** Check if each entity contains both name and type label information.",
+    "expected_output": "2 points: All entities have clear name and type labels. 1 point: Most entities have name and type labels but some are missing. 0 points: Missing name or type information in the entity output."
+  },
+  {
+    "metric": "2.7b Entity Output Format - Occurrence Frequency",
+    "description": "1. **Execute (Act):** View the output of entity recognition.\n2. **Assert:** Check if each entity includes occurrence frequency information.",
+    "expected_output": "2 points: All entities include accurate occurrence frequency. 1 point: Most entities include frequency information but some are missing or inaccurate. 0 points: Missing frequency information in the entity output."
+  },
+  {
+    "metric": "2.7c Entity Output Format - Contextual Information",
+    "description": "1. **Execute (Act):** View the output of entity recognition.\n2. **Assert:** Check if each entity includes contextual information (8 characters before and after).",
+    "expected_output": "2 points: All entities contain 8 characters of contextual information before and after. 1 point: Most entities contain contextual information but less than 8 characters or incomplete. 0 points: Missing contextual information in the entity output."
+  },
+  {
+    "metric": "3.1 Frequency Statistics Analysis - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is option 3 \"Frequency Statistics Analysis\" available in the main menu?\n2. **Execute (Act):** Select menu option 3.\n3. **Assert:** Observe if the program enters the frequency statistics analysis function interface.",
+    "expected_output": "2 points: Pre-check passed, able to enter the frequency statistics analysis function normally. 1 point: Pre-check passed, but the interface prompt is unclear. 0 points: Pre-check fails, unable to access the function through the menu."
+  },
+  {
+    "metric": "3.2 Frequency Statistics and Ranking Generation",
+    "description": "1. **Execute (Act):** Perform statistical operations in the frequency statistics analysis function.\n2. **Assert:** Observe if the frequency of each entity type is counted separately by novel and a clear frequency ranking is generated.",
+    "expected_output": "2 points: Correctly counts frequency and generates a clear ranking, categorized by novel. 1 point: Can count frequency but display format has issues or categorization is unclear. 0 points: Unable to perform frequency statistics."
+  },
+  {
+    "metric": "3.3a Entity Type Filtering - Character Filtering",
+    "description": "1. **Execute (Act):** Select the character filter option in the frequency statistics feature.\n2. **Assert:** Observe if the filter results contain only character-type entities.",
+    "expected_output": "2 points: Provides character filter option and results are completely correct. 1 point: Provides character filter but results contain other type entities. 0 points: No character filter feature provided."
+  },
+  {
+    "metric": "3.3b Entity Type Filtering - Location Filtering",
+    "description": "1. **Execute (Act):** Select the location filter option in the frequency statistics feature.\n2. **Assert:** Observe if the filter results contain only location-type entities.",
+    "expected_output": "2 points: Provides location filter option and results are completely correct. 1 point: Provides location filter but results contain other type entities. 0 points: No location filter feature provided."
+  },
+  {
+    "metric": "3.3c Entity Type Filtering - Time Filtering",
+    "description": "1. **Execute (Act):** Select the time filter option in the frequency statistics feature.\n2. **Assert:** Observe if the filter results contain only time-type entities.",
+    "expected_output": "2 points: Provides time filter option and results are completely correct. 1 point: Provides time filter but results contain other type entities. 0 points: No time filter feature provided."
+  },
+  {
+    "metric": "3.3d Entity Type Filtering - Occupation Filtering",
+    "description": "1. **Execute (Act):** Select the occupation filter option in the frequency statistics feature.\n2. **Assert:** Observe if the filter results contain only occupation-type entities.",
+    "expected_output": "2 points: Provides occupation filter option and results are completely correct. 1 point: Provides occupation filter but results contain other type entities. 0 points: No occupation filter feature provided."
+  },
+  {
+    "metric": "3.4 Frequency Range Filtering",
+    "description": "1. **Prepare (Arrange):** Prepare different minimum frequency thresholds (e.g., 5, 10, 20).\n2. **Execute (Act):** Enter each minimum frequency threshold in the frequency statistics.\n3. **Assert:** Observe if all entity frequencies in the filter results are greater than or equal to the set threshold.",
+    "expected_output": "2 points: Correctly filters by frequency threshold, and all results meet the threshold requirements. 1 point: Provides filter function but the results include some entities not meeting the threshold. 0 points: Does not support frequency threshold filtering."
+  },
+  {
+    "metric": "3.5 Combined Filter Conditions",
+    "description": "1. **Execute (Act):** Simultaneously set entity type filtering and frequency threshold filtering conditions.\n2. **Assert:** Observe if the filter results simultaneously satisfy the two conditions and check if \"and/or\" logical relationship selection is supported.",
+    "expected_output": "2 points: Supports multi-dimensional combined filtering with correct logical relationship processing. 1 point: Supports combined filtering but logical relationship processing is problematic. 0 points: Does not support combined filtering."
+  },
+  {
+    "metric": "3.6 Sorting Function",
+    "description": "1. **Execute (Act):** Test sorting in ascending and descending order by frequency, as well as sorting by other fields in the statistics results.\n2. **Assert:** Observe if the sorting results are correct and if the order of data matches the selected sorting method.",
+    "expected_output": "2 points: Supports multiple sorting methods (at least including ascending/descending order by frequency) and results are correct. 1 point: Supports sorting but options are limited or results are incorrect. 0 points: Does not support sorting functions."
+  },
+  {
+    "metric": "3.7 Pagination Display",
+    "description": "1. **Execute (Act):** View the display method of statistical results and test the page switching function.\n2. **Assert:** Observe if results are paginated by 10 items per page and the page up/down switch function works normally.",
+    "expected_output": "2 points: Correctly implements pagination by 10 items per page and the switch function works normally. 1 point: Pagination is available but the number of items per page is not 10 or the switch function has problems. 0 points: Does not support paginated display."
+  },
+  {
+    "metric": "4.1 Semantic Similarity Analysis - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is option 4 \"Semantic Similarity Analysis\" available in the main menu?\n2. **Execute (Act):** Select menu option 4.\n3. **Assert:** Observe if the program enters the semantic similarity analysis function interface.",
+    "expected_output": "2 points: Pre-check passed, able to enter the semantic similarity analysis function normally. 1 point: Pre-check passed, but the interface prompt is unclear. 0 points: Pre-check fails, unable to access the function through the menu."
+  },
+  {
+    "metric": "4.2 Character Entity Selection",
+    "description": "1. **Execute (Act):** Try to select a character entity as the analysis target in the semantic similarity analysis interface.\n2. **Assert:** Observe if the program provides a list of character entities to choose from and restricts selection to character type entities only.",
+    "expected_output": "2 points: Correctly displays a list of character entities and restricts selection to character entities. 1 point: Allows entity selection but does not restrict type or list is incomplete. 0 points: Unable to select a character entity for analysis."
+  },
+  {
+    "metric": "4.3a Word2Vec Model - Algorithm Use",
+    "description": "1. **Execute (Act):** Perform the semantic similarity analysis function.\n2. **Assert:** Confirm through program output or logs whether the Word2Vec algorithm was used for word vector training.",
+    "expected_output": "2 points: Clearly uses the Word2Vec algorithm for word vector training. 1 point: Used word vector training but uncertain if it is Word2Vec. 0 points: Did not use the Word2Vec algorithm."
+  },
+  {
+    "metric": "4.3b Word2Vec Model - Parameter Configuration",
+    "description": "1. **Execute (Act):** Perform the semantic similarity analysis function.\n2. **Assert:** Check if model parameters meet requirements: vector dimension 300, window size 5, minimum word frequency 20, and 8 working threads.",
+    "expected_output": "2 points: All 4 parameters meet requirements. 1 point: 2-3 parameters meet requirements. 0 points: Less than 2 parameters meet requirements or unable to verify parameters."
+  },
+  {
+    "metric": "4.4 Similarity Calculation and Ranking",
+    "description": "1. **Execute (Act):** Complete semantic similarity analysis.\n2. **Assert:** Observe if output results show the top 10 ranked entities by similarity and their specific similarity values.",
+    "expected_output": "2 points: Correctly outputs the top 10 similar entities and accurate similarity values. 1 point: Outputs similar entities but the number is not 10 or similarity values have issues. 0 points: Unable to output similarity results."
+  },
+  {
+    "metric": "4.5 High Similarity Entity Deep Analysis",
+    "description": "1. **Execute (Act):** Complete semantic similarity analysis.\n2. **Assert:** Check if entities with similarity >0.7 have additional contextual features and relationship network analysis outputs.",
+    "expected_output": "2 points: Provides detailed contextual features and relationship network analysis for entities with similarity >0.7. 1 point: Provides analysis but content is not detailed enough or threshold is not 0.7. 0 points: Does not provide deep analysis."
+  },
+  {
+    "metric": "5.1 Relationship Inference Analysis - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is option 5 \"Relationship Inference Analysis\" available in the main menu?\n2. **Execute (Act):** Select menu option 5.\n3. **Assert:** Observe if the program enters the relationship inference analysis function interface.",
+    "expected_output": "2 points: Pre-check passed, able to enter the relationship inference analysis function normally. 1 point: Pre-check passed, but the interface prompt is unclear. 0 points: Pre-check fails, unable to access the function through the menu."
+  },
+  {
+    "metric": "5.2 Analogy Inference Query Format Parsing",
+    "description": "1. **Prepare (Arrange):** Prepare a query of the format \"The relationship between A and B is similar to C and whose relationship\".\n2. **Execute (Act):** Enter the prepared query in the relationship inference interface.\n3. **Assert:** Observe if the program can correctly parse the query format and start processing.",
+    "expected_output": "2 points: Correctly parses analogy inference query format and provides the result. 1 point: Can process the query but format parsing has issues or results are inaccurate. 0 points: Unable to process analogy inference queries."
+  },
+  {
+    "metric": "5.3 Vector Space Analogy Inference Algorithm",
+    "description": "1. **Execute (Act):** Perform the relationship inference function.\n2. **Assert:** Confirm through program output or logs if the D=C+B-A vector space analogy inference algorithm was used and check the reasonableness of the calculation results.",
+    "expected_output": "2 points: Correctly implements D=C+B-A vector space analogy inference algorithm and results are reasonable. 1 point: Implements analogy inference algorithm but unsure if it is the specified formula or there is an issue with result accuracy. 0 points: Algorithm not implemented."
+  },
+  {
+    "metric": "5.4 Relationship Pattern Recognition",
+    "description": "1. **Execute (Act):** Complete relationship inference analysis.\n2. **Assert:** Check if inference results include relationship type labels (e.g., \"teacher-student relationship,\" \"romantic relationship,\" \"hostile relationship,\" etc.).",
+    "expected_output": "2 points: Automatically recognize and output accurate relationship type labels. 1 point: Recognizes relationship types but labels are not accurate enough or types are limited. 0 points: Cannot recognize relationship patterns."
+  },
+  {
+    "metric": "5.5 Relationship Pattern Statistical Analysis",
+    "description": "1. **Execute (Act):** Complete relationship inference analysis.\n2. **Assert:** Observe if statistical analysis of relationship patterns is provided, including frequency and distribution of various relationship types.",
+    "expected_output": "2 points: Provides complete statistical analysis and distribution of relationship patterns, including frequency and distribution rules. 1 point: Provides statistics but analysis is not detailed enough or lacks distribution rules. 0 points: Does not provide relationship pattern statistics."
+  },
+  {
+    "metric": "6.1 Input Validity Check",
+    "description": "1. **Prepare (Arrange):** Prepare various invalid inputs (letters, out-of-range numbers, special characters, etc.).\n2. **Execute (Act):** Enter invalid options in each function interface.\n3. **Assert:** Observe if the program gives clear Chinese error prompts for all invalid inputs.",
+    "expected_output": "2 points: Correctly checks all input types and gives clear Chinese prompts. 1 point: Can check most inputs but the prompt is not clear or not in Chinese. 0 points: No input validation or no error prompt."
+  },
+  {
+    "metric": "6.2 Tabular Display Options",
+    "description": "1. **Execute (Act):** When generating various analysis results, check if there is a table display option.\n2. **Assert:** Observe if a table option is provided and verify if the display effect is clear and visually pleasing after selecting table view.",
+    "expected_output": "2 points: Provides table option and the table format is clear and visually pleasing. 1 point: Provides option but the table format has issues or is not visually pleasing. 0 points: Does not provide table display option."
+  },
+  {
+    "metric": "6.3 Result Saving Function",
+    "description": "1. **Execute (Act):** After completing various analysis functions, test whether results can be saved as a TXT file.\n2. **Assert:** Observe if saving is supported and check if the saved file content is complete, including extracted entities, statistical results, similarity matrix, relationship inference results, etc.",
+    "expected_output": "2 points: Able to save all types of analysis results and file content is complete. 1 point: Can save results but content is missing or format has issues. 0 points: Does not support result saving function."
+  },
+  {
+    "metric": "6.4 Custom Save Path",
+    "description": "1. **Execute (Act):** Test whether the save path can be customized when saving results.\n2. **Assert:** Observe if a path selection function is provided and verify if the file is saved to the specified location.",
+    "expected_output": "2 points: Supports custom save path and function works properly, files are saved to the specified location. 1 point: Supports custom path but has limitations or save location is inaccurate. 0 points: Does not support custom save path."
+  }
+]

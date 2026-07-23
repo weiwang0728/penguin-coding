@@ -1,0 +1,24 @@
+[
+  {
+    "Cost": "4.00",
+    "Count": 2,
+    "ID": 1,
+    "Record": [
+      {
+        "Speed": 0,
+        "S_temp": 25.0,
+        "E_temp": 26.0
+      },
+      {
+        "Speed": 1,
+        "S_temp": 26.0,
+        "E_temp": 26.0
+      },
+      {
+        "Speed": 0,
+        "S_temp": 26.0,
+        "E_temp": 26.0
+      }
+    ]
+  }
+]

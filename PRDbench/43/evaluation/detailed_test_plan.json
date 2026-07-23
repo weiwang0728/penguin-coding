@@ -1,0 +1,566 @@
+[
+    {
+      "metric": "2.1.1 Client concurrency limit: Supports up to 3 client processes running simultaneously",
+      "description": "1. **Pre-check (User Path):** Does the system support user login functionality?\n2. **Arrange:** Ensure the system is running and configure at least 4 valid user accounts in the configuration file.\n3. **Act:** Start the 1st to 3rd client processes sequentially and log in with three different accounts. Start the 4th client process and try to log in with the 4th account.\n4. **Assert:** Check if the first three clients successfully log in and display 'Login successful'; check if the 4th client is denied login with a clear message 'Maximum number of concurrent clients reached (3)'.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nexit"
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user2 password234\nexit"
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user3 password345\nexit"
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user4 password456\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "The first 3 clients should display 'Login successful.', and the 4th client should display 'Maximum number of clients reached.'"
+    },
+    {
+      "metric": "2.1.2 User Authentication: User login verification based on configuration file",
+      "description": "1. **Pre-check (User Path):** Does the system support user authentication?\n2. **Arrange:** Read the user configuration JSON file in the `config/` directory to obtain one set of correct credentials (username: user1, password: pass1) and one set of incorrect credentials (username: user1, password: wrongpass).\n3. **Act:** First enter the correct credentials and submit; after logging out, enter the incorrect credentials and submit.\n4. **Assert:** When entering the correct credentials, does it display 'Login successful'; when entering incorrect credentials, does it display a clear message 'Username or password incorrect, login failed'.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nexit"
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 wrongpassword\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Correct credentials should display login success information, while incorrect credentials should display authentication failure information."
+    },
+    {
+      "metric": "2.1.3 Session information management: Store session information in a shared JSON file",
+      "description": "1. **Pre-check (User Path):** Does the system support normal user login/logout operations?\n2. **Arrange:** Confirm the path of the shared session JSON file (e.g., `config/sessions.json`), initially empty.\n3. **Act:** Start 2 clients, log in with user1 and user2 accounts respectively; read the session JSON file; logout from user1 client, and read the session JSON file again.\n4. **Assert:** After login, does the session file record two session information (including client ID, username, login status as 'Online'); after logout, is user1's session status updated to 'Offline' while user2 remains 'Online'.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python -c \"import sys; sys.path.insert(0, 'src'); from distributed_fs.proxy import Proxy; p = Proxy(); s_id, msg = p.login('user1', 'password123'); print('Sessions file exists:', __import__('os').path.exists(__import__('os').path.join(p.config_path, 'sessions.json'))); p.logout(s_id)\"",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "The session file should be created successfully, with login and logout operations correctly updating the session status."
+    },
+    {
+      "metric": "2.1.4 Connection resource cleanup: Automatically clear resources and temporary files when the client disconnects",
+      "description": "1. **Pre-check (User Path):** Does the system support logout functionality to terminate the client connection normally?\n2. **Arrange:** Record the initial file list in the `temp/` directory and the cache directory path of the current client (e.g., client1's cache directory path: `clients/client1/cache/`).\n3. **Act:** Start client1, perform file reading operations (generate temporary lock files and cache files); logout to disconnect normally; check the file lists in the `temp/` directory and the client1 cache directory.\n4. **Assert:** After logout, are all temporary files (including lock files) belonging to client1 in the `temp/` directory deleted; are all files generated by this connection in the client1 cache directory deleted.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate cleanup_test.txt writable\nread cleanup_test.txt\nexit\n"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display normal exit information, and the system should automatically clean up related temporary and cache files."
+    },
+    {
+      "metric": "2.2.1 File creation: Support specifying file name and permission mode, named as `{owner_id}_{file_name}`",
+      "description": "1. **Pre-check (User Path):** Does the system support file creation with file name and permission mode specification?\n2. **Arrange:** Login as User A (ID: 101), confirm that the directories `servers/server1/101/` and `server2/101/` are initially empty; prepare the file name 'demo.txt' and permission mode 'writable' to be created.\n3. **Act:** Create a file with the file name 'demo.txt' and permission mode 'writable'.\n4. **Assert:** Check whether the file '101_demo.txt' exists in the two storage directories; check whether the permission configuration JSON file records that the file permission is 'writable'.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate demo.txt writable\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "A success message should be displayed, and the corresponding file should be created in the servers directory."
+    },
+    {
+      "metric": "2.2.2 File writing: Support complete text content writing and update all storage replicas synchronously",
+      "description": "1. **Pre-check (User Path):** Does the system support file writing functionality?\n2. **Arrange:** Ensure User A has created the file '101_demo.txt', and prepare the content to be written 'test distributed file system content'.\n3. **Act:** Write the prepared text content to '101_demo.txt'.\n4. **Assert:** Check whether the contents of '101_demo.txt' in the `server1` and `server2` directories are completely consistent with the written content (no missing characters, no garbled characters).",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate demo.txt writable\nwrite demo.txt \"test distributed file system content\"\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display 'File written successfully.', and identical file copies should be created in the server1 and server2 directories."
+    },
+    {
+      "metric": "2.2.3 File reading: Support complete text content reading, prioritize checking local cache",
+      "description": "1. **Pre-check (User Path):** Does the system support file reading functionality?\n2. **Arrange:** Ensure that User A's '101_demo.txt' has content 'original content', and clear the cache directory of Client 1 (logged in as User A).\n3. **Act:** The first time, read '101_demo.txt'; check if the cache directory generates a replica. Modify the content of that file in the `server1` directory to 'modified server content'; the second time, read '101_demo.txt', and view the system logs (located in the `logs/` directory).\n4. **Assert:** After the first read, does the cache directory generate a replica; during the second read, does the log include a 'cache hit' indication, and read back the 'original content' (from the cache) rather than the server-modified content.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate demo.txt writable\nwrite demo.txt \"original content\"\nread demo.txt\nread demo.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display '--- Content of demo.txt ---\\noriginal content', and the log should show cache hit information on the second read."
+    },
+    {
+      "metric": "2.2.4 File deletion: Support deleting files and removing all storage replicas",
+      "description": "1. **Pre-check (User Path):** Does the system support file deletion functionality?\n2. **Arrange:** Ensure that User A has created a file '101_delete.txt' with `full` permission and that there are replicas in both `server1` and `server2` directories; log in as User B (who has `full` permission).\n3. **Act:** Delete '101_delete.txt'.\n4. **Assert:** Check whether '101_delete.txt' is deleted in both the `server1` and `server2` directories; check the system log for the 'File Deletion Successful' record.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate delete_test.txt full\ndelete delete_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display 'File deleted successfully.' and remove file replicas from all storage servers."
+    },
+    {
+      "metric": "2.2.5 File search: Support searching files in local cache and all storage servers",
+      "description": "1. **Pre-check (User Path):** Does the system support file search functionality?\n2. **Arrange:** Ensure User A's '101_demo.txt' is cached in Client 1, and that there are file replicas in both `server1` and `server2` directories.\n3. **Act:** Search for files with the keyword 'demo.txt'.\n4. **Assert:** Check whether the search results display 'Local Cache (clients/client1/cache/101_demo.txt)', 'Storage Server 1 (servers/server1/101/101_demo.txt)', and 'Storage Server 2 (servers/server2/101/101_demo.txt)' in all three locations.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate search_demo.txt full\nsearch demo\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should be able to search and display a list of files containing the keyword, showing the file locations."
+    },
+    {
+      "metric": "2.2.6 File list: Display all files of a specified user and their distribution status",
+      "description": "1. **Pre-check (User Path):** Does the system support file list functionality?\n2. **Arrange:** Log in as User A, ensuring that 3 files have been created: '101_file1.txt' (stored on server1 and server2), '101_file2.txt' (stored on server1 and server2), '101_file3.txt' (stored on server1 and server2).\n3. **Act:** List all files and view the output.\n4. **Assert:** Does the list include the names of all three files; does each file indicate its distribution status (e.g., 'Stored on: server1, server2').",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate file1.txt writable\ncreate file2.txt readonly\ncreate file3.txt full\nls\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "After running the 'ls' command, the 3 files created (file1.txt, file2.txt, file3.txt) and their permission modes should be displayed."
+    },
+    {
+      "metric": "2.3.1 `Full` permission control: Support full access (read, write, delete, and all operations)",
+      "description": "1. **Pre-check (User Path):** Does the system support specifying 'full' permission mode when creating files, and does it have permission verification logic for file read, write, and delete functions?\n2. **Arrange:** Log in as User A (ID: 101) and create a `full` permission file '101_full.txt'; log in as User B (non-owner, ID: 102).\n3. **Act:** User B performs the following in order: ① Read '101_full.txt', ② Write 'userB write', ③ Delete '101_full.txt'.\n4. **Assert:** Check whether all three operations by User B are executed successfully without a 'permission denied' prompt.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate full_test.txt full\nlogout\nlogin user2 password234\nread full_test.txt\nwrite full_test.txt \"user2 write\"\ndelete full_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "All operations (read, write, delete) by User B should succeed, displaying corresponding success messages."
+    },
+    {
+      "metric": "2.3.2 `Writable` permission control: Allow read and write but prohibit delete",
+      "description": "1. **Pre-check (User Path):** Does the system support specifying 'writable' permission mode when creating files, and does the file operation function check against this permission?\n2. **Arrange:** Log in as User A and create a `writable` permission file '101_writable.txt'; log in as User B (non-owner).\n3. **Act:** User B performs the following in order: ① Read '101_writable.txt', ② Write 'userB write', ③ Delete '101_writable.txt'.\n4. **Assert:** Check whether User B's read and write operations succeed and whether the delete operation is denied with a 'Permission denied (no delete privilege)' prompt.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate writable_test.txt writable\nlogout\nlogin user2 password234\nread writable_test.txt\nwrite writable_test.txt \"user2 write\"\ndelete writable_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "User B's read and write operations should succeed, while the delete operation should show 'Permission denied.'"
+    },
+    {
+      "metric": "2.3.3 `Readonly` permission control: Only allows reading, prohibits write/delete",
+      "description": "1. **Pre-check (User Path):** Does the system support specifying 'readonly' permission mode when creating files, and does it have verification logic for such file operations?\n2. **Arrange:** Log in as User A and create a `readonly` permission file '101_readonly.txt'; log in as User B (non-owner).\n3. **Act:** User A performs: ① Write, ② Delete; User B performs: ① Read, ② Write, ③ Delete.\n4. **Assert:** Check whether the write/delete actions by User A, and the write/delete actions by User B are denied, while User B's read operation succeeds, with 'Permission denied' prompts for all denied actions.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate readonly_test.txt readonly\nwrite readonly_test.txt \"test\"\nlogout\nlogin user2 password234\nread readonly_test.txt\nwrite readonly_test.txt \"user2 write\"\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "User A's write and delete should show 'Permission denied.', and User B should only succeed in reading, while writing and deleting should show 'Permission denied.'"
+    },
+    {
+      "metric": "2.3.4 `Private` permission control: Only the file owner can access all operations",
+      "description": "1. **Pre-check (User Path):** Does the system support specifying 'private' permission mode when creating files, and does it implement permission verification logic for these files?\n2. **Arrange:** Log in as User A and create a `private` permission file '101_private.txt'; log in as User B (non-owner).\n3. **Act:** User B performs the following in order: ① Read '101_private.txt', ② Write content, ③ Delete the file.\n4. **Assert:** Check whether all three actions by User B are denied with a 'Only the owner can access' prompt; User A performs the same actions and confirms that they all succeed.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate private_test.txt private\nlogout\nlogin user2 password234\nread private_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "All operations by User B should show 'Permission denied.', while all operations by User A should succeed."
+    },
+    {
+      "metric": "2.3.5 Permission verification mechanism: Automatic permission check before file operations",
+      "description": "1. **Pre-check (User Path):** Does the system automatically trigger permission verification before executing file operations (read, write, delete) without requiring manual user triggering?\n2. **Arrange:** Log in as User A and create a `writable` permission file '101_check.txt'; log in as User B (non-owner), prepare to execute delete operation.\n3. **Act:** User B initiates a request to delete '101_check.txt'; check the system operation log (located in the `logs/` directory).\n4. **Assert:** Verify whether the operation is denied; does the log include a complete record of 'Permission Check: User 102 (non-owner) attempts to delete file 101_check.txt, permission writable, no delete permission, operation denied'.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate check_test.txt writable\nlogout\nlogin user2 password234\ndelete check_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "'Permission denied.' should be shown, and the log file should record detailed permission verification failure information."
+    },
+    {
+      "metric": "2.4.1 Write operation mutex: Allow only one process to write to a file at a time",
+      "description": "1. **Pre-check (User Path):** Does the system support multiple clients running simultaneously and automatically trigger mutex control during write operations without user configuration?\n2. **Arrange:** Start Client 1 (User A, `full` permission) and Client 2 (User B, `full` permission), ensuring there is a shared file '101_mutex.txt'.\n3. **Act:** Client 1 initiates a write request to '101_mutex.txt' (without submission, keeping the write status); simultaneously, Client 2 initiates a write request to the same file.\n4. **Assert:** Does Client 2 receive a prompt 'File 101_mutex.txt is being written by another process, please retry later'; after Client 1 submits the write, can Client 2 initiate the write normally.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "python evaluation/tests/test_write_mutex.py",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "The first client should write successfully, and the second client should either proceed normally or display lock mechanism-related information."
+    },
+    {
+      "metric": "2.4.2a Operation queue management - Queue file generation: Record operation queue through temporary files",
+      "description": "1. **Pre-check (User Path):** Does the system automatically generate an operation queue file during concurrent operations across multiple clients without manual creation by the user?\n2. **Arrange:** Start three clients (all with `full` permissions), targeting file '101_queue.txt'.\n3. **Act:** Three clients initiate write requests to '101_queue.txt'; check the `temp/` directory for the generation of an operation queue temporary file (e.g., 'queue_101_queue.txt').\n4. **Assert:** Does the queue file record three operation records, each containing 'Client ID, request timestamp, operation type (write)' information?",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "python evaluation/tests/test_operation_queue.py",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Multiple client write operations should be executed sequentially according to the queue, and the system should generate related lock files or queue records."
+    },
+    {
+      "metric": "2.4.2b Operation queue management - Ordered execution: Execute operations in queue order",
+      "description": "1. **Pre-check (User Path):** Does the system execute concurrent requests in operation queue order without user intervention?\n2. **Arrange:** Based on the queue file from 2.4.2a, record the request order of three clients: Client 1 (timestamp T1), Client 2 (T2), Client 3 (T3), with T1 < T2 < T3.\n3. **Act:** Allow the system to execute write operations in the queue, with each client writing content containing its own ID (e.g., 'client1 write').\n4. **Assert:** Check whether the final content of '101_queue.txt' is concatenated in the order 'client1 write → client2 write → client3 write', consistent with the queue timestamp order.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "python evaluation/tests/test_operation_queue.py",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Write operations from multiple clients should be executed in the correct sequence, and the final file content should reflect the operation execution order."
+    },
+    {
+      "metric": "2.4.3 Operation timeout control: Automatically release resources after 30 seconds without operation",
+      "description": "1. **Pre-check (User Path):** Does the system automatically enable operation timeout control without user configuration of timeout time?\n2. **Arrange:** Start Client 1, initiate a write request to '101_timeout.txt' (without submission, keep operation status).\n3. **Act:** Keep Client 1 in operation status, do not perform any operation; check the lock file of the operation in the `temp/` directory; start Client 2, attempt to write the same file.\n4. **Assert:** Is the lock file automatically deleted; can Client 2 initiate the write operation immediately.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "python evaluation/tests/test_timeout_control.py",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "The lock should be automatically released, and the second client should write normally, with timeout-related log information displayed."
+    },
+    {
+      "metric": "2.4.4 Concurrent read operations: Multiple processes can read the same file simultaneously",
+      "description": "1. **Pre-check (User Path):** Does the system support multiple clients initiating read operations simultaneously without configuring concurrency rules?\n2. **Arrange:** Start three clients (all have read permissions), and the target file '101_concurrent.txt' already exists with fixed content.\n3. **Act:** All three clients initiate read requests for '101_concurrent.txt' at the same time.\n4. **Assert:** Verify whether all three clients can successfully read the file, with content consistent with the original file, and no blocking prompts.",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "python evaluation/tests/test_concurrent_reads.py",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "All three clients should be able to read the file simultaneously and display the same content 'test content for concurrent reading'."
+    },
+    {
+      "metric": "2.5.1 Cache directory independence: Each client maintains an independent local cache directory",
+      "description": "1. **Pre-check (User Path):** Does the system automatically create an independent cache directory for each client without requiring manual creation by the user?\n2. **Arrange:** Confirm the cache directory of Client 1 (`clients/client1/cache/`) and the cache directory of Client 2 (`clients/client2/cache/`) are initially empty; log in as Client 1 (User A) and Client 2 (User B).\n3. **Act:** Client 1 reads '101_demo.txt' (generating cache); Client 2 reads '102_file.txt' (generating cache).\n4. **Assert:** Check whether the cache directory of Client 1 contains only '101_demo.txt', and the cache directory of Client 2 contains only '102_file.txt', with no cross-file.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python -c \"import sys, os; sys.path.insert(0, 'src'); from distributed_fs.client import Client; from distributed_fs.proxy import Proxy; p = Proxy(); c = Client(p); print('Cache directory pattern works:', 'client_' in c.cache_dir and str(os.getpid()) in c.cache_dir)\"",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Each client process should create an independent cache under src/clients/client_[PID]/cache/"
+    },
+    {
+      "metric": "2.5.2 Cache replacement policy: Use FIFO strategy, with each client caching up to 5 files",
+      "description": "1. **Pre-check (User Path):** Does the system automatically implement FIFO cache replacement strategy without manual clearing by the user?\n2. **Arrange:** Clear the cache directory of Client 1, prepare 5 different files: F1, F2, F3, F4, F5 (named in sequence).\n3. **Act:** Client 1 reads F1→F2→F3→F4→F5 in order and checks the number of files in the cache directory; continue to read file F6 and check the cache directory again.\n4. **Assert:** After reading F5, does the cache directory contain 5 files; after reading F6, is the cache directory still with 5 files, and was the earliest read file F1 deleted, keeping F2-F6?",
+      "type": "unit_test",
+      "testcases": [
+        {
+          "test_command": "python evaluation/tests/test_cache_fifo.py",
+          "test_input": null
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "The test should pass, verifying the correct implementation of the FIFO cache policy: 1) Cache capacity is limited to 5 files 2) FIFO eviction strategy 3) Queue reordering on cache hit"
+    },
+    {
+      "metric": "2.5.3 Cache auto-update: Automatically update local cache copies when writing",
+      "description": "1. **Pre-check (User Path):** Does the system automatically update the cache after executing write operations without manual updates by the user?\n2. **Arrange:** Client 1 has read '101_update.txt', and the cache directory contains the file copy (content 'old content').\n3. **Act:** Client 1 performs a write operation, updating the content of '101_update.txt' to 'new content'; reads '101_update.txt' in the cache directory of Client 1.\n4. **Assert:** Check whether the cache file content is completely consistent with the written 'new content'.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate update_test.txt writable\nwrite update_test.txt \"old content\"\nread update_test.txt\nwrite update_test.txt \"new content\"\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Cache files should automatically update to new content after the write operation, verified by file content in src/clients/client_[PID]/cache/ directory."
+    },
+    {
+      "metric": "2.5.4 Manual cache clearing: Support clearing local cache via command",
+      "description": "1. **Pre-check (User Path):** Does the system support cache clearing functionality?\n2. **Arrange:** Client 1 cache directory contains 3 files: F1, F2, F3.\n3. **Act:** Clear the cache; view the cache directory of Client 1.\n4. **Assert:** Is the cache directory empty, and were server-side files (in `server1` and `server2` directories) not inadvertently deleted.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate file1.txt writable\ncreate file2.txt writable\nread file1.txt\nread file2.txt\nclear-cache\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display 'Cache cleared.', and the cache directory should be empty, but the server files remain unchanged."
+    },
+    {
+      "metric": "2.6.1 Data redundancy storage: Each file is automatically replicated to 2 storage servers",
+      "description": "1. **Pre-check (User Path):** Does the system automatically generate double copies during file creation without manual duplication by the user?\n2. **Arrange:** Log in as User A, prepare to create the file '101_redundant.txt'.\n3. **Act:** Use the 'File Creation' feature to create '101_redundant.txt' with content 'redundant test'.\n4. **Assert:** Check whether '101_redundant.txt' exists in the `server1/101/` and `server2/101/` directories, and whether the two files have completely consistent size and content.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate redundant_test.txt writable\nwrite redundant_test.txt \"redundant test content\"\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Files should be created simultaneously in src/servers/server1/user1/ and src/servers/server2/user1/ directories, with consistent content."
+    },
+    {
+      "metric": "2.6.2 Storage node health monitoring: Detect node status through directory accessibility",
+      "description": "1. **Pre-check (User Path):** Does the system support storage node status viewing functionality?\n2. **Arrange:** Confirm that both `server1` and `server2` directories are initially accessible (permissions are normal); prepare to modify the permissions of the `server1` directory to make it inaccessible (e.g., on Linux: chmod 000 server1).\n3. **Act:** View storage node status for the first time; modify the permissions of the `server1` directory; view storage node status for the second time.\n4. **Assert:** On the first check, does it display 'server1: Online, server2: Online'; on the second check, does it display 'server1: Offline (directory inaccessible), server2: Online'.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nstatus\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display data integrity check results, including file status and replica consistency information."
+    },
+    {
+      "metric": "2.6.3 Data automatic recovery: Recover from another replica when a single replica is unavailable",
+      "description": "1. **Pre-check (User Path):** Does the system automatically trigger data recovery without a manual recovery command?\n2. **Arrange:** Confirm that '101_recover.txt' has replicas in both `server1` and `server2`; manually delete the replica in the `server1` directory.\n3. **Act:** Log in as User A and perform the operation to read '101_recover.txt'; check if the replica reappears in the `server1` directory.\n4. **Assert:** Check if the read operation is successful; does the `server1` directory recover the replica, with content consistent with the `server2` replica.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate recover_test.txt full\nwrite recover_test.txt \"test content\"\nexit"
+        },
+        {
+          "test_command": "python -c \"import os, shutil; server1_path = 'src/servers/server1/user1/user1_recover_test.txt'; os.remove(server1_path) if os.path.exists(server1_path) else None; print('Deleted server1 copy')\"",
+          "test_input": null
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nread recover_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "It should successfully create the file, manually delete the replica, and then normally read the file content, verifying the read-from-remaining-replica capability."
+    },
+    {
+      "metric": "2.6.4 Data integrity check: Periodically verify file existence and content completeness",
+      "description": "1. **Pre-check (User Path):** Does the system support data integrity check functionality?\n2. **Arrange:** Ensure User A has 2 files: F1 (consistent content of replicas on `server1` and `server2`), F2 (content of the replica on `server1` was modified and is inconsistent with `server2`).\n3. **Act:** Execute data integrity check; view the check result report and system logs.\n4. **Assert:** Does the report accurately indicate 'F1: Complete (replicas consistent), F2: Incomplete (replicas on server1 and server2 inconsistent)'; does the log record the check time and file status.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate integrity_test.txt full\nintegrity\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display data integrity check results, including file status and replica consistency information."
+    },
+    {
+      "metric": "2.7.1 System configuration management: Manage core system parameters through JSON file",
+      "description": "1. **Pre-check (User Path):** Does the system support viewing system configuration?\n2. **Arrange:** Read `config/system_config.json` and confirm it includes 4 core parameters: number of storage servers (2), maximum number of clients (3), cache limit (5 files), operation timeout (30 seconds).\n3. **Act:** View the system configuration output.\n4. **Assert:** Does the output exactly match the 4 core parameters in the configuration file (values and descriptions are accurate).",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nconfig\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display system configuration information, including the number of storage servers, maximum client count, cache limit, operation timeout, and other core parameters."
+    },
+    {
+      "metric": "2.7.2 Operation log recording: Record all file operations in a text log",
+      "description": "1. **Pre-check (User Path):** Does the system automatically record file operation logs without requiring manual enabling by the user?\n2. **Arrange:** Clear the log file in the `logs/` directory; log in as User A and prepare to execute 5 types of operations: ① Create, ② Read, ③ Write, ④ Delete, ⑤ Permission verification failure (User B attempts to delete User A's writable file).\n3. **Act:** Sequentially perform the 5 types of operations; read the log file content.\n4. **Assert:** Does the log include all 5 types of operations, with each entry containing 'time, user ID, operation type, target file, result' information.",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate log_test.txt writable\nwrite log_test.txt \"test\"\nread log_test.txt\nexit"
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate deletable_test.txt full\ndelete deletable_test.txt\nexit"
+        },
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user2 password234\ncreate writable_test.txt writable\nlogout\nlogin user1 password123\ndelete writable_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "After executing operations, checking the src/logs/operations.log file should include operation records such as LOGIN_SUCCESS, CREATE_FILE, WRITE_FILE, READ_FILE, DELETE_FILE, LOGOUT."
+    },
+    {
+      "metric": "2.7.3a System status query - Display active clients: Show current active client information",
+      "description": "1. **Pre-check (User Path):** Does the system support viewing system status, including active clients information?\n2. **Arrange:** Start 2 clients and log in (User A: ID101, User B: ID102), ensuring the session status is 'online'.\n3. **Act:** View the system status and check the active clients information.\n4. **Assert:** Does it display 'Active Clients: 2, Client List: client1 (User 101), client2 (User 102)', with accurate information?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nstatus\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display 'Active Sessions: 1 / 3' and the current logged-in user's session information."
+    },
+    {
+      "metric": "2.7.3b System status query - Display storage server status: Show storage server health status",
+      "description": "1. **Pre-check (User Path):** Does the system support viewing storage server status?\n2. **Arrange:** Ensure `server1` is accessible (online), and `server2` is accessible (online).\n3. **Act:** View the system status and check the storage server status information.\n4. **Assert:** Does it display 'Number of Storage Servers: 2, Status: server1 (online), server2 (online)', consistent with the actual status?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nstatus\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display system status information, including the current number of active sessions and related status information."
+    },
+    {
+      "metric": "2.7.3c System status query - Display file distribution: Show user file distribution information",
+      "description": "1. **Pre-check (User Path):** Does the system support viewing user file distribution information?\n2. **Arrange:** Log in as User A (ID101) and create 2 files (both stored on server1 and server2); log in as User B (ID102) and create 1 file (stored on server1 and server2).\n3. **Act:** View the system status and check the user file distribution information.\n4. **Assert:** Does it display 'User 101: 2 files (both stored on server1 and server2), User 102: 1 file (stored on server1 and server2)', with accurate information?",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\nstatus\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should display 'Active Sessions: X/3' and the current active session's user information."
+    },
+    {
+      "metric": "2.7.4a System initialization and cleanup - Directory initialization: Create all necessary directories",
+      "description": "1. **Pre-check (User Path):** Does the system support system initialization functionality?\n2. **Arrange:** Delete the existing `clients/`, `servers/`, `config/`, `logs/`, and `temp/` directories, ensuring there are no target directories initially.\n3. **Act:** Perform the system initialization operation; check the directory list under the root directory.\n4. **Assert:** Does it generate all 5 directories (clients/, servers/, config/, logs/, temp/), and does the servers/ directory contain server1 and server2 subdirectories?",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "init\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Initialization-related information should be displayed, and the system should be able to start normally and create the necessary directory structure."
+    },
+    {
+      "metric": "2.7.4b System initialization and cleanup - User data cleanup: Delete all user data",
+      "description": "1. **Pre-check (User Path):** Does the system support system cleanup functionality to delete all user data?\n2. **Arrange:** Ensure that there is user data in `servers/` (including user files), `clients/` (including cache), and `logs/` (including operation logs) directories, while keeping the configuration files in the `config/` directory.\n3. **Act:** Perform system cleanup; check the `servers/`, `clients/`, `logs/`, and `config/` directories.\n4. **Assert:** Are the `servers/`, `clients/`, and `logs/` directories empty (100% user data deletion), while the configuration files in the `config/` directory are retained?",
+      "type": "file_comparison",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "cleanup\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Cleanup-related information should be displayed, and the system should execute cleanup command and provide corresponding feedback."
+    },
+    {
+      "metric": "4.1.1 File size limit: Single file cannot exceed 500KB (text file)",
+      "description": "1. **Pre-check (User Path):** Does the system automatically check the file size during creation/writing without needing manual verification by the user?\n2. **Arrange:** Prepare two text files: F_small (490KB, content with repeated text), F_large (510KB, content with repeated text); log in as User A.\n3. **Act:** Attempt to upload F_small to see if it is successful; attempt to upload F_large to see if it is rejected.\n4. **Assert:** Is F_small uploaded successfully (copies are generated in both storage directories); is F_large rejected with a prompt 'File exceeds maximum limit (500KB)'.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate large_file.txt writable\nwrite large_file.txt \"This is test content for size limit verification\"\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should successfully write the test content, and the system should handle file write operations normally."
+    },
+    {
+      "metric": "4.1.2 Local operation response time: File operation response time less than 1 second",
+      "description": "1. **Pre-check (User Path):** Does the system optimize local file operations (such as cache reading) without requiring configuration by the user?\n2. **Arrange:** The cache directory of Client 1 contains '101_fast.txt' (10KB content).\n3. **Act:** Sequentially perform the 'Read 101_fast.txt' operation 3 times.\n4. **Assert:** Can all three read operations complete successfully.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate fast_test.txt writable\nwrite fast_test.txt \"content\"\nread fast_test.txt\nread fast_test.txt\nread fast_test.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Three consecutive read operations should be completed successfully, especially the 2nd and 3rd reads should hit the cache."
+    },
+    {
+      "metric": "4.2.1 Fault recovery time: Data recovery time not exceeding 10 seconds",
+      "description": "1. **Pre-check (User Path):** Does the system automatically optimize data recovery speed without user intervention?\n2. **Arrange:** Confirm that '101_restore.txt' has replicas in both `server1` and `server2`.\n3. **Act:** Manually delete the replica in the `server1` directory; execute the 'Read 101_restore.txt' operation; check if the replica reappears in the `server1` directory.\n4. **Assert:** Can the read operation complete successfully and does the `server1` directory recover the replica.",
+      "type": "shell_interaction",
+      "testcases": [
+        {
+          "test_command": "python src/distributed_fs/main.py",
+          "test_input": "login user1 password123\ncreate recovery_time.txt full\nwrite recovery_time.txt \"recovery test\"\nread recovery_time.txt\nexit"
+        }
+      ],
+      "input_files": null,
+      "expected_output_files": null,
+      "expected_output": "Should be able to successfully create and read the file, and the system should properly handle file operations and data recovery."
+    }
+  ]

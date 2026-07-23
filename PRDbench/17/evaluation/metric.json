@@ -1,0 +1,82 @@
+[
+  {
+    "metric": "0.1 Project Documentation: Provide clear installation and operation guides",
+    "description": "1. **Act:** Execute `ls -l` command in the root directory of the project.\n2. **Assert:** Check for the existence of the `README.md` file. If present, execute `cat README.md` and verify that it contains two clear sections: (1) Install dependencies (e.g., `pip install -r requirements.txt`); (2) Run the main program (e.g., `python main.py`).",
+    "expected_output": "2 points: `README.md` file exists and contains clear, unambiguous instructions for installation and execution. 1 point: File exists, but instructions are unclear, incomplete (only installation or execution instructions provided), or incorrect. 0 points: `README.md` file does not exist."
+  },
+  {
+    "metric": "2.5 Program Startup and Main Menu Display",
+    "description": "1. **Arrange:** Complete dependency installation as instructed in `README.md`.\n2. **Act:** Execute the program startup command specified in `README.md`.\n3. **Assert:** Check if the program successfully starts and displays a clear main menu containing all 5 options from the PRD (1. Import, 2. View, 3. Generate Charts, 4. Export, 5. Exit).",
+    "expected_output": "2 points: Program successfully starts as per README instructions and displays all 5 main menu options completely and clearly. 1 point: Program starts, but menu options are missing (less than 5), unclear, or garbled. 0 points: Program does not start as per README instructions, or crashes immediately after starting."
+  },
+  {
+    "metric": "2.1.1 Data Import Functionality",
+    "description": "1. **User Path Pre-check:** Is there a clear option in the main menu (such as \"1. Import Tabular Data\") to trigger the data import function?\n2. **Arrange:** Prepare a valid path and correctly formatted CSV file (e.g., `valid.csv`).\n3. **Act:** Select the import function and enter the prepared file path when prompted.\n4. **Assert:** Check if the program logs the operation and indicates successful data import, and stably returns to the main menu.",
+    "expected_output": "2 points: Pre-check passes, and data is successfully imported with clear success feedback. 1 point: Pre-check passes, but non-fatal errors occur during import or there is no feedback post-success. 0 points: Pre-check fails, or unable to import valid files."
+  },
+  {
+    "metric": "2.6.2a Exception Handling: Non-existent File Path",
+    "description": "1. **User Path Pre-check:** Ensure access to \"Import Tabular Data\" function via the main menu.\n2. **Arrange:** Prepare a non-existent file path, like `non_existent_file.csv`.\n3. **Act:** Select the import function and enter the non-existent path when prompted.\n4. **Assert:** Observe if the program prints a warning message and stably returns to the main menu.",
+    "expected_output": "2 points: Pre-check passes, error message is printed, and stable return to the menu. 1 point: Pre-check passes, no error message printed, or unstable return to the menu. 0 points: Pre-check fails, program crashes or freezes."
+  },
+  {
+    "metric": "2.6.2b Exception Handling: Task ID Format Validation",
+    "description": "1. **Arrange:** Prepare a table `invalid_task_id.csv` with at least one record where task ID does not conform to the format `^TASK-[HML]-(\\d{8})$`.\n2. **Act:** Import this file, then execute `cat error.log` (or the log file name specified in PRD).\n3. **Assert:** Check the log file content to confirm if it contains clear error records for the erroneous task ID.",
+    "expected_output": "2 points: Format error detected, main program not interrupted, and error log accurately records the problem line and reason. 1 point: Error detected and logged, but entire import process interrupted. 0 points: Format error not detected, or program crashes due to erroneous data."
+  },
+  {
+    "metric": "2.6.2c Exception Handling: Equipment Duration Range Validation",
+    "description": "1. **Arrange:** Prepare a table `invalid_duration.csv` with at least one record where equipment duration is less than 0 or greater than or equal to 10.\n2. **Act:** Import this file, then execute `cat error.log` (or the log file name specified in PRD).\n3. **Assert:** Check the log file content to confirm if it contains clear error records for the out-of-range duration.",
+    "expected_output": "2 points: Range error detected, main program not interrupted, and error log accurately records the problem line and reason. 1 point: Error detected and logged, but entire import process interrupted. 0 points: Range error not detected, or program crashes due to erroneous data."
+  },
+  {
+    "metric": "2.2.1 Task Data Aggregation and Duration Summation",
+    "description": "1. **User Path Pre-check:** Ensure access to \"View Summary Table\" function via the main menu.\n2. **Arrange:** Prepare a table `aggregation.csv` with at least 2 records having the same task ID (e.g., `TASK-H-20231001` with durations of 2.5 hours and 3.0 hours respectively).\n3. **Act:** Import this file and select view summary table.\n4. **Assert:** Check the output table to confirm the task ID appears only once and its equipment duration is the correct total (5.5 hours).",
+    "expected_output": "2 points: Pre-check passes, data correctly aggregated by task ID, and duration summed accurately. 1 point: Pre-check passes, data aggregated, but duration calculation incorrect. 0 points: Pre-check fails or data not aggregated as required."
+  },
+  {
+    "metric": "2.2.3a Feedback Column Generation: Text Simplification",
+    "description": "1. **User Path Pre-check:** Ensure access to \"View Summary Table\" function via the main menu.\n2. **Arrange:** Prepare a table with feedback column content as \"Trial has no exceptions\".\n3. **Act:** Import this file and select view summary table.\n4. **Assert:** Check the \"Feedback Column\" in the output table to confirm its content has been simplified to \"No exceptions\".",
+    "expected_output": "2 points: Pre-check passes, feedback column text correctly simplified according to rules. 1 point: Pre-check passes, but simplification rules applied incorrectly or ineffective. 0 points: Pre-check fails or feedback column not generated."
+  },
+  {
+    "metric": "2.2.3b Feedback Column Generation: Exception Identifier Extraction",
+    "description": "1. **User Path Pre-check:** Ensure access to \"View Summary Table\" function via the main menu.\n2. **Arrange:** Prepare a table with feedback column content as \"Error-404, device restart\".\n3. **Act:** Import this file and select view summary table.\n4. **Assert:** Check the output table to confirm a new \"Exception Identifier\" column is created with content extracted from feedback, containing non-Chinese text \"Error-404,\".",
+    "expected_output": "2 points: Pre-check passes, \"Exception Identifier\" column correctly created and all non-Chinese content extracted. 1 point: Pre-check passes, but extracted content incomplete or rules applied incorrectly. 0 points: Pre-check fails or \"Exception Identifier\" column not generated."
+  },
+  {
+    "metric": "2.3a Task Efficiency Analysis: Core KPI Calculation",
+    "description": "1. **User Path Pre-check:** Is there an option \"Generate Statistics Chart (including KPI Analysis)\" in the main menu?\n2. **Arrange:** Prepare a table like `kpi.csv`, containing 10 tasks (8 successful), 20 test items (15 valid), total duration of 100 hours.\n3. **Act:** Import `kpi.csv`, then select \"Generate Statistics Chart (including KPI Analysis)\".\n4. **Assert:** Check if the output includes \"Task Completion Rate\", \"Test Validity Index\", \"Average Equipment Duration\". Ensure calculated values match expected values.",
+    "expected_output": "2 points: Pre-check passes, all 3 core KPIs correctly calculated and displayed. 1 point: Pre-check passes, but only 1-2 KPIs are correctly calculated and displayed. 0 points: Pre-check fails or no correct KPI displayed."
+  },
+  {
+    "metric": "2.3b Task Efficiency Analysis: Layered Statistics by Priority",
+    "description": "1. **User Path Pre-check:** Access \"Generate Statistics Chart (including KPI Analysis)\" in the main menu. Check if data is grouped by priority (e.g., 'TASK-H', 'TASK-M') in the display area.\n2. **Arrange:** Prepare a table containing at least two different priority task IDs.\n3. **Act:** Import the table and access the KPI display function.\n4. **Assert:** Check if KPI data is clearly divided into at least 2 priority categories in the output.",
+    "expected_output": "2 points: Pre-check passes, correct layered statistics by 2 or more priorities. 1 point: Pre-check passes, but only 1 priority layered or display format confused. 0 points: Pre-check fails or no layered statistics function."
+  },
+  {
+    "metric": "2.4a Visual Report Generation: Task Status Distribution Chart",
+    "description": "1. **User Path Pre-check:** Is there an option \"Generate Statistics Chart\" or similar in the main menu?\n2. **Arrange:** Import a data table containing \"Successful\" and \"Failed\" statuses.\n3. **Act:** Select the chart generation function and enter the save directory.\n4. **Assert:** Check the program output, confirm the save path for the chart (e.g., `task_status.png`) and use `ls` command to verify the file is generated.",
+    "expected_output": "2 points: Pre-check passes, successfully generates task status chart file and returns path. 1 point: Pre-check passes, but chart generation fails or no path returned. 0 points: Pre-check fails."
+  },
+  {
+    "metric": "2.4b Visual Report Generation: Test Effectiveness Distribution Chart",
+    "description": "1. **User Path Pre-check:** Is there an option \"Generate Statistics Chart\" or similar in the main menu?\n2. **Arrange:** Import a data table containing \"Valid\", \"Invalid\", \"Unmarked\" statuses.\n3. **Act:** Select the chart generation function, enter the save directory.\n4. **Assert:** Check the program output, confirm the save path for the second chart (e.g., `test_effectiveness.png`) and use `ls` command to verify the file is generated.",
+    "expected_output": "2 points: Pre-check passes, successfully generates test effectiveness chart file and returns path. 1 point: Pre-check passes, but chart generation fails or no path returned. 0 points: Pre-check fails."
+  },
+  {
+    "metric": "2.5.1 Results Export Function",
+    "description": "1. **User Path Pre-check:** Is there an \"Export Process Results\" option in the main menu?\n2. **Arrange:** Successfully import a data set.\n3. **Act:** Select export function, follow prompt for `csv` or excel.\n4. **Assert:** Confirm file generation and verify file content is processed tabular data.",
+    "expected_output": "2 points: Pre-check passes, successfully generates file in specified format according to user input, and content is correct. 1 point: Pre-check passes, but file generation fails or format and content do not match expectations. 0 points: Pre-check fails."
+  },
+  {
+    "metric": "2.5.2 Shortcut Key: 'q' Key Return",
+    "description": "1. **Act:** Select `2` (View Summary Table) in the main menu, after displaying the table, press `q` key without selecting other operations.\n2. **Assert:** Observe if the program correctly returns to the previous screen.",
+    "expected_output": "2 points: Pressing 'q' key instantly and stably returns to the previous screen. 1 point: Pressing 'q' key has delay or requires extra operation to return. 0 points: 'q' key is ineffective or causes program exception."
+  },
+  {
+    "metric": "2.5.1 System Exit Function",
+    "description": "1. **User Path Pre-check:** Is there a \"5. Exit System\" option in the main menu?\n2. **Act:** Select the exit option and press enter in the main menu interface.\n3. **Assert:** Observe if the program process terminates cleanly and normally, with no error messages printed.",
+    "expected_output": "2 points: Pre-check passes, program exits quietly and normally. 1 point: Pre-check passes, but program exit accompanied by errors or exception prints. 0 points: Pre-check fails, or program unresponsive or frozen upon exit."
+  }
+]

@@ -1,0 +1,336 @@
+[
+  {
+    "metric": "0.1 Program Startup and Help Command",
+    "description": "1. **Act:** Execute `python -m src.main --help` in the shell.\n2. **Assert:** Check whether the program exits normally, and whether the outputted help information clearly includes the six main commands: `init`, `template`, `data`, `analyze`, `persona`, and `report` along with their basic descriptions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py --help",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Standard output should contain the application name 'Golf-Analyzer', the help text 'Golfer Tourism Consumer Behavior Survey & Data Analysis System', and a clearly listed set of available subcommands, including `init`, `template`, `data`, `analyze`, `persona`, `report` and brief descriptions."
+  },
+  {
+    "metric": "2.1.1a Questionnaire Template Creation",
+    "description": "1. **Arrange:** Prepare a template name '2024 Spring Survey'.\n2. **Act:** Execute `python -m src.main template create`, and enter the template name and description according to the interactive prompts.\n3. **Assert:** Execute `python -m src.main template list`, and check whether the output list includes an entry named '2024 Spring Survey'.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -m src.main template create",
+        "test_input": "evaluation/2.1.1a_create_template.in"
+      },
+      {
+        "test_command": "python -m src.main template list",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/2.1.1a_create_template.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "After the first step, the questionnaire should be created successfully, and the terminal should display 'Questionnaire \"2024 Spring Survey\" has been successfully created!'. In the second step, when listing the questionnaires, the terminal should display a table containing the entry '2024 Spring Survey'."
+  },
+  {
+    "metric": "2.1.1b Add Question (Single Choice)",
+    "description": "1. **Arrange:** Ensure a template named '2024 Spring Survey' already exists.\n2. **Act:** Execute `python -m src.main template add-question --template-name '2024 Spring Survey' --module 'Personal Basic Information' --type 'Single Choice' --title 'What is your gender?' --options 'Male,Female'`.\n3. **Assert:** Execute `python -m src.main template show --template-name '2024 Spring Survey'`, and check the output to see if it contains the newly added single choice question, and that all attributes (module, title, options) are correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_add_single_choice_question.py::test_add_single_choice_question_to_existing_template -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passes with no errors. The unit test should verify that the question object and the two option objects are correctly created and submitted to the database session."
+  },
+  {
+    "metric": "2.1.1c Add Question (Multiple Choice)",
+    "description": "1. **Arrange:** Ensure a template named '2024 Spring Survey' already exists.\n2. **Act:** Execute `python -m src.main template add-question --template-name '2024 Spring Survey' --module 'Current Consumption Status' --type 'Multiple Choice' --title 'What types of golf venues do you frequent?' --options 'Public,Membership,Driving Range'`.\n3. **Assert:** Execute `python -m src.main template show --template-name '2024 Spring Survey'`, and check the output to see if it contains the newly added multiple choice question, and that all attributes are correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_add_multiple_choice_question.py::test_add_multiple_choice_question_to_existing_template -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passes with no errors. The unit test should verify that the question object and three option objects are correctly created and submitted to the database session."
+  },
+  {
+    "metric": "2.1.1d Add Question (Scale)",
+    "description": "1. **Arrange:** Ensure a template named '2024 Spring Survey' already exists.\n2. **Act:** Execute `python -m src.main template add-question --template-name '2024 Spring Survey' --module 'Travel Motivation' --type 'Scale' --title 'To what extent does price influence you?' --options '1,5'`.\n3. **Assert:** Execute `python -m src.main template show --template-name '2024 Spring Survey'`, and check the output to see if it contains the newly added scale question and that the range is correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_add_scale_question.py::test_add_scale_question_to_existing_template -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passes with no errors. The unit test should verify that the question object and a remark object representing the scale range are correctly created and submitted to the database session."
+  },
+  {
+    "metric": "2.1.1e Add Question (Open Text)",
+    "description": "1. **Arrange:** Ensure a template named '2024 Spring Survey' already exists.\n2. **Act:** Execute `python -m src.main template add-question --template-name '2024 Spring Survey' --module 'Personal Basic Information' --type 'Open Text' --title 'What is your occupation?'`.\n3. **Assert:** Execute `python -m src.main template show --template-name '2024 Spring Survey'`, and check the output to see if it contains the newly added open text question.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_add_open_text_question.py::test_add_open_text_question_to_existing_template -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passes with no errors. The unit test should verify that the question object is correctly created and submitted to the database session, and no option objects are created."
+  },
+  {
+    "metric": "2.1.1f Questionnaire Template Import (CSV)",
+    "description": "1. **Arrange:** Create an `expert_questions.csv` file with four columns: 'module', 'type', 'title', 'options' and at least 3 rows of question data.\n2. **Act:** Execute `python -m src.main template import --file-path evaluation/expert_questions.csv --template-name 'Expert Template'`.\n3. **Assert:** Execute `python -m src.main template show --template-name 'Expert Template'`, and check whether the number and content of questions in the output are exactly consistent with the CSV file.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -m src.main template import --file-path evaluation/expert_questions.csv --template-name 'Expert Template'",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/expert_questions.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Standard output should contain a successful import confirmation message such as: 'Successfully imported 3 questions from expert_questions.csv into questionnaire \"Expert Template\"'"
+  },
+  {
+    "metric": "2.1.2b Input Validation (Range Validation)",
+    "description": "1. **Arrange:** In the `collect` interactive flow, go to a scale question (for example, range 1-5).\n2. **Act:** When prompted for an answer, first input an out-of-range value '6'.\n3. **Assert:** Observe whether the program rejects the input and prints a clear error message (such as \"Input must be between 1 and 5\"), then prompts the user to re-enter, instead of accepting invalid values or crashing.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_range_validation.py::test_range_validation_in_data_collection -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passes with no errors. The unit test should verify that the CLI command correctly handles out-of-range input (to be implemented), and finally accepts valid input."
+  },
+  {
+    "metric": "2.1.2c Input Validation (Required Field Validation)",
+    "description": "1. **Arrange:** In the `collect` interactive flow, go to a required question (by default, all questions are required).\n2. **Act:** When prompted for an answer, press Enter directly (input an empty value).\n3. **Assert:** Observe whether the program rejects the input and prints a clear error message (such as \"This field is required\"), then prompts the user to try again, instead of accepting empty values or crashing.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_required_validation.py::test_collect_single_question_answer_rejects_empty_then_accepts",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passes with no errors. The unit test should verify that when the input is empty, the error message \"This field is required, please enter a valid value.\" is displayed, and the valid input is successfully returned afterwards."
+  },
+  {
+    "metric": "2.1.3a Data Export (CSV)",
+    "description": "1. **Arrange:** Ensure that at least 2 collected records exist in the database.\n2. **Act:** Execute `python -m src.main data export --output-path collected_data.csv`.\n3. **Assert:** Check whether the `collected_data.csv` file is created, use the `head` command to inspect the file, confirm it is UTF-8 encoded and that the fields are ordered according to PRD requirements.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py data export --output-path src/actual_collected_data.csv",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": "evaluation/expected_actual_collected_data.csv",
+    "expected_output": "Standard output should contain a successful data export confirmation, such as: 'Data successfully exported to src/actual_collected_data.csv'. The file actual_collected_data.csv should be created successfully and its content should not be empty."
+  },
+  {
+    "metric": "2.1.3b Data Anonymization",
+    "description": "1. **Arrange:** Ensure that the database contains records with personal privacy information (such as 'Name').\n2. **Act:** Execute `python -m src.main data export --anonymize --output-path anonymized_data.csv`.\n3. **Assert:** Check the `anonymized_data.csv` file and verify that privacy columns have been masked (e.g. 'Zhang San' -> 'Zhang*'), while other data remains unchanged.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main data export --anonymize --output-path src/anonymized_data.csv",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/test_data_with_personal_info.csv"
+    ],
+    "expected_output_files": "evaluation/anonymized_data.csv",
+    "expected_output": "Standard output should contain confirmation of data anonymization and export, such as: 'Data has been successfully anonymized and exported to evaluation/anonymized_data.csv'. The anonymized_data.csv file should be created successfully, and personal privacy information (name, phone, etc.) should be properly anonymized, e.g. 'Zhang San' becomes 'Zhang*', '13812345678' becomes '138****5678', while non-privacy information (gender, age group, etc.) remains unchanged."
+  },
+  {
+    "metric": "2.2.1a Descriptive Statistics (Table Output)",
+    "description": "1. **Arrange:** Prepare a `sample_data.csv` with at least 10 records.\n2. **Act:** Execute `python -m src.main analyze stats --data-path evaluation/sample_data.csv --output-dir reports/descriptive`.\n3. **Assert:** Check whether a table file (.md) is generated under the `reports/descriptive` directory, and whether the file content includes at least three required statistics (mean, standard deviation, proportion) as specified in PRD.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main analyze stats --data-path evaluation/sample_data.csv --output-dir evaluation/reports/descriptive",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/reports/descriptive/descriptive_stats.md"
+    ],
+    "expected_output": "Standard output should confirm that analysis is complete and the report is generated, such as: '✅ Descriptive statistics analysis completed, report saved to evaluation/reports/descriptive'. The descriptive_stats.md file should be created successfully and include statistics for numerical fields (mean, standard deviation, min, max, median) and distribution proportions for categorical fields."
+  },
+  {
+    "metric": "2.2.1b Descriptive Statistics (Chart Output)",
+    "description": "1. **Arrange:** Reuse the previous step's results.\n2. **Act:** No additional execution needed.\n3. **Assert:** Check whether at least 2 chart files (e.g. .png), corresponding to bar chart and pie chart, are generated under the `reports/descriptive` directory.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main analyze stats --data-path evaluation/sample_data.csv --output-dir evaluation/reports/descriptive",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_gender_distribution.png",
+      "evaluation/expected_venue_type_distribution.png"
+    ],
+    "expected_output": "Standard output should confirm that analysis is complete and the report is generated, such as: '✅ Descriptive statistics analysis completed, report saved to evaluation/reports/descriptive'. The files gender_distribution.png and venue_type_distribution.png should be created successfully, containing a gender distribution pie chart and a preferred venue type bar chart respectively."
+  },
+  {
+    "metric": "2.2.2 Factor Analysis (Loadings Matrix and Factor Scores Output)",
+    "description": "1. **Arrange:** Prepare a `sample_data.csv` containing scale questions.\n3. **Act:** Execute `python -m src.main analyze factor --data-path evaluation/sample_data.csv --questions 'price_influence,satisfaction,amenities_importance' --output-dir evaluation/reports/factor`.\n4. **Assert:** Check whether the `evaluation/reports/factor` directory contains the result file with factor loadings matrix (`factor_loadings.csv`) and the factor scores file (`factor_scores.csv`).",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main analyze factor --data-path evaluation/sample_data.csv --questions \"price_influence,satisfaction,amenities_importance\" --output-dir evaluation/reports/factor",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/reports/factor/factor_loadings.csv",
+      "evaluation/reports/factor/factor_scores.csv"
+    ],
+    "expected_output": "Standard output should confirm analysis completion and report generation, e.g.: '✅ Factor analysis completed, report saved to evaluation/reports/factor'. Two files should be generated: 1) factor_loadings.csv - includes three variables (price_influence, satisfaction, amenities_importance) with loadings on two factors, loadings matrix as a 3-row 2-column CSV file; 2) factor_scores.csv - has 10 rows (corresponding to 10 samples) and two factor score columns (Factor_1, Factor_2)."
+  },
+  {
+    "metric": "2.2.5 User Persona Generation",
+    "description": "1. **Arrange:** Prepare a clustering analysis result file `reports/cluster/results.json`.\n2. **Act:** Execute `python -m src.main persona generate --from-cluster-results evaluation/reports/cluster/results.json --output-dir evaluation/reports/personas`.\n4. **Assert:** Check the `reports/personas` directory and confirm that a JSON persona file is generated for each cluster, and that each file contains at least the 4 dimensions mentioned in the PRD (demographics, leading motivations, consumption preference, destination preference).",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main persona generate --from-cluster-results evaluation/reports/cluster/results.json --output-dir evaluation/reports/personas",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/reports/cluster/results.json"
+    ],
+    "expected_output_files": [
+      "evaluation/reports/personas/cluster_0.json",
+      "evaluation/reports/personas/cluster_1.json",
+      "evaluation/reports/personas/cluster_2.json"
+    ],
+    "expected_output": "Standard output should include a confirmation of successful user persona generation, such as: '✅ User personas successfully generated and saved to evaluation/reports/personas'. Files cluster_0.json, cluster_1.json, and cluster_2.json should be created successfully, each containing complete persona information, including: 1) demographics - gender distribution, age group distribution; 2) motivations - price sensitivity, satisfaction level, facility importance; 3) consumption_patterns - consumption frequency distribution, behavioral description; 4) venue_preferences - venue type preference distribution, preference description; 5) persona_summary."
+  },
+  {
+    "metric": "2.3.2b Full Report Export (Word)",
+    "description": "1. **Arrange:** Prepare a `sample_data.csv`.\n2. **Act:** Execute `python -m src.main report generate-full --data-path evaluation/sample_data.csv --format word --output-path evaluation/full_report.docx`.\n3. **Assert:** Check whether the `full_report.docx` file is generated successfully and that its file size is nonzero.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main report generate-full --data-path evaluation/sample_data.csv --format word --output-path evaluation/full_report.docx",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_full_report.docx"
+    ],
+    "expected_output": "Standard output should include a confirmation of report generation, such as: '✅ Report successfully generated and saved to evaluation/full_report.docx'. The file full_report.docx should be created successfully and the file size should be nonzero. The Word document should contain the complete analysis report: 1) Executive summary; 2) Data overview; 3) Descriptive statistics analysis (tables for numerical and categorical fields); 4) Analysis conclusions; 5) Marketing recommendations. The document should be well formatted with titles, tables, and lists."
+  },
+  {
+    "metric": "2.3.2c Full Report Export (Markdown)",
+    "description": "1. **Arrange:** Prepare a `sample_data.csv`.\n2. **Act:** Execute `python -m src.main report generate-full --data-path evaluation/sample_data.csv --format markdown --output-path evaluation/full_report.md`.\n3. **Assert:** Check whether the `full_report.md` file is generated successfully and its file size is nonzero.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main report generate-full --data-path evaluation/sample_data.csv --format markdown --output-path evaluation/full_report.md",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_full_report.md"
+    ],
+    "expected_output": "Standard output should include a confirmation of report generation, such as: '✅ Report successfully generated and saved to evaluation/full_report.md'. The file full_report.md should be created successfully and its size should be nonzero. The Markdown document should contain the complete analysis report, including: 1) Title and executive summary; 2) Data overview; 3) Descriptive statistics analysis (tables for numerical and categorical fields); 4) Analysis conclusions; 5) Marketing recommendations. The document should use standard Markdown formatting, including title levels, tables, and lists, and content should be identical to expected_full_report.md."
+  },
+  {
+    "metric": "2.3.3a Permission Control (Role)",
+    "description": "1. **Arrange:** Prepare a `sample_data.csv`.\n3. **Act:** Execute a command that requires analyst permissions, but use the regular user role: `python -m src.main --role \"Regular User\" analyze stats --data-path evaluation/sample_data.csv --output-dir evaluation/reports/descriptive`.\n4. **Assert:** Observe whether the program refuses execution and returns a clear error message for insufficient permissions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -m src.main --help",
+        "test_input": null
+      },
+      {
+        "test_command": "python -m src.main --role \"Regular User\" analyze stats --data-path evaluation/sample_data.csv --output-dir evaluation/reports/descriptive",
+        "test_input": null
+      },
+      {
+        "test_command": "python -m src.main --role \"Analyst\" analyze stats --data-path evaluation/sample_data.csv --output-dir evaluation/reports/descriptive",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Step 1: The command should execute successfully and exit with status code 0, standard output should include the option description '--role TEXT User role (Regular User, Analyst, Admin) [default: Analyst]'. Step 2: The command should exit with nonzero status code (1), standard output should include a clear permission error: '❌ Permission error: \"Regular User\" role does not have permission to perform this operation.' and 'This operation requires \"Analyst\" or higher permissions.' Step 3: The command should execute successfully and exit with status code 0, standard output should include successful information: '✅ Successfully read data file: evaluation/sample_data.csv' and '✅ Descriptive statistics analysis completed, report saved to evaluation/reports/descriptive'."
+  },
+  {
+    "metric": "2.3.3b Logging",
+    "description": "1. **Arrange:** Delete any existing log files (such as `activity.log`).\n2. **Act:** Execute any successful command, for example `python -m src.main template list`.\n3. **Assert:** Check whether a log file is created in the project root or specified log directory, and whether the file records the recently executed operation.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -m src.main template list",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "activity.log"
+    ],
+    "expected_output": "An `activity.log` file should be created or appended to in the project root, and the file should include log entries related to the executed command, formatted as: 'YYYY-MM-DD HH:MM:SS,mmm - INFO - EXECUTED: templatelist'. The log file should record the specific commands executed by the user for system admin to track user operation history."
+  },
+  {
+    "metric": "3.0 Performance Requirements",
+    "description": "1. **Arrange:** Prepare a questionnaire data file `large_data.csv` with 5000 records.\n2. **Act:** Execute a timer command to test report generation performance under large data volume.\n3. **Assert:** Observe and record the actual execution time of the command, and verify whether the performance meets the requirements.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -m src.main report generate-full --data-path evaluation/large_data.csv --format markdown --output-path evaluation/performance_report.md",
+        "test_input": null
+      }
+    ],
+    "input_files": [
+      "evaluation/large_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/performance_report.md"
+    ],
+    "expected_output": "Standard output should include the following information: 1) '✅ Successfully read data file: evaluation/large_data.csv'; 2) '📊 Data dimensions: 5000 rows x 16 columns'; 3) '✅ Report successfully generated and saved to evaluation/performance_report.md'. The generated performance_report.md file should contain the full analysis report, including executive summary, data overview, descriptive statistics analysis, conclusions, and marketing recommendations. The total command execution time should be within a reasonable range (preferably less than 30 seconds) to meet performance requirements for large data sets."
+  }
+]

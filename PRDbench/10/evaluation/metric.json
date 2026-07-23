@@ -1,0 +1,97 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the command `python src/main.py` in the shell.\n2. **Assert:** Check whether the program starts successfully and displays a clear main menu containing options such as 'Input Data', 'Generate Huffman Tree and Codes', 'Export Results', and 'Exit'.",
+    "expected_output": "2 points: The program starts successfully and displays a clear main menu with 4 main options. 1 point: The program starts, but the menu has fewer than 4 options, is unclear, or contains garbled text. 0 points: The program fails to start or crashes immediately after launch."
+  },
+  {
+    "metric": "1.1 Menu Navigation - Main Menu Option Response",
+    "description": "1. **Act:** After starting the program, sequentially enter '1', '5', '2', '3', '4', and then an invalid option such as '9'.\n2. **Assert:** Check whether the program correctly enters submenus, executes corresponding operations, or displays proper prompts for invalid input.",
+    "expected_output": "2 points: All valid main menu options (1,2,3,4) respond correctly, and invalid inputs trigger appropriate error prompts. 1 point: Most valid options respond properly, but some fail or the invalid input prompt is unclear. 0 points: Main menu options do not respond or the program crashes."
+  },
+  {
+    "metric": "1.2 Menu Navigation - Input Data Submenu",
+    "description": "1. **Act:** Start the program and select '1' from the main menu to enter the input data menu.\n2. **Assert:** Verify whether a submenu is displayed containing 'Read from TXT file', 'Generate Random Text', 'Manual Text Input', 'Input Key-Value Pairs', and 'Return to Main Menu'.",
+    "expected_output": "2 points: The complete input data submenu with 5 options is displayed successfully. 1 point: The submenu appears but some options are missing or incorrect. 0 points: The submenu does not appear or the program encounters errors."
+  },
+  {
+    "metric": "1.3 Menu Navigation - Export Results Submenu",
+    "description": "1. **Act:** Start the program and select '3' from the main menu to enter the export results menu.\n2. **Assert:** Verify whether a submenu appears containing 'Export Huffman Codes to CSV', 'Export Huffman Tree to JSON', and 'Return to Main Menu'.",
+    "expected_output": "2 points: The complete export results submenu with 3 options is displayed successfully. 1 point: The submenu appears but options are missing or mislabeled. 0 points: The submenu fails to display or the program encounters errors."
+  },
+  {
+    "metric": "2.1.1a Text Import - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** After selecting '1' from the main menu to enter the input data menu, confirm there is an option like 'Read from TXT file'.\n2. **Arrange:** Ensure a text file named `Test.txt` exists in the project root directory.\n3. **Act:** Select 'Read from TXT file' and input `Test.txt` as the file path.\n4. **Assert:** Verify whether the program successfully reads the file and generates a frequency table.",
+    "expected_output": "2 points: Pre-check passes, and the file is successfully read and a frequency table is generated. 1 point: Pre-check passes, but non-critical errors occur when reading the file or creating the table. 0 points: Pre-check fails, the file cannot be read, or an error is reported."
+  },
+  {
+    "metric": "2.1.2a Random Text Generation (Numbers) - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the input data menu, confirm the existence of a 'Generate Random Text' option.\n2. **Arrange:** Input parameters: length 10, type 'numbers'.\n3. **Act:** Select 'Generate Random Text', then enter length 10 and type 'numbers'.\n4. **Assert:** Verify whether a 10-digit numeric text is generated and displayed.",
+    "expected_output": "2 points: Pre-check passes, and the specified random numeric text is generated successfully. 1 point: Pre-check passes, but the text length/type does not match requirements or is not displayed. 0 points: Pre-check fails, text cannot be generated, or an error occurs."
+  },
+  {
+    "metric": "2.1.2b Random Text Generation (Letters) - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the input data menu, confirm the existence of a 'Generate Random Text' option.\n2. **Arrange:** Input parameters: length 15, type 'letters'.\n3. **Act:** Select 'Generate Random Text', then enter length 15 and type 'letters'.\n4. **Assert:** Verify whether a 15-character alphabetic text is generated and displayed.",
+    "expected_output": "2 points: Pre-check passes, and the specified random alphabetic text is generated successfully. 1 point: Pre-check passes, but the text length/type does not match or is not displayed. 0 points: Pre-check fails, text cannot be generated, or an error occurs."
+  },
+  {
+    "metric": "2.1.2c Random Text Generation (String) - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the input data menu, confirm the existence of a 'Generate Random Text' option.\n2. **Arrange:** Input parameters: length 20, type 'string'.\n3. **Act:** Select 'Generate Random Text', then enter length 20 and type 'string'.\n4. **Assert:** Verify whether a 20-character mixed text containing letters, numbers, and punctuation is generated and displayed.",
+    "expected_output": "2 points: Pre-check passes, and the specified mixed-type random text is generated successfully. 1 point: Pre-check passes, but the text does not meet the format or display requirements. 0 points: Pre-check fails, text cannot be generated, or an error occurs."
+  },
+  {
+    "metric": "2.1.2d Random Text Generation (Chinese) - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the input data menu, confirm the existence of a 'Generate Random Text' option.\n2. **Arrange:** Input parameters: length 8, type 'Chinese'.\n3. **Act:** Select 'Generate Random Text', then enter length 8 and type 'Chinese'.\n4. **Assert:** Verify whether an 8-character Chinese text is generated and displayed.",
+    "expected_output": "2 points: Pre-check passes, and the specified Chinese text is generated successfully. 1 point: Pre-check passes, but the text does not fully match the requirements or is not displayed. 0 points: Pre-check fails, text cannot be generated, or an error occurs."
+  },
+  {
+    "metric": "2.1.3a Manual Text Input - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the input data menu, confirm the existence of a 'Manual Text Input' option.\n2. **Arrange:** Input data: 'AABBBCCCCDDDDDE'.\n3. **Act:** Select 'Manual Text Input' and enter 'AABBBCCCCDDDDDE'.\n4. **Assert:** Verify whether the program reports successful frequency table creation.",
+    "expected_output": "2 points: Pre-check passes, and the frequency table is successfully created. 1 point: Pre-check passes, but there are non-critical issues or missing success messages. 0 points: Pre-check fails, frequency table creation fails, or an error occurs."
+  },
+  {
+    "metric": "2.1.4a Key-Value Pair Input - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the input data menu, confirm the existence of an 'Input Key-Value Pairs' option.\n2. **Arrange:** Input key-value pairs: 'a:5', 'b:9', 'c:12'.\n3. **Act:** Select 'Input Key-Value Pairs', then input 'a' and '5', 'b' and '9', 'c' and '12', followed by 'done'.\n4. **Assert:** Verify whether the program indicates successful frequency table creation.",
+    "expected_output": "2 points: Pre-check passes, and the frequency table is successfully created from the key-value pairs. 1 point: Pre-check passes, but minor issues or incomplete success messages occur. 0 points: Pre-check fails, frequency table cannot be created, or an error occurs."
+  },
+  {
+    "metric": "2.2.1a Huffman Tree Construction - Normal Process",
+    "description": "1. **Pre-check (User Path):** Confirm the program provides a function to build a Huffman tree from a frequency table.\n2. **Arrange:** Prepare a valid frequency table (e.g., from input 'AABBBCCCCDDDDDE').\n3. **Act:** Select '2' from the main menu.\n4. **Assert:** Verify whether the program indicates successful Huffman tree and code generation and prints the code table.",
+    "expected_output": "2 points: Pre-check passes, and the Huffman tree is successfully built and codes generated. 1 point: Pre-check passes, but there are minor display or output issues. 0 points: Pre-check fails, tree cannot be built, or an error occurs."
+  },
+  {
+    "metric": "2.2.1b Huffman Tree Construction - Exception Handling (Single Character)",
+    "description": "1. **Pre-check (User Path):** Confirm the program provides a function to build a Huffman tree from a frequency table.\n2. **Arrange:** Prepare a frequency table with only one character (e.g., input 'A').\n3. **Act:** Select '2' from the main menu.\n4. **Assert:** Verify whether the program displays a clear error message such as 'At least two characters are required to build a Huffman tree.'",
+    "expected_output": "2 points: Pre-check passes, and the program displays a clear and accurate error message. 1 point: Pre-check passes, but the message is unclear or incomplete. 0 points: Pre-check fails, error message not shown, or program crashes."
+  },
+  {
+    "metric": "2.3.1a CSV Export - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the export results menu, confirm the existence of an 'Export Huffman Codes to CSV' option.\n2. **Arrange:** Ensure Huffman codes have been generated (e.g., via input 'AABBBCCCCDDDDDE').\n3. **Act:** Select 'Export Huffman Codes to CSV' and enter file name 'export.csv'.\n4. **Assert:** Verify whether a success message is displayed and the file is created.",
+    "expected_output": "2 points: Pre-check passes, and Huffman codes are successfully exported to a CSV file with confirmation. 1 point: Pre-check passes, but minor export issues or missing success messages occur. 0 points: Pre-check fails, file not created, or an error occurs."
+  },
+  {
+    "metric": "2.3.2a JSON Export (Level-order Traversal) - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the export results menu, confirm the existence of an 'Export Huffman Tree to JSON' option.\n2. **Arrange:** Ensure a Huffman tree has been generated (e.g., via input 'AABBBCCCCDDDDDE').\n3. **Act:** Select 'Export Huffman Tree to JSON', enter file name 'tree.json', and choose traversal type 'level-order'.\n4. **Assert:** Verify whether a success message is displayed and the file is created.",
+    "expected_output": "2 points: Pre-check passes, and the Huffman tree (level-order traversal) is successfully exported to a JSON file with confirmation. 1 point: Pre-check passes, but minor export or message issues occur. 0 points: Pre-check fails, file not created, or an error occurs."
+  },
+  {
+    "metric": "2.3.2b JSON Export (Pre-order Traversal) - User Path Accessibility",
+    "description": "1. **Pre-check (User Path):** In the export results menu, confirm the existence of an 'Export Huffman Tree to JSON' option.\n2. **Arrange:** Ensure a Huffman tree has been generated (e.g., via input 'AABBBCCCCDDDDDE').\n3. **Act:** Select 'Export Huffman Tree to JSON', enter file name 'tree.json', and choose traversal type 'pre-order'.\n4. **Assert:** Verify whether a success message is displayed and the file is created.",
+    "expected_output": "2 points: Pre-check passes, and the Huffman tree (pre-order traversal) is successfully exported to a JSON file with confirmation. 1 point: Pre-check passes, but minor export or message issues occur. 0 points: Pre-check fails, file not created, or an error occurs."
+  },
+  {
+    "metric": "3.1 Unit Test - Build Huffman Tree",
+    "description": "1. **Pre-check (User Path):** Confirm there is a unit test for `build_huffman_tree` in `src/tests/` or a similar directory.\n2. **Arrange:** Prepare test data such as a dictionary with multiple characters and frequencies: `{'a': 5, 'b': 9, 'c': 12, 'd': 13, 'e': 16, 'f': 45}`.\n3. **Act:** Run `pytest src/tests/test_huffman.py::TestHuffman::test_build_huffman_tree -v`.\n4. **Assert:** Check whether the test passes.",
+    "expected_output": "2 points: Pre-check passes, and `test_build_huffman_tree` passes successfully. 1 point: Pre-check passes, but the test coverage or logic has minor flaws. 0 points: Pre-check fails, test not found, or test fails."
+  },
+  {
+    "metric": "3.2 Unit Test - Generate Huffman Codes",
+    "description": "1. **Pre-check (User Path):** Confirm there is a unit test for `generate_huffman_codes` in `src/tests/` or a similar directory.\n2. **Arrange:** Prepare test data, including a constructed Huffman tree and expected code dictionary.\n3. **Act:** Run `pytest src/tests/test_huffman.py::TestHuffman::test_generate_huffman_codes -v`.\n4. **Assert:** Check whether the test passes.",
+    "expected_output": "2 points: Pre-check passes, and `test_generate_huffman_codes` passes successfully. 1 point: Pre-check passes, but test coverage or verification has minor issues. 0 points: Pre-check fails, test not found, or test fails."
+  },
+  {
+    "metric": "3.3 Unit Test - Exception Handling (Insufficient Nodes in Tree Construction)",
+    "description": "1. **Pre-check (User Path):** Confirm there is a unit test for invalid input handling in `build_huffman_tree` under `src/tests/` or similar.\n2. **Arrange:** Prepare test data with only one character: `{'a': 1}`.\n3. **Act:** Run `pytest src/tests/test_huffman.py::TestHuffman::test_build_tree_with_insufficient_nodes -v`.\n4. **Assert:** Verify whether the test passes and the function raises `ValueError` for invalid input.",
+    "expected_output": "2 points: Pre-check passes, and `test_build_tree_with_insufficient_nodes` correctly validates exception handling. 1 point: Pre-check passes, but verification is partial or incomplete. 0 points: Pre-check fails, test not found, or test fails."
+  }
+]

@@ -1,0 +1,1 @@
+curl --noproxy "*"  -X POST -H "Content-Type: application/json" -d "{\"startDate\": \"{{TODAY}}\", \"endDate\": \"{{TODAY}}\"}" http://localhost:8080/log/

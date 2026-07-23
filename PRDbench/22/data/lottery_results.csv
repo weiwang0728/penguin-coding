@@ -1,0 +1,11 @@
+round_id,round_name,draw_time,name,department,weight,win_count
+round_1,Quarterly Star,2025-08-21 14:58:46,Li Si,Technical Department,1.50,0
+round_1,Quarterly Star,2025-08-21 14:58:46,Qian Qi,HR Department,1.00,0
+round_1,Quarterly Star,2025-08-21 15:00:36,Wang Wu,Marketing Department,1.00,0
+round_1,Quarterly Star,2025-08-21 15:00:36,Zhao Liu,Marketing Department,2.00,0
+round_1,Quarterly Star,2025-08-22 10:25:56,Zhang San,Technical Department,0.46,0
+round_1,Quarterly Star,2025-08-22 10:25:56,Li Si,Technical Department,1.50,1
+round_1,Quarterly Star,2025-08-22 10:30:26,Zhang San,Technical Department,0.46,1
+round_1,Quarterly Star,2025-08-22 10:30:26,Zhao Liu,Marketing Department,2.00,1
+round_1,Quarterly Star,2026-01-05 11:23:46,Qian Qi,HR Department,1.00,1
+round_1,Quarterly Star,2026-01-05 11:23:46,Wang Wu,Marketing Department,1.00,1

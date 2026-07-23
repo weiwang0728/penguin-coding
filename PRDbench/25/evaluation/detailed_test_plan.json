@@ -1,0 +1,727 @@
+[
+  {
+    "metric": "2.1.1a SI Model Core Algorithm Implementation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide clear menu options to run the SI model?\n2. **Arrange:** Set SI model parameters: total population N=10000, transmission rate beta=0.01, contact rate r=10, initial state S[0]=9999, I[0]=1.\n3. **Act:** Select the SI model option, input the above parameters, and run a simulation for 200 days.\n4. **Assert:** Verify the model outputs S(t) and I(t) series with reasonable values, S+I=N holds at all times.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_si_model_algorithm.py::TestSIModelAlgorithm::test_si_model_core_algorithm -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying the correctness of the SI model core algorithm implementation: the conservation law S+I=N holds at all times, numerical stability is good, final states S(∞)=0 and I(∞)=N match theoretical expectations, and calculations are accurate for a 200-day simulation"
+  },
+  {
+    "metric": "2.1.1b SI Model Visualization Output",
+    "description": "1. **Pre-validation (User Path):** After running the SI model, is there an option to generate visualization charts?\n2. **Act:** After running the SI model, choose the generate chart option.\n3. **Assert:** Verify the generated SI_model_result.png image file clearly displays S(t) and I(t) curves with correct axis labels and clear legend.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.si_model import SIModel; model = SIModel(); model.run_simulation()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/images/SI_model_result.png"
+    ],
+    "expected_output": "The file output/images/SI_model_result.png has been successfully created, and the file size is >10KB. The image clearly displays the S(t) and I(t) curves: S(t) decreases monotonically from 9999 to 0 (blue/green), and I(t) increases monotonically from 1 to 10000 (red/orange), reflecting the 100% ultimate invasion characteristic of the SI model. The axis labels are complete (x-axis: time/days, 0-200 days; y-axis: number of people, 0-10000), and the legend clearly identifies S(t) and I(t), with curves matching the theoretical solution of the SI differential equations defined in the evaluation/expected_si_model_visualization_structure.txt"
+  },
+  {
+    "metric": "2.1.2a SIR Model Core Algorithm Implementation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide clear menu options to run the SIR model?\n2. **Arrange:** Set SIR model parameters: transmission rate beta=0.05, recovery rate gamma=0.1, and simulation duration of 100 days.\n3. **Act:** Select the SIR model option, input the above parameters, and run the simulation.\n4. **Assert:** Verify that the SIR model runs correctly, and S+I+R=N holds at all times with good numerical stability.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_sir_model_algorithm.py::TestSIRModelAlgorithm::test_sir_model_core_algorithm -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying the correct implementation of the SIR model core algorithm: the conservation law S+I+R=N holds at all times, numerical stability is good, and when R0=beta/gamma=0.5<1, the epidemic does not outbreak on a large scale. The final state is reasonable, and 100-day simulation calculations are accurate"
+  },
+  {
+    "metric": "2.1.2a-ext Handling of Boundary Conditions in SIR Model",
+    "description": "1. **Arrange:** Set abnormal SIR model parameters: gamma=0 (recovery rate is 0), negative beta value, initial condition anomalies, and other boundary cases.\n2. **Act:** Attempt to initialize the SIR model and run the simulation.\n3. **Assert:** Verify that the system can correctly handle boundary conditions, provides clear error messages, and does not crash due to division errors.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_sir_model_algorithm.py::TestSIRModelAlgorithm::test_sir_model_parameter_validation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying that the SIR model correctly handles boundary conditions: gamma=0 throws a clear ValueError instead of a division error, negative beta values prompt a parameter validation error, and initial condition anomalies provide corresponding prompts, showing good system robustness"
+  },
+  {
+    "metric": "2.1.2a-param Model Parameter Validation Mechanism",
+    "description": "1. **Arrange:** Prepare various invalid parameter combinations: negative values, out-of-range parameters, initial conditions exceeding total population, etc.\n2. **Act:** Attempt to initialize various epidemic models (SI, SIR, SEIR).\n3. **Assert:** Verify the parameter validation mechanism works properly, detecting ≥5 kinds of parameter anomalies and providing specific error messages.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_sir_model_algorithm.py::TestSIRModelAlgorithm::test_sir_model_parameter_validation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, validating that the model parameter validation mechanism works correctly: detecting negative values, out-of-range parameters, initial condition anomalies, time parameter errors, and population parameter anomalies, ≥5 types of cases, each providing specific ValueError exceptions and error information with comprehensive coverage"
+  },
+  {
+    "metric": "2.1.2b SIR Model R0 Calculation",
+    "description": "1. **Pre-validation (User Path):** After running the SIR model, does it provide an option for R0 calculation?\n2. **Act:** After running the SIR model, choose the option to calculate the basic reproduction number R0.\n3. **Assert:** Verify that the R0 calculation is correct (R0 = beta/gamma = 0.05/0.1 = 0.5) and displays the calculation process and results.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.sir_model import SIRModel; model = SIRModel(); model.run_simulation()\" | grep -E 'basic reproduction number|R0'",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "During the SIR model operation, the R0 calculation result should be displayed, including the calculation formula 'R0 = beta/gamma' and specific numerical results. If default parameters are used, R0 should show a reasonable value"
+  },
+  {
+    "metric": "2.1.2c SIR Model Chart Generation",
+    "description": "1. **Pre-validation (User Path):** After running the SIR model, is there an option to generate phase and time series charts?\n2. **Act:** After running the SIR model, choose the option to generate charts.\n3. **Assert:** Verify the generation of the SIR_model_result.png file, which includes phase and time series subplots, good image quality, and complete labels.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.sir_model import SIRModel; model = SIRModel(); model.run_simulation()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/images/SIR_model_result.png"
+    ],
+    "expected_output": "The file output/images/SIR_model_result.png has been successfully created, with the file size >15KB. The image contains two subplots: a phase plot showing the S-I phase space trajectory (a short trajectory from (9999,1) to the endpoint) and a time series plot displaying the S(t), I(t), R(t) state curves (0-100 days). As R0=β/γ=0.5<1, the infection peak is very small, with most people remaining susceptible, reflecting the non-prevalent characteristic of the epidemic. Complete axis labels, clear legend, conforming to the evaluation/expected_sir_model_visualization_structure.txt"
+  },
+  {
+    "metric": "2.1.3a SEIR Model Core Algorithm Implementation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide clear menu options to run the SEIR model?\n2. **Arrange:** Set SEIR model parameters: transmission rate beta=0.03, latent period transition rate sigma=0.1, recovery rate gamma=0.1, contact rate r=20.\n3. **Act:** Select the SEIR model option, input the above parameters, and conduct a 160-day simulation.\n4. **Assert:** Verify that the four-state conversion logic is correct (S→E→I→R) and that S+E+I+R=N holds at all times.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_seir_model_algorithm.py::TestSEIRModelAlgorithm::test_seir_model_core_algorithm -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying the correct implementation of the SEIR model core algorithm: four-state conversion logic is correct (S→E→I→R), conservation law S+E+I+R=N holds at all times, R0=6.0>1 reflects high transmission characteristics, latent peak occurs before the infection peak, with a final invasion rate >95%, and 160-day simulation calculations are accurate"
+  },
+  {
+    "metric": "2.1.3b SEIR Model Visualization Output",
+    "description": "1. **Pre-validation (User Path):** After running the SEIR model, is there an option to display multi-state time series charts?\n2. **Act:** After running the SEIR model, choose the generate chart option.\n3. **Assert:** Verify the generation of the SEIR_model_result.png file, clearly displaying the S, E, I, R curves, with distinct colors and a complete legend.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.seir_model import SEIRModel; model = SEIRModel(); model.run_simulation()\"",
+        "test_input": null
+      }
+    ],
+    "expected_output_files": [
+      "evaluation/expected_output/images/SEIR_model_result.png"
+    ],
+    "expected_output": "The file output/images/SEIR_model_result.png has been successfully created, with the file size >15KB. The image clearly displays the S, E, I, R state curves (0-160 days): S(t) decreases monotonically (blue), E(t) increases and then decreases peaking at about 3158 individuals on day 68 (yellow), I(t) increases and then decreases peaking at about 2593 individuals on day 76 (red), R(t) increases monotonically to 9975 individuals (gray). It reflects the high transmission characteristic of R0=6.0>1 and a 99.82% final invasion rate. Colors are distinctly separated, the legend clearly identifies the four states, and axis labels are complete, conforming to the evaluation/expected_seir_model_visualization_structure.txt"
+  },
+  {
+    "metric": "2.2.1a Excel Data File Reading",
+    "description": "1. **Pre-validation (User Path):** Does the program provide a data import function option?\n2. **Arrange:** Provide an Excel format COVID-19 data file for Hubei province epidemic_data.xlsx (77 rows × 10 columns).\n3. **Act:** Select the data import option, specify the Excel file path, and run the data reading module.\n4. **Assert:** Verify successful reading of 77 rows of data, with no reading errors or exceptions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_2_2_2a.py",
+        "test_input": null
+      }
+    ],
+    "input_files": "data/epidemic_data.xlsx",
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '2. Real Data Modeling Verification' option, and upon entering the submenu should display the '1. Data Preprocessing' option, after completion should display 'Data preprocessing complete! Results have been saved to the output/data/ directory', with no reading errors or exception information"
+  },
+  {
+    "metric": "2.2.1b Key Field Extraction and Validation",
+    "description": "1. **Act:** Extract key fields like date, cumulative confirmed, deaths, and recovered from the read Excel data.\n2. **Assert:** Verify that the extracted number of fields is 4, the field names are correct, data type conversion is accurate (date to datetime type, numerical values to int or float type), and no missing value processing errors occur.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_data_field_extraction.py::TestDataFieldExtraction::test_key_field_extraction_and_validation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying successful extraction of 4 key fields (date, cumulative_confirmed, cumulative_deaths, cumulative_recovered), accurate data type conversion (date as datetime type, numerical values as numeric type), without missing value processing errors"
+  },
+  {
+    "metric": "2.2.1b-ext Data Field Auto-Matching Mechanism",
+    "description": "1. **Arrange:** Prepare test data files with various different column name formats: mixed Chinese and English column names, underscore separation, space separation, and case differences, etc.\n2. **Act:** Run the data preprocessing module to test the column name auto-matching feature.\n3. **Assert:** Verify correct matching of ≥3 different formats of column names, with a mapping success rate ≥90%, providing detailed matching logs.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_data_field_extraction.py::TestDataFieldExtraction::test_field_extraction_with_real_data -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying the data field auto-matching mechanism works correctly: successfully matches mixed Chinese and English column names, underscore and space separation formats, case difference formats ≥3 types, with a mapping success rate ≥90%, providing clear column mapping logs and matching result feedback"
+  },
+  {
+    "metric": "2.2.2a Data Standardization",
+    "description": "1. **Pre-validation (User Path):** After reading the data, is there an option for data standardization?\n2. **Act:** Select the data standardization option, run the data preprocessing function, calculate the daily S, E, I, R values.\n3. **Assert:** Verify correct data standardization calculation, reasonable values for S, E, I, R without negative numbers or anomalies.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_2_2_2a.py",
+        "test_input": null
+      }
+    ],
+    "input_files": "data/epidemic_data.xlsx",
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '2. Real Data Modeling Verification' option, and upon entering the submenu should display the '1. Data Preprocessing' option, after completion should display 'Data preprocessing complete! Results have been saved to the output/data/ directory', without negative numbers or anomaly errors"
+  },
+  {
+    "metric": "2.2.2b Standardized Data File Output",
+    "description": "1. **Act:** Run the data file output feature.\n2. **Assert:** Verify the creation of 4 standardized data files (data/s.txt, data/i.txt, data/r.txt, data/e.txt), with correct file formats, good data consistency, and each file containing 77 rows of data.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/data_processing.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/data/*.txt"
+    ],
+    "expected_output": "The files output/data/s.txt, output/data/e.txt, output/data/i.txt, output/data/r.txt, and output/data/seir_summary.txt have been successfully created. Each state file contains 80 rows (3 header comment lines + 77 numerical data lines), and the summary file contains 83 rows (6 header comment lines + 77 SEIR state data lines). File structures conform to the evaluation/expected_data_structure.txt definition, with correct data format, reasonable numerical range, all values non-negative, and the S+E+I+R sum approximately equal to 59170000 (total population of Hubei province)"
+  },
+  {
+    "metric": "2.2.3a SIR Model Parameter Estimation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide an SIR model parameter estimation option?\n2. **Act:** Select the SIR parameter estimation option and use standardized data for parameter fitting.\n3. **Assert:** Verify successful estimation of SIR model parameters, generation of fitted parameter values (beta and gamma), and reasonable fitting error metrics (MSE<1000).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_sir_parameter_estimation.py",
+        "test_input": null
+      }
+    ],
+    "input_files": "data/epidemic_data.xlsx",
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '2. Real Data Modeling Verification' option, and upon entering the submenu should display the '2. SIR Model Parameter Estimation' option, after completion should display 'SIR parameter estimation complete!', generate beta and gamma parameter values, with fitting error metrics MSE<1000"
+  },
+  {
+    "metric": "2.2.3b SEIR Model Parameter Estimation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide an SEIR model parameter estimation option?\n2. **Act:** Select the SEIR parameter estimation option and use standardized data for parameter fitting.\n3. **Assert:** Verify successful estimation of SEIR model parameters, generation of fitted parameter values (beta, sigma, gamma), and reasonable fitting error metrics (MSE<1000).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_seir_parameter_estimation.py",
+        "test_input": null
+      }
+    ],
+    "input_files": "data/epidemic_data.xlsx",
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '2. Real Data Modeling Verification' option, and upon entering the submenu should display '3. SEIR Model Parameter Estimation' option, after completion should display 'SEIR parameter estimation complete!', generate beta, sigma, gamma parameter values, with fitting error metrics MSE<1000"
+  },
+  {
+    "metric": "2.2.3c Parameter Estimation Output Results",
+    "description": "1. **Act:** After running the parameter estimation, generate the result file.\n2. **Assert:** Verify the creation of the results/parameter_estimation.txt file containing the fitted parameter values and fit error analysis, with a standard format and detailed accurate content.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from parameter_estimation import ParameterEstimator; estimator = ParameterEstimator(); estimator.estimate_sir_parameters()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/results/parameter_estimation.txt"
+    ],
+    "expected_output": "The file output/results/parameter_estimation.txt has been successfully created, with a file size >2KB. The report contains the complete parameter estimation results for both SIR and SEIR models: SIR model (beta, gamma, R0 parameter, and fit error MSE), SEIR model (beta, sigma, gamma, R0 parameter, and fit error analysis). All parameters are within a reasonable range (beta, gamma∈(0,1), R0>0), with fitting error metrics reasonable (MSE<10000), and includes the goodness of fit R² evaluation, with a standard format conforming to the evaluation/expected_parameter_estimation_structure.txt"
+  },
+  {
+    "metric": "2.3.1a Seven-State Isolation Model Implementation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for isolation mechanism SEIR model?\n2. **Arrange:** Configure seven-state isolation model parameters: isolation rate q=0.000001, hospitalization rate deltaI=0.13, recovery rate gammaI=0.007, etc.\n3. **Act:** Select the isolation SEIR model option, input parameters, and perform a 70-day simulation.\n4. **Assert:** Verify the seven-state conversion logic correctness (S, Sq, E, Eq, I, H, R) and state total conservation.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_isolation_seir.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu containing '3. Improved Isolation Mechanism SEIR Model' option, after completion should display 'Improved Isolation Mechanism SEIR Model operation complete! Results have been saved to output/images/isolation_comparison.png', verifying the seven-state conversion logic correctness"
+  },
+  {
+    "metric": "2.3.1b Isolation Effect Numerical Verification",
+    "description": "1. **Act:** Run the isolation model and monitor the change in the number of infections.\n2. **Assert:** Verify that isolation measures significantly reduce the infection peak (compared to the situation without isolation, reduced by ≥30%) and the number of isolated people grows reasonably.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_isolation_effectiveness.py::TestIsolationEffectiveness::test_isolation_reduces_infection_peak -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying that isolation measures significantly reduce the infection peak (≥30% reduction compared to non-isolation), with reasonable growth in the number of isolated individuals, population conservation in isolation chambers, and isolation effect meeting expectations"
+  },
+  {
+    "metric": "2.3.2 Comparison Analysis of Isolation Effects",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for comparison analysis before and after isolation?\n2. **Act:** Select the comparison analysis option to generate charts comparing before and after isolation.\n3. **Assert:** Verify the creation of the isolation_comparison.png file, clearly displaying differences in the transmission curve due to isolation measures, including comparison legend and numerical annotations.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.isolation_seir_model import IsolationSEIRModel; model = IsolationSEIRModel(); model.run_simulation()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/images/isolation_comparison.png"
+    ],
+    "expected_output": "The file output/images/isolation_comparison.png has been successfully created, with a file size >15KB. The image clearly demonstrates the comparison of transmission curves before and after isolation, including the time series comparison of the infected (I) state, showing a significant reduction and appropriate delay in the peak after isolation. The image contains a complete legend description (pre-/post-isolation model), complete axis labels (time/days, number of people), with clear numerical annotations (peak number, time points), conforming to the evaluation/expected_isolation_comparison_structure.txt"
+  },
+  {
+    "metric": "2.4.1a Two-Dimensional Spatial Grid Setup",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for spatial propagation simulation?\n2. **Arrange:** Set two-dimensional spatial grid parameters: 50×50 grid with 2500 individuals.\n3. **Act:** Select spatial propagation simulation option and initialize spatial grid.\n4. **Assert:** Verify the grid size is correct (50×50), the number of individuals is correct (2500), and the initial distribution of individuals is reasonable.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_spatial_simulation.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '4. Brownian Motion Spatial Propagation Optimization' option, and upon entering the submenu should display the '1. Run Spatial Propagation Simulation' option, after completion should display 'Spatial propagation simulation complete!', verifying the grid size 50×50 and the number of individuals 2500"
+  },
+  {
+    "metric": "2.4.1b Brownian Motion Individual Movement",
+    "description": "1. **Arrange:** Set Brownian motion intensity sigma=2.\n2. **Act:** Run individual movement simulation and monitor position changes.\n3. **Assert:** Verify that individual spatial movement follows Brownian motion characteristics (random walk), with reasonable movement distance distribution, and motion intensity parameter effective.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_brownian_motion.py::TestBrownianMotion::test_brownian_motion_characteristics -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying that individual spatial movement follows Brownian motion characteristics (random walk), with reasonable movement distance distribution (mean close to theoretical value), and motion intensity parameter sigma=2 effective, with displacement distribution following a normal distribution"
+  },
+  {
+    "metric": "2.4.1c Spatial Distance Calculation",
+    "description": "1. **Act:** Run the spatial distance calculation module, setting the propagation distance threshold to 4 grid units.\n2. **Assert:** Verify accurate spatial distance calculation (Euclidean distance), the propagation distance threshold of 4 grid units takes effect, and no propagation occurs between individuals beyond the threshold.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_spatial_distance_calculation.py::TestSpatialDistanceCalculation::test_spatial_distance_calculation_accuracy -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying accurate spatial distance calculation (using Euclidean distance formula), propagation distance threshold of 4 grid units takes effect, and no propagation occurs between individuals beyond the threshold, meeting the distance calculation accuracy requirements"
+  },
+  {
+    "metric": "2.4.2 Spatial Transmission Probability Calculation",
+    "description": "1. **Pre-validation (User Path):** Is there a transmission probability calculation function in the spatial simulation?\n2. **Arrange:** Set transmission rate beta=0.04.\n3. **Act:** Run the spatial propagation module and calculate transmission probability based on spatial distance.\n4. **Assert:** Verify that transmission probability negatively correlates with spatial distance, becoming zero beyond 4 grid units.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_spatial_transmission_probability.py::TestSpatialTransmissionProbability::test_transmission_probability_distance_correlation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying that transmission probability negatively correlates with spatial distance (using exponential decay formula prob=beta*exp(-distance)*dt), becoming higher with closer proximity, zero probability beyond 4 grid units, meeting expectation"
+  },
+  {
+    "metric": "2.4.3a Spatial Isolation Strategy Configuration",
+    "description": "1. **Pre-validation (User Path):** Does the spatial propagation simulation provide options for isolation strategy configuration?\n2. **Arrange:** Configure isolation strategy parameters: latent isolation rate v1=1/5, infected isolation rate v2=1/3, isolation duration 14 days.\n3. **Act:** Set isolation strategy parameters and start spatial isolation simulation.\n4. **Assert:** Verify isolation rate settings take effect and isolation duration calculation is correct.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_spatial_full_analysis.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing '4. Brownian Motion Spatial Propagation Optimization' option, and upon entering the submenu should display '3. Run Complete Spatial Propagation Analysis' option, after completion should display 'Complete Spatial Propagation Analysis Complete!', verifying isolation strategy configuration takes effect"
+  },
+  {
+    "metric": "2.4.3b Isolation State Management",
+    "description": "1. **Act:** Run spatial isolation simulation and monitor changes in individual isolation state.\n2. **Assert:** Verify that isolated individuals stop moving, the isolation time countdown is accurate, the isolation lifting mechanism works normally, and isolation has a significant suppressive effect on transmission (infection transmission speed reduced by ≥20%).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_spatial_isolation_management.py::TestSpatialIsolationManagement::test_isolation_prevents_movement -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying that isolated individuals stop moving, the isolation time countdown is accurate (14-day isolation period), the isolation lifting mechanism works normally, isolation has a significant suppressive effect on transmission (infection transmission speed reduced by ≥20%)"
+  },
+  {
+    "metric": "2.4.4a Spatial Transmission Animation Frame Generation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for spatial propagation visualization?\n2. **Act:** Select spatial visualization option and run the visualization module.\n3. **Assert:** Verify the creation of animation frame files, saved in spatial_spread_frames/frame_%d.png format, with a minimum of 10 frames.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.spatial_brownian_model import SpatialBrownianModel; model = SpatialBrownianModel(); model.run_simulation(); model.generate_animation_frames()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/images/spatial_spread_frames/*.png"
+    ],
+    "expected_output": "The directory output/images/spatial_spread_frames/ has been successfully created, containing ≥10 animation frame files (actually generated 26). The file naming follows the format frame_%03d.png (frame_000.png to frame_025.png), with each file size >5KB. The animation frames display the epidemic propagation process among 2500 individuals in a 50x50 space grid, using different colors to differentiate SEIR states, showing the dynamic spread of the infection from the origin to the surrounding area in space. At the same time, a time series image is generated named spatial_brownian_timeseries.png, conforming to the evaluation/expected_spatial_frames_structure.txt"
+  },
+  {
+    "metric": "2.4.4b Individual State Visualization",
+    "description": "1. **Act:** Check the image content of the generated animation frames.\n2. **Assert:** Verify clear visibility of individual positions, noticeable color distinction in infection states (at least three colors distinguishing S, I, R states), and accurate spatial position coordinates.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "ls output/images/spatial_spread_frames/frame_*.png | wc -l && ls output/images/spatial_spread_frames/frame_000.png output/images/spatial_spread_frames/frame_012.png output/images/spatial_spread_frames/frame_025.png",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/images/spatial_spread_frames/*.png"
+    ],
+    "expected_output": "A total of 26 animation frame files (frame_000.png to frame_025.png) have been successfully generated, with each file size >5KB. Animation frames clearly show the position and state of 2500 individuals within the 50x50 space grid: susceptible S (blue/green), exposed E (yellow/orange), infected I (red), recovered R (gray/purple), isolated (special markers). Individual position is clearly visible, state color is clearly distinguished (≥3 colors), and spatial coordinates are accurate (0-50 range), allowing observation of the dynamic spread of infection from the source to surrounding areas in a Brownian motion spatial propagation, conforming to the evaluation/expected_individual_state_visualization_structure.txt"
+  },
+  {
+    "metric": "2.5.1a Parameter Sensitivity Testing Execution",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for sensitivity analysis?\n2. **Act:** Choose the sensitivity analysis option and test the effects of key parameter changes on the results.\n3. **Assert:** Verify testing of ≥5 key parameters (such as beta, gamma, sigma, etc.), with each parameter tested using ≥3 different values.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/test_sensitivity_analysis.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '5. Model Evaluation and Analysis' option, and upon entering the submenu should display the '1. Parameter Sensitivity Analysis' option, after completion should display 'Parameter Sensitivity Analysis Complete! Results have been saved to output/results/sensitivity_analysis.csv', testing ≥5 key parameters"
+  },
+  {
+    "metric": "2.5.1b Sensitivity Analysis Result Output",
+    "description": "1. **Act:** After running sensitivity analysis, generate analysis results.\n2. **Assert:** Verify the generation of the results/sensitivity_analysis.csv file containing sensitivity metrics calculations, impact ranking, and standard file format.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from model_evaluation import ModelEvaluator; evaluator = ModelEvaluator(); evaluator.sensitivity_analysis()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/results/sensitivity_analysis.csv",
+      "evaluation/expected_output/results/sensitivity_analysis_summary.txt"
+    ],
+    "expected_output": "The files output/results/sensitivity_analysis.csv and output/results/sensitivity_analysis_summary.txt have been successfully created. The CSV file contains comprehensive sensitivity analysis data for ≥3 parameters (beta, gamma, sigma), with each parameter being tested using ≥3 different values, including 12 columns (parameter name, parameter value, final invasion rate, infection peak, peak time, R0, change amount, sensitivity coefficient, etc.). The summary file includes sensitivity statistics and explanatory information. File format is standard, with good data quality, conforming to the evaluation/expected_sensitivity_analysis_structure.txt definition"
+  },
+  {
+    "metric": "2.5.2a Model Error Metric Calculation",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for model comparison?\n2. **Act:** Select the model comparison option and compare different models' prediction accuracy.\n3. **Assert:** Verify the calculation of MSE and MAE error metrics, comparing ≥3 models (SI, SIR, SEIR), with accurate metrics.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py <<< $'5\\n2'",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '5. Model Evaluation and Analysis' option, and upon entering the submenu should display the '2. Model Prediction Error Calculation' option, after completion should display 'Model Prediction Error Calculation Complete! Results have been saved to output/results/model_comparison.txt', calculating MSE and MAE error metrics, comparing ≥3 models"
+  },
+  {
+    "metric": "2.5.2b Model Comparison Result Output",
+    "description": "1. **Act:** After running model comparison, generate the comparison results.\n2. **Assert:** Verify the creation of results/model_comparison.txt file containing a model error comparison table, error analysis conclusion, and standard file format.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from model_evaluation import ModelEvaluator; evaluator = ModelEvaluator(); evaluator.model_comparison()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/results/model_comparison.txt"
+    ],
+    "expected_output": "The file output/results/model_comparison.txt has been successfully created, with a file size >1KB. The report contains 4 required analysis sections: model comparison of basic parameters (R0, final invasion rate, infection peak for ≥2 models), comparison of model fit quality (including MSE and MAE error metrics), fit quality evaluation (average R² value and conclusion), analysis of model characteristics (advantages, disadvantages, and applicable scenarios). Error metrics are calculated accurately, comparing the prediction accuracy of ≥2 models (SIR, SEIR), with a standard file format conforming to the evaluation/expected_model_comparison_structure.txt"
+  },
+  {
+    "metric": "2.5.3 Infectivity Comparison During Latent Period",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for comparison analysis of infectivity during the latent period?\n2. **Act:** Choose the latent period comparison analysis option and run model comparison between two scenarios (latent period with infectivity vs. without infectivity).\n3. **Assert:** Verify the creation of results/latent_period_comparison.txt file, comparing the result differences between two models, analyzing the impact of infectivity, and providing a reasonable conclusion.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from model_evaluation import ModelEvaluator; evaluator = ModelEvaluator(); evaluator.latent_period_comparison()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/results/latent_period_comparison.txt"
+    ],
+    "expected_output": "The file output/results/latent_period_comparison.txt has been successfully created, with a file size >1KB. The report contains 6 required analysis sections: results from the infectivity-latent-period model (R0, final invasion rate, infection peak, and other indicators), results from the non-infectivity-latent-period model (same indicators), difference analysis (quantitative comparison of differences for various indicators), conclusion analysis (qualitative analysis of infectivity impact), and practical significance (guidance for control strategies). Comparison of model result differences under two latent period infectivity assumptions, with reasonable analysis of infectivity impact, conforming to the evaluation/expected_latent_period_comparison_structure.txt"
+  },
+  {
+    "metric": "2.6.1a Support for Multi-Format Data Output",
+    "description": "1. **Pre-validation (User Path):** Does the program provide options for multiple data format output?\n2. **Act:** Check the data output function and try outputting different formats.\n3. **Assert:** Verify support for ≥4 data formats (Excel, Text, CSV, JSON), with correct file generation for each format.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py <<< $'2\\n4'",
+        "test_input": null
+      }
+    ],
+    "input_files": "data/epidemic_data.xlsx",
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '2. Real Data Modeling Verification' option, and upon entering the submenu should display the '4. Run Complete Data Modeling Process' option, after completion should display 'Complete Data Modeling Process Complete!', verifying support for ≥4 data formats output"
+  },
+  {
+    "metric": "2.6.1b Data Format Conversion Quality",
+    "description": "1. **Act:** Check the content quality of output files in different formats.\n2. **Assert:** Verify correct format conversion, file structure is standard, data integrity is good, and no format errors or data loss occur.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "wc -l output/data/s.txt && grep -o ',' output/results/sensitivity_analysis.csv | wc -l && grep -o $'\\t' output/data/seir_summary.txt | wc -l && grep 'beta' output/results/parameter_estimation.txt",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program supports ≥4 data formats output: text format (s.txt, parameter_estimation.txt, etc., UTF-8 encoding with no garbled text), CSV format (sensitivity_analysis.csv, standard comma separation, 12 complete columns), tab-separated format (seir_summary.txt, tab separation, 83 rows of data), and structured text format (analysis_summary.txt, clear hierarchical structure). All format conversions are correct, file structure is standard, data integrity is good (no data loss, precision maintained), with no format errors, all using UTF-8 encoding, conforming to the evaluation/expected_data_format_conversion_structure.txt"
+  },
+  {
+    "metric": "2.6.2a Input Data Anomaly Detection",
+    "description": "1. **Pre-validation (User Path):** Does the program provide data validation function?\n2. **Arrange:** Prepare test input containing abnormal data (negative population, out-of-range parameters, missing values, incorrect data type).\n3. **Act:** Input the abnormal data and run the data validation function.\n4. **Assert:** Verify the system can detect ≥4 types of anomalies and provide clear error messages.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py <<< $'2\\n1'",
+        "test_input": null
+      }
+    ],
+    "input_files": "evaluation/invalid_data.xlsx",
+    "expected_output_files": null,
+    "expected_output": "The program should display the main menu showing the '2. Real Data Modeling Verification' option, and upon entering the submenu should display the '1. Data Preprocessing' option, when using invalid data files, clear error messages should be shown, such as 'Error: Data file not found' or data format errors and other anomaly detection information"
+  },
+  {
+    "metric": "2.6.2b Exception Handling Mechanism",
+    "description": "1. **Act:** Trigger various exceptions and observe the system handling mechanism.\n2. **Assert:** Verify reasonable exception handling (does not crash, provides hints, can recover), program stability is good, allowing users to re-enter correct data.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_exception_handling.py::TestExceptionHandling::test_invalid_file_path_handling -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying reasonable exception handling (does not crash, has clear hints, is recoverable), program stability is good, supporting handling of invalid file paths, data format errors, parameter anomalies, division by zero, and multiple other exceptions, allowing users to re-enter the correct data"
+  },
+  {
+    "metric": "2.6.3 Comprehensive Analysis Report Generation",
+    "description": "1. **Pre-validation (User Path):** After program completion, is there an option to generate analysis reports?\n2. **Act:** After running a complete simulation, select the option to generate an analysis report.\n3. **Assert:** Verify the creation of reports/analysis_summary.txt file containing ≥5 analysis parts (model fit evaluation, parameter estimation results, prediction accuracy analysis, sensitivity analysis results, model comparison conclusions), with detailed accurate content.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from model_evaluation import ModelEvaluator; evaluator = ModelEvaluator(); evaluator.generate_analysis_report()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/reports/analysis_summary.txt"
+    ],
+    "expected_output": "The file output/reports/analysis_summary.txt has been successfully created, with a file size >3KB. The report contains ≥5 required analysis parts: model implementation, data analysis (including parameter estimation results), sensitivity analysis, model comparison, latent infectivity study, and other 12 complete chapters. Content includes model fit evaluation, parameter estimation results, prediction accuracy analysis, sensitivity analysis results, model comparison conclusions, with standard format and clear logic, conforming to the evaluation/expected_analysis_report_structure.txt"
+  },
+  {
+    "metric": "3.1a Run Time Performance Test",
+    "description": "1. **Arrange:** Set up performance monitoring tools and prepare complete simulation test cases.\n2. **Act:** Run a complete simulation process and monitor run time.\n3. **Assert:** Verify the run time of a single complete simulation is ≤30 seconds, supporting ≥200 days of long time series simulation.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_runtime_performance.py::TestRuntimePerformance::test_complete_simulation_runtime -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying a single complete simulation run time is ≤30 seconds, supporting ≥200 days of long time series simulation, including data processing, SIR, SEIR, isolation SEIR model performance tests, with each component meeting performance requirements"
+  },
+  {
+    "metric": "3.1b Memory Usage Performance Test",
+    "description": "1. **Act:** Run a complete simulation process and monitor memory usage.\n2. **Assert:** Verify the peak memory usage is ≤2GB, reasonable memory growth (1-100MB range), no memory leakage issues, and stable program operation.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_memory_performance.py::TestMemoryPerformance::test_peak_memory_usage_constraint -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying peak memory usage is ≤2GB (actually about 0.1-0.2GB), reasonable memory growth (usually 1-10MB), no memory leak issues, stable program operation, and efficient memory usage, supporting large-scale and concurrent scenarios"
+  },
+  {
+    "metric": "3.2a Code Modular Design",
+    "description": "1. **Act:** Check code structure and module division.\n2. **Assert:** Verify clear modular design, independent functional modules, reasonable interface definitions, and low coupling between modules.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_code_modularity.py::TestCodeModularity::test_module_structure_clarity -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying clear modular design (12 expected modules exist), independent functional modules (each module can be independently imported), reasonable interface definitions (method documentation coverage ≥70%), and low coupling between modules (average dependencies ≤5)"
+  },
+  {
+    "metric": "3.2b Code Standards and Comments",
+    "description": "1. **Act:** Check code comments, naming conventions, and compliance with PEP8.\n2. **Assert:** Verify detailed code comments (coverage ≥80%), consistent naming conventions, compliance with PEP8 standards (≥90%), and comprehensive error handling.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_code_standards.py::TestCodeStandards::test_code_comment_coverage -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying detailed code comments (coverage ≥80%), consistent naming conventions (PascalCase for class names, snake_case for function names), compliance with PEP8 standards (≥90%), and comprehensive error handling (coverage ≥50%, handling common exception types)"
+  },
+  {
+    "metric": "3.3a Unit Test Case Design",
+    "description": "1. **Act:** Check the unit test files and test cases.\n2. **Assert:** Verify complete unit test cases exist, designed reasonably, covering core functions ≥80%.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_unit_test_coverage.py::TestUnitTestCoverage::test_unit_test_files_existence -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, verifying complete unit test cases exist (≥7 test files), designed reasonably (documentation coverage ≥80%, average ≥2 assertions/method), covering core functions ≥80% (including data processing, model computation, spatial propagation, etc.)"
+  },
+  {
+    "metric": "3.3b Unit Test Execution Results",
+    "description": "1. **Act:** Run unit tests and check the test pass rate.\n2. **Assert:** Verify a 100% test pass rate, no failed test cases, and stable test operation.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python evaluation/run_required_tests.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Running unit tests should show a 100% test pass rate, with no failed test cases, ultimately displaying '100% tests passed'"
+  },
+  {
+    "metric": "4.1a Image Output File Integrity",
+    "description": "1. **Act:** After running the full process, check the output/images/ folder.\n2. **Assert:** Verify the presence of 4 model image files (SI_model_result.png, SIR_model_result.png, SEIR_model_result.png, isolation_comparison.png), reasonable file sizes (>10KB), and good image quality.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python -c \"import sys; sys.path.append('src'); from models.si_model import SIModel; from models.sir_model import SIRModel; from models.seir_model import SEIRModel; from models.isolation_seir_model import IsolationSEIRModel; SIModel().run_simulation(); SIRModel().run_simulation(); SEIRModel().run_simulation(); IsolationSEIRModel().run_simulation()\"",
+        "test_input": null
+      }
+    ],
+    "input_files": "data/epidemic_data.xlsx",
+    "expected_output_files": [
+      "evaluation/expected_output/images/SIR_model_result.png",
+      "evaluation/expected_output/images/SEIR_model_result.png",
+      "evaluation/expected_output/images/isolation_comparison.png"
+    ],
+    "expected_output": "Files output/images/SIR_model_result.png, output/images/SEIR_model_result.png, and output/images/isolation_comparison.png have been successfully created. Each image file size is >10KB, with SIR_model_result.png containing both a phase plot and a time series plot subgraph, SEIR_model_result.png clearly showing S, E, I, R curves, and isolation_comparison.png clearly demonstrating differences in transmission curves due to isolation measures. All images have complete axis labels and clear legends, conforming to the evaluation/expected_image_files_structure.txt"
+  },
+  {
+    "metric": "4.1b Data Output File Integrity",
+    "description": "1. **Act:** Check the structure and content of the output/data/ folder.\n2. **Assert:** Verify the presence of 4 data files (s.txt, i.txt, r.txt, e.txt), correct file formats, reasonable data contents, and no empty files or format errors.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "ls output/data && for f in output/data/*.txt; do echo Checking $f && wc -l \"$f\"; done",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/data/s.txt",
+      "evaluation/expected_output/data/e.txt",
+      "evaluation/expected_output/data/i.txt",
+      "evaluation/expected_output/data/r.txt",
+      "evaluation/expected_output/data/seir_summary.txt"
+    ],
+    "expected_output": "The output/data/ directory contains 5 data files: s.txt, e.txt, i.txt, r.txt (each 80 lines: 3 header comment lines + 77 lines of SEIR state numerical data) and seir_summary.txt (83 lines: 6 header comment lines + 77 lines of tab-separated summary data). All file formats are correct (UTF-8 encoded), with reasonable data content (all values non-negative, S+E+I+R ≈ 59170000), no empty files or format errors, conforming to the data file structure standards defined in evaluation/expected_data_structure.txt"
+  },
+  {
+    "metric": "4.1c Result Analysis File Integrity",
+    "description": "1. **Act:** Check the structure and content of the output/results/ folder.\n2. **Assert:** Verify the presence of 4 result files (parameter_estimation.txt, sensitivity_analysis.csv, model_comparison.txt, latent_period_comparison.txt), with detailed content and reasonable analysis results.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "ls output/results && for f in output/results/*.txt output/results/*.csv; do echo Checking $f && wc -l \"$f\"; done",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_output/results/sensitivity_analysis.csv",
+      "evaluation/expected_output/results/model_comparison.txt",
+      "evaluation/expected_output/results/latent_period_comparison.txt",
+      "evaluation/expected_output/results/sensitivity_analysis_summary.txt"
+    ],
+    "expected_output": "The output/results/ directory contains 4 required result files: sensitivity_analysis.csv (>2KB, containing sensitivity data for ≥3 parameters), model_comparison.txt (>1KB, containing an analysis comparing ≥2 models), latent_period_comparison.txt (>1KB, containing latent period infectivity comparison study), sensitivity_analysis_summary.txt (>500 bytes, sensitivity analysis summary). Each file content is detailed, with good data quality and reasonable analysis results, standard file format, conforming to evaluation/expected_results_files_structure.txt"
+  },
+  {
+    "metric": "4.2a Technical Document Completeness",
+    "description": "1. **Act:** Check the document files in the project root directory and docs folder.\n2. **Assert:** Verify the existence of ≥3 types of documents (README.md, technical implementation document, API document, etc.), with complete detailed content and standard format.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "ls src/*.md && wc -l src/README.md && wc -l src/requirements.txt",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The project contains ≥3 types of technical documents: src/README.md (user manual, >10KB), src/PRD.md (product requirement document, >5KB), src/metric.md (technical implementation document, >2KB), and src/requirements.txt (dependency configuration file, >100 bytes). README.md contains ≥4 required sections (project introduction, environment setup, usage guide, parameter description), with complete detailed content, standard format, allowing new users to successfully operate the program according to instructions. All documents conform to the standards defined in evaluation/expected_documentation_structure.txt"
+  },
+  {
+    "metric": "4.2b User Guide",
+    "description": "1. **Act:** Check the usage instructions section in the user manual or README.\n2. **Assert:** Verify clear usage instructions, including installation steps, execution methods, parameter descriptions, example usage, and ≥4 sections, allowing new users to successfully run the program according to instructions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "grep -E '## Environment Setup|## Usage Guide|## Parameter Configuration|python main.py' src/README.md && wc -l src/README.md",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The src/README.md contains ≥4 necessary sections of user usage instructions: Environment setup (≥20 lines, detailed installation steps, supporting Windows/macOS/Linux), Usage guide (≥30 lines, program startup python main.py and 6 main menu options instructions), Parameter configuration (≥15 lines, SI/SIR/SEIR model parameters description), and FAQ (≥10 lines, FAQ and troubleshooting). The document is >10KB (actually 356 lines), with detailed and accurate content, allowing new users to configure the environment and run the program according to instructions, conforming to evaluation/expected_user_manual_structure.txt"
+  }
+]

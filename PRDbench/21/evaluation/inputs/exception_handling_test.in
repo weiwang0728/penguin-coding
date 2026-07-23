@@ -1,0 +1,20 @@
+1
+nonexistent_file.csv
+1
+evaluation/test_data/employees_invalid_format.csv
+1
+evaluation/test_data/employees_missing_field.csv
+1
+evaluation/test_data/employees_5.csv
+2
+
+5
+Test Prize
+abc
+-1
+1
+Test Prize
+1
+1
+1
+0

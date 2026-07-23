@@ -1,0 +1,6 @@
+age,income,credit_history,employment_years,debt_ratio,target
+25,,good,3,0.3,1
+30,55000,,5,0.2,1
+,35000,poor,1,0.7,0
+35,75000,good,,0.1,1
+28,48000,fair,4,,0

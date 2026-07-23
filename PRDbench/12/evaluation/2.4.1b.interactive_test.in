@@ -1,0 +1,10 @@
+1
+help
+summary
+segments
+show
+filter segment Important Value Customer
+show
+reset
+export test_report.csv
+quit

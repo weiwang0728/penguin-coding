@@ -1,0 +1,15 @@
+{
+    "decision_flow_analysis": {
+        "total_steps": 5,
+        "total_time_ms": 1250,
+        "steps": [
+            {"step": "DataLoad", "time_ms": 200},
+            {"step": "UserPreferenceAnalysis", "time_ms": 300},
+            {"step": "RecommendationCalculateMethodDesignCalculate", "time_ms": 450},
+            {"step": "ResultSort", "time_ms": 150},
+            {"step": "OutputGenerate", "time_ms": 150}
+        ],
+        "complexity_score": 3.2,
+        "efficiency_rating": "Good"
+    }
+}

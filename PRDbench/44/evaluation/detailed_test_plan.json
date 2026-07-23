@@ -1,0 +1,350 @@
+[
+{
+"metric": "0.1 Program Startup & Command Line Interface",
+"description": "1. **Act:** Execute the program startup command in the shell (e.g., `python main.py` or `python -m subway_system.main`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear command line interactive interface with input prompt information.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "The program starts successfully and displays a clear interactive interface with input prompts."
+},
+{
+"metric": "1.1 Basic Input Reception Function",
+    "description": "1. **Pre-validation (User Path):** After starting, does the program provide clear input prompts to guide the user on how to enter the origin and destination stations?\n2. **Arrange:** Prepare valid station names for origin and destination station (such as \"Tiananmen East\" and \"Xidan\").\n3. **Act:** Enter origin and destination station names as prompted by the program.\n4. **Assert:** Observe whether the program correctly receives input without format errors.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/basic_input.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "The program can correctly receive station inputs in standard format."
+},
+{
+"metric": "2.1 Basic Path Calculation Function",
+    "description": "1. **Arrange:** Prepare a pair of valid origin and destination stations (such as \"Fengtai East Street\" to \"Xidan\").\n2. **Act:** Enter the origin and destination stations to trigger path calculation.\n3. **Assert:** Verify whether the program can output a valid path that includes the complete list of stations.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/path_fengtai_xidan.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Correctly calculates and displays the complete station sequence (including origin, destination, and all intermediate stations)."
+},
+{
+"metric": "2.2 Basic Fare Calculation Function",
+"description": "1. **Arrange:** Prepare 3 groups of station pairs with different distances: short distance (expected 3 yuan), medium distance (expected 4-5 yuan), long distance (expected 6 yuan or more).\n2. **Act:** Query the path and fare for each group.\n3. **Assert:** Verify whether the calculated fare complies with Beijing Subway fare structure (0-6 km 3 yuan, 6-12 km 4 yuan, 12-22 km 5 yuan, 22-32 km 6 yuan).",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_fare.py::TestFare::test_fare_calculation",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "All three groups of tests meet the official Beijing subway fare structure exactly."
+},
+{
+"metric": "2.3 Multiple Path Query Functions",
+"description": "1. **Pre-check (User Path):** Does the program provide multiple path query modes (shortest distance, least transfers, comprehensive optimal)?\n2. **Arrange:** Prepare a pair of stations requiring transfer, with multiple possible paths.\n3. **Act:** Test the path calculation results for different query modes.\n4. **Assert:** Verify whether different modes provide corresponding optimized path results.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_shortest_path",
+"test_input": null,
+        "description": "Validate basic shortest path algorithm functionality."
+},
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_least_transfer_mode",
+"test_input": null,
+        "description": "Validate that the number of transfers in least-transfer mode is minimized."
+},
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_comprehensive_mode",
+"test_input": null,
+        "description": "Validate that in comprehensive optimal mode, the path's overall score is optimal."
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Supports shortest distance, least transfers, and comprehensive optimal path query modes, with results matching each optimization target."
+},
+{
+"metric": "2.4 Path Preference Setting Function",
+    "description": "1. **Pre-validation (User Path):** Does the program support setting a maximum transfer limit and line preference?\n2. **Arrange:** Prepare test cases: set the maximum number of transfers to 2, set a favorite line.\n3. **Act:** Query the path under constraint settings.\n4. **Assert:** Verify whether the query results comply with the set constraints.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_path_preferences",
+        "test_input": null,
+        "description": "Validate basic path preference setting functionality."
+},
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_max_transfers_limit",
+"test_input": null,
+        "description": "Validate that after setting the maximum transfer limit, the program correctly filters out paths that exceed the limit."
+},
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_line_preference",
+"test_input": null,
+        "description": "Validate that after setting line preference, the program can prioritize the preferred line (if it exists)."
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Supports maximum transfer limit and line preference settings; path calculations comply with constraint conditions."
+},
+{
+"metric": "3.1a Path Information Display - Station Sequence",
+"description": "1. **Act:** Perform a complete path query (e.g., \"Tiananmen East\" to \"Zhongguancun\").\n2. **Assert:** Check whether the output includes a complete list of station names, displayed in order from start to end.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/path_tiananmen_zhongguancun.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Displays the full station sequence, including origin, destination, and all intermediate stations, with correct order."
+},
+{
+"metric": "3.1b Path Information Display - Total Distance",
+"description": "1. **Act:** Perform a path query.\n2. **Assert:** Check whether the output includes total distance information, uses appropriate units (meters or kilometers), and clearly displays the final fare in an easy-to-read format.",
+"type": "shell_interaction",
+"testcases": [
+{
+"test_command": "python src/cli.py < evaluation/inputs/path_fengtai_xidan.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Accurate total distance information is displayed, with reasonable units (meters for short distance, kilometers for long), and the final fare is clearly shown in a standardized format (such as \"Fare: 4 yuan\")."
+},
+{
+"metric": "4.1 Input Format Validation - Semicolon-separated Format",
+"description": "1. **Arrange:** Prepare different input formats: correct format (\"Start;End\"), incorrect formats (\"Start,End\", \"Start End\", single station, etc.).\n2. **Act:** Enter these different formats for queries.\n3. **Assert:** Verify whether the program correctly recognizes format requirements and provides appropriate prompts.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/format_validation.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Strictly enforces the \"origin station;destination station\" format requirement, and gives clear error messages for wrong formats."
+},
+{
+"metric": "4.2 Input Validation - Invalid Station Detection",
+"description": "1. **Arrange:** Prepare non-existent station names (e.g., \"Nonexistent Station\", \"Test Station\").\n2. **Act:** Enter queries containing invalid stations.\n3. **Assert:** Observe whether the program can recognize invalid input and give a clear error prompt, rather than crashing or giving a wrong result.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/invalid_station.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Accurately identifies invalid stations and provides clear, specific error messages(e.g. \"Station 'Nonexistent Station' is not in the system\")."
+},
+{
+"metric": "5.1a Transfer Information Display - Transfer Station Identification",
+    "description": "1. **Arrange:** Prepare origin and destination  stations that require transfers (such as \"Tiananmen East\" to \"Zhongguancun\").\n2. **Act:** Input the query and get results.\n3. **Assert:** Check if the output clearly identifies all transfer stations and displays the subway line information involved.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/transfer_station.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Accurately identifies and clearly marks all transfer stations, and clearly displays the names of all subway lines involved in the path."
+},
+{
+"metric": "5.2 Special Handling for Transfer Stations",
+"description": "1. **Arrange:** Prepare path query involving complex transfer stations (large transfer stations with multiple lines).\n2. **Act:** Perform path calculation involving complex transfer stations.\n3. **Assert:** Verify whether the program can correctly handle path calculation at multi-line transfer points, including special handling of transfer time and distance.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_complex_transfer_handling",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Correctly handles path calculation at multi-line intersections; transfer logic is accurate."
+},
+{
+"metric": "6.1 Fare Calculation Boundary Handling",
+"description": "1. **Arrange:** Prepare 4 test cases: origin-destination pairs with distances close to 6km, 12km, 22km, 32km.\n2. **Act:** Query the fare for these 4 pairs.\n3. **Assert:** Verify whether fare calculation correctly handles boundary cases and ceiling rounding logic.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_fare.py::TestFare::test_fare_boundary_conditions",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "All four boundary test cases are handled correctly in fare calculation."
+},
+{
+"metric": "6.2 Extended Fare Calculation Validation",
+"description": "1. **Arrange:** Prepare ultra-long-distance origin-destination pairs: 32-52km (expected 7 yuan), 52-72km (expected 8 yuan), etc.\n2. **Act:** Query the fare for these ultra-long-distance pairs.\n3. **Assert:** Verify whether the extended fare rule of adding 1 yuan for every 20km above 32km is correctly implemented.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_fare.py::TestFare::test_extended_fare_rules",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Extended fare structure are accurate; ultra-long distance fare calculation is correct."
+},
+{
+"metric": "7.1 Continuous Query Support",
+    "description": "1. **Pre-validation (User Path):** After completing a query, does the program provide options or prompts to continue querying?\n2. **Act:** After the first query, follow prompts to perform a second and third query.\n3. **Assert:** Verify whether continuous querying is possible without restarting the program.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/continuous_query.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Supports smooth consecutive queries with good user experience."
+},
+{
+"metric": "8.1 Logical Validation - Origin-Destination Same Station Detection",
+    "description": "1. **Arrange:** Prepare identical origin and destination station names (such as both \"Tiananmen East\").\n2. **Act:** Enter the same origin and destination stations.\n3. **Assert:** Observe whether the program can recognize this logical error and give an appropriate prompt.",
+"type": "shell_interaction",
+"testcases": [
+{
+        "test_command": "python src/cli.py < evaluation/inputs/same_start_end.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Accurately recognizes logical inconsistency and provides a clear prompt (e.g. \"Origin station cannot be the same as destination station\")."
+},
+{
+"metric": "8.2 Performance Validation - Response Time",
+    "description": "1. **Arrange:** Prepare 5 groups of queries with varying complexity: short direct, medium with transfer, long with multiple transfers, etc.\n2. **Act:** Perform these queries individually and record response time.\n3. **Assert:** Verify that every query's response time is within 1 second.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_performance.py::TestPerformance::test_response_time",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "All 5 test groups have response times within 1 second; excellent performance."
+},
+{
+"metric": "9.1 Shortest Path Algorithm Verification",
+"description": "1. **Arrange:** Prepare 3 origin-destination pairs with predefined optimal paths, including direct routes and routes with transfers.\n2. **Act:** Query the path for these 3 pairs.\n3. **Assert:** Verify whether the calculation result is truly the shortest path (can be judged by distance and station count).",
+"type": "unit_test",
+"testcases": [
+{
+"test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_shortest_path",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "All three test groups find the shortest path; algorithm implementation is correct."
+},
+{
+"metric": "10.1 Data Coverage Validation",
+"description": "1. **Arrange:** Prepare representative stations from main lines mentioned in PRD: Line 1 (Tiananmen East, Xidan), Line 2 (Chaoyangmen, Dongzhimen), Line 4 (Xidan, Zhongguancun), Line 5 (Dongdan, Yonghegong), etc.\n2. **Act:** Test whether these representative stations can be identified by the system.\n3. **Assert:** Verify whether the system contains data for these main line stations.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_data.py::TestData::test_data_coverage",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "All main line representative stations (8 or more) are correctly identified."
+},
+{
+"metric": "10.2 Data Management Function Validation",
+"description": "1. **Arrange:** Prepare data integrity verification: station data coverage, connection integrity, distance   data accuracy.\n2. **Act:** Perform data integrity verification, test data maintenance  mechanism (e.g., new line addition, station info modification).\n3. **Assert:** Verify whether data management can correctly check data integrity and support data updates.",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_data.py::TestData::test_data_management",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Data integrity check functions work normally and support data update and scalability."
+},
+{
+"metric": "11.1 Result Export Function - Text Format",
+"description": "1. **Pre-check (User Path):** Does the program provide export option or related prompt?\n2. **Act:** After path query, try to use export function.\n3. **Assert:** Verify whether query results can be exported successfully, and check the format and content integrity of the export file.",
+"type": "file_comparison",
+"testcases": [
+{
+        "test_command": "python src/cli.py --output_file evaluation/outputs/path_fengtai_xidan.txt < evaluation/inputs/path_fengtai_xidan.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": [
+      "evaluation/expected_outputs/path_fengtai_xidan.txt"
+],
+    "expected_output": "The file evaluation/outputs/path_fengtai_xidan.txt has been successfully created."
+},
+{
+"metric": "11.2 Multi-format Export Support",
+"description": "1. **Pre-check (User Path):** Does the program support multiple export formats (e.g., text and JSON)?\n2. **Act:** Try exporting to different formats (text and JSON).\n3. **Assert:** Verify whether export to multiple formats is successful, and check structure and content integrity of each format.",
+"type": "file_comparison",
+"testcases": [
+{
+        "test_command": "python src/cli.py --output_file evaluation/outputs/path_tiananmen_zhongguancun.json --format json < evaluation/inputs/path_tiananmen_zhongguancun.in",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": [
+      "evaluation/expected_outputs/path_tiananmen_zhongguancun.json"
+],
+    "expected_output": "Supports multiple export formats and the JSON format is well structured."
+},
+{
+"metric": "12.1 Estimated Time Calculation Function",
+"description": "1. **Act:** Perform a path query.\n2. **Assert:** Check whether the query result includes estimated travel time information, and verify the reasonableness of the estimation (based on distance and number of transfers, usually 1-2 minutes per km, each transfer adds 2-3 minutes).",
+"type": "unit_test",
+"testcases": [
+{
+        "test_command": "pytest evaluation/tests/test_pathfinding.py::TestPathfinding::test_time_estimation",
+"test_input": null
+}
+],
+"input_files": null,
+"expected_output_files": null,
+    "expected_output": "Provides reasonable time estimation considering distance and number of transfers; estimate is within a reasonable range."
+}
+]

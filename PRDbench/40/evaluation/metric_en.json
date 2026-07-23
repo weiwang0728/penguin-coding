@@ -1,0 +1,122 @@
+[
+  {
+    "metric": "0.1 Program Startup and Basic Operation",
+    "description": "1. **Execute (Act):** Run `python code/main.py 2` in the project root directory.\n2. **Assert:** Check if the program starts successfully without crash errors, and verify if there is output indicating successful startup.",
+    "expected_output": "2 points: Program starts successfully and displays startup success message, without error output. 1 point: Program starts but with warning messages or some features malfunctioning. 0 points: Program fails to start or crashes directly with errors."
+  },
+  {
+    "metric": "1.1 Host Device Port Allocation",
+    "description": "1. **Execute (Act):** After system startup, check the program output and perform status queries.\n2. **Assert:** Verify if the ports of all host devices strictly follow the format.",
+    "expected_output": "2 points: All host device ports completely follow the 1{device_id}300 format. 1 point: More than 80% of host device ports are correctly allocated. 0 points: Less than 80% of device ports are correctly allocated, or format is completely wrong."
+  },
+  {
+    "metric": "1.2 Device Type Identification",
+    "description": "1. **Execute (Act):** After starting the system, check the program output.\n2. **Assert:** Ensure the system can correctly identify and label devices, verify the type identifiers in the device initialization process.",
+    "expected_output": "2 points: Accurately identify all devices and correctly allocate functionality modules. 1 point: Can identify devices but there are minor errors in allocation process. 0 points: Cannot correctly identify device types."
+  },
+  {
+    "metric": "2.1a Frame Structure Field Integrity",
+    "description": "1. **Execute (Act):** Check the frame structure definitions in the code.\n2. **Assert:** Verify if the frame structure includes all 8 required fields: Frame Locator (8 bits), Source Port (16 bits), Session State (2 bits), Response Flag (1 bit), Sequence Number (1 bit), Data Segment (32 bits), Destination Port (16 bits), CRC Check (16 bits).",
+    "expected_output": "2 points: Contains all 8 fields with correct bit settings. 1 point: Contains 6-7 fields or 1-2 bit setting errors. 0 points: Missing 3 or more fields or severe bit setting errors."
+  },
+  {
+    "metric": "2.1b FrameBuilder and FrameParser Class Implementation",
+    "description": "1. **Execute (Act):** Check if FrameBuilder and FrameParser classes exist in the code.\n2. **Assert:** Verify if these classes provide complete handling functions like frame building, validation, and parsing.",
+    "expected_output": "2 points: Both classes exist with complete functionality, including build, validate, and parse methods. 1 point: Classes exist but functionality is incomplete, missing 1-2 key methods. 0 points: Missing one or both classes."
+  },
+  {
+    "metric": "2.2a CRC-16 Algorithm Parameter Configuration",
+    "description": "1. **Execute (Act):** Check the implementation of CRC-16 validation algorithm in the code.\n2. **Assert:** Verify if the generator polynomial 0xA001 and initial value 0xFFFF are used.",
+    "expected_output": "2 points: Both generator polynomial and initial value are set correctly. 1 point: One of the generator polynomial or initial value is set correctly. 0 points: Both generator polynomial and initial value are set incorrectly or CRC algorithm not implemented."
+  },
+  {
+    "metric": "2.2b CRC-16 Validation Function Verification",
+    "description": "1. **Arrange:** Prepare test data for CRC validation.\n2. **Execute (Act):** Run CRC validation function or check related test cases.\n3. **Assert:** Verify if the checksum calculation function works normally.",
+    "expected_output": "2 points: CRC validation function works completely, correctly calculating checksum. 1 point: CRC validation function works basically but has minor issues. 0 points: CRC validation function does not work or calculation results incorrect."
+  },
+  {
+    "metric": "2.3a SwitchTable Class Basic Implementation",
+    "description": "1. **Execute (Act):** Check if SwitchTable class exists in the code.\n2. **Assert:** Verify if SwitchTable class implements basic port address table data structure, with format dict[local_port, dict[remote_port, lifetime]].",
+    "expected_output": "2 points: SwitchTable class exists and data structure format completely correct. 1 point: SwitchTable class exists but data structure format has minor deviations. 0 points: SwitchTable class does not exist or data structure format has serious errors."
+  },
+  {
+    "metric": "2.3b Switch Address Learning Mechanism",
+    "description": "1. **Execute (Act):** Check address learning implementation in switch code.\n2. **Assert:** Verify if the functions of automatically extracting source address, updating port address table, and setting lifetime to REMOTE_MAX_LIFE are implemented.",
+    "expected_output": "2 points: Complete implementation of all 3 address learning functions. 1 point: Implemented 2 functions. 0 points: Implemented less than 2 functions or not implemented at all."
+  },
+  {
+    "metric": "2.3c Switch Lifetime Management",
+    "description": "1. **Execute (Act):** Check lifetime processing logic in switch code.\n2. **Assert:** Verify if the mechanism for decrementing lifetime by 1 for all entries during each frame processing and automatically deleting expired entries is implemented.",
+    "expected_output": "2 points: Complete implementation of decrement and automatic deletion mechanism. 1 point: Decrement mechanism implemented but deletion mechanism imperfect. 0 points: Lifetime management mechanism not implemented."
+  },
+  {
+    "metric": "2.4a RouterTable Class Data Structure",
+    "description": "1. **Execute (Act):** Check implementation of RouterTable class in the code.\n2. **Assert:** Verify if WAN environment (router_id -> Path structure) and LAN environment (host_id -> exit_port) two-level mapping structure are included.",
+    "expected_output": "2 points: Complete implementation of WAN and LAN two-level mapping structure. 1 point: Implemented one level of mapping structure. 0 points: RouterTable class does not exist or mapping structure missing severely."
+  },
+  {
+    "metric": "2.4b Dijkstra Algorithm Path Fields",
+    "description": "1. **Execute (Act):** Check Path structure in Dijkstra algorithm implementation.\n2. **Assert:** Verify if Path structure includes all 4 required fields: next hop, exit port, cost, optimized state.",
+    "expected_output": "2 points: Path structure contains all 4 essential fields. 1 point: Path structure contains 3 fields. 0 points: Path structure contains less than 3 fields or does not exist."
+  },
+  {
+    "metric": "3.1 Text Data UTF-8 Encoding Support",
+    "description": "1. **Pre-check (User Path):** After starting the system, is there a clear entry for sending text messages?\n2. **Arrange:** Prepare a test text including Chinese, English, punctuation.\n3. **Execute (Act):** Send the test text via the system.\n4. **Assert:** Verify if the receiving end can display all characters correctly without garbled text.",
+    "expected_output": "2 points: Pre-check passes, can correctly transmit and display all UTF-8 characters. 1 point: Pre-check passes but minor issues in handling special characters. 0 points: Pre-check fails, or severe errors in character encoding processing."
+  },
+  {
+    "metric": "3.2 PNG Image File Transfer Functionality",
+    "description": "1. **Pre-check (User Path):** After starting the system, is there a clear entry for sending image files?\n2. **Arrange:** Prepare a test image file in PNG format.\n3. **Execute (Act):** Send the test image via the system.\n4. **Assert:** Verify if the receiving end can completely receive the image file and check if file size and content are consistent with the original.",
+    "expected_output": "2 points: Pre-check passes, and can completely and correctly transfer PNG image files. 1 point: Pre-check passes, but there is slight data loss during the transfer. 0 points: Pre-check fails, or the transfer of image files is impossible."
+  },
+  {
+    "metric": "4.1a Buffer Size Configuration",
+    "description": "1. **Execute (Act):** Check buffer configuration in the code.\n2. **Assert:** Verify if two buffer size constants INTER_NE_BUFSIZE (communication buffer between network elements) and IN_NE_BUFSIZE (communication buffer within network elements) are defined.",
+    "expected_output": "2 points: Both buffer size constants are defined. 1 point: One buffer size constant is defined. 0 points: Buffer size constants are not defined."
+  },
+  {
+    "metric": "4.1b Transmission Rate Control Mechanism",
+    "description": "1. **Execute (Act):** Check transmission rate control implementation in the code.\n2. **Assert:** Verify if the mechanism for setting max transmission interval and preventing sender from excessive speed is implemented.",
+    "expected_output": "2 points: Complete implementation of transmission rate control mechanism. 1 point: Basic rate control implemented but mechanism is imperfect. 0 points: Transmission rate control mechanism not implemented."
+  },
+  {
+    "metric": "5.1 Interactive Console Functionality",
+    "description": "1. **Pre-check (User Path):** After starting the system, is an interactive command-line interface available?\n2. **Execute (Act):** Try entering query commands (e.g., viewing routing tables, device status, etc.).\n3. **Assert:** Verify if the system can respond to commands and provide relevant information output.",
+    "expected_output": "2 points: Pre-check passes, providing complete interactive console functionality, able to respond to various query commands. 1 point: Pre-check passes, but interactive functionality is incomplete or responses have problems. 0 points: Pre-check fails, or interactive console functionality is absent."
+  },
+  {
+    "metric": "6.1 Bit Stuffing Algorithm Implementation",
+    "description": "1. **Execute (Act):** Check bit stuffing algorithm implementation in the code.\n2. **Assert:** Verify if the algorithm to detect 5 consecutive '1's and insert '0' ensuring frame locator uniqueness is implemented.",
+    "expected_output": "2 points: Complete implementation of bit stuffing algorithm, correctly handling consecutive 5 '1's. 1 point: Bit stuffing implemented but logic has minor problems. 0 points: Bit stuffing algorithm not implemented."
+  },
+  {
+    "metric": "6.2a Stop-and-Wait ARQ-ACK/NAK Mechanism",
+    "description": "1. **Execute (Act):** Check ACK/NAK confirmation mechanism implementation in the code.\n2. **Assert:** Verify if ACK confirmation and NAK denial response mechanisms are implemented.",
+    "expected_output": "2 points: Complete implementation of both ACK and NAK response mechanisms. 1 point: Implemented either ACK or NAK mechanism. 0 points: ACK/NAK response mechanisms not implemented."
+  },
+  {
+    "metric": "6.2b Stop-and-Wait ARQ-Sequence Number Alternation",
+    "description": "1. **Execute (Act):** Check sequence number processing implementation in the code.\n2. **Assert:** Verify if the alternating sequence number mechanism 0/1 to prevent receiving duplicate frames is implemented.",
+    "expected_output": "2 points: Complete implementation of 0/1 alternating sequence number mechanism. 1 point: Sequence number mechanism implemented but alternation logic has issues. 0 points: Sequence number alternation mechanism not implemented."
+  },
+  {
+    "metric": "7.1 Phase Configuration File Support",
+    "description": "1. **Execute (Act):** Check if configuration files for different phases exist in the config directory, attempt to start the system using parameters 2, 3, 4.\n2. **Assert:** Verify if the system can load configuration files corresponding to different parameters for each phase.",
+    "expected_output": "2 points: Supports configuration management for all 4 phases, able to switch and load correctly. 1 point: Supports configuration management for 2-3 phases. 0 points: Does not support phased configuration or supports only 1 phase."
+  },
+  {
+    "metric": "8.1a Switch Unicast Forwarding",
+    "description": "1. **Execute (Act):** Check forwarding decision logic in switch code.\n2. **Assert:** Verify if function to perform unicast forwarding based on destination address query in port address table is implemented.",
+    "expected_output": "2 points: Complete implementation of unicast forwarding logic, able to query address table and forward correctly. 1 point: Unicast forwarding implemented but query or forwarding logic has issues. 0 points: Unicast forwarding function not implemented."
+  },
+  {
+    "metric": "8.1b Switch Broadcast Forwarding",
+    "description": "1. **Execute (Act):** Check broadcast handling logic in switch code.\n2. **Assert:** Verify if the function to forward broadcast data to all physical layer ports except receiving port is implemented.",
+    "expected_output": "2 points: Complete implementation of broadcast forwarding logic, able to forward correctly to all ports (except receiving port). 1 point: Broadcast forwarding implemented but port selection logic has issues. 0 points: Broadcast forwarding function not implemented."
+  },
+  {
+    "metric": "8.1c Switch Flood Forwarding",
+    "description": "1. **Execute (Act):** Check unknown address processing logic in switch code.\n2. **Assert:** Verify if the function to flood forwarding to all ports (except receiving port) when destination address is unknown is implemented.",
+    "expected_output": "2 points: Complete implementation of flood forwarding logic, able to flood correctly on unknown address. 1 point: Flood forwarding implemented but trigger condition or forwarding logic has issues. 0 points: Flood forwarding function not implemented."
+  }
+]

@@ -1,0 +1,112 @@
+[
+{
+    "metric": "0.1 Program Basic Startup",
+    "description": "1. **Act:** Execute‌ `python Main.py` or `python src/Main.py` in the command line.\n2. **Assert:** Observe whether the program starts successfully, displays the ASCII art banner‌ ('CHORD'), developer credits‌, and enters the parameter configuration interface prompting for the m parameter.",
+    "expected_output": "2 points: The program starts normally, shows the complete ASCII art banner‌ and developer credits‌, and enters the parameter configuration interface. 1 point: The program starts but the display is incomplete or there are warnings. 0 points: The program fails to initialize or experiences immediate runtime termination."
+},
+{
+    "metric": "1.1 Network Parameter Configuration - m Parameter Input",
+    "description": "1. **Pre-check (User Path):** After start, does the program prompt the user to enter the m parameter?\n2. **Arrange:** Prepare a valid m parameter value (e.g., 5).\n3. **Act:** Enter the m parameter value as prompted.\n4. **Assert:** Observe whether the program accepts the parameter and proceeds to the next step (prompt for node count).",
+    "expected_output": "2 points: Pre-check passes, program correctly accepts valid m parameter and continues. 1 point: Pre-check passes, but there are minor issues handling the parameter. 0 points: Pre-check fails or unable to handle m parameter input."
+},
+{
+    "metric": "1.2 Network Parameter Configuration - Node Count Input",
+    "description": "1. **Arrange:** Based on the entered m parameter, prepare a valid node count (not greater than 2^m).\n2. **Act:** Enter the node count.\n3. **Assert:** Observe whether the program accepts this parameter and proceeds to the next step (prompt for data amount).",
+    "expected_output": "2 points: Correctly accepts valid node count and continues. 1 point: Accepts the parameter but handling is not perfect. 0 points: Fails to handle node count input correctly."
+},
+{
+    "metric": "1.3 Network Parameter Configuration - Boundary Condition Validation",
+    "description": "1. **Arrange:** Prepare a node count that exceeds the range (greater than 2^m).\n2. **Act:** Enter the out-of-range node count.\n3. **Assert:** Observe whether the program gives an error message and prompts for re-entry.",
+    "expected_output": "2 points: Detects boundary condition and gives clear error, requires re-entry. 1 point: Detects error but message not clear. 0 points: No boundary check or program crashes."
+},
+{
+    "metric": "2.1 Network Initialization Process Display",
+    "description": "1. **Act:** After completing parameter configuration, observe the network creation process.\n2. **Assert:** The program should display initial node creation info, batch node joining info, and finally show time stats such as \"Network created in X seconds\".",
+    "expected_output": "2 points: Displays full network creation info and time stats. 1 point: Displays partial info but incomplete. 0 points: Network creation fails or no progress info."
+},
+{
+    "metric": "3.1 Interactive Menu Integrity‌",
+    "description": "1. **Act:** After network creation, observe the displayed menu.\n2. **Assert:** Menu should contain 7 options: 1. Insert new node into network 2. Search for data in network 3. Insert data into network 4. Print network graph 5. Print network info 6. Delete node from network 7. Exit program.",
+    "expected_output": "2 points: Shows all 7 menu options, descriptions are accurate and clear. 1 point: Shows 6-7 options but descriptions are slightly problematic. 0 points: Menu missing important items (less than 6) or not displayed at all."
+},
+{
+    "metric": "4.1a Dynamic Node Addition - Success Scenario",
+    "description": "1. **Pre-check (User Path):** Is \"Insert new node into network\" (option 1) present in main menu?\n2. **Arrange:** Prepare a node ID not duplicating existing nodes.\n3. **Act:** Choose menu option 1, input new node ID.\n4. **Assert:** Check if the program displays success info including node ID and time stats.",
+    "expected_output": "2 points: Pre-check passes, successfully adds node and shows confirmation/time info. 1 point: Pre-check passes, can add node but info display incomplete. 0 points: Pre-check fails or unable to add node."
+},
+{
+    "metric": "4.1b Dynamic Node Addition - Duplicate ID Handling",
+    "description": "1. **Arrange:** Prepare an existing node ID.\n2. **Act:** Choose menu option 1, input duplicate node ID.\n3. **Assert:** Check if program gives \"Node is already in the network\" or similar error message.",
+    "expected_output": "2 points: Correctly detects duplicate ID and gives clear error. 1 point: Detects duplicate but error message not clear. 0 points: No duplicate ID check or program crashes."
+},
+{
+    "metric": "4.2 Network Integrity Validation After Node Insertion",
+    "description": "1. **Arrange:** Create a network with multiple nodes and insert multiple data items.\n2. **Act:** Insert a new node into the network, then try to look up all previously inserted data items.\n3. **Assert:** Verify all original data can still be found after inserting the node, ensuring network integrity and correct finger table update. The new node should integrate correctly.",
+    "expected_output": "2 points: All original data still found, network integrity intact, finger table updates correctly. 1 point: Most data found, basic integrity OK, minor issues possible. 0 points: Data loss or integrity broken after node insertion."
+},
+{
+    "metric": "5.1a Data Insert Function - Basic Insert",
+    "description": "1. **Pre-check (User Path):** Is \"Insert data into network\" (option 3) in the main menu?\n2. **Arrange:** Prepare a test data string (e.g. \"test_data\").\n3. **Act:** Choose menu option 3, enter data string.\n4. **Assert:** Check if the program displays data insert success info including hash, target node ID, and time.",
+    "expected_output": "2 points: Pre-check passes, successfully inserts data, shows hash, node, and time info. 1 point: Pre-check passes, data inserted but info display not complete. 0 points: Pre-check fails or data insert not working."
+},
+{
+    "metric": "5.2a Data Search Function - Existing Data",
+    "description": "1. **Pre-check (User Path):** Is \"Search for data in network\" (option 2) in main menu?\n2. **Arrange:** Insert a data item first via option 3 (e.g. \"search_test\").\n3. **Act:** Choose menu option 2, enter same data string to search.\n4. **Assert:** Observe if program can find data and display something like \"Found 'search_test' in node X\".",
+    "expected_output": "2 points: Pre-check passes, accurately finds data and shows location. 1 point: Pre-check passes, finds data but info incomplete. 0 points: Pre-check fails or can't find existing data."
+},
+{
+    "metric": "5.2b Data Search Function - Nonexistent Data",
+    "description": "1. **Arrange:** Prepare a data string that is certain not to exist (e.g. \"nonexistent_data\").\n2. **Act:** Choose menu option 2, enter nonexistent data string.\n3. **Assert:** Observe if the program gives clear message like \"'nonexistent_data' not exist in the network\".",
+    "expected_output": "2 points: Gives clear \"not exist\" message for missing data. 1 point: Message given but not clear enough. 0 points: No error handling or program crashes."
+},
+{
+    "metric": "6.1 Network Status Information Display",
+    "description": "1. **Pre-check (User Path):** Is \"Print network info\" (option 5) in the main menu?\n2. **Act:** Choose menu option 5.\n3. **Assert:** Observe if program displays these 4 network stats: active node count, maximum node capacity, m parameter value, bootstrap node ID.",
+    "expected_output": "2 points: Pre-check passes, shows all 4 stats, format clear. 1 point: Pre-check passes, 3-4 stats shown but format problematic. 0 points: Pre-check fails or less than 3 stats displayed."
+},
+{
+    "metric": "7.1 Node Delete Function - Successful Deletion",
+    "description": "1. **Pre-check (User Path):** Is \"Delete node from network\" (option 6) in the main menu?\n2. **Arrange:** Ensure network has a deletable node (not first node).\n3. **Act:** Choose menu option 6, enter an existing node ID.\n4. **Assert:** See if program displays deletion success info and time stats.",
+    "expected_output": "2 points: Pre-check passes, deletes node and shows confirmation/time info. 1 point: Pre-check passes, deletes node but info incomplete. 0 points: Pre-check fails or delete function not working."
+},
+{
+    "metric": "7.2 Network Connectivity Validation After Node Deletion",
+    "description": "1. **Arrange:** Create a network with multiple nodes, insert data into different nodes.\n2. **Act:** Delete a node, then try to find all previously inserted data items.\n3. **Assert:** Verify remaining nodes can still find all data, ensuring network connectivity and data integrity. Data should be correctly migrated to successor node.",
+    "expected_output": "2 points: After node deletion, all data still found, connectivity intact, data migration correct. 1 point: Most data found, basic connectivity OK, minor issues possible. 0 points: Data loss or connectivity broken."
+},
+{
+    "metric": "8.1 Network Topology Visualization - DOT File Generation",
+    "description": "1. **Pre-check (User Path):** Is \"Print network graph\" (option 4) in main menu?\n2. **Act:** Choose menu option 4.\n3. **Assert:** Check if graph.dot file is generated in current directory; content should include \"digraph G\" and other Graphviz markers.",
+    "expected_output": "2 points: Pre-check passes, valid graph.dot file generated. 1 point: Pre-check passes, file generated but format may be problematic. 0 points: Pre-check fails or DOT file not generated."
+},
+{
+    "metric": "9.1 Operation Latency Monitoring  Function",
+    "description": "1. **Act:** Execute various operations (node insert, data insert, search, delete, etc.).\n2. **Assert:** Observe whether program shows time stats after each operation like \"operation completed in X seconds\" or \"insert node in: X seconds\".",
+    "expected_output": "2 points: All main operations show detailed latency metrics. 1 point: Some operations show timing info. 0 points: ‌Lacks operation latency monitoring."
+},
+{
+    "metric": "10.1a Input Validation - Menu Selection Validation",
+    "description": "1. **Act:** At main menu prompt, enter invalid selection (like letter 'a' or out-of-range number '9').\n2. **Assert:** Check if the program gives error and re-displays menu instead of crashing.",
+    "expected_output": "2 points: Clear error given for invalid menu input and menu re-displayed. 1 point: Error handled but not clear enough. 0 points: No input check, program crashes on invalid input."
+},
+{
+    "metric": "10.1b Input Validation - Node ID Validation",
+    "description": "1. **Act:** When needing to enter node ID (e.g. add or delete node), input a non-integer value (like 'abc').\n2. **Assert:** See if program gives error and prompts for re-entry, rather than crashing.",
+    "expected_output": "2 points: Clear error for non-integer node ID input and asks for re-entry. 1 point: Error handled but not clear. 0 points: No input validation, program crashes on invalid node ID."
+},
+{
+    "metric": "11.1 Bulk Data Generation Function",
+    "description": "1. **Arrange:** On network initialization, set simulated data count > 0 (e.g. 10).\n2. **Act:** Finish network creation, observe bulk data insert process.\n3. **Assert:** Program should show bulk data insert progress and average time info, such as \"X seconds per item\".",
+    "expected_output": "2 points: Successfully generates target amount of simulated data, shows insert progress and statistics. 1 point: Data generated but info incomplete. 0 points: Bulk data generation not working."
+},
+{
+    "metric": "12.1 Menu Loop Execution",
+    "description": "1. **Act:** Sequentially execute multiple operations (e.g. insert data, search data, view network info).\n2. **Assert:** Observe after each operation, does the program always return to main menu and wait for next user input.",
+    "expected_output": "2 points: Always returns to main menu after each operation, supports consecutive actions. 1 point: Most operations return to menu, few exceptions. 0 points: Program exits or can't continue after operation."
+},
+{
+    "metric": "13.1 Graceful Program Exit",
+    "description": "1. **Pre-check (User Path):** Is \"Exit program\" (option 7) in main menu?\n2. **Act:** Choose menu option 7.\n3. **Assert:** Observe if the program exits cleanly, no abnormal or error info.",
+    "expected_output": "2 points: Pre-check passes, program exits cleanly with no errors. 1 point: Pre-check passes, exits but possible warnings. 0 points: Pre-check fails or cannot exit normally."
+}
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "metric": "1.1.1a Program Start and Menu Display",
+    "description": "1. **Act:** In the src directory, run `python main.py`.\n2. **Assert:** Observe whether the program starts successfully and displays information.",
+    "expected_output": "2 points: The program starts normally and displays a complete menu. 1 point: The program starts normally and displays part of the menu. 0 points: The program cannot start, crashes, or fails to display menu information."
+  },
+  {
+    "metric": "1.1.1b Crawl Quantity Limit Function",
+    "description": "1. **Arrange:** Prepare a valid seed URL and database path.\n2. **Act:** After starting the program, select the crawler function in the interactive menu, enter the seed URL, database path, and crawl limit (set to 5).\n3. **Assert:** Observe the crawler's output or final database records. Verify whether the total number of crawled webpages stored in the database is strictly equal to 5.",
+    "expected_output": "2 points: The crawl quantity strictly follows the `-c` parameter limit. 1 point: The crawl quantity is close to the value of the `-c` parameter, with a +/-1 error, or the default is not 1000. 0 points: The `-c` parameter is invalid, the crawler keeps running, or an incorrect default value is used."
+  },
+  {
+    "metric": "1.1.1c Progress Display and Log",
+    "description": "1. **Act:** Select the crawler function in the interactive menu, set the crawl quantity to 10 pages and start the crawler.\n2. **Assert:** During crawling, the console should show real-time progress information, such as 'Crawled 3/10 pages...'. At the same time, check whether the `logs/spider.log` file exists and contains key information from the crawl process (such as start, end, errors encountered, etc.).",
+    "expected_output": "2 points: Provides clear console progress and a detailed log file. 1 point: Only provides one (progress or logs), or the information is unclear/incomplete. 0 points: No progress display or log records."
+  },
+  {
+    "metric": "1.1.1d Breadth-First and URL Filtering",
+    "description": "1. **Arrange:** Prepare a test website structure containing duplicate links, invalid links (404), and valid sub-links.\n2. **Act:** Select the crawler function in the interactive menu, enter the test website's URL, and start crawling.\n3. **Assert:** Check the crawl log and database. Verify the crawler crawls in level order (breadth-first). Verify invalid links are skipped and not recorded. Verify duplicate URLs are only crawled once.",
+    "expected_output": "2 points: Fully follows breadth-first logic and correctly filters invalid and duplicate URLs. 1 point: Basically breadth-first, but with minor ordering errors, or only filters one of duplicate/invalid URLs. 0 points: Crawl order is chaotic or unable to filter invalid/duplicate URLs."
+  },
+  {
+    "metric": "1.1.1e Specific Content Extraction",
+    "description": "1. **Arrange:** Prepare an HTML page containing `<article>` and `<p>` tags, and another page that doesn't contain these tags.\n2. **Act:** Select the crawler function in the interactive menu, enter these two page URLs for crawling.\n3. **Assert:** Check the database. Verify the content of the first page is correctly extracted and stored. Verify the second page is treated as a blank document and ignored.",
+    "expected_output": "2 points: Accurately extracts the content inside specified tags and correctly filters blank documents. 1 point: Can extract content but can't filter blank documents, or extraction rules are not completely accurate. 0 points: Cannot extract specified content."
+  },
+  {
+    "metric": "1.2.1 Database and Table Structure Creation",
+    "description": "1. **Arrange:** Create a temporary database file path.\n2. **Act:** Directly call the DataBase class constructor and create_tables method.\n3. **Assert:** Verify the database file is created successfully, and whether there are two tables named `doc` and `word`, and check the table structure is correct.",
+    "expected_output": "2 points: Successfully creates the database file and includes correctly structured `doc` and `word` tables. 1 point: Creates the database file, but only includes one of the tables, or table name/structure is incorrect. 0 points: Fails to create database file."
+  },
+  {
+    "metric": "1.2.2 Chinese Word Segmentation and Inverted Index",
+    "description": "1. **Arrange:** In the interactive menu, select the crawler function and crawl a page containing a clear Chinese sentence (such as 'Welcome to the world of search engines').\n2. **Act:** After crawling, connect to the database.\n3. **Assert:** Query the segmentation results (such as 'Welcome', 'to', 'search', 'engine', 'world') in the `word` table. These entries should be found, each associated with the corresponding document ID and its position in the document.",
+    "expected_output": "2 points: Can correctly segment Chinese content and build a complete inverted index from word to document ID and position. 1 point: Can segment and store the vocabulary, but does not record word positions, or the segmentation is poor (e.g., 'search engine' is incorrectly separated). 0 points: Unable to process Chinese content, the `word` table is empty or has no Chinese words."
+  },
+  {
+    "metric": "1.2.3 Incremental Indexing",
+    "description": "1. **Arrange:** In the interactive menu, select the crawler function and run it once to build the initial database.\n2. **Act:** Using the same database path, again select the crawler function in the interactive menu and enter a new seed URL.\n3. **Assert:** Check the database to verify the old data still exists and the newly crawled content has been successfully added, with document IDs and indices appropriately updated.",
+    "expected_output": "2 points: Fully supports incremental indexing, new and old data coexist and the index is correct. 1 point: Can add new data, but index confusion or overwrites old data occurs. 0 points: Directly errors or deletes original data when running again."
+  },
+  {
+    "metric": "1.3.1a Command-Line Search Function - Successful Case",
+    "description": "1. **Arrange:** Use the crawler to pre-build a database file containing a specific word (such as 'database').\n2. **Act:** In the interactive menu, choose the search function and enter the search keyword 'database' and the database path.\n3. **Assert:** The program should output a list containing at least one result related to 'database', with each result including a URL and title.",
+    "expected_output": "2 points: Correctly executes the command and returns a non-empty result list sorted by relevance with URL and title. 1 point: Returns results, but the format is incorrect (missing URL or title), or not sorted by relevance. 0 points: Program fails to execute, or returns empty results for words known to exist."
+  },
+  {
+    "metric": "1.3.1b Command-Line Search Function - No Result Case",
+    "description": "1. **Arrange:** Prepare a constructed database file.\n2. **Act:** In the interactive menu, choose the search function and enter an extremely unlikely, random keyword (e.g., asdfqwerzxcv) and the database path.\n3. **Assert:** The program should clearly output a prompt message, such as 'No results found', instead of returning an empty list or error.",
+    "expected_output": "2 points: Correctly handles no-result situations and gives a clear, friendly user prompt. 1 point: Handles it but gives no prompt, only returns an empty line or list. 0 points: Program crashes or unhandled exception when no results."
+  },
+  {
+    "metric": "1.3.1c Multi-Keyword Search and Score Aggregation",
+    "description": "1. **Arrange:** Pre-build a database where Document A contains both 'Python' and 'Web', while Document B only contains 'Python'.\n2. **Act:** In the interactive menu, choose the search function and enter multiple keywords 'Python Web' and the database path.\n3. **Assert:** In the returned result list, Document A should rank ahead of Document B, showing the effect of score accumulation for multiple keywords.",
+    "expected_output": "2 points: Fully supports multiple keyword search and the result ordering correctly reflects accumulated TF-IDF scores. 1 point: Supports multiple keywords, but result ordering is incorrect or only searches for one word. 0 points: Does not support space-delimited multiple keyword search, or program errors."
+  },
+  {
+    "metric": "2.1.1 Clear Database Function",
+    "description": "1. **Arrange:** Run the crawler to populate some data in the database.\n2. **Act:** In the interactive menu, choose the 'Clear Database' function, and enter 'y' at the confirmation prompt.\n3. **Assert:** The database file is cleared and reset, and its state is identical to a standard empty database file.",
+    "expected_output": "2 points: Correctly responds to the command, clears the database, and resets table structure. 1 point: Deletes data but does not rebuild table, or needs to restart program to take effect. 0 points: Function is invalid or causes program to crash."
+  }
+]

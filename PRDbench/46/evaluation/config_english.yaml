@@ -1,0 +1,93 @@
+# Bank Personal Credit Assessment System Configuration File
+
+# Data Configuration
+data:
+  input_path: "sample_data/credit_data.csv"
+  output_path: "outputs"
+  encoding: "utf-8"
+  test_size: 0.3
+  random_state: 42
+  max_file_size_mb: 100
+  min_samples: 10
+  
+# Data Preprocessing Configuration
+preprocessing:
+  missing_value_strategy: "mean"  # mean, median, mode
+  outlier_removal: true
+  outlier_threshold: 3.0
+  feature_selection: true
+  correlation_threshold: 0.9
+  scaling_method: "standard"  # standard, minmax, robust
+  
+# Algorithm Configuration
+algorithms:
+  logistic_regression:
+    max_iter: 1000
+    random_state: 42
+    penalty: "l2"
+    C: 1.0
+    
+  neural_network:
+    hidden_layer_sizes: [64, 32]
+    activation: "relu"
+    solver: "adam"
+    alpha: 0.001
+    batch_size: 32
+    learning_rate: "constant"
+    learning_rate_init: 0.001
+    max_iter: 1000
+    random_state: 42
+    early_stopping: true
+    validation_fraction: 0.2
+    n_iter_no_change: 20
+
+# Model Evaluation Configuration  
+evaluation:
+  cv_folds: 5
+  test_size: 0.3
+  random_state: 42
+  metrics: ["accuracy", "precision", "recall", "f1", "auc"]
+  
+# Credit Score Configuration
+scoring:
+  base_score: 600
+  score_range: [300, 850]
+  weight_logistic: 0.6
+  weight_neural: 0.4
+  
+  # Credit Rating Levels
+  rating_levels:
+    - {name: "Excellent", min_score: 750, max_score: 850, color: "#228B22"}
+    - {name: "Good", min_score: 650, max_score: 749, color: "#32CD32"}  
+    - {name: "Fair", min_score: 550, max_score: 649, color: "#FFD700"}
+    - {name: "Poor", min_score: 450, max_score: 549, color: "#FFA500"}
+    - {name: "Bad", min_score: 350, max_score: 499, color: "#FF8C00"}
+    - {name: "Very Bad", min_score: 0, max_score: 349, color: "#DC143C"}
+
+# Visualization Configuration
+visualization:
+  figure_size: [10, 8]
+  dpi: 300
+  style: "whitegrid"
+  color_palette: "Set1"
+  font_size: 12
+  
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_path: "logs/credit_assessment.log"
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+  
+# API Configuration
+api:
+  host: "127.0.0.1"
+  port: 8000
+  debug: false
+  
+# Security Configuration
+security:
+  enable_data_masking: true
+  mask_sensitive_fields: ["customer_name", "id_number", "phone_number"]
+  log_retention_days: 90

@@ -1,0 +1,122 @@
+[
+  {
+    "metric": "1.1 System Startup Display",
+    "description": "1. **Act:** In the src directory, run `python main.py`.\n2. **Assert:** Observe whether the program starts successfully and displays information.",
+    "expected_output": "2 points: The program starts normally and displays a complete menu. 1 point: The program starts normally but only displays part of the menu. 0 points: The program cannot start, crashes, or fails to display menu information."
+  },
+  {
+    "metric": "2.1 User Login - Administrator Account",
+    "description": "1. **Pre-condition (User Path):** Is there a `login` command to directly access the login feature?\n2. **Arrange:** Use the default admin account (username: admin, password: admin123).\n3. **Act:** Run `python main.py` to log in as the administrator.\n4. **Assert:** Observe if the login is successful and information is displayed.",
+    "expected_output": "2 points: Pre-condition passed, login successful, displays user details with 5 or more items. 1 point: Pre-condition passed, login successful but displays incomplete info (3-4 items). 0 points: Pre-condition failed, or login failed, or program crashes."
+  },
+  {
+    "metric": "3.1 User List - Basic Information Display",
+    "description": "1. **Pre-condition (User Path):** Is there a `user list` command to view the user list?\n2. **Act:** Run `python main.py user list`.\n3. **Assert:** Observe if the user list is displayed, each user should have at least 5 info columns (ID, username, name, email, department).",
+    "expected_output": "2 points: Pre-condition passed, correctly displays user list with at least 5 columns per user. 1 point: Pre-condition passed, displays user list but info columns are incomplete (3-4 columns). 0 points: Pre-condition failed, cannot display user list, or program crashes."
+  },
+  {
+    "metric": "3.2 View User Details",
+    "description": "1. **Pre-condition (User Path):** Is there a `user show` command to view user details?\n2. **Arrange:** Select a valid user ID (e.g., 1).\n3. **Act:** Run `python main.py user show 1`.\n4. **Assert:** Observe if it displays the specified user's detailed information, including at least 8 items (basic info, organization info, status, roles, etc.).",
+    "expected_output": "2 points: Pre-condition passed, shows complete user details with 8 or more items. 1 point: Pre-condition passed, shows basic info but not detailed enough (5-7 items). 0 points: Pre-condition failed, cannot display user details, or shows error."
+  },
+  {
+    "metric": "3.3.1 User Creation - Interactive Interface",
+    "description": "1. **Pre-condition (User Path):** Is there a `user create` command to create a new user?\n2. **Arrange:** Prepare new user info (username: testuser, name: Test User, email: test@test.com, password: test123).\n3. **Act:** Run `python main.py user create` and enter the prepared user info as prompted.\n4. **Assert:** Observe if the user is successfully created through the interactive interface and displays a confirmation message.",
+    "expected_output": "2 points: Pre-condition passed, user can be successfully created interactively, and confirmation is clearly displayed. 1 point: Pre-condition passed, user can be created but interactive experience is poor or confirmation message is unclear. 0 points: Pre-condition failed, cannot create user, or program crashes."
+  },
+  {
+    "metric": "3.3.2 User Creation - Field Validation",
+    "description": "1. **Arrange:** Prepare user data with invalid info (e.g., duplicate username, invalid email format).\n2. **Act:** Try to create a user with invalid info.\n3. **Assert:** Observe if the system performs field validation and gives clear error messages for invalid inputs.",
+    "expected_output": "2 points: All invalid inputs are clearly validated and show error messages. 1 point: Some invalid inputs are validated but not completely. 0 points: Lacks field validation or validation is ineffective."
+  },
+  {
+    "metric": "3.4.1 View Department Information",
+    "description": "1. **Pre-condition (User Path):** Is there a `user departments` command to view department list?\n2. **Act:** Run `python main.py user departments`.\n3. **Assert:** Observe if the department list is displayed, including at least 4 preset departments, each with at least 4 columns (ID, name, code, description).",
+    "expected_output": "2 points: Pre-condition passed, displays 4 or more departments, each with 4 or more columns. 1 point: Pre-condition passed, displays 2-3 departments or columns are incomplete. 0 points: Pre-condition failed, cannot display department info."
+  },
+  {
+    "metric": "3.4.2 View Role Information",
+    "description": "1. **Pre-condition (User Path):** Is there a `user roles-list` command to view roles?\n2. **Act:** Run `python main.py user roles-list`.\n3. **Assert:** Observe if the role list is displayed, including at least 3 preset roles (admin, manager, employee), each with at least 4 columns.",
+    "expected_output": "2 points: Pre-condition passed, displays 3 or more roles, each with 4 or more columns. 1 point: Pre-condition passed, displays 2 roles or columns are incomplete. 0 points: Pre-condition failed, cannot display role info."
+  },
+  {
+    "metric": "4.1.1 Workflow Templates - List Display",
+    "description": "1. **Pre-condition (User Path):** Is there a `workflow templates` command to view workflow templates?\n2. **Act:** Run `python main.py workflow templates`.\n3. **Assert:** Observe if the workflow template list is displayed, including at least 2 preset templates, each with at least 5 columns (ID, name, code, category, status).",
+    "expected_output": "2 points: Pre-condition passed, displays 2 or more templates, each with 5 or more columns. 1 point: Pre-condition passed, displays 1 template or columns are incomplete (3-4 columns). 0 points: Pre-condition failed, cannot display template list, or program crashes."
+  },
+  {
+    "metric": "4.2.1 Workflow Start - Interactive Process",
+    "description": "1. **Pre-condition (User Path):** Can the workflow start feature be accessed through interactive menus?\n2. **Arrange:** Prepare process info.\n3. **Act:** Start the program, log in with the admin account, go to the workflow management menu, choose to create a new process, and enter the prepared info as prompted.\n4. **Assert:** Observe if the workflow is successfully started interactively, and displays the instance info.",
+    "expected_output": "2 points: Pre-condition passed, workflow can be started interactively, instance info is displayed. 1 point: Pre-condition passed, workflow can be started but interactive experience is poor. 0 points: Pre-condition failed, cannot start workflow, or program crashes."
+  },
+  {
+    "metric": "4.3.1 Workflow Instances - List Display",
+    "description": "1. **Pre-condition (User Path):** Is there a `workflow instances` command to view instance list?\n2. **Arrange:** Ensure at least 1 workflow instance exists in the system.\n3. **Act:** Run `python main.py workflow instances`.\n4. **Assert:** Observe if the instance list is displayed, each instance with at least 5 columns (ID, title, template, initiator, status).",
+    "expected_output": "2 points: Pre-condition passed, correctly displays the instance list, each with 5 or more columns. 1 point: Pre-condition passed, displays instance list but columns are incomplete (3-4 columns). 0 points: Pre-condition failed, cannot display instance list."
+  },
+  {
+    "metric": "4.3.2 Workflow Instances - Process Monitoring",
+    "description": "1. **Pre-condition (User Path):** Can the process monitoring feature be accessed through interactive menus?\n2. **Arrange:** Ensure at least 1 workflow instance exists for monitoring.\n3. **Act:** Start the program, log in as admin, enter workflow management menu, select process monitoring to view status.\n4. **Assert:** Observe if the process monitoring screen is displayed, showing real-time status and at least 4 monitoring info columns (process ID, name, current status, progress).",
+    "expected_output": "2 points: Pre-condition passed, correctly displays monitoring screen with 4 or more columns. 1 point: Pre-condition passed, displays monitoring screen but columns incomplete (2-3 columns). 0 points: Pre-condition failed, cannot display monitoring screen."
+  },
+  {
+    "metric": "4.3.3 Workflow Instances - Process Statistics",
+    "description": "1. **Pre-condition (User Path):** Can the process statistics feature be accessed through interactive menus?\n2. **Arrange:** Ensure the system has multiple workflow instances for analysis.\n3. **Act:** Start the program, log in as admin, go to workflow management menu, select process statistics to view reports.\n4. **Assert:** Observe if the process statistics screen is displayed, able to view statistics, with at least 4 statistical dimensions (total count, completed count, in-progress count, completion rate).",
+    "expected_output": "2 points: Pre-condition passed, correctly shows statistics screen with 4 or more dimensions. 1 point: Pre-condition passed, statistics screen displayed but dimensions incomplete (2-3). 0 points: Pre-condition failed, cannot display statistics screen."
+  },
+  {
+    "metric": "4.4.1 View To-Do Tasks",
+    "description": "1. **Pre-condition (User Path):** Can the to-do task view feature be accessed through interactive menus?\n2. **Arrange:** Ensure the current user has to-do tasks (can create via workflow initiation and user switching).\n3. **Act:** Start the program, log in as admin, enter the task management menu, select My Tasks to view to-do list.\n4. **Assert:** Observe if the current user's to-do task list is displayed, each task includes at least 5 info columns (node ID, workflow title, node name, status, creation time).",
+    "expected_output": "2 points: Pre-condition passed, correctly displays to-do list with 5 or more columns per task. 1 point: Pre-condition passed, displays task list but info is incomplete (3-4 columns). 0 points: Pre-condition failed, cannot display task list."
+  },
+  {
+    "metric": "4.4.2 Task Management - Create Task",
+    "description": "1. **Pre-condition (User Path):** Can the task creation feature be accessed via interactive menus?\n2. **Arrange:** Prepare task info (title, description, deadline, priority, type).\n3. **Act:** Start the program, log in as admin, go to task management menu, select to create new task, and enter the info as prompted.\n4. **Assert:** Observe if the task is successfully created interactively and shows a confirmation message.",
+    "expected_output": "2 points: Pre-condition passed, task is successfully created, shows complete task info and confirmation. 1 point: Pre-condition passed, task is created but info is incomplete. 0 points: Pre-condition failed, cannot create task, or program crashes."
+  },
+  {
+    "metric": "4.4.3 Task Management - Task Assignment",
+    "description": "1. **Pre-condition (User Path):** Can the task assignment feature be accessed via interactive menus?\n2. **Arrange:** Ensure there are assignable tasks and users in the system.\n3. **Act:** Start the program, log in as admin, go to task management menu, select the task assignment feature to assign tasks.\n4. **Assert:** Observe if the task is successfully assigned, displays assignment confirmation info, including at least 3 assignment details (task, assigned to, deadline).",
+    "expected_output": "2 points: Pre-condition passed, task assigned successfully, shows complete assignment info and confirmation. 1 point: Pre-condition passed, task assigned but info display is incomplete. 0 points: Pre-condition failed, cannot assign task, or program crashes."
+  },
+  {
+    "metric": "4.4.4 Task Management - Task Tracking",
+    "description": "1. **Pre-condition (User Path):** Can the task tracking feature be accessed via interactive menus?\n2. **Arrange:** Ensure there are ongoing tasks in the system for tracking.\n3. **Act:** Start the program, log in as admin, go to task management menu, select task tracking to view progress.\n4. **Assert:** Observe if the task tracking screen is shown, able to view task progress with at least 4 tracking info columns (task ID, name, executor, progress).",
+    "expected_output": "2 points: Pre-condition passed, correctly displays task tracking screen with 4 or more columns. 1 point: Pre-condition passed, tracking screen displayed but columns are incomplete (2-3 columns). 0 points: Pre-condition failed, cannot display tracking screen."
+  },
+  {
+    "metric": "4.4.5 Task Management - Task Statistics",
+    "description": "1. **Pre-condition (User Path):** Can the task statistics feature be accessed via interactive menus?\n2. **Arrange:** Ensure there are multiple tasks in the system for statistics analysis.\n3. **Act:** Start the program, log in as admin, go to task management menu, select task statistics to view report.\n4. **Assert:** Observe if the task statistics screen is displayed, able to view stats with at least 4 statistical dimensions (total tasks, completed, in-progress, completion rate).",
+    "expected_output": "2 points: Pre-condition passed, correctly displays task statistics screen with 4 or more dimensions. 1 point: Pre-condition passed, statistics screen displayed but dimensions incomplete (2-3). 0 points: Pre-condition failed, cannot display statistics screen."
+  },
+  {
+    "metric": "4.5.1 Task Processing - Approve Operation",
+    "description": "1. **Pre-condition (User Path):** Is there a `workflow process` command to process tasks?\n2. **Arrange:** Make sure there is a processable task node ID, and prepare the approval comment \"Agree to application\".\n3. **Act:** Run `python main.py workflow process <NodeID> --action approve --comment \"Agree to application\"`.\n4. **Assert:** Observe if the task is successfully processed and displays a success confirmation message.",
+    "expected_output": "2 points: Pre-condition passed, task processed successfully, clear success confirmation message is displayed. 1 point: Pre-condition passed, task processed but confirmation message is unclear. 0 points: Pre-condition failed, cannot process task, or program crashes."
+  },
+  {
+    "metric": "4.5.2 Task Processing - Reject Operation",
+    "description": "1. **Arrange:** Make sure there is a processable task node ID and prepare the comment \"Application rejected\".\n2. **Act:** Run `python main.py workflow process <NodeID> --action reject --comment \"Application rejected\"`.\n3. **Assert:** Observe if the rejection operation is successfully processed and displays a success confirmation message.",
+    "expected_output": "2 points: Successfully processes the rejection operation and displays a clear success confirmation message. 1 point: Can process rejection but confirmation message is unclear. 0 points: Cannot process rejection or program crashes."
+  },
+  {
+    "metric": "5.1 Password Change Feature",
+    "description": "1. **Pre-condition (User Path):** Is there an `auth change-password` command to change password?\n2. **Arrange:** Prepare the current password and new password info.\n3. **Act:** Run `python main.py auth change-password`, enter current and new password as prompted.\n4. **Assert:** Observe if the password is changed successfully and shows a confirmation message.",
+    "expected_output": "2 points: Pre-condition passed, password changed successfully, with validation and confirmation steps. 1 point: Pre-condition passed, password changed but validation is incomplete. 0 points: Pre-condition failed, cannot change password, or program crashes."
+  },
+  {
+    "metric": "5.2 User Logout Feature",
+    "description": "1. **Pre-condition (User Path):** Is there a `logout` command to log out of the system?\n2. **Arrange:** Make sure a user is already logged in.\n3. **Act:** Run `python main.py logout`.\n4. **Assert:** Observe if logout is successful, confirmation message is displayed, and login status is cleared.",
+    "expected_output": "2 points: Pre-condition passed, logged out successfully, confirmation message displayed, login status cleared. 1 point: Pre-condition passed, can log out but status is incompletely cleared. 0 points: Pre-condition failed, cannot log out, or program crashes."
+  },
+  {
+    "metric": "6.1 Permission Control Verification",
+    "description": "1. **Arrange:** Log in with a regular employee account (employee).\n2. **Act:** Attempt to perform an admin function `python main.py user create`.\n3. **Assert:** Observe if the system properly blocks unauthorized actions and shows a clear insufficient permissions message.",
+    "expected_output": "2 points: Correctly validates user permission, unauthorized action blocked with a clear insufficient permissions message. 1 point: Basic permission control exists but message is unclear. 0 points: No permission control or validation not effective."
+  },
+  {
+    "metric": "6.2 Error Handling - Invalid Parameters",
+    "description": "1. **Act:** Try to view a non-existent user with `python main.py user show 999`.\n2. **Assert:** Observe if a friendly error message is shown and the program does not crash.",
+    "expected_output": "2 points: Displays friendly \"user does not exist\" error message and program runs normally. 1 point: Error message shown but not friendly or accurate enough. 0 points: Program crashes or no error message."
+  }
+]

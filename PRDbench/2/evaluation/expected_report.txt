@@ -1,0 +1,20 @@
+Query SQL:
+SELECT * FROM df WHERE Industry = 'Technology'
+
+Analysis Metric: Market Value
+Analysis Dimensions: Sector
+
+--- Variance Decomposition Results ---
++----------+----------------+-----------+------------+------------------+
+| Source   |         sum_sq |        df |         F |   PR(>F)         |
+|----------+----------------+-----------+------------+------------------|
+| C(Sector)| 1.023e+22      | 1         |  0.85      | 0.39             |
+| Residual | 2.15e+22       | 18        | nan        | nan              |
++----------+----------------+-----------+------------+------------------+
+
+--- Deep Analysis: C(Sector) ---
++----------------+-----------------+-----------------+
+| Sector         | Market Value_mean | Market Value_std |
+|----------------+-----------------+-----------------|
+| Technology     | 2.89e+10        | 4.65e+10        |
++----------------+-----------------+-----------------+

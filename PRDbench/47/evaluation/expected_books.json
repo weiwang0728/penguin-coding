@@ -1,0 +1,13 @@
+[
+ {
+ "BookId": "ISBN001",
+ "BookName": "PythonCodeProcessInput",
+ "Auth": "Sam",
+ "Category": "DesignCalculateMachine",
+ "Publisher": "PersonOutputEdition",
+ "PublishTime": "2023-01-01",
+ "NumStorage": 10,
+ "NumCanBorrow": 8,
+ "NumBookinged": 0
+ }
+]

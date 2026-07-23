@@ -1,0 +1,302 @@
+[
+  {
+    "metric": "4.1 System Startup and Basic Status Query",
+    "description": "1. Act: Start the system service.\n2. Act: Query the master unit status information.\n3. Assert: Check if the response is successful and verify that the returned information contains all four key fields: operating mode (mode), processing capacity (processing_capacity), scheduling algorithm (scheduling_algorithm), and standby status (status).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_1.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Expected JSON response from /machine/info containing 'status', 'power', 'scheduling', and 'standby' fields."
+  },
+  {
+    "metric": "2.2.5a Slave Addition Functionality",
+    "description": "1. Arrange: Prepare unique slave identification information, including necessary identifier fields (e.g., ID card number and room number).\n2. Act: Send an add slave request, submitting the prepared identification information.\n3. Assert: Verify that the response indicates successful creation and contains a success message.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_2.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Expected an empty response with HTTP status 200."
+  },
+  {
+    "metric": "2.2.5b Slave Status Query Functionality",
+    "description": "1. Arrange: Ensure a slave has been successfully added.\n2. Act: Query the status of this slave based on its identifier.\n3. Assert: Verify the response is successful and contains the slave's complete initial status information (e.g., identification info, target temperature, current temperature, wind speed).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_3.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Expected JSON response containing the slave's status information (id, card_id, target_temp, cur_temp, speed, energy, amount)."
+  },
+  {
+    "metric": "2.1.1 Master Mode Switching and Slave Status Reset",
+    "description": "1. Arrange: Ensure at least one slave exists in the system with a temperature above 25 degrees.\n2. Act: Set the master mode to cooling mode, then query the slave status.\n3. Assert: Verify if the slave target temperature meets the requirement.\n4. Act: Set the master mode to heating mode, then query the slave status again.\n5. Assert: Verify if the slave target temperature is reset to the default value for heating mode (28°C).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_4.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "After setting master to cooling, slave target temperature should be 22. After setting master to heating, slave target temperature should be 28."
+  },
+  {
+    "metric": "2.2.2 Slave Temperature Adjustment",
+    "description": "1. Arrange: Ensure the master is in cooling mode and at least one slave exists.\n2. Act: Send a slave temperature adjustment request, decreasing the target temperature by one degree.\n3. Assert: Query the slave status to verify if its target temperature has been updated to the requested value.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_5.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Slave target temperature decreases by 1°C."
+  },
+  {
+    "metric": "2.3.3 Intelligent Decision - Auto Stop Fan Upon Reaching Target Temperature",
+    "description": "1. Arrange: Create a slave state where the temperature has reached the target temperature.\n2. Act: Test the intelligent decision logic.\n3. Assert: Verify that when the temperature reaches the target, the wind speed automatically becomes 0.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_intelligent_decision_fixed.py::TestIntelligentDecision::test_temperature_reached_auto_stop -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test verifies the auto stop fan logic when temperature reaches target."
+  },
+  {
+    "metric": "2.3.4a Intelligent Decision - Mode-Adaptive Stop Fan (Cooling)",
+    "description": "1. Arrange: Set cooling mode, slave current temperature below target temperature.\n2. Act: Test intelligent decision logic under cooling mode.\n3. Assert: Verify that in cooling mode, when current temperature is below target temperature, wind speed automatically becomes 0.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_intelligent_decision_fixed.py::TestIntelligentDecision::test_cooling_mode_temperature_adaptation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test verifies the temperature-adaptive stop fan logic in cooling mode."
+  },
+  {
+    "metric": "2.3.4b Intelligent Decision - Mode-Adaptive Stop Fan (Heating)",
+    "description": "1. Arrange: Set heating mode, slave current temperature above target temperature.\n2. Act: Test intelligent decision logic under heating mode.\n3. Assert: Verify that in heating mode, when current temperature is above target temperature, wind speed automatically becomes 0.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_intelligent_decision.py::TestIntelligentDecision::test_heating_mode_temperature_adaptation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test verifies the temperature-adaptive stop fan logic in heating mode."
+  },
+  {
+    "metric": "2.5.2 Real-time Cost Calculation Accuracy",
+    "description": "1. Arrange: Create test slaves and set different wind speed levels.\n2. Act: Simulate cost calculation logic, verify energy consumption and cost calculation under different wind speeds.\n3. Assert: Verify the accuracy of the cost calculation formula: low speed 0.8/60*5, medium speed 1.0/60*5, high speed 1.3/60*5 (calculated per second), allowing ±5% error.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_cost_calculation.py::TestCostCalculation::test_cost_calculation_one_minute -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit test verifies that 1-minute medium wind speed cost calculation result is approximately 5.0 yuan, allowing ±5% error."
+  },
+  {
+    "metric": "2.6.5a Report Generation - Basic Functionality and Time Range",
+    "description": "1. Arrange: Prepare valid start and end time parameters.\n2. Act: Request a report for the specified time range.\n3. Assert: Verify the response is successful and the returned report includes query time range information consistent with the request parameters.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_11.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": ["evaluation/expected_report_2_6_5a.json"],
+    "expected_output": "The generated report should include the specified start and end dates (2025-08-19 to 2025-08-19) in the 'Query Time Range' section and contain at least one slave record."
+  },
+  {
+    "metric": "2.6.5b Report Generation - Slave Statistics Accuracy",
+    "description": "1. Arrange: Within a time period, perform 2 power-on and 2 power-off operations on a specific slave.\n2. Act: Request a report covering that time period.\n3. Assert: In the slave statistics section of the report, find the record for that slave and verify if the power-on/off count is 2 and if the total cost matches the cumulative cost in the slave's status.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_12.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": ["evaluation/expected_report_2_6_5b.json"],
+    "expected_output": "The report for slave 'test_card_002' should show 'Count' as 2 (two shutdown events) and an accurate 'Cost' reflecting the operations."
+  },
+  {
+    "metric": "2.6.5c Report Generation - Content Completeness",
+    "description": "1. Arrange: Ensure there are operation records in the system.\n2. Act: Request a report.\n3. Assert: Check the report structure to see if it contains all four stipulated main sections simultaneously: Query Time Range, Slave Statistics, Cost Statistics, and Detailed Records.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_13.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": ["evaluation/expected_report_2_6_5c.json"],
+    "expected_output": "The report should be a JSON array of slave reports. Each slave report should contain 'ID', 'Count', 'Record' (detailed operation array), and 'Cost'."
+  },
+  {
+    "metric": "3.1a Data Persistence - Slave Status",
+    "description": "1. Arrange: Operate a slave to generate a non-zero cumulative cost and record the value.\n2. Act: Manually restart the system service (refer to persistence_test_instructions.md for details).\n3. Assert: After service restart, query the slave status and verify if its cumulative cost matches the value recorded before restart.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/app.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_14_1.in",
+        "test_input": null
+      },
+      {
+        "test_command": "pkill -f python src/app.py",
+        "test_input": ""
+      },
+      {
+        "test_command": "python src/app.py",
+        "test_input": ""
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_14_2.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The slave 'amount' should be the same as the initially recorded amount."
+  },
+  {
+    "metric": "3.1b Data Persistence - Operation Logs",
+    "description": "1. Arrange: Perform a specific operation on a slave (e.g., adjust temperature) and note the operation time.\n2. Act: Manually restart the system service (refer to persistence_test_instructions.md for details).\n3. Assert: After service restart, request a report covering that operation time and verify if the detailed records still contain the operation record from before the restart.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py < evaluation/test_case_15_1.in",
+        "test_input": null
+      },
+      {
+        "test_command": "pkill -f python src/app.py",
+        "test_input": ""
+      },
+      {
+        "test_command": "python src/app.py",
+        "test_input": ""
+      },
+      {
+        "test_command": "python src/run.py < evaluation/test_case_15_2.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The report should contain log entries for the temperature adjustment performed before restart."
+  },
+  {
+    "metric": "2.1.2 Scheduling Algorithm Accuracy",
+    "description": "1. Arrange: Create multiple test requests with different wind speeds and times.\n2. Act: Test the three scheduling algorithms respectively: Random Scheduling, First-Come-First-Served, and Wind Speed Priority.\n3. Assert: Verify if each scheduling algorithm selects and sorts requests according to the expected rules, and verify the priority of power on/off requests.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_scheduling_fixed.py::TestSchedulingAlgorithms::test_random_scheduling -v",
+        "test_input": null
+      },
+      {
+        "test_command": "pytest evaluation/tests/test_scheduling_fixed.py::TestSchedulingAlgorithms::test_speed_priority_scheduling -v",
+        "test_input": null
+      },
+      {
+        "test_command": "pytest evaluation/tests/test_scheduling_fixed.py::TestSchedulingAlgorithms::test_power_first_priority -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit tests verify the randomness of random scheduling, correct ordering of speed priority scheduling, and priority handling of power on/off requests."
+  },
+  {
+    "metric": "2.4.1 Temperature Monitoring Calculation Accuracy",
+    "description": "1. Arrange: Set different initial temperatures, target temperatures, and wind speed conditions.\n2. Act: Test the temperature calculation model logic under cooling and heating modes.\n3. Assert: Verify the temperature change direction is correct, the intelligent wind speed adjustment logic is accurate, and the fan automatically stops when temperature reaches target.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_temperature_monitor_fixed.py::TestTemperatureMonitor::test_temperature_calculation_heating -v",
+        "test_input": null
+      },
+      {
+        "test_command": "pytest evaluation/tests/test_temperature_monitor_fixed.py::TestTemperatureMonitor::test_temperature_calculation_cooling -v",
+        "test_input": null
+      },
+      {
+        "test_command": "pytest evaluation/tests/test_temperature_monitor_fixed.py::TestTemperatureMonitor::test_intelligent_speed_adjustment -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Unit tests verify the accuracy of the temperature calculation model and the intelligent wind speed adjustment logic."
+  }
+]

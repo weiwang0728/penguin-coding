@@ -1,0 +1,97 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Run the program startup command in the shell (e.g., `python src/main.py`). 2. **Assert:** Check whether the program starts successfully and displays a clear main menu, which should clearly include entries for core features such as 'Professional Ability Question Bank', 'Mock Interview', 'Career Development Planning', etc.",
+    "expected_output": "2 points: Program starts successfully and displays a clear, operable main menu with 3 or more core feature options. 1 point: Program starts, but menu options are incomplete, unclear, or garbled. 0 points: Program fails to start or crashes immediately after launch."
+  },
+  {
+    "metric": "1.1a Question Bank Generation - Feature Entry",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for 'Generate Question Bank' or a similar function in the main menu? 2. **Act:** Select this option. 3. **Assert:** Observe whether the program enters the question bank generation configuration interface and prompts the user for the next steps (e.g., selecting question type, quantity, etc.).",
+    "expected_output": "2 points: Pre-check passed and can successfully enter the feature configuration interface. 1 point: Pre-check passed but, after entering, there is no clear guidance or the interface is disordered. 0 points: Pre-check failed, i.e., cannot find this feature entry in the main menu."
+  },
+  {
+    "metric": "1.1b Question Bank Generation - Custom Question Type and Quantity",
+    "description": "1. **Arrange:** Set generation requirements: 2 single choice questions, 3 multiple choice questions, 1 true/false question, and 1 situational analysis question. 2. **Act:** On the question bank generation interface, enter the above requirements as prompted. 3. **Assert:** Check the generated question bank and confirm that it contains all 4 types of questions in the exact quantities entered.",
+    "expected_output": "2 points: Fully supports customizing the quantity for all 4 question types, and the generated results are completely accurate. 1 point: Supports custom settings for 2-3 question types, or there are discrepancies in the quantities. 0 points: Cannot support custom settings for fewer than 2 types, or the function is completely broken."
+  },
+  {
+    "metric": "1.1c Question Bank Generation - Custom Difficulty",
+    "description": "1. **Arrange:** Set generation requirements: 10 'Advanced' difficulty questions. 2. **Act:** On the question bank generation interface, select 'Advanced' difficulty and generate questions. 3. **Assert:** Check all generated questions and confirm that their difficulty labels are all 'Advanced'. Repeat verification for 'Beginner' and 'Intermediate'.",
+    "expected_output": "2 points: Fully supports customizing all three difficulty levels, and the generated result is completely correct. 1 point: Supports custom settings for 1-2 difficulty levels, or there are discrepancies in difficulty settings. 0 points: Does not support difficulty customization."
+  },
+  {
+    "metric": "1.2 Question Bank Generation - Coverage of Competency Dimensions",
+    "description": "1. **Arrange:** Set generation requirements: Generate a large question bank containing 60 questions. 2. **Act:** Execute the generation. 3. **Assert:** Check all generated questions and tally their 'competency dimension labels' to confirm that all 6 major career competency dimensions (Professional Knowledge, Problem Solving, Teamwork, Communication, Learning Ability, Professionalism) are present.",
+    "expected_output": "2 points: The generated question bank fully covers all 6 competency dimensions. 1 point: Covers 3-5 competency dimensions. 0 points: Covers fewer than 3 competency dimensions."
+  },
+  {
+    "metric": "1.3a Question Bank Generation - Content Completeness (Answers & Tags)",
+    "description": "1. **Arrange:** Generate a question bank of any size. 2. **Act:** Check the generated question bank data. 3. **Assert:** Randomly select 5 questions and check whether each contains both 'standard answer' and 'competency dimension label' fields.",
+    "expected_output": "2 points: All checked questions contain both standard answers and competency dimension labels. 1 point: Some questions are missing fields. 0 points: All questions are missing fields."
+  },
+  {
+    "metric": "1.3b Question Bank Generation - Content Completeness (STAR Analysis)",
+    "description": "1. **Arrange:** Generate a question bank containing at least one 'situational analysis' question. 2. **Act:** Check the data of that situational analysis question. 3. **Assert:** Confirm that the question contains a detailed 'analysis' field, and that the content conforms to the basic structure of the STAR method (contains descriptions for Situation, Task, Action, Result).",
+    "expected_output": "2 points: The situational analysis question contains an analysis field with clear structure and complies with the STAR principle. 1 point: The analysis field exists, but the content is simple or does not follow the STAR structure. 0 points: Analysis field is missing."
+  },
+  {
+    "metric": "1.4a Question Bank Export - Function Implementation",
+    "description": "1. **Pre-check (User Path):** After generating the question bank, is there a clear 'Export as Excel' or similar button/command on the interface? 2. **Arrange:** Successfully generate a question bank. 3. **Act:** Perform the export operation. 4. **Assert:** Check the specified output directory to confirm whether an Excel file in .xlsx format was successfully generated.",
+    "expected_output": "2 points: Pre-check passed and successfully generated the Excel file. 1 point: Pre-check passed, but an error is reported during execution or an incorrectly formatted file is generated. 0 points: Pre-check failed or the export function does not work at all."
+  },
+  {
+    "metric": "1.4b Question Bank Export - Data Completeness",
+    "description": "1. **Arrange:** Successfully export a question bank Excel file. 2. **Act:** Read the Excel file. 3. **Assert:** Check the table header (first row) and confirm that it contains all required fields specified in the PRD: Question, Options, Answer, Analysis, Competency Dimension.",
+    "expected_output": "2 points: Exported file contains all 5 specified fields. 1 point: File contains 3-4 specified fields. 0 points: File contains fewer than 3 specified fields."
+  },
+  {
+    "metric": "2.1 Mock Interview - Mode Selection",
+    "description": "1. **Pre-check (User Path):** Is there a clear 'Mock Interview' entry in the main menu? 2. **Act:** Enter the mock interview function. 3. **Assert:** Observe the interface and confirm that both 'Structured Interview' and 'Random Interview' modes are clearly available for user selection.",
+    "expected_output": "2 points: Pre-check passed and both interview modes are clearly provided for selection. 1 point: Pre-check passed, but only one mode is implemented. 0 points: Pre-check failed or no mode selection is provided."
+  },
+  {
+    "metric": "2.2 Mock Interview - Answer Input, Timing Function, and Auto-Scoring",
+    "description": "1. **Arrange:** Start any mock interview. 2. **Act:** Answer at least 2 questions and complete the entire interview. 3. **Assert:** Confirm that a timer is displayed on the interface when answering each question; and that after the interview ends, the report shows the total time used. After submission, the system should give a score based on a 1-5 scale and either go to the next question or end the process.",
+    "expected_output": "2 points: Both per-question timing and total time statistics are implemented. 1 point: Only one is implemented. 0 points: No timing function is implemented."
+  },
+  {
+    "metric": "2.3a Comprehensive Report - Radar Chart",
+    "description": "1. **Arrange:** Complete a mock interview. 2. **Act:** View the generated comprehensive evaluation report. 3. **Assert:** The report should include a competency radar chart showing the user's scores in various competency dimensions.",
+    "expected_output": "2 points: The report includes a correctly rendered, accurate competency radar chart. 1 point: The radar chart exists but has formatting errors, inaccurate data, or incomplete dimensions. 0 points: No radar chart in the report."
+  },
+  {
+    "metric": "2.3b Comprehensive Report - Improvement Suggestions",
+    "description": "1. **Arrange:** Complete a mock interview. 2. **Act:** View the generated comprehensive evaluation report. 3. **Assert:** The report should include specific improvement suggestions based on the user's performance.",
+    "expected_output": "2 points: The report contains targeted improvement suggestions. 1 point: Suggestions are too generic or unrelated to the user's performance. 0 points: No improvement suggestions in the report."
+  },
+  {
+    "metric": "3.1 Career Planning - Career Anchor Assessment",
+    "description": "1. **Pre-check (User Path):** Is there a clear 'Career Development Planning' entry in the main menu? 2. **Act:** Enter this function and complete the 12-question assessment on Career Anchor Theory. 3. **Assert:** After completing the questionnaire, the system gives a clear career anchor type result (such as Technical, Managerial, etc.).",
+    "expected_output": "2 points: Pre-check passed and a clear career anchor type is assessed through the 12-question questionnaire. 1 point: Pre-check passed, but fewer than 12 questionnaire items or the results are unclear. 0 points: Pre-check failed or assessment cannot be completed."
+  },
+  {
+    "metric": "3.2a Development Suggestions - Core Competencies",
+    "description": "1. **Arrange:** Complete a mock interview and career anchor assessment. 2. **Act:** Generate personalized development path suggestions. 3. **Assert:** Check the suggestions and confirm that they include 'three prioritized core improvement competencies'.",
+    "expected_output": "2 points: Suggestions clearly list three core competencies prioritized. 1 point: Suggestions include a list of competencies, but not three or not prioritized. 0 points: Suggestions lack a core competency improvement section."
+  },
+  {
+    "metric": "3.2b Development Suggestions - Learning Resources",
+    "description": "1. **Arrange:** Complete a mock interview and career anchor assessment. 2. **Act:** Generate personalized development path suggestions. 3. **Assert:** Check the suggestions and confirm that they include 'recommended types of learning resources and acquisition channels'.",
+    "expected_output": "2 points: Suggestions include specific types of learning resources and channels. 1 point: Suggestions only include resource types or channels, or are too vague. 0 points: Suggestions lack a learning resources section."
+  },
+  {
+    "metric": "3.2c Development Suggestions - Stage Goals",
+    "description": "1. **Arrange:** Complete a mock interview and career anchor assessment. 2. **Act:** Generate personalized development path suggestions. 3. **Assert:** Check the suggestions and confirm that they include 'stage goal setting (short-term/mid-term/long-term)'.",
+    "expected_output": "2 points: Suggestions include clear short-, mid-, and long-term goals. 1 point: Goals in the suggestions are unclear or one or two stages are missing. 0 points: Suggestions lack a stage goal setting section."
+  },
+  {
+    "metric": "3.3a Planning Export - Function Implementation",
+    "description": "1. **Pre-check (User Path):** After generating the development plan, is there a clear 'Export as Markdown' or similar button/command on the interface? 2. **Arrange:** Successfully generate a development plan. 3. **Act:** Perform the export operation. 4. **Assert:** Check the specified output directory to confirm whether a Markdown file in .md format was successfully generated.",
+    "expected_output": "2 points: Pre-check passed and successfully generated the Markdown file. 1 point: Pre-check passed but an error is reported during execution or an incorrectly formatted file is generated. 0 points: Pre-check failed or the export function does not work at all."
+  },
+  {
+    "metric": "3.3b Planning Export - Data Completeness",
+    "description": "1. **Arrange:** Successfully export a development planning Markdown file. 2. **Act:** Read the Markdown file. 3. **Assert:** Check the file content and confirm that it contains both the 'action plan timeline' and 'competency improvement milestones' sections.",
+    "expected_output": "2 points: Exported file contains both the timeline and milestone sections. 1 point: File contains only one of these sections. 0 points: File does not contain any of the specified sections."
+  }
+]

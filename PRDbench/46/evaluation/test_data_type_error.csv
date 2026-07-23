@@ -1,0 +1,4 @@
+customer_id,age,income,employment_years,debt_ratio,credit_history,target
+CUST_000001,25,not_number,3,0.3,good,1
+CUST_000002,invalid_age,55000,5,0.2,excellent,0
+CUST_000003,35,75000,unknown,0.4,fair,1

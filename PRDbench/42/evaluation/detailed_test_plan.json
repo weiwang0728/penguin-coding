@@ -1,0 +1,430 @@
+[
+  {
+    "metric": "1.1 System Startup and Basic Availability: System can successfully start through command line and execute basic functions.",
+    "description": "1. **Act:** Execute system demonstration command in shell (e.g., `python src/demo.py`).\n2. **Assert:** Observe whether terminal displays startup success prompt information and function demonstration output.\n3. **Act:** Execute CLI tool help command (e.g., `python src/main_cli.py --help`).\n4. **Assert:** Observe whether system can return expected CLI command list and usage instructions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/demo.py",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main_cli.py --help",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main_cli.py init",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main_cli.py status",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System successfully starts, displays CLI demonstration program output and help information, no error messages"
+  },
+  {
+    "metric": "2.1.1a Questionnaire Data Import - Excel Format Support",
+    "description": "Test whether system can successfully import Excel format questionnaire data, verify CLI command data import function.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py system init",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_survey.xlsx -c \"Test Enterprise\" -t survey",
+        "test_input": "evaluation/import_excel_input.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/test_survey.xlsx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Displays data import success information, contains imported record quantity, no error messages"
+  },
+  {
+    "metric": "2.1.1b Questionnaire Data Import - CSV Format Support",
+    "description": "Test whether system can successfully import CSV format questionnaire data, verify CLI command data import function.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_survey.csv -c \"Test Enterprise\" -t survey",
+        "test_input": "evaluation/import_csv_input.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/test_survey.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Displays data import success information, contains imported record quantity, no error messages"
+  },
+  {
+    "metric": "2.1.2a Interview Text Import - Manual Entry",
+    "description": "Test interview text manual entry function, verify CLI interaction text input and saving capability.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_interview_manual.py::test_manual_interview_input",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, interview text successfully saved to database"
+  },
+  {
+    "metric": "2.1.2b Interview Text Import - .docx File Upload",
+    "description": "Test .docx format interview file import function, verify CLI command file parsing and content extraction capability.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_interview.docx -c \"Test Enterprise\" -t interview",
+        "test_input": "evaluation/import_docx_input.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/test_interview.docx"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Displays interview data import success information, no error messages"
+  },
+  {
+    "metric": "2.1.2c Interview Text Import - .txt File Upload",
+    "description": "Test .txt format interview file import function, verify CLI command text file reading and content saving capability.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_interview.txt -c \"Test Enterprise\" -t interview",
+        "test_input": "evaluation/import_txt_input.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/test_interview.txt"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Displays interview data import success information, no error messages"
+  },
+  {
+    "metric": "2.1.3 Data Validation: Validate questionnaire response completeness.",
+    "description": "1. **Arrange:** Prepare a questionnaire data file containing missing response items.\n2. **Act:** Import this questionnaire data containing missing items.\n3. **Assert:** Through CLI view output, confirm whether system can identify missing items and display corresponding validation warning information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_survey_incomplete.csv -c \"Test Enterprise\" -t survey",
+        "test_input": "evaluation/import_incomplete_input.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/test_survey_incomplete.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Displays data validation warning information, identifies missing items specific positions and content"
+  },
+  {
+    "metric": "2.1.4a Sample Management - Multi-dimensional Filtering",
+    "description": "1. **Arrange:** Ensure database already imported and contains sample data with different enterprise, department, position, management level labels.\n2. **Act:** Through CLI interaction, try filtering samples by enterprise, department.\n3. **Assert:** Check returned sample list, confirm filtering function effective, results correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_sample_filtering.py::test_multi_dimension_filtering",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, sample filtering function works normally, returns correct filtering results"
+  },
+  {
+    "metric": "2.1.4b Sample Management - Batch Metadata Annotation",
+    "description": "1. **Arrange:** Ensure database already has batch sample data.\n2. **Act:** Through CLI interaction, try adding metadata labels for this batch samples (e.g., 'Source A', 'Valid').\n3. **Assert:** Check database or sample list, confirm metadata labels successfully added and viewed.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_metadata_annotation.py::test_batch_metadata_annotation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, metadata annotation function works normally, labels successfully added"
+  },
+  {
+    "metric": "2.1.5 Historical Data Version Management: Each data import or update generates read-only version snapshot.",
+    "description": "1. **Arrange:** Prepare initial dataset and import system.\n2. **Act:** Through CLI query historical version information.\n3. **Arrange:** Prepare updated dataset and import or update partial data.\n4. **Act:** Again through CLI query historical version information.\n5. **Assert:** Confirm whether generated new version snapshot. Try viewing different version data contents, verify their read-only property.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_version_management.py::test_data_version_snapshots",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, version management function normal, each data change generates new read-only snapshot"
+  },
+  {
+    "metric": "2.2.1 Preset Management Skill Dimensions: System presets four core management skill dimensions.",
+    "description": "1. **Act:** Through CLI command, request obtain system preset skill dimension list.\n2. **Assert:** Check return result whether contains 'Leadership and Motivation Skills', 'Planning Organization and Coordination Skills', 'Decision-making and Innovation Skills', 'Professional and Control Skills' these four items.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_skill_dimensions.py::test_preset_skill_dimensions",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, system contains all four preset skill dimensions"
+  },
+  {
+    "metric": "2.2.2a Custom Dimensions and Indicators - Add New Dimension",
+    "description": "1. **Arrange:** Prepare new skill dimension name (e.g., 'Communication Ability').\n2. **Act:** Through CLI interaction, try adding this new skill dimension.\n3. **Assert:** Query dimension list, confirm new dimension successfully added.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_custom_dimensions.py::test_add_custom_dimension",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, new skill dimension successfully added to system"
+  },
+  {
+    "metric": "2.2.2b Custom Dimensions and Indicators - Add Indicator and Weight for Dimension",
+    "description": "1. **Arrange:** Prepare indicator name and corresponding weight value.\n2. **Act:** Under newly added dimension, through CLI interaction add indicator and set weight.\n3. **Assert:** Query this dimension configuration details, confirm indicator and its weight successfully saved.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_custom_dimensions.py::test_add_dimension_indicators",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "pytest test passes, dimension indicator and weight configuration successfully saved"
+  },
+  {
+    "metric": "2.2.3 Factor Analysis Engine Execution: Call principal component analysis or factor analysis algorithm to automatically model sample questionnaire data.",
+    "description": "1. **Arrange:** Ensure already has imported questionnaire dataset.\n2. **Act:** Through CLI command trigger factor analysis task (requires specifying dataset).\n3. **Assert:** Wait task completion, check whether generated factor scores, loading matrices and cumulative explanation rate etc. analysis results.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py analysis factor -c \"Test Enterprise\" -f 3 -r varimax",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays factor analysis results, contains factor quantity, explained variance, factor interpretation and suitability test results"
+  },
+  {
+    "metric": "2.2.4a Algorithm Parameter Customization - Factor Quantity",
+    "description": "1. **Arrange:** Prepare custom factor quantity (e.g., 3).\n2. **Act:** When triggering factor analysis task, through CLI interaction, set factor quantity to prepared value.\n3. **Assert:** Check generated report or results, confirm factor quantity parameter whether set effective.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py analysis factor -c \"Test Enterprise\" -f 2",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Factor analysis results display factor quantity as 2, consistent with set parameter"
+  },
+  {
+    "metric": "2.2.4b Algorithm Parameter Customization - Rotation Method",
+    "description": "1. **Arrange:** Prepare different from default rotation method (e.g., 'promax').\n2. **Act:** When triggering factor analysis task, through CLI interaction, set rotation method to prepared value.\n3. **Assert:** Check generated report or results, confirm rotation method parameter whether set effective.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py analysis factor -c \"Test Enterprise\" -r promax",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Factor analysis results display rotation method as promax, consistent with set parameter"
+  },
+  {
+    "metric": "2.2.5 Statistical Significance Test: Model results are accompanied by statistical significance test report.",
+    "description": "1. **Act:** Execute one factor analysis.\n2. **Act:** Obtain or download analysis report.\n3. **Assert:** Check report content whether contains KMO test, Bartlett spherical test etc. statistical significance test results.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py analysis factor -c \"Test Enterprise\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Factor analysis results contain KMO test and Bartlett spherical test statistical significance test results"
+  },
+  {
+    "metric": "2.2.6a Multi-dimensional Data Comparative Analysis - Grouping Dimension Setting",
+    "description": "1. **Arrange:** Ensure has sample data containing different enterprise, department, level labels.\n2. **Act:** Through CLI interaction, set grouping conditions (e.g., by 'Enterprise' and 'Management Level' grouping).\n3. **Assert:** Confirm system accepted grouping condition settings.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py analysis compare -c \"Test Enterprise\" -g management_level",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System accepts grouping condition settings, starts executing by management level comparative analysis"
+  },
+  {
+    "metric": "2.2.6b Multi-dimensional Data Comparative Analysis - Result Output",
+    "description": "1. **Act:** After already set grouping conditions, execute comparative analysis.\n2. **Assert:** Check output results (e.g., mean, standard deviation) whether correctly grouped by set dimensions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py analysis compare -c \"Test Enterprise\" -g department",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays by department grouped comparative analysis results, contains each group mean, standard deviation etc. statistical indicators"
+  },
+  {
+    "metric": "2.2.7a Comparative Result Visualization - Histogram",
+    "description": "1. **Act:** Execute one multi-dimensional comparative analysis. Through CLI request obtain analysis results histogram.\n2. **Assert:** Check return content whether contains or can generate histogram.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py visualize histogram -c \"Test Enterprise\" -o evaluation/test_histogram.png",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_histogram.png"
+    ],
+    "expected_output": "Successfully generates histogram file, file format correct and can normally open"
+  },
+  {
+    "metric": "2.2.7b Comparative Result Visualization - Box Plot",
+    "description": "1. **Act:** Execute one multi-dimensional comparative analysis. Through CLI request obtain analysis results box plot.\n2. **Assert:** Check return content whether contains or can generate box plot.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py visualize boxplot -c \"Test Enterprise\" -o evaluation/test_boxplot.png",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_boxplot.png"
+    ],
+    "expected_output": "Successfully generates box plot file, file format correct and can normally open"
+  },
+  {
+    "metric": "2.2.7c Comparative Result Visualization - Radar Chart",
+    "description": "1. **Act:** Execute one multi-dimensional comparative analysis. Through CLI request obtain analysis results radar chart.\n2. **Assert:** Check return content whether contains or can generate radar chart.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py visualize radar -c \"Test Enterprise\" -o evaluation/test_radar.png",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_radar.png"
+    ],
+    "expected_output": "Successfully generates radar chart file, file format correct and can normally open"
+  },
+  {
+    "metric": "2.3.1a Chart Export Function - PNG Format",
+    "description": "1. **Act:** Through CLI command generate one PNG format chart.\n2. **Assert:** Check specified output directory whether generated .PNG file, and verify file can normally open.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py visualize histogram -c \"Test Enterprise\" -o evaluation/expected_chart.png",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_chart.png"
+    ],
+    "expected_output": "Successfully generates PNG format chart file, file can normally open"
+  },
+  {
+    "metric": "2.3.1b Chart Export Function - SVG Format",
+    "description": "1. **Act:** Through CLI command generate one SVG format chart.\n2. **Assert:** Check specified output directory whether generated .SVG file, and verify file can normally open.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py visualize radar -c \"Test Enterprise\" -o evaluation/expected_chart.svg",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_chart.svg"
+    ],
+    "expected_output": "Successfully generates SVG format chart file, file can normally open"
+  },
+  {
+    "metric": "2.3.1c Chart Export Function - CSV Format Raw Data",
+    "description": "1. **Act:** Through CLI command export raw data as CSV format.\n2. **Assert:** Check specified output directory whether generated .CSV file, and verify file content correct.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py system reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_survey.csv -c \"Test Enterprise\" -t survey",
+        "test_input": "evaluation/import_csv_input.in"
+      },
+      {
+        "test_command": "python src/cli.py data export-data -c \"Test Enterprise\" -t survey -f csv -o evaluation/output_data.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/cli.py data verify-export -f evaluation/output_data.csv -e evaluation/expected_export.csv",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_export.csv"
+    ],
+    "expected_output": "Successfully generates CSV format data file, file content correct"
+  },
+  {
+    "metric": "2.3.1d Chart Export Function - Excel Format Raw Data",
+    "description": "1. **Act:** Through CLI command export raw data as Excel format.\n2. **Assert:** Check specified output directory whether generated .Excel file, and verify file content correct.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/cli.py system reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/cli.py data import-data -f evaluation/test_survey.csv -c \"Test Enterprise\" -t survey",
+        "test_input": "evaluation/import_csv_input.in"
+      },
+      {
+        "test_command": "python src/cli.py data export-data -c \"Test Enterprise\" -t survey -f excel -o evaluation/output_data.xlsx",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/cli.py data verify-export -f evaluation/output_data.xlsx -e evaluation/expected_export.xlsx",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_export.xlsx"
+    ],
+    "expected_output": "Successfully generates Excel format data file, file content correct"
+  }
+]

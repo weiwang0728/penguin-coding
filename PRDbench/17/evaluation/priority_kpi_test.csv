@@ -1,0 +1,4 @@
+Task ID,Task Name,Test Item,Equipment Duration,Test Status,Test Type,Test Item Feedback
+TASK-H-20231001,High Priority Task A,Functional Test,1.0,Success,Type A,Normal
+TASK-M-20231002,Medium Priority Task B,Performance Test,2.0,Failure,Type B,Anomaly
+TASK-L-20231003,Low Priority Task C,Integration Test,3.0,Success,Type C,Normal

@@ -1,0 +1,117 @@
+[
+  {
+    "metric": "0.1 Basic Environment Verification: Core Module File Existence Check",
+    "description": "1. **Arrange:** Identify the list of 10 core files to check: maze_generator.py, path_finder.py, maze_validator.py, dfs_generator.py, prim_generator.py, dfs_solver.py, bfs_solver.py, astar_solver.py, data_manager.py, performance.py.\n2. **Act:** Use the ls command to check whether each file exists, then attempt to import each module using the Python import statement.\n3. **Assert:** Verify that all 10 core files exist and can be successfully imported, with no ImportError exception.",
+    "expected_output": "2 points: All 10 core module files exist and can be imported. 1 point: 8-9 core files exist and can be imported. 0 points: Fewer than 8 core files exist or ImportError occurs."
+  },
+  {
+    "metric": "0.2 Basic Environment Verification: numpy Dependency Availability",
+    "description": "1. **Act:** Run the command `python -c \"import numpy; print(numpy.__version__)\"` in the terminal.\n2. **Assert:** Verify that numpy is successfully imported and the version meets the requirement (1.23.4 or compatible version).",
+    "expected_output": "2 points: numpy is successfully imported and the version is 1.23.4 or compatible. 1 point: numpy can be imported but the version does not match the PRD requirement. 0 points: numpy cannot be imported or an error occurs during execution."
+  },
+  {
+    "metric": "1.1 DFS Maze Generation: Basic Generation Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear command line entry or menu option to access the DFS maze generation function?\n2. **Arrange:** Prepare the default argument for calling the DFS maze generation function: size=10.\n3. **Act:** Call the DFS maze generation function using the default parameter to generate a 10x10 maze.\n4. **Assert:** Verify the returned result contains 4 required components: maze matrix (numpy.ndarray, dtype=uint8, values contain only 0 and 1), generation time statistics, start coordinates, and end coordinates.",
+    "expected_output": "2 points: Pre-check passed, maze successfully generated, all 4 required components returned, format fully meets requirements. 1 point: Pre-check passed, maze can be generated but the return components are incomplete (missing 1 component) or format has minor issues. 0 points: Pre-check failed, unable to generate maze, or program error."
+  },
+  {
+    "metric": "1.2 DFS Maze Generation: Custom Start Point Functionality",
+    "description": "1. **Pre-check (User Path):** Does the DFS maze generation function support user input or setting of custom start coordinates?\n2. **Arrange:** Prepare custom start coordinates [2,2] and maze size 10x10.\n3. **Act:** Generate the maze using the DFS algorithm, setting the start point to [2,2].\n4. **Assert:** Verify the returned start coordinates are [2,2], and the corresponding position in the maze matrix is 0 (path).",
+    "expected_output": "2 points: Pre-check passed, fully supports custom start point, location is correct and is a path. 1 point: Pre-check passed, supports custom start but coordinates recorded inaccurately or location is not a path. 0 points: Pre-check failed, or does not support custom start point functionality."
+  },
+  {
+    "metric": "1.3 DFS Maze Generation: Maze Connectivity Verification",
+    "description": "1. **Arrange:** Prepare to use the DFS algorithm to generate 5 different 10x10 mazes.\n2. **Act:** Generate 5 mazes in sequence, and for each maze use a simple BFS or DFS algorithm to check connectivity from start to end.\n3. **Assert:** Verify that all 5 mazes have a valid path from start to end.",
+    "expected_output": "2 points: All 5 mazes are connected, start and end are guaranteed reachable. 1 point: 4 mazes are connected. 0 points: Fewer than 4 mazes are connected or start/end are unreachable."
+  },
+  {
+    "metric": "2.1 PRIM Maze Generation: Basic Generation Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear command line entry or menu option to access the PRIM maze generation function?\n2. **Arrange:** Prepare default argument for calling the PRIM maze generation function: size=10.\n3. **Act:** Call the PRIM maze generation function, using the default parameter to generate a 10x10 maze.\n4. **Assert:** Verify the returned result contains 4 required components: maze matrix (numpy.ndarray, dtype=uint8, values only 0 and 1), generation time statistics, start coordinates, end coordinates.",
+    "expected_output": "2 points: Pre-check passed, maze generated successfully, all 4 required components returned, format fully meets requirements. 1 point: Pre-check passed, maze can be generated but return components are incomplete (missing 1 component) or format slightly problematic. 0 points: Pre-check failed, unable to generate maze, or program error."
+  },
+  {
+    "metric": "2.2 PRIM Maze Generation: Custom Start Point Functionality",
+    "description": "1. **Pre-check (User Path):** Does the PRIM maze generation function support user input or setting custom start coordinates?\n2. **Arrange:** Prepare custom start coordinates [1,3] and maze size 10x10.\n3. **Act:** Generate the maze using the PRIM algorithm, setting the start point to [1,3].\n4. **Assert:** Verify the returned start coordinates are [1,3], and the corresponding position in the maze matrix is 0 (path).",
+    "expected_output": "2 points: Pre-check passed, fully supports custom start, location is correct and is a path. 1 point: Pre-check passed, supports custom start but coordinates recorded inaccurately or location is not a path. 0 points: Pre-check failed, or does not support custom start point functionality."
+  },
+  {
+    "metric": "3.1 Maze Post-processing: Wall Removal Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entrance for wall removal or maze post-processing?\n2. **Arrange:** Prepare a generated maze matrix and wall removal parameter wall_count=5.\n3. **Act:** Call the wall removal function and specify to remove 5 walls.\n4. **Assert:** Compare the maze matrix before and after processing, verify walls are removed (1 turns to 0), and the removal count is close to the specified value (allow ±1 error).",
+    "expected_output": "2 points: Pre-check passed, can accurately remove the specified number of walls (±1 error allowed), returns optimized maze matrix. 1 point: Pre-check passed, can remove walls but the count error exceeds ±1. 0 points: Pre-check failed, wall removal function ineffective, or program error."
+  },
+  {
+    "metric": "4.1 DFS Path Search: Basic Solving Functionality",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear entry for DFS path search?\n2. **Arrange:** Prepare a solvable 10x10 maze matrix, start coordinates [0,0], end coordinates [9,9].\n3. **Act:** Call the DFS path search algorithm to solve the path.\n4. **Assert:** Verify the returned result contains 4 required components: path coordinate list, number of explored nodes, search time, path length, and that the path is non-empty.",
+    "expected_output": "2 points: Pre-check passed, valid path found, all 4 statistics returned. 1 point: Pre-check passed, path found but statistics incomplete (missing 1-2 components). 0 points: Pre-check failed, path not found, or program error."
+  },
+  {
+    "metric": "4.2 DFS Path Search: Path Validity Verification",
+    "description": "1. **Arrange:** Use the path coordinate list returned by the DFS algorithm in 4.1.\n2. **Act:** Check each coordinate in the path: verify the corresponding value in the maze is 0 (path), verify the distance between adjacent coordinates is 1 (continuity), and verify start and end points are correct.\n3. **Assert:** Verify all coordinates in the path are paths, all adjacent coordinates are continuous, and the start/end points are fully correct.",
+    "expected_output": "2 points: All coordinates in the path are paths and continuous, start/end points are fully correct. 1 point: Path is generally valid but has 1-2 coordinate issues or continuity problems. 0 points: Path is invalid, contains wall coordinates, or continuity is seriously broken."
+  },
+  {
+    "metric": "5.1 BFS Path Search: Shortest Path Guarantee",
+    "description": "1. **Arrange:** Prepare the same solvable maze, solve it separately using DFS and BFS algorithms.\n2. **Act:** Run the DFS and BFS algorithms on the same maze 3 times each, recording the path length each time.\n3. **Assert:** Verify the average path length of BFS is less than or equal to that of DFS, and in all 3 tests the BFS path length does not exceed DFS.",
+    "expected_output": "2 points: BFS finds the shortest path in all 3 tests, length less than or equal to DFS. 1 point: BFS finds a shorter path in 2 tests. 0 points: BFS path length is often longer than DFS or cannot find a path."
+  },
+  {
+    "metric": "5.2 BFS Path Search: Completeness of Statistical Information",
+    "description": "1. **Pre-check (User Path):** Does the program provide a clear entry for BFS path search?\n2. **Arrange:** Prepare a solvable maze matrix, start and end coordinates.\n3. **Act:** Call the BFS path search algorithm.\n4. **Assert:** Verify the returned result contains 4 required components: shortest path coordinate list, statistics on number of explored nodes, search time statistics, and path length statistics, with correct data types.",
+    "expected_output": "2 points: Pre-check passed, returns all 4 required statistical information, format and types fully correct. 1 point: Pre-check passed, returns 3 statistical components, format basically correct. 0 points: Pre-check failed, more than 1 statistical component missing, or format incorrect."
+  },
+  {
+    "metric": "6.1 A* Path Search: Optimal Path Guarantee",
+    "description": "1. **Arrange:** Prepare a complex 20x20 maze, solve using BFS and A* algorithms.\n2. **Act:** Run both BFS and A* on the same maze 3 times each, recording path length and number of explored nodes.\n3. **Assert:** Verify A* finds the optimal path of the same length as BFS in all 3 tests, and the average number of explored nodes in A* is less than 80% of BFS.",
+    "expected_output": "2 points: A* finds the optimal path in all 3 tests and explores less than 80% of the nodes BFS does. 1 point: A* finds the optimal path but efficiency advantage is not obvious (explored nodes at 80%-95% of BFS). 0 points: A* path not optimal or explored nodes exceed 95% of BFS."
+  },
+  {
+    "metric": "6.2 A* Path Search: Heuristic Function Implementation",
+    "description": "1. **Arrange:** Prepare a large maze (50x50), solve it using BFS and A* algorithms.\n2. **Act:** Run BFS and A* 5 times each on the 50x50 maze, record the number of explored nodes.\n3. **Assert:** Verify A*'s average explored node count is less than 50% of BFS's average, demonstrating significant heuristic advantage.",
+    "expected_output": "2 points: A*'s average explored nodes in large maze is less than 50% of BFS, showing clear heuristic advantage. 1 point: A* explores 50%-70% of BFS's nodes, with some heuristic advantage. 0 points: A* explores more than 70% of BFS's nodes, no heuristic advantage."
+  },
+  {
+    "metric": "7.1 Data Saving Functionality: Basic Saving Capability",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry for saving maze data?\n2. **Arrange:** Prepare a generated maze matrix and save path 'test_maze.npy'.\n3. **Act:** Call the data save function to save the maze at the specified path.\n4. **Assert:** Verify that file 'test_maze.npy' is successfully created, and the returned result contains save success status and file size information.",
+    "expected_output": "2 points: Pre-check passed, file saved successfully, complete save status and file size returned. 1 point: Pre-check passed, file saved successfully but returned information is incomplete (missing status or size info). 0 points: Pre-check failed, save failed, or program error."
+  },
+  {
+    "metric": "7.2 Data Loading Functionality: Basic Loading Capability",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry for loading maze data?\n2. **Arrange:** Prepare the previously saved 'test_maze.npy' file and the original maze matrix for comparison.\n3. **Act:** Call the data load function to load the maze from 'test_maze.npy'.\n4. **Assert:** Verify the maze matrix is successfully loaded, data matches the original matrix completely, returned result contains maze matrix, metadata, and load status.",
+    "expected_output": "2 points: Pre-check passed, file loaded successfully, data matches original fully, complete 3 components returned. 1 point: Pre-check passed, file loaded but data or returned info missing 1 component. 0 points: Pre-check failed, load failed, or data error."
+  },
+  {
+    "metric": "7.3 Data Validation Functionality: Maze Format Check",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry for data validation?\n2. **Arrange:** Prepare 3 invalid maze matrices: a matrix containing values other than 0 and 1, a matrix with incorrect data type, and a matrix with incorrect shape.\n3. **Act:** Call data validation on each of the 3 invalid matrices.\n4. **Assert:** Verify all 3 format errors can be correctly identified and clear error descriptions are returned.",
+    "expected_output": "2 points: Pre-check passed, all 3 types of format errors are accurately identified, clear error descriptions returned. 1 point: Pre-check passed, 2 types of format errors identified. 0 points: Pre-check failed, unable to identify format errors, or misjudges correct data as errors."
+  },
+  {
+    "metric": "7.4 Data Validation Functionality: Connectivity Check",
+    "description": "1. **Pre-check (User Path):** Does the data validation functionality include a connectivity check option?\n2. **Arrange:** Prepare a maze matrix in which the end cannot be reached from the start (manually constructed or modified existing maze).\n3. **Act:** Call the connectivity check in data validation on the disconnected maze.\n4. **Assert:** Verify that connectivity issues are correctly identified, returning failed validation status and connectivity error information.",
+    "expected_output": "2 points: Pre-check passed, accurately identifies connectivity issues, clear validation result and error info provided. 1 point: Pre-check passed, connectivity issue identified but error description not clear enough. 0 points: Pre-check failed, unable to identify connectivity issue, or misjudgement."
+  },
+  {
+    "metric": "8.1 Algorithm Performance Comparison: Multi-Algorithm Comparison",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry for algorithm performance comparison?\n2. **Arrange:** Prepare a test maze and a list of 3 algorithms to compare: DFS, BFS, A*.\n3. **Act:** Call the performance comparison function to test the performance of the 3 algorithms.\n4. **Assert:** Verify a complete performance comparison report is returned, including time performance statistics for all 3 algorithms, comparison of explored node count, and comparison of path length.",
+    "expected_output": "2 points: Pre-check passed, complete comparison report containing all 3 performance indicators returned, data reasonable and valuable for comparison. 1 point: Pre-check passed, performance report returned but missing 1 indicator or some data incomplete. 0 points: Pre-check failed, comparison feature ineffective, or data clearly wrong."
+  },
+  {
+    "metric": "8.2 Algorithm Performance Comparison: Recommendation Suggestions",
+    "description": "1. **Arrange:** Use the performance comparison results from 8.1.\n2. **Act:** Check if the performance comparison function provides algorithm recommendation suggestions.\n3. **Assert:** Verify reasonable algorithm recommendation suggestions are provided, recommendations are based on performance data and match algorithm characteristics (e.g., BFS suitable for shortest path finding, A* suitable for complex mazes, etc.).",
+    "expected_output": "2 points: Provides reasonable algorithm recommendation suggestion, based on performance data and fully matches algorithm characteristics. 1 point: Provides recommendation suggestion but not detailed enough or some suggestions are not accurate. 0 points: No recommendation suggestion provided or suggestion clearly wrong."
+  },
+  {
+    "metric": "8.3 Maze Complexity Evaluation: Comprehensive Scoring",
+    "description": "1. **Pre-check (User Path):** Does the program provide an entry for maze complexity evaluation?\n2. **Arrange:** Prepare 2 mazes of different complexity: simple 10x10 maze and complex 30x30 maze.\n3. **Act:** Call the complexity evaluation function for both mazes.\n4. **Assert:** Verify complete evaluation information is returned: complexity score, detailed statistics (path length, branch point count, dead end count), difficulty level, and that the complex (30x30) maze's score is higher than the simple (10x10) maze.",
+    "expected_output": "2 points: Pre-check passed, complete 4 evaluation components returned, complex maze score is reasonably higher than simple maze. 1 point: Pre-check passed, evaluation returned but incomplete (missing 1 component) or score difference not obvious. 0 points: Pre-check failed, complexity evaluation ineffective, or score clearly unreasonable."
+  },
+  {
+    "metric": "9.1 Data Format Specification: Coordinate System Consistency",
+    "description": "1. **Arrange:** Collect all function inputs and outputs involving coordinates: start, end, path coordinates.\n2. **Act:** Run maze generation, path search and other functions, record the format of all coordinate data.\n3. **Assert:** Verify all coordinates use [row, column] format, data type is numpy.ndarray or list, format completely unified.",
+    "expected_output": "2 points: All coordinate formats fully unified, conform to [row, column] format. 1 point: Over 90% of coordinate formats are correct, occasional inconsistency. 0 points: Coordinate format chaotic or less than 90% conform."
+  },
+  {
+    "metric": "9.2 Error Handling: Abnormal Input Processing",
+    "description": "1. **Arrange:** Prepare 5 types of abnormal inputs: negative maze size (-5), out-of-bound start coordinates [20,20], invalid maze matrix (contains string), empty maze matrix, incorrect data type.\n2. **Act:** Input these 5 types of abnormal data to each function module in turn and observe program response.\n3. **Assert:** Verify all 5 types of abnormal inputs are gracefully handled, meaningful error info is returned, and program does not crash.",
+    "expected_output": "2 points: All 5 types of abnormal input are gracefully handled, clear error info returned, program does not crash. 1 point: 4 types of abnormal input are gracefully handled. 0 points: Fewer than 4 types are handled, or program crashes often."
+  }
+]

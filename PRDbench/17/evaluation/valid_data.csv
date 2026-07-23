@@ -1,0 +1,4 @@
+Task ID,Task Name,Test Item,Equipment Duration,Test Status,Test Type,Test Item Feedback
+TASK-H-20231001,Task A,Item 1,1.0,Success,Type A,Normal
+TASK-M-20231002,Task B,Item 2,2.0,Failure,Type B,Anomaly
+TASK-L-20231003,Task C,Item 3,3.0,Success,Type C,Normal

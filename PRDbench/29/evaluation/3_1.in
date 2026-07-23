@@ -1,0 +1,8 @@
+start
+status
+100 200 300 400
+sleep(2)
+start
+100 100 500 400
+sleep(2)
+status

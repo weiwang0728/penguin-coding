@@ -1,0 +1,324 @@
+[
+  {
+    "metric": "1.1 Basic Program Operation Capability: System can start normally and respond to basic commands",
+    "description": "1. **Act:** Execute `python main.py` command in the command line.\n2. **Assert:** Observe whether the program starts normally and displays help information containing at least 5 main command options (such as init, location, login, search, recommend, etc.), with no error messages output.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program starts normally and displays help information containing at least 5 main command options (such as init, recommend, search, nearby, etc.), with no error messages output"
+  },
+  {
+    "metric": "1.2 Initialization Command: Supports connecting to database and model via init command, init_model initializes model",
+    "description": "1. **Arrange:** Database file exists\n2. **Act:** Execute init and init_model command functions.\n3. **Assert:** Verify that there are indeed merchant records in the database, and model training begins.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/init_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System prompts that there are merchant records in the database, model begins training"
+  },
+  {
+    "metric": "1.3 Location Setting Function: Supports setting user geographic location via location command",
+    "description": "1. **Arrange:** Prepare valid latitude and longitude coordinates (e.g., 27.91,-82.71).\n2. **Act:** Execute `location 27.91 -82.71` command.\n3. **Assert:** Observe whether the system displays confirmation information for successful location setting, containing the set coordinate values.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/location_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System displays confirmation information for successful location setting, containing the set coordinate values"
+  },
+  {
+    "metric": "1.4 User Login Function: Supports logging in specified user via login command",
+    "description": "1. **Arrange:** Prepare a valid user ID (e.g., HFECrzYDpgbS5EmTBtj2zQ).\n2. **Act:** Execute `python main.py login HFECrzYDpgbS5EmTBtj2zQ` command.\n3. **Assert:** Observe whether the system displays login success information, containing user ID or user basic information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/login_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System displays login success information, containing user ID or user basic information"
+  },
+  {
+    "metric": "2.1 Basic Search Function: Supports simple keyword search",
+    "description": "1. **Arrange:** Ensure data initialization is completed, prepare search keyword \"CA restaurant\".\n2. **Act:** Execute `python main.py search \"CA restaurant\"` command.\n3. **Assert:** Observe whether at least 5 restaurant search results are returned, results contain business names and basic information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/search_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returns at least 5 restaurant search results, results contain business names and basic information"
+  },
+  {
+    "metric": "2.2a Advanced Search Parameter: radius parameter function",
+    "description": "1. **Arrange:** Set user location, prepare search term \"coffee\" and radius parameter 3000 meters.\n2. **Act:** Execute `python main.py search \"coffee\" --radius 3000` command.\n3. **Assert:** Observe whether all businesses in returned results are within 3000 meters from user location.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/search_radius_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "All businesses in returned results are within 3000 meters from user location"
+  },
+  {
+    "metric": "2.2b Advanced Search Parameter: limit parameter function",
+    "description": "1. **Arrange:** Prepare search term \"restaurant\" and limit number 15.\n2. **Act:** Execute `python main.py search \"restaurant\" --limit 15` command.\n3. **Assert:** Observe whether returned result quantity is exactly 15 (or less than 15 if total results insufficient).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/search_limit_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returned result quantity exactly 15 (or less than 15 if total results insufficient)"
+  },
+  {
+    "metric": "2.2c Advanced Search Parameter: sort parameter function",
+    "description": "1. **Arrange:** Prepare search term \"coffee\" and sort parameter \"rating\".\n2. **Act:** Execute search and specify sorting by rating.\n3. **Assert:** Observe whether returned results are sorted by rating from high to low, check whether first 5 results' ratings show decreasing trend.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/search_sort_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returned results sorted by rating from high to low, first 5 results' ratings show decreasing trend"
+  },
+  {
+    "metric": "2.3 Category Search Function: Supports search by category and subcategory",
+    "description": "1. **Arrange:** Prepare category \"Food\" and subcategory \"Chinese\".\n2. **Act:** Execute `category \"Food\" --subcategory \"Chinese\"` command.\n3. **Assert:** Observe whether returned results are all Chinese restaurants, check category information of first 5 results.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/category_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returned results are Chinese restaurants"
+  },
+  {
+    "metric": "3.1 Geographic Location Sorting: Search results can be sorted by distance proximity",
+    "description": "1. **Arrange:** Set user location, prepare search term \"coffee\".\n2. **Act:** Execute search command and specify sorting by distance.\n3. **Assert:** Check whether first 5 businesses' distances in returned results are arranged in order from near to far.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/search_sort_dist_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "First 5 businesses' distances in returned results arranged in order from near to far"
+  },
+  {
+    "metric": "4.1a Multi-field Matching: Business Name Field Matching",
+    "description": "1. **Arrange:** Prepare a known existing business name keyword.\n2. **Act:** Search this business name keyword.\n3. **Assert:** Observe whether returned results contain name-matched businesses, and ranked in top 3 positions.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/text_match_name.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Able to search for completely matching results"
+  },
+  {
+    "metric": "4.1b Multi-field Matching: Category Field Matching",
+    "description": "1. **Arrange:** Prepare category keyword \"pizza\".\n2. **Act:** Search \"pizza\".\n3. **Assert:** Observe whether returned results are mainly pizza-related businesses.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/text_match_cat.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returned results are mainly pizza-related businesses"
+  },
+  {
+    "metric": "4.1c Multi-field Matching: Address Field Matching",
+    "description": "1. **Arrange:** Prepare address keyword \"Highway 19N\" (address existing in example data).\n2. **Act:** Search this address keyword.\n3. **Assert:** Observe whether returned results' business addresses contain relevant geographic location information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/text_match_dest.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returned results' business addresses contain relevant geographic location information"
+  },
+  {
+    "metric": "4.2 Fuzzy Matching Capability: Supports spelling errors and partial matching",
+    "description": "1. **Arrange:** Prepare search term with spelling error \"resturant\" (correct is \"restaurant\").\n2. **Act:** Search \"resturant\".\n3. **Assert:** Observe whether can return restaurant-related search results.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/text_match_spell_error.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Able to return restaurant-related search results"
+  },
+  {
+    "metric": "6.1 Pagination Display Function: Supports paging browsing for large search results",
+    "description": "1. **Pre-check (User Path):** When search returns large number of results, whether provides page-turning options or pagination prompts?\n2. **Arrange:** Execute a search that can return large number of results (e.g., \"restaurant\").\n3. **Act:** Observe whether supports pagination, try page-turning operations.\n4. **Assert:** Verify whether pagination function works normally.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/pagination_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Supports pagination, page-turning operations work normally"
+  },
+  {
+    "metric": "7.1 Business Detail Viewing: Supports viewing single business's detailed information",
+    "description": "1. **Pre-check (User Path):** In search results, whether provides options for viewing business details or operation prompts?\n2. **Act:** In search results, select to view some business's detailed information.\n3. **Assert:** Observe whether can display business's detailed information, including complete address, business hours, contact methods, etc., observe whether detail page contains user review content, at least displays 3 reviews and review statistical information (such as total review count, average rating).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/business_details_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Able to display business's detailed information, including complete address, business hours, contact methods, user review content, at least displays 3 reviews and review statistical information (such as total review count, average rating)"
+  },
+  {
+    "metric": "8.1 Search History Recording: System can record and display user's search history",
+    "description": "1. **Pre-check (User Path):** In main menu or interactive mode, whether exists option for viewing search history?\n2. **Arrange:** Execute 3 different search operations.\n3. **Act:** Try to view search history.\n4. **Assert:** Observe whether can display previous 3 search records.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/search_history_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Able to display previously executed search records"
+  },
+  {
+    "metric": "9.1 Error Handling: System can gracefully handle various error situations",
+    "description": "1. **Arrange:** Prepare multiple error inputs: invalid commands, wrong parameter formats, non-existing user IDs.\n2. **Act:** Input these error commands and parameters sequentially.\n3. **Assert:** Observe whether system gives clear error prompt information, rather than crashes or displays technical error information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/error_handling_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System gives clear error prompt information, rather than crashes or displays technical error information"
+  },
+  {
+    "metric": "9.2 Performance: Search response time within acceptable range",
+    "description": "1. **Arrange:** Prepare 5 different search queries.\n2. **Act:** Continuously execute these 5 searches, record each search's response time.\n3. **Assert:** Observe whether each search completes within 5 seconds, average response time whether within 3 seconds.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_performance.py::TestPerformance::test_search_response_time",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed. Each search completes within 5 seconds, average response time within 3 seconds"
+  },
+  {
+    "metric": "10.1 Nearby Search Function: Supports nearby command searching nearby businesses",
+    "description": "1. **Arrange:** Set user location as 27.91,-82.71, ensure database initialized.\n2. **Act:** Execute `python main.py nearby` command and `python main.py nearby restaurant` command.\n3. **Assert:** Observe whether returns nearby business list, observe all returned businesses' distances whether within 2 kilometers (default search radius), and sorted by distance from near to far.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/nearby_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Returns nearby business list, all returned businesses' distances within 2 kilometers (default search radius), and sorted by distance from near to far."
+  },
+  {
+    "metric": "12.1 Personalized Recommendation Function: Supports recommend command providing personalized recommendations",
+    "description": "1. **Arrange:** Prepare a user ID with review history.\n2. **Act:** Execute unit test, obtain recommendations for this user.\n3. **Assert:** Unit test asserts all recommendation results' categories related to user's historical preference categories.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_recommendations.py::test_recommendation_relevance",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, returned recommendation results related to user preferences"
+  },
+  {
+    "metric": "12.2 Cold Start Recommendation Function: Location-based recommendations for non-logged-in users",
+    "description": "1. **Arrange:** Ensure user not logged in status, set user geographic location.\n2. **Act:** Execute recommend command.\n3. **Assert:** Observe whether system provides popular business recommendations based on geographic location, recommendation results should contain nearby high-rating businesses.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/recommend_no_login_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "System provides popular business recommendations based on geographic location, displays nearby high-rating business list"
+  },
+  {
+    "metric": "13.1 System Statistics Function: Supports stats command displaying system statistical information",
+    "description": "1. **Arrange:** Ensure database initialized, has certain data and user activity.\n2. **Act:** Execute `python main.py stats` command.\n3. **Assert:** Observe whether displays system statistical information, including key indicators such as total business count, total user count, total review count,etc.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py < evaluation/stats_test.in",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays system statistical information, including key indicators such as total business count, total user count, total review count,etc."
+  }
+]

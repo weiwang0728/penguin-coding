@@ -1,0 +1,118 @@
+```json
+[
+  {
+    "score_point": "0.1 Program Startup and Main Menu",
+    "verification_method": "1. **Execute (Act):** Execute the command `python src/main.py` in the shell.\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu containing options such as 'Input Data', 'Generate Huffman Tree and Codes', 'Export Results', 'Exit'.",
+    "scoring_specification": "2 points: Program starts successfully and displays a clear main menu with 4 main operation options. 1 point: Program starts, but the menu has fewer than 4 options, is unclear, or contains garbled text. 0 points: Program cannot start or crashes immediately after starting.",
+    "scoring_weight": 5.0
+  },
+  {
+    "score_point": "1.1 Menu Navigation - Main Menu Option Response",
+    "verification_method": "1. **Execute (Act):** After starting the program, sequentially enter '1', '5', '2', '3', '4', then enter an invalid option such as '9'.\n2. **Assert:** Observe whether the program can correctly enter submenus, execute operations, or provide prompts for invalid input.",
+    "scoring_specification": "2 points: All valid main menu options (1,2,3,4) are correctly recognized and responded to, and invalid input receives appropriate prompts. 1 point: Most valid options respond, but some are incorrect or invalid input prompts are unclear. 0 points: Main menu options do not respond or the program crashes.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "1.2 Menu Navigation - Input Data Submenu",
+    "verification_method": "1. **Execute (Act):** Start the program, select main menu '1' to enter the input data menu.\n2. **Assert:** Observe whether a submenu is displayed containing 'Read from TXT file', 'Generate random text', 'Manually enter text', 'Enter key-value pairs', 'Return to main menu'.",
+    "scoring_specification": "2 points: Successfully displays complete input data submenu with 5 options. 1 point: Displays submenu but options are incomplete or incorrect. 0 points: Submenu not displayed or program error.",
+    "scoring_weight": 1.5
+  },
+  {
+    "score_point": "1.3 Menu Navigation - Export Results Submenu",
+    "verification_method": "1. **Execute (Act):** Start the program, select main menu '3' to enter the export results menu.\n2. **Assert:** Observe whether a submenu is displayed containing 'Export Huffman codes to CSV', 'Export Huffman tree to JSON', 'Return to main menu'.",
+    "scoring_specification": "2 points: Successfully displays complete export results submenu with 3 options. 1 point: Displays submenu but options are incomplete or incorrect. 0 points: Submenu not displayed or program error.",
+    "scoring_weight": 1.5
+  },
+  {
+    "score_point": "2.1.1a Text Import - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** After selecting '1' in the main menu to enter the input data menu, is there a clear option such as 'Read from TXT file' or similar functionality?\n2. **Prepare (Arrange):** Ensure a file named `Test.txt` exists in the project root directory.\n3. **Execute (Act):** Select the 'Read from TXT file' option and enter `Test.txt` as the file path.\n4. **Assert:** Observe whether the program displays information about successfully reading the file and creating a frequency table.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully read the specified file content and generate a frequency table. 1 point: Precondition check passes, but non-fatal errors occur when reading the file or generating the frequency table. 0 points: Precondition check fails, or cannot read the file, or program error.",
+    "scoring_weight": 3.5
+  },
+  {
+    "score_point": "2.1.2a Random Text Generation (Digits) - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the input data menu, is there a clear option such as 'Generate random text' or similar functionality?\n2. **Prepare (Arrange):** Prepare input data: length of 10, type 'digits'.\n3. **Execute (Act):** Select the 'Generate random text' option, then enter length 10 and type 'digits'.\n4. **Assert:** Observe whether the program successfully generates a 10-digit pure numeric text and displays the generated text content.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully generate random text of the specified length and type. 1 point: Precondition check passes, but the generated text type or length does not match requirements, or the generated text is not displayed. 0 points: Precondition check fails, or cannot generate text, or program error.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "2.1.2b Random Text Generation (Letters) - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the input data menu, is there a clear option such as 'Generate random text' or similar functionality?\n2. **Prepare (Arrange):** Prepare input data: length of 15, type 'letters'.\n3. **Execute (Act):** Select the 'Generate random text' option, then enter length 15 and type 'letters'.\n4. **Assert:** Observe whether the program successfully generates a 15-character pure letter text and displays the generated text content.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully generate random text of the specified length and type. 1 point: Precondition check passes, but the generated text type or length does not match requirements, or the generated text is not displayed. 0 points: Precondition check fails, or cannot generate text, or program error.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "2.1.2c Random Text Generation (String) - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the input data menu, is there a clear option such as 'Generate random text' or similar functionality?\n2. **Prepare (Arrange):** Prepare input data: length of 20, type 'string'.\n3. **Execute (Act):** Select the 'Generate random text' option, then enter length 20 and type 'string'.\n4. **Assert:** Observe whether the program successfully generates a 20-character text containing letters, digits, and punctuation marks, and displays the generated text content.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully generate random text of the specified length and type. 1 point: Precondition check passes, but the generated text type or length does not match requirements, or the generated text is not displayed. 0 points: Precondition check fails, or cannot generate text, or program error.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "2.1.2d Random Text Generation (Chinese) - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the input data menu, is there a clear option such as 'Generate random text' or similar functionality?\n2. **Prepare (Arrange):** Prepare input data: length of 8, type 'chinese'.\n3. **Execute (Act):** Select the 'Generate random text' option, then enter length 8 and type 'chinese'.\n4. **Assert:** Observe whether the program successfully generates an 8-character Chinese text and displays the generated text content.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully generate random text of the specified length and type. 1 point: Precondition check passes, but the generated text type or length does not match requirements, or the generated text is not displayed. 0 points: Precondition check fails, or cannot generate text, or program error.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "2.1.3a Manual Text Input - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the input data menu, is there a clear option such as 'Manually enter text' or similar functionality?\n2. **Prepare (Arrange):** Prepare input data: text 'AABBBCCCCDDDDDE'.\n3. **Execute (Act):** Select the 'Manually enter text' option, then enter the text 'AABBBCCCCDDDDDE'.\n4. **Assert:** Observe whether the program displays information about successfully creating a frequency table.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully create a frequency table based on the input text. 1 point: Precondition check passes, but non-fatal errors occur when creating the frequency table or success information is not displayed. 0 points: Precondition check fails, or cannot create frequency table, or program error.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "2.1.4a Key-Value Pair Input - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the input data menu, is there a clear option such as 'Enter key-value pairs' or similar functionality?\n2. **Prepare (Arrange):** Prepare input data: key-value pairs 'a:5', 'b:9', 'c:12'.\n3. **Execute (Act):** Select the 'Enter key-value pairs' option, then sequentially enter 'a' and '5', 'b' and '9', 'c' and '12', and finally enter 'done'.\n4. **Assert:** Observe whether the program displays information about successfully creating a frequency table.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully create a frequency table based on the input key-value pairs. 1 point: Precondition check passes, but non-fatal errors occur when creating the frequency table or success information is not displayed. 0 points: Precondition check fails, or cannot create frequency table, or program error.",
+    "scoring_weight": 2.0
+  },
+  {
+    "score_point": "2.2.1a Huffman Tree Construction - Normal Process",
+    "verification_method": "1. **Precondition Check (User Path):** Does functionality exist to build a Huffman tree from a frequency table?\n2. **Prepare (Arrange):** Prepare a valid frequency table, for example by manually entering 'AABBBCCCCDDDDDE'.\n3. **Execute (Act):** Select '2' in the main menu.\n4. **Assert:** Observe whether the program displays information about successfully generating the Huffman tree and codes, and prints the encoding table.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully build a Huffman tree from the frequency table and generate codes. 1 point: Precondition check passes, but non-fatal errors occur during the build process or complete information is not displayed. 0 points: Precondition check fails, or cannot build Huffman tree, or program error.",
+    "scoring_weight": 3.0
+  },
+  {
+    "score_point": "2.2.1b Huffman Tree Construction - Exception Handling (Single Character)",
+    "verification_method": "1. **Precondition Check (User Path):** Does functionality exist to build a Huffman tree from a frequency table?\n2. **Prepare (Arrange):** Prepare a frequency table with only one character, for example by manually entering 'A'.\n3. **Execute (Act):** Select '2' in the main menu.\n4. **Assert:** Observe whether the program displays a clear error message, such as 'Input must contain at least two characters to build a Huffman tree.'",
+    "scoring_specification": "2 points: Precondition check passes, and displays clear, correct error messages when invalid data is input. 1 point: Precondition check passes, but error message is unclear or not completely correct. 0 points: Precondition check fails, or no error message is displayed, or program crashes.",
+    "scoring_weight": 1.5
+  },
+  {
+    "score_point": "2.3.1a CSV Export - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the export results menu, is there a clear option such as 'Export Huffman codes to CSV' or similar functionality?\n2. **Prepare (Arrange):** Ensure that Huffman codes have been generated in the program (for example, by entering 'AABBBCCCCDDDDDE' and building the tree).\n3. **Execute (Act):** Select the 'Export Huffman codes to CSV' option, then enter the filename 'export.csv'.\n4. **Assert:** Observe whether the program displays successful export information and check if the file has been created.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully export Huffman codes to a CSV file with success information displayed. 1 point: Precondition check passes, but non-fatal errors occur during export or success information is not displayed. 0 points: Precondition check fails, or cannot export file, or program error.",
+    "scoring_weight": 2.5
+  },
+  {
+    "score_point": "2.3.2a JSON Export (Level-Order Traversal) - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the export results menu, is there a clear option such as 'Export Huffman tree to JSON' or similar functionality?\n2. **Prepare (Arrange):** Ensure that a Huffman tree has been generated in the program (for example, by entering 'AABBBCCCCDDDDDE' and building the tree).\n3. **Execute (Act):** Select the 'Export Huffman tree to JSON' option, then enter the filename 'tree.json' and traversal type 'level'.\n4. **Assert:** Observe whether the program displays successful export information and check if the file has been created.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully export the Huffman tree (level-order traversal) to a JSON file with success information displayed. 1 point: Precondition check passes, but non-fatal errors occur during export or success information is not displayed. 0 points: Precondition check fails, or cannot export file, or program error.",
+    "scoring_weight": 2.5
+  },
+  {
+    "score_point": "2.3.2b JSON Export (Pre-Order Traversal) - User Path Accessibility",
+    "verification_method": "1. **Precondition Check (User Path):** In the export results menu, is there a clear option such as 'Export Huffman tree to JSON' or similar functionality?\n2. **Prepare (Arrange):** Ensure that a Huffman tree has been generated in the program (for example, by entering 'AABBBCCCCDDDDDE' and building the tree).\n3. **Execute (Act):** Select the 'Export Huffman tree to JSON' option, then enter the filename 'tree.json' and traversal type 'preorder'.\n4. **Assert:** Observe whether the program displays successful export information and check if the file has been created.",
+    "scoring_specification": "2 points: Precondition check passes, and can successfully export the Huffman tree (pre-order traversal) to a JSON file with success information displayed. 1 point: Precondition check passes, but non-fatal errors occur during export or success information is not displayed. 0 points: Precondition check fails, or cannot export file, or program error.",
+    "scoring_weight": 2.5
+  },
+  {
+    "score_point": "3.1 Unit Testing - Build Huffman Tree",
+    "verification_method": "1. **Precondition Check (User Path):** Does a unit test for the `build_huffman_tree` function exist in `src/tests/` or similar directory?\n2. **Prepare (Arrange):** Prepare test data, for example a dictionary containing multiple characters and their frequencies `{'a': 5, 'b': 9, 'c': 12, 'd': 13, 'e': 16, 'f': 45}`.\n3. **Execute (Act):** Execute the unit test command `pytest src/tests/test_huffman.py::TestHuffman::test_build_huffman_tree -v`.\n4. **Assert:** Observe whether the test passes.",
+    "scoring_specification": "2 points: Precondition check passes, and unit test `test_build_huffman_tree` executes successfully. 1 point: Precondition check passes, but unit test does not fully cover functionality or has minor issues. 0 points: Precondition check fails, or unit test does not exist, or test does not pass.",
+    "scoring_weight": 1.0
+  },
+  {
+    "score_point": "3.2 Unit Testing - Generate Huffman Codes",
+    "verification_method": "1. **Precondition Check (User Path):** Does a unit test for the `generate_huffman_codes` function exist in `src/tests/` or similar directory?\n2. **Prepare (Arrange):** Prepare test data, for example a pre-built Huffman tree and expected encoding dictionary.\n3. **Execute (Act):** Execute the unit test command `pytest src/tests/test_huffman.py::TestHuffman::test_generate_huffman_codes -v`.\n4. **Assert:** Observe whether the test passes.",
+    "scoring_specification": "2 points: Precondition check passes, and unit test `test_generate_huffman_codes` executes successfully. 1 point: Precondition check passes, but unit test does not fully cover functionality or has minor issues. 0 points: Precondition check fails, or unit test does not exist, or test does not pass.",
+    "scoring_weight": 1.0
+  },
+  {
+    "score_point": "3.3 Unit Testing - Exception Handling (Insufficient Nodes When Building Tree)",
+    "verification_method": "1. **Precondition Check (User Path):** Does a unit test for the `build_huffman_tree` function handling exceptional input exist in `src/tests/` or similar directory?\n2. **Prepare (Arrange):** Prepare test data, for example a dictionary containing only one character `{'a': 1}`.\n3. **Execute (Act):** Execute the unit test command `pytest src/tests/test_huffman.py::TestHuffman::test_build_tree_with_insufficient_nodes -v`.\n4. **Assert:** Observe whether the test passes, confirming that the function throws a `ValueError` when receiving invalid input.",
+    "scoring_specification": "2 points: Precondition check passes, and unit test `test_build_tree_with_insufficient_nodes` successfully verifies exception handling logic. 1 point: Precondition check passes, but unit test does not fully verify exception handling or has minor issues. 0 points: Precondition check fails, or unit test does not exist, or test does not pass.",
+    "scoring_weight": 1.0
+  }
+]
+```

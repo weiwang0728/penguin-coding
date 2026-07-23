@@ -1,0 +1,14 @@
+1
+evaluation/sample_data.csv
+
+2
+SELECT * FROM df WHERE Industry = 'Technology'
+
+y
+
+4
+2
+2
+y
+y
+evaluation/report.txt

@@ -1,0 +1,23 @@
+# Parameter Sensitivity Analysis Summary
+# Generation Time: 2025-09-01 17:05:38.427958
+============================================================
+
+Parameter beta:
+  Final Attack Rate Sensitivity: 0.2715 +- 0.5745
+  Infection Peak Sensitivity: 0.5494 +- 0.5087
+  Peak Time Sensitivity: -0.7500 +- 0.6426
+
+Parameter gamma:
+  Final Attack Rate Sensitivity: -0.0121 +- 0.0127
+  Infection Peak Sensitivity: -0.8282 +- 0.5200
+  Peak Time Sensitivity: 0.1579 +- 0.0926
+
+Parameter sigma:
+  Final Attack Rate Sensitivity: 0.0007 +- 0.0009
+  Infection Peak Sensitivity: 0.4277 +- 0.2565
+  Peak Time Sensitivity: -0.4053 +- 0.2892
+
+Sensitivity Explanation:
+- Sensitivity coefficient > 1: Parameter change has a large impact on results
+- Sensitivity coefficient < 1: Parameter change has a small impact on results
+- Positive values indicate positive correlation, negative values indicate negative correlation

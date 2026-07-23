@@ -1,0 +1,766 @@
+[
+  {
+    "metric": "0.1 Program Startup & Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., `python src/main.py --help`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu or help information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py --help",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program starts successfully and displays help information, including system name and available command list"
+  },
+  {
+    "metric": "1.1 Scale Management Module Entry",
+    "description": "1. **Act:** Execute the command `python src/main.py scales --help`.\n2. **Assert:** Observe whether the program successfully enters the scale management submenu, which should include options such as \"Show scale details\", \"Import scale\", \"Export scale\" at minimum.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py scales --help",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays scale management subcommand help, including list, show, import-csv, export options"
+  },
+  {
+    "metric": "1.2 Data Management Module Entry",
+    "description": "1. **Act:** Execute the command `python src/main.py data --help`.\n2. **Assert:** Observe whether the program successfully enters the data management submenu, which should include options such as \"Import data\", \"Show data summary\", \"Check data anomalies\" at minimum.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py data --help",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays data management subcommand help, including import-participants, import-responses, summary, check-anomalies options"
+  },
+  {
+    "metric": "1.3 Analysis Module Entry",
+    "description": "1. **Act:** Execute the command `python src/main.py analysis --help`.\n2. **Assert:** Observe whether the program successfully enters the analysis submenu, which should include options such as \"Descriptive statistics\", \"Correlation analysis\", \"Reliability analysis\", \"Factor analysis\" at minimum.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py analysis --help",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays analysis subcommand help, including descriptive, reliability, factor, correlation, group-comparison options"
+  },
+  {
+    "metric": "1.4 Report & Export Module Entry",
+    "description": "1. **Act:**\n2. **Assert:** Observe whether the program successfully enters the report and export submenu, which should include options such as \"Generate report\", \"Generate chart\" at minimum.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py report --help",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz --help",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Displays report generation and visualization subcommand help, including comprehensive, comparison, descriptive, dashboard options"
+  },
+  {
+    "metric": "2.1.1a Scale Creation - Basic Info Definition",
+    "description": "1. **Arrange:** Prepare a scale name (e.g., \"Test Scale\") and description.\n2. **Act:** Use the interactive creation command to verify basic scale information creation.\n3. **Assert:** Observe whether the program accepts the input and successfully creates a new empty scale.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "Get-Content evaluation/test_scale_create_basic_en.in | python src/main.py scales create",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales list",
+        "test_input": null
+      }
+    ],
+    "input_files":null,
+    "expected_output_files": null,
+    "expected_output": "Interactive command displays creation success message; new scale appears in the scale list"
+  },
+  {
+    "metric": "2.1.1b Scale Creation - Item & Dimension Definition",
+    "description": "1. **Arrange:** Prepare at least 2 item contents (e.g., \"I can concentrate for a long time\"), their dimensions (e.g., \"Attention Stability\"), and scoring method (e.g., 5-point Likert).\n2. **Act:** Use the interactive creation command to verify item and dimension definition.\n3. **Assert:** Observe whether the program successfully saves these items, and they are visible in the scale preview.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "Get-Content evaluation/test_scale_create_with_items_en.in | python src/main.py scales create",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales show 4",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Interactive command displays scale creation success; scale details include all items and dimensions; item info is complete and correctly saved"
+  },
+  {
+    "metric": "2.1.2a Scale Import (CSV)",
+    "description": "1. **Arrange:** Prepare a compliant scale CSV file, including scale name, items, dimensions, scoring method, etc.\n2. **Act:** Select the import function, specifying the CSV file path.\n3. **Assert:** Observe whether the program successfully reads the file and loads the scale, with structure and content matching the file.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales import-csv evaluation/test_scale.csv",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_scale.csv"],
+    "expected_output_files": null,
+    "expected_output": "CSV file imported successfully and scale created; import success message displayed"
+  },
+  {
+    "metric": "2.1.2b Scale Import (JSON)",
+    "description": "1. **Arrange:** Prepare a compliant scale JSON file.\n2. **Act:** Use shell command to import the JSON file.\n3. **Assert:** Observe whether the program successfully reads and loads the scale, with structure and content matching the file.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales import-json evaluation/test_scale.json",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales list",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_scale.json"],
+    "expected_output_files": null,
+    "expected_output": "JSON file imported successfully and scale created; import success message displayed; scale appears in the list"
+  },
+  {
+    "metric": "2.1.2c Scale Export (CSV)",
+    "description": "1. **Arrange:** Ensure a scale is available for export.\n2. **Act:** Select export function, choose CSV format, and specify export path.\n3. **Assert:** Check if a CSV file is generated at the specified path, with content matching the exported scale.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales import-csv evaluation/test_scale.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales export 4 --format csv --output-path evaluation/exported_scale.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "Compare-Object (Get-Content evaluation/exported_scale.csv) (Get-Content evaluation/test_scale.csv)",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_scale.csv"],
+    "expected_output_files": ["evaluation/test_scale.csv"],
+    "expected_output": "CSV file generated successfully; Compare-Object command outputs nothing, indicating exported file matches original"
+  },
+  {
+    "metric": "2.1.2d Scale Export (JSON)",
+    "description": "1. **Arrange:** Ensure a scale is available for export.\n2. **Act:** Select export function, choose JSON format, and specify export path.\n3. **Assert:** Check if a JSON file is generated at the specified path, with content matching the exported scale.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales import-json evaluation/test_scale.json",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py scales export 4 --format json --output-path evaluation/exported_scale.json",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/compare_json.py evaluation/exported_scale.json evaluation/test_scale.json",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_scale.json"],
+    "expected_output_files": ["evaluation/test_scale.json"],
+    "expected_output": "JSON file generated successfully; Python comparison script outputs 'Files match', indicating exported file matches original (ignoring timestamp)"
+  },
+  {
+    "metric": "2.1.3a Exploratory Factor Analysis (EFA) - KMO & Bartlett Test",
+    "description": "1. **Arrange:** Prepare a CSV file with scale item data and import successfully.\n2. **Act:** Select EFA function, choose a scale for analysis, and specify KMO and Bartlett's test.\n3. **Assert:** Check output for KMO value (between 0 and 1) and Bartlett test significance p-value.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py analysis factor 1",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes KMO value (0 to 1) and Bartlett test p-value in factor analysis results"
+  },
+  {
+    "metric": "2.1.3b Exploratory Factor Analysis (EFA) - PCA & Rotation",
+    "description": "1. **Arrange:** Ensure scale data is loaded.\n2. **Act:** In EFA, select principal component analysis and varimax rotation, then perform analysis.\n3. **Assert:** Check output for factor loading matrix and variance explained by each factor.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_statistical_analysis.py::test_factor_analysis_with_rotation",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes factor loading matrix and variance explained in complete factor analysis results"
+  },
+  {
+    "metric": "2.1.4a Reliability & Validity Test - Cronbach's α",
+    "description": "1. **Arrange:** Ensure scale data is loaded.\n3. **Act:** Select reliability analysis function and execute analysis.\n4. **Assert:** Check output for Cronbach's α coefficient value (between 0 and 1).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py analysis reliability 1",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes Cronbach's α coefficient value (0 to 1) in reliability analysis results"
+  },
+  {
+    "metric": "2.1.4b Reliability & Validity Test - Item Deletion Suggestion",
+    "description": "1. **Arrange:** Ensure reliability analysis is calculated.\n2. **Act:** View detailed reliability report.\n3. **Assert:** Check report for suggestions or metrics on change in α value after each item is deleted.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_statistical_analysis.py::test_reliability_item_analysis",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Reliability analysis result includes suggestion for change in α value after each item is deleted"
+  },
+  {
+    "metric": "2.2.1a Data Collection - Participant Info Import",
+    "description": "1. **Arrange:** Prepare a CSV file with participant info (e.g., ID, name, grade, gender).\n2. **Act:** Select import participant data function, specifying the CSV file path.\n3. **Assert:** Observe whether the program successfully reads and stores participant info, which can be referenced in subsequent steps.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants evaluation/test_participants.csv",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_participants.csv"],
+    "expected_output_files": null,
+    "expected_output": "Participant info CSV file imported successfully; displays number of imported participants"
+  },
+  {
+    "metric": "2.2.1b Data Collection - Response Data Import",
+    "description": "1. **Arrange:** Prepare a CSV file with scale response data and ensure corresponding participant info is imported.\n2. **Act:** Select import response data function, specifying the CSV file path.\n3. **Assert:** Observe whether the program successfully reads and associates response data with participant info.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants evaluation/test_participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses evaluation/test_responses.csv 1",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_participants.csv", "evaluation/test_responses.csv"],
+    "expected_output_files": null,
+    "expected_output": "Response data CSV file imported successfully; displays number of imported responses and correct association with participant info"
+  },
+  {
+    "metric": "2.2.2 Data Anomaly Detection",
+    "description": "1. **Arrange:** Prepare a response CSV file containing anomalies such as skipped items (nulls), missing items (partially unanswered), and import successfully.\n2. **Act:** Start data validation/anomaly detection function.\n3. **Assert:** Check whether the validation report clearly identifies anomalous participant IDs or data rows, and specifies anomaly types (e.g., \"skipped\", \"missing\").",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants evaluation/test_participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses evaluation/test_responses_with_anomalies.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data check-anomalies 1",
+        "test_input": null
+      }
+    ],
+    "input_files": ["evaluation/test_participants.csv", "evaluation/test_responses_with_anomalies.csv"],
+    "expected_output_files": null,
+    "expected_output": "Validation report output clearly identifies anomalous participant IDs and anomaly types (e.g., skipped, missing)"
+  },
+  {
+    "metric": "2.2.3 Data Grouping",
+    "description": "1. **Arrange:** Ensure participant data with grouping fields such as grade and gender is imported.\n2. **Act:** Select data grouping function, choose to group by \"grade\" and \"gender\".\n3. **Assert:** Check whether the system successfully creates corresponding grouped data sets, which can be selected in subsequent analysis.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "pytest evaluation/tests/test_data_management.py::test_data_grouping",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Grouped data sets successfully created by specified fields (grade, gender)"
+  },
+  {
+    "metric": "2.3.1a Basic Feature Analysis",
+    "description": "1. **Arrange:** Ensure data set is imported and grouped.\n2. **Act:** Select descriptive statistics function to analyze a scale dimension.\n3. **Assert:** Check output for at least 5 descriptive statistics indicators, such as mean, standard deviation, quantile, etc.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py analysis descriptive 1",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes at least 5 descriptive statistics indicators such as mean, standard deviation, quantile, etc., in a complete report"
+  },
+  {
+    "metric": "2.3.1b Basic Feature Analysis - Chart Visualization",
+    "description": "1. **Arrange:** Ensure data set is imported.\n2. **Act:** Select descriptive statistics chart generation function to generate grouped bar chart/box plot.\n3. **Assert:** Check whether descriptive statistical chart files (e.g., PNG) are successfully generated, and the image clearly reflects data distribution characteristics.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz descriptive 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/verify_descriptive_chart.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Descriptive statistics chart file generated successfully; Python validation script confirms file exists and size is greater than 0 bytes"
+  },
+  {
+    "metric": "2.3.2a Group Difference Analysis - t-test",
+    "description": "1. **Arrange:** Ensure data set is imported and grouped by a binary grouping (e.g., gender).\n2. **Act:** Select group difference analysis function, choose a scale dimension as dependent variable, \"gender\" as grouping variable, and select \"t-test\".\n3. **Assert:** Check output for means of both groups, t-value, degrees of freedom, and p-value.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py analysis group-comparison 1 gender",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes means of two groups, t-value, degrees of freedom, and p-value in t-test results"
+  },
+  {
+    "metric": "2.3.2b Group Difference Analysis - ANOVA",
+    "description": "1. **Arrange:** Ensure data set is imported and grouped by multiple groups (e.g., grade).\n2. **Act:** In group difference analysis, choose a scale dimension as dependent variable, \"grade\" as grouping variable, and select \"ANOVA\".\n3. **Assert:** Check output for F-value and p-value.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py analysis group-comparison 1 grade",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes F-value and p-value in ANOVA analysis results"
+  },
+  {
+    "metric": "2.3.3 Trend Analysis",
+    "description": "1. **Arrange:** Ensure data set is imported with multiple ordered groups (e.g., grade 1, 2, 3, 4).\n2. **Act:** Select trend analysis function, choose a scale dimension as dependent variable, \"grade\" as grouping variable.\n3. **Assert:** Check output for regression slope, significance p-value, and trend fitting chart.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_statistical_analysis.py::test_trend_analysis",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes regression slope, significance p-value, and trend fitting chart in trend analysis results"
+  },
+  {
+    "metric": "2.4.1a Correlation Analysis - Correlation Matrix",
+    "description": "1. **Arrange:** Ensure data set is imported.\n2. **Act:** Select correlation analysis function, choose multiple scale dimensions for analysis.\n3. **Assert:** Check output for a readable correlation coefficient matrix table (e.g., Pearson correlation coefficients).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/self_control_responses.csv 2",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py analysis correlation 1 2",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes a complete, properly formatted multivariate correlation coefficient matrix table"
+  },
+  {
+    "metric": "2.4.1b Correlation Analysis - Heatmap Visualization",
+    "description": "1. **Arrange:** Ensure correlation coefficient matrix is calculated.\n2. **Act:** Select the option to generate a heatmap.\n3. **Assert:** Check whether heatmap files (e.g., PNG, PDF) are successfully generated, and the image clearly reflects the strength of correlations between variables.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/self_control_responses.csv 2",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz correlation 1 2",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/verify_correlation_files.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Correlation heatmap files generated successfully; Python validation script confirms at least one chart file is created and size is greater than 0 bytes"
+  },
+  {
+    "metric": "2.4.2 Regression Prediction Analysis",
+    "description": "1. **Arrange:** Ensure data set is imported. Prepare a regression model, specifying a dependent variable (e.g., \"Self-Control\") and multiple independent variables (e.g., \"Attention Stability\", \"Emotional Stability\").\n2. **Act:** Select regression analysis function, input or select model variables.\n3. **Assert:** Check output for standardized regression coefficients and corresponding p-values for each independent variable.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_statistical_analysis.py::test_regression_analysis",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes standardized regression coefficients and p-values in multiple linear regression analysis results"
+  },
+  {
+    "metric": "2.4.3a Path Analysis - Model Setup & Execution",
+    "description": "1. **Arrange:** Ensure data set is imported. Prepare a path model structure, e.g., specifying \"Emotional Stability\" affects \"Attention Factor\", \"Attention Factor\" affects \"Self-Control\".\n2. **Act:** Select path analysis function, input or set up model paths via graphical interface.\n3. **Assert:** Check whether the analysis can be successfully started and completed.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_statistical_analysis.py::test_path_analysis_setup",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Path model analysis successfully set up and executed"
+  },
+  {
+    "metric": "2.4.3b Path Analysis - Result Output & Visualization",
+    "description": "1. **Arrange:** Ensure path analysis is completed.\n2. **Act:** View path analysis results.\n3. **Assert:** Check results for: 1) path coefficient table; 2) table of direct, indirect, and total effects decomposition; 3) an auto-layout path coefficient diagram; 4) at least two model fit indices (e.g., CFI, RMSEA).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_statistical_analysis.py::test_path_analysis_results",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Output includes path coefficient table, effect decomposition, path diagram, and at least two fit indices in complete results"
+  },
+  {
+    "metric": "2.5.1 Intelligent Report Generation",
+    "description": "1. **Arrange:** Ensure a series of analyses (e.g., descriptive statistics, difference analysis, path analysis) are completed.\n2. **Act:** Select generate analysis report function.\n3. **Assert:** Check whether a report file (e.g., PDF or TXT) is successfully generated, with content integrating sample description, main analysis results (difference, path coefficients, etc.), and brief interpretation.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py report comprehensive 1",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": ["evaluation/expected_comprehensive_report.html"],
+    "expected_output": "Comprehensive, well-structured analysis report file generated successfully"
+  },
+  {
+    "metric": "2.5.2a Chart Export (PNG)",
+    "description": "1. **Arrange:** Ensure a chart is generated and available for export.\n2. **Act:** Select chart export function, choose PNG format, and specify export path.\n3. **Assert:** Check whether a PNG file is generated at the specified path, and the image is clear and complete.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/self_control_responses.csv 2",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz descriptive 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/verify_png_files.py",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "PNG chart file generated successfully; Python validation script confirms at least one PNG chart file exists and size is greater than 0 bytes"
+  },
+  {
+    "metric": "2.5.2b Chart Export (PDF)",
+    "description": "1. **Arrange:** Ensure a chart is generated and available for export.\n2. **Act:** Select chart export function, choose PDF format, and specify export path.\n3. **Assert:** Check whether a PDF file is generated at the specified path, and the image is clear and complete.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz descriptive 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz export-pdf src/output/figures/descriptive_stats_scale_1.png --output-path evaluation/test_chart.pdf",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/verify_files.py pdf evaluation/test_chart.pdf",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "PDF chart file generated successfully; Python validation script confirms PDF file exists and size is greater than 0 bytes"
+  },
+  {
+    "metric": "2.5.2c Chart Export (SVG)",
+    "description": "1. **Arrange:** Ensure a chart is generated and available for export.\n2. **Act:** Select chart export function, choose SVG format, and specify export path.\n3. **Assert:** Check whether a SVG file is generated at the specified path, and the file is valid vector graphic format.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz descriptive 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py viz export-svg src/output/figures/descriptive_stats_scale_1.png --output-path evaluation/test_chart.svg",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/verify_files.py svg evaluation/test_chart.svg",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "SVG chart file generated successfully; Python validation script confirms SVG file exists, size is greater than 0 bytes, and contains valid SVG tags"
+  },
+  {
+    "metric": "2.5.2d Data Export (CSV)",
+    "description": "1. **Arrange:** Ensure data (such as participant data, analysis results) is imported or generated.\n2. **Act:** Select data export function, choose CSV format, and specify export path.\n3. **Assert:** Check whether CSV files are generated at the specified path, and content matches exported data.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py reset",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-participants src/sample_data/participants.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data import-responses src/sample_data/attention_responses.csv 1",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data export-responses 1 --output-path evaluation/test_responses_export.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python src/main.py data export-participants --output-path evaluation/test_participants_export.csv",
+        "test_input": null
+      },
+      {
+        "test_command": "python evaluation/verify_files.py csv evaluation/test_responses_export.csv evaluation/test_participants_export.csv",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "CSV data files generated successfully; Python validation script confirms both response and participant data files exist and size is greater than 0 bytes; displays 'CSV export test: PASSED'"
+  }
+]

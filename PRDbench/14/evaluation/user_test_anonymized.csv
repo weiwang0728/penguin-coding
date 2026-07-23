@@ -1,0 +1,3 @@
+﻿session_id,collector,location,session_created_at,questionnaire_title,What is your name?,What is your phone number?,What is your gender?,What is your age group?
+1,Surveyor A,Practice Course B,2023-10-26 10:00:00,Personal Information Survey,Zhang*,138****5678,Male,30-40 years old
+2,Surveyor B,Resort C,2023-10-26 11:00:00,Personal Information Survey,Li**,159****4321,Female,25-35 years old

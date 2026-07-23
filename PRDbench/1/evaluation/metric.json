@@ -1,0 +1,107 @@
+[
+  {
+    "metric": "0.1.1 Environment & Documentation: Provide clear instruction documentation (README.md)",
+    "description": "1. **Assert**: Verify that a `README.md` file exists in the project root directory.\n2. **Assert**: If the file exists, review its content to confirm it contains at least three distinct sections: project overview, environment setup instructions (dependency installation), and program startup commands.",
+    "expected_output": "2 points: `README.md` exists and fully includes project overview, 未进行environment setup, and startup commands. 1 point: `README.md` exists but covers only one or two of these sections. 0 points: `README.md` file does not exist."
+  },
+  {
+    "metric": "0.1.2 Environment & Documentation: Provide a clear dependencies file (requirements.txt)",
+    "description": "1. **Preparation**: Verify that a `requirements.txt` file exists in the project root directory.\n2. **Act**: If the file exists, run the command `pip install -r requirements.txt`.\n3. **Assert**: Check the installation output to confirm that all dependencies are installed successfully without any errors.",
+    "expected_output": "2 points: `requirements.txt` exists and all dependencies install successfully. 1 point: `requirements.txt` exists but installation errors occur. 0 points: `requirements.txt` file does not exist."
+  },
+  {
+    "metric": "0.2.1 Program Runability: Program can successfully start and display main menu",
+    "description": "1. **Act**: Start the program according to the startup commands in `README.md` (e.g., `python main.py`).\n2. **Assert**: Check the program output to confirm it starts successfully and displays a main menu interface with multiple options and interactive elements.",
+    "expected_output": "2 points: Program starts successfully and displays a clear, interactive main menu. 1 point: Program starts but lacks a clear main menu or contains minor errors. 0 points: Program fails to start, crashes, or throws fatal errors."
+  },
+  {
+    "metric": "0.3.1 Unit Testing: Provide executable unit tests",
+    "description": "1. **Preparation**: Verify that test files (e.g., `test_*.py`) exist in the `tests/` directory.\n2. **Act**: Run the test command (e.g., `pytest` or `python -m unittest discover tests`).\n3. **Assert**: Review the results to confirm the test framework executes and all discovered test cases show as 'PASSED'.",
+    "expected_output": "2 points: Test files exist in the `tests/` directory and all tests pass. 1 point: Test files exist but one or more tests fail. 0 points: `tests/` directory is empty or no test files exist."
+  },
+  {
+    "metric": "1.1.2 Module Navigation & Return: Able to smoothly navigate between modules",
+    "description": "1. **Pre-check (User Flow)**: Confirm that there is a clear entry to the 'Dish Data Management' module in the main menu.\n2. **Act**: From the main menu, input the option to enter 'Dish Data Management'.\n3. **Assert**: Verify that the program enters the corresponding submenu.\n4. **Act**: In the submenu, locate and use the option to return to the main menu.\n5. **Assert**: Confirm that the program successfully returns to the main menu interface.",
+    "expected_output": "2 points: Can enter the submenu and return smoothly to the main menu. 1 point: Can enter the submenu but the return operation is invalid or unclear. 0 points: Pre-check failed or cannot enter submenu."
+  },
+  {
+    "metric": "2.1.1 Dish Creation (C): Add new dish via interactive CLI",
+    "description": "1. **Pre-check (User Flow)**: Confirm that there is a clear 'Add Dish' option in the 'Dish Data Management' menu.\n2. **Preparation**: Navigate to the 'Add Dish' feature.\n3. **Act**: Follow program prompts to input dish name 'Test Dish A', category 'Test Category', price '50', and cooking time '10'.\n4. **Assert**: Confirm that the program clearly displays 'Added Successfully' or a similar success message.",
+    "expected_output": "2 points: Successfully created a new dish by following CLI prompts and received a success message. 1 point: Creation succeeded but with unclear guidance or minor issues. 0 points: Pre-check failed, no add option found, or program crashed during creation."
+  },
+  {
+    "metric": "2.1.2a Dish Search (R): Search by name",
+    "description": "1. **Pre-check (User Flow)**: Confirm that a 'Search Dish' option exists in the 'Dish Data Management' menu.\n2. **Preparation**: Ensure 'Test Dish A' exists in the system.\n3. **Act**: Use 'Search Dish', select search by 'Name', and input 'Test Dish A'.\n4. **Assert**: Confirm that the results accurately include 'Test Dish A'.",
+    "expected_output": "2 points: Accurately retrieves the target dish. 1 point: Search works but includes unrelated or missing results. 0 points: Pre-check failed or cannot search existing dish by name."
+  },
+  {
+    "metric": "2.1.2b Dish Search (R): Search by category",
+    "description": "1. **Pre-check (User Flow)**: Confirm that 'Search Dish' supports searching by 'Category'.\n2. **Preparation**: Ensure there is at least one dish under 'Test Category'.\n3. **Act**: Use 'Search Dish', select search by 'Category', and enter 'Test Category'.\n4. **Assert**: Confirm that all dishes belonging to 'Test Category' are returned.",
+    "expected_output": "2 points: Accurately retrieves all dishes under the target category. 1 point: Search works but includes unrelated or missing results. 0 points: Pre-check failed or cannot search by category."
+  },
+  {
+    "metric": "2.1.3 Dish Update (U): Update dish information",
+    "description": "1. **Pre-check (User Flow)**: Confirm that there is an 'Update Dish' option in the 'Dish Data Management' menu.\n2. **Preparation**: Ensure 'Test Dish A' exists and its price is '50'.\n3. **Act**: Navigate to 'Update Dish', select 'Test Dish A', and change its price to '60'.\n4. **Assert**: Search for 'Test Dish A' again to confirm that its price is updated to '60'.",
+    "expected_output": "2 points: Successfully updates and verifies dish information. 1 point: Update operation runs but change not applied. 0 points: Pre-check failed or update feature unavailable."
+  },
+  {
+    "metric": "2.1.4 Dish Deletion (D): Delete dish with operation confirmation",
+    "description": "1. **Pre-check (User Flow)**: Confirm that there is a 'Delete Dish' option in the 'Dish Data Management' menu.\n2. **Preparation**: Ensure 'Test Dish A' exists.\n3. **Act**: Navigate to 'Delete Dish', select 'Test Dish A'. When prompted for confirmation, enter an affirmative response (e.g., 'y' or 'yes').\n4. **Assert**: Search for 'Test Dish A' again to confirm it is no longer found.",
+    "expected_output": "2 points: Successfully deletes the specified dish with a clear confirmation step. 1 point: Deletion succeeds but lacks confirmation prompt. 0 points: Pre-check failed or cannot delete dish."
+  },
+  {
+    "metric": "2.1.5 Dish Batch Import: Import from CSV file",
+    "description": "1. **Pre-check (User Flow)**: Confirm that there is a 'Batch Import Dishes' option in the 'Dish Data Management' menu.\n2. **Preparation**: Create a `dishes_to_import.csv` file containing 3 correctly formatted dishes.\n3. **Act**: Use 'Batch Import Dishes' and provide the path to the file.\n4. **Assert**: Search these 3 dishes individually to confirm successful import.",
+    "expected_output": "2 points: All 3 dishes imported successfully. 1 point: 1–2 dishes imported successfully. 0 points: Pre-check failed or import unsuccessful."
+  },
+  {
+    "metric": "2.2.1a Ingredient Cost Analysis: Calculate dish cost",
+    "description": "1. **Pre-check (User Flow)**: Confirm that the 'Ingredient Analysis' module and 'Cost Structure Analysis' feature are available.\n2. **Preparation**: Create `ingredients_A.csv` defining the total raw material cost of 'Test Dish A' as 20 yuan. Upload or associate this file.\n3. **Act**: Run 'Cost Structure Analysis' for 'Test Dish A'.\n4. **Assert**: Confirm that the output clearly shows 'Ingredient Cost' as 20 or 20.0.",
+    "expected_output": "2 points: Cost calculation is exactly correct. 1 point: Result inaccurate (error exceeds ±5%). 0 points: Pre-check failed, feature missing, or incorrect output."
+  },
+  {
+    "metric": "2.2.1b Ingredient Cost Analysis: Calculate gross profit margin",
+    "description": "1. **Pre-check (User Flow)**: Confirm that the 'Ingredient Analysis' module and 'Cost Structure Analysis' feature are available.\n2. **Preparation**: 'Test Dish A' price is 60, cost is 20.\n3. **Act**: Run 'Cost Structure Analysis' for 'Test Dish A'.\n4. **Assert**: Confirm that the output shows 'Gross Profit Margin' as 66.7% or 0.667 (±0.1 tolerance).",
+    "expected_output": "2 points: Profit margin calculation is exactly correct. 1 point: Result inaccurate (error exceeds ±5%). 0 points: Pre-check failed, feature missing, or incorrect output."
+  },
+  {
+    "metric": "2.2.2 Allergen Identification: Mark dishes containing allergens",
+    "description": "1. **Pre-check (User Flow)**: Confirm that an 'Allergen Identification' feature exists in the 'Ingredient Analysis' module.\n2. **Preparation**: Create `ingredients_B.csv` and add 'Peanut' as an ingredient for a dish. Upload or associate this file.\n3. **Act**: Run 'Allergen Identification'.\n4. **Assert**: Confirm that the system correctly marks the dish as containing 'Nut' or 'Peanut' allergens.",
+    "expected_output": "2 points: Accurately identifies and labels dishes containing allergens. 1 point: Identifies partially or with unrelated results. 0 points: Pre-check failed or identification unavailable."
+  },
+  {
+    "metric": "2.3.1a Sales Trend Analysis: Count by 'Month'",
+    "description": "1. **Pre-check (User Flow)**: Confirm that the 'Sales Data Analysis' module and 'Sales Trend Analysis' feature are available.\n2. **Act**: Import order data, then execute 'Sales Trend Analysis' and select the 'Month' dimension.\n3. **Assert**: Confirm that the output correctly shows June sales as 100 and July sales as 150.",
+    "expected_output": "2 points: Monthly sales correctly summarized. 1 point: Incorrect computation. 0 points: Pre-check failed or feature missing."
+  },
+  {
+    "metric": "2.3.1b Sales Trend Analysis: Count by 'Week'",
+    "description": "1. **Pre-check (User Flow)**: Confirm that the 'Sales Trend Analysis' feature includes an option for 'Week'.\n2. **Act**: Run 'Sales Trend Analysis' and select 'Week' dimension.\n3. **Assert**: Confirm that the output correctly displays weekly sales.",
+    "expected_output": "2 points: Weekly sales correctly summarized. 1 point: Incorrect computation. 0 points: Pre-check failed or feature missing."
+  },
+  {
+    "metric": "2.3.1c Sales Trend Analysis: Count by 'Day'",
+    "description": "1. **Pre-check (User Flow)**: Confirm that the 'Sales Trend Analysis' feature includes an option for 'Day'.\n2. **Act**: Run 'Sales Trend Analysis' and select 'Day' dimension.\n3. **Assert**: Confirm that the output correctly displays daily sales.",
+    "expected_output": "2 points: Daily sales correctly summarized. 1 point: Incorrect computation. 0 points: Pre-check failed or feature missing."
+  },
+  {
+    "metric": "2.4.1 Dish Similarity Matching: Similar dish grouping",
+    "description": "1. **Pre-check (User Flow)**: Confirm that the 'Dish Similarity Matching' module is available in the main menu.\n2. **Preparation**: Create `approximate_dishes.csv` including 'Braised Beef' and 'Braised Beef Noodles'. Upload the file.\n3. **Act**: Run 'Dish Similarity Matching'.\n4. **Assert**: Confirm that 'Braised Beef' and 'Braised Beef Noodles' are grouped together as similar dishes.",
+    "expected_output": "2 points: Sensibly groups similar dishes by name similarity. 1 point: Groups partially or with unrelated results. 0 points: Pre-check failed or feature missing."
+  },
+  {
+    "metric": "2.5.1 Result Visualization: Use text tables or ASCII charts",
+    "description": "1. **Act**: Run the 'Sales Trend Analysis' feature.\n2. **Assert**: Confirm that results are displayed as aligned text tables or ASCII-based bar/line charts rather than plain unformatted text.",
+    "expected_output": "2 points: Results displayed as clear, aligned text tables or ASCII charts. 1 point: Formatting exists but is messy or hard to read. 0 points: Output is plain unformatted text."
+  },
+  {
+    "metric": "2.5.2 Progress Visualization: Show progress bar during large batch import",
+    "description": "1. **Pre-check (User Flow)**: Confirm that 'Batch Import Dishes' feature is available.\n2. **Preparation**: Create a `large_import.csv` file with at least 500 rows of data.\n3. **Act**: Execute the batch import and observe the CLI.\n4. **Assert**: Confirm that a dynamically updating text progress bar (0%–100%) is displayed during file reading and processing.",
+    "expected_output": "2 points: Displays a clear, dynamically updating text progress bar. 1 point: Shows only a static message like 'Importing…'. 0 points: Pre-check failed or no progress indication."
+  },
+  {
+    "metric": "2.5.3 Error Handling: Invalid input management",
+    "description": "1. **Act**: On the main menu, enter an obviously invalid option (e.g., `999` or `xyz`).\n2. **Assert**: Confirm that the program displays a clear error message such as 'Invalid input, please try again,' and remains on the current menu without crashing or freezing.",
+    "expected_output": "2 points: Handles invalid input gracefully, shows clear error prompt, and continues running stably. 1 point: Error message unclear but program remains stable. 0 points: Program crashes on invalid input."
+  }
+]

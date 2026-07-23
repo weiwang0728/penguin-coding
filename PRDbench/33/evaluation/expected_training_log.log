@@ -1,0 +1,5 @@
+[2024-01-15 10:30:25] Stage 1: Training with all clients
+[2024-01-15 10:30:26] Round: 1, Test Loss: 2.3456, Accuracy: 0.1234
+[2024-01-15 10:30:27] Round: 2, Test Loss: 1.8765, Accuracy: 0.3456
+[2024-01-15 10:30:28] Best model saved with accuracy: 0.3456
+[2024-01-15 10:30:29] Training completed successfully

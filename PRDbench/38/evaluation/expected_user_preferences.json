@@ -1,0 +1,18 @@
+{
+    "user_1": {
+        "price": 0.8,
+        "quality": 0.6,
+        "appearance": 0.7,
+        "function": 0.9,
+        "service": 0.5,
+        "brand": 0.4
+    },
+    "user_2": {
+        "price": 0.3,
+        "quality": 0.8,
+        "appearance": 0.5,
+        "function": 0.6,
+        "service": 0.7,
+        "brand": 0.9
+    }
+}

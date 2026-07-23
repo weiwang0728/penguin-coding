@@ -1,0 +1,77 @@
+[
+  {
+    "metric": "4.1 System Startup and Basic Status Query",
+    "description": "1. Execute (Act): Start the system service.\n2. Execute (Act): Query the host status information.\n3. Assert: Check if the response is successful and verify if the returned information contains all 4 key fields: mode, processing capacity, scheduling algorithm, and status.",
+    "expected_output": "2 points: The service starts successfully, the status query is successful, and the return contains all 4 correct default host information. 1 point: The service starts but the status information is incomplete (contains 2-3 key fields) or default values are incorrect. 0 points: The service fails to start, status cannot be queried/errors, or returned key fields are less than 2."
+  },
+  {
+    "metric": "2.2.5a Slave Device New Functionality",
+    "description": "1. Prepare (Arrange): Prepare a unique identity information for the slave device, including necessary identification fields (e.g., ID number and room number).\n2. Execute (Act): Send a request to add a slave device and submit the prepared identity information.\n3. Assert: Verify if the response indicates successful creation and contains a success message.",
+    "expected_output": "2 points: The request is successful, and a successful response is returned. 1 point: After the request, the slave device was actually created (can be verified through subsequent queries), but the response is non-standard or lacks a success message. 0 points: The request to add a slave device fails, or the slave device is not created."
+  },
+  {
+    "metric": "2.2.5b Slave Device Status Query Function",
+    "description": "1. Prepare (Arrange): Ensure a slave device has been successfully added.\n2. Execute (Act): Query the slave device's status based on its identification.\n3. Assert: Verify if the response is successful and if the returned information contains the complete initial status information of the slave device (such as identification information, target temperature, current temperature, wind speed, etc.).",
+    "expected_output": "2 points: The slave device can be queried, and correct information with all key fields is returned. 1 point: The slave device can be queried, but the returned information is incomplete. 0 points: Unable to query the created slave device."
+  },
+  {
+    "metric": "2.1.1 Host Mode Switching and Slave Device State Reset",
+    "description": "1. Prepare (Arrange): Ensure there is at least one slave device in the system.\n2. Execute (Act): Set the host mode to cooling mode and then query the slave device's status.\n3. Assert: Verify if the target temperature of the slave device is reset to the default value for cooling mode (22℃).\n4. Execute (Act): Set the host mode to heating mode and query the slave device's status again.\n5. Assert: Verify if the target temperature of the slave device is reset to the default value for heating mode (28℃).",
+    "expected_output": "2 points: After switching between both modes, the slave device's target temperature is correctly reset to the specified values. 1 point: Only after switching to one mode, the slave device's target temperature is correctly reset. 0 points: After switching between both modes, the slave device's target temperature is not correctly reset, or the operation fails."
+  },
+  {
+    "metric": "2.2.2 Slave Device Temperature Adjustment (Legal Range)",
+    "description": "1. Prepare (Arrange): Ensure the host is in cooling mode (temperature range 18-25℃) and the slave device is turned on.\n2. Execute (Act): Send a temperature adjustment request to the slave device, setting the target temperature within the legal range (e.g., 20℃).\n3. Assert: Query the slave device's status and verify if its target temperature has been updated to the requested value.",
+    "expected_output": "2 points: The request is successful, and the slave device's target temperature is correctly updated. 1 point: The request returns success, but the target temperature is not updated upon query. 0 points: The temperature adjustment request fails or errors."
+  },
+  {
+    "metric": "4.3 Slave Device Temperature Adjustment (Illegal Range)",
+    "description": "1. Prepare (Arrange): Ensure the host is in cooling mode (temperature range 18-25℃).\n2. Execute (Act): Send a temperature adjustment request to the slave device, setting the target temperature beyond the legal range (e.g., 17℃).\n3. Assert: Verify if the system rejects the request and returns a response with a clear error reason.",
+    "expected_output": "2 points: The request is rejected, and an error status along with a clear error message is returned. 1 point: The request is rejected, but the error status is non-standard or the error message is unclear. 0 points: The system accepts a temperature value that is out of range."
+  },
+  {
+    "metric": "2.3.3 Smart Decision-Auto Wind Stop at Target Temperature",
+    "description": "1. Prepare (Arrange): Set the current temperature of the slave device to a value close to but not reaching the target temperature. For example, in heating mode, set the target temperature to 28℃, the current temperature to 27℃, and wind speed to medium speed.\n2. Execute (Act): Wait or simulate a temperature change to make the current temperature reach the target temperature.\n3. Assert: Monitor the slave device's status and verify if the wind speed automatically changes to 0 within a reasonable time when the temperature reaches or exceeds the target temperature.",
+    "expected_output": "2 points: After reaching the target temperature, the wind speed can automatically and accurately change to 0. 1 point: After the temperature reaches, the wind speed changes but does not become 0, or there is a high delay in auto wind stopping. 0 points: After reaching the temperature, the wind speed does not change at all."
+  },
+  {
+    "metric": "2.3.4a Smart Decision-Mode Adaptation Wind Stop (Cooling)",
+    "description": "1. Prepare (Arrange): Set the host to cooling mode. Set the slave device's target temperature to a normal value (e.g., 22℃), wind speed to medium speed, and current temperature to a value below the target temperature (e.g., 20℃).\n2. Execute (Act): Wait for system response or trigger a scheduling cycle.\n3. Assert: Query the slave device's status and verify if its wind speed automatically changes to 0.",
+    "expected_output": "2 points: In cooling mode, when the current temperature is below the target temperature, the wind speed can automatically change to 0. 1 point: The wind speed does not automatically change to 0, but it decreases. 0 points: The wind speed does not change at all."
+  },
+  {
+    "metric": "2.3.4b Smart Decision-Mode Adaptation Wind Stop (Heating)",
+    "description": "1. Prepare (Arrange): Set the host to heating mode. Set the slave device's target temperature to a normal value (e.g., 28℃), wind speed to medium speed, and current temperature to a value above the target temperature (e.g., 29℃).\n2. Execute (Act): Wait for system response or trigger a scheduling cycle.\n3. Assert: Query the slave device's status and verify if its wind speed automatically changes to 0.",
+    "expected_output": "2 points: In heating mode, when the current temperature is above the target temperature, the wind speed can automatically change to 0. 1 point: The wind speed does not automatically change to 0, but it decreases. 0 points: The wind speed does not change at all."
+  },
+  {
+    "metric": "2.5.2 Real-Time Cost Calculation Accuracy",
+    "description": "1. Prepare (Arrange): Query and record the initial cumulative cost of the slave device.\n2. Execute (Act): Request to operate the slave device at medium wind speed (standard power 1.0/minute) and wait precisely for one minute.\n3. Assert: Query the slave device's status again to get the new cumulative cost. Verify if the cost increase equals the theoretical value (1.0 power * 1 minute * rate), with an allowable error of ±5%.",
+    "expected_output": "2 points: The cost increase is within a ±5% error range of the theoretical value. 1 point: There is a cost increase, but the error is between 5% and 20%. 0 points: There is no cost increase, or the error exceeds 20%."
+  },
+  {
+    "metric": "2.6.5a Report Generation-Basic Functionality and Time Range",
+    "description": "1. Prepare (Arrange): Prepare valid start and end time parameters.\n2. Execute (Act): Request a report for the specified time range.\n3. Assert: Verify if the response is successful and if the returned report contains query time range information consistent with the requested parameters.",
+    "expected_output": "2 points: The report is successfully generated and correctly contains the query time range information. 1 point: The report is generated, but lacks time range information or does not match the request. 0 points: The report generation fails or an empty response is returned."
+  },
+  {
+    "metric": "2.6.5b Report Generation-Slave Device Statistics Accuracy",
+    "description": "1. Prepare (Arrange): Perform 2 on/off operations on a specific slave device within a period.\n2. Execute (Act): Request a report covering that period.\n3. Assert: In the slave device statistics section of the report, find the record of the slave device and verify if the number of on/off operations is 2 and if the total cost matches the cumulative cost in the slave device status.",
+    "expected_output": "2 points: Both statistics (on/off operations and total cost) in the report exactly match the actual operations. 1 point: Only one of the two statistics is correct. 0 points: Both statistics are incorrect or missing."
+  },
+  {
+    "metric": "2.6.5c Report Generation-Content Completeness",
+    "description": "1. Prepare (Arrange): Ensure there are operation records in the system.\n2. Execute (Act): Request a report.\n3. Assert: Check the report structure to see if it contains all 4 main sections: query time range, slave device statistics, cost statistics, and detailed records.",
+    "expected_output": "2 points: The report structure is complete and contains all 4 sections. 1 point: The report contains 2-3 sections. 0 points: The report contains fewer than 2 sections."
+  },
+  {
+    "metric": "3.1a Data Persistence-Slave Device Status",
+    "description": "1. Prepare (Arrange): Operate a slave device to generate a non-zero cumulative cost and record the value.\n2. Execute (Act): Shut down and restart the system service.\n3. Assert: After the service restart, query the slave device state and verify if its cumulative cost matches the recorded value before the restart.",
+    "expected_output": "2 points: After the restart, the slave device's cumulative cost and key status are preserved completely. 1 point: After the restart, the state is partially preserved (such as cost reset but the slave device still exists). 0 points: After the restart, the slave device information is completely lost."
+  },
+  {
+    "metric": "3.1b Data Persistence-Operation Log",
+    "description": "1. Prepare (Arrange): Perform a definite operation (such as temperature adjustment) on the slave device, and note the time of the operation.\n2. Execute (Act): Shut down and restart the system service.\n3. Assert: After the service restart, request a report containing the operation time, and verify if the detailed record still includes the operation log before the restart.",
+    "expected_output": "2 points: After the restart, the operation log is completely preserved and can be queried through the report. 1 point: After the restart, part of the log is lost. 0 points: After the restart, all historical logs are lost."
+  }
+]

@@ -1,0 +1,403 @@
+[
+  {
+    "metric": "1.1.1 Main Menu Function Navigation: After program startup, the main menu is correctly displayed, and corresponding functional modules can be accessed via numeric options.",
+    "description": "Start the program. Observe if a menu clearly displaying '[1] Enter CSV File Path', '[2] SQL Query', '[3] Screen Stocks', '[4] Analyze Metric Fluctuation', '[5] View History Queries', '[6] Exit' is shown. Input 1, 2, 3, 4, 5, 6 sequentially, verifying if the program enters the corresponding functional module or exits correctly after each input.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/1.1.1_main_menu_navigation.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should sequentially enter each function menu and finally exit normally using option 6.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.1.1_main_menu_navigation.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.1.2 Input Validity Check: Strictly validates input for the main menu.",
+    "description": "On the main menu interface, input non-numeric characters (e.g., 'a') and out-of-range numbers (e.g., '0' or '7') sequentially. Observe if the program can catch the errors and provide clear Chinese prompts (e.g., \"Error: Please enter a number between 1 and 6\"), and if the program does not crash and remains on the main menu.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/1.1.2_input_validation.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "For each invalid input, the program should prompt \"Invalid input, please try again.\" and remain on the main menu, finally exiting normally using option 6.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.1.2_input_validation.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.2.1 CSV Data Source Configuration: Supports users configuring local CSV file paths via the command line.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'Enter CSV File Path' function interface by inputting '[1]' and pressing Enter?\n2. Preparation: Prepare a real existing CSV file (e.g., /path/to/data.csv) and a non-existent path (e.g., /path/to/fake.csv).\n3. Execution (Valid Path): After entering the function, input the real path and submit.\n4. Assertion (Valid Path): The program should clearly prompt 'Configuration successful' or similar information.\n5. Execution (Invalid Path): Enter the function again, input the non-existent path and submit.\n6. Assertion (Invalid Path): The program should clearly prompt 'File not found' or 'Invalid path', and must continue running without crashing.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/1.2.1_csv_config.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should first prompt 'CSV file loaded successfully!', then for the invalid path prompt 'Error: File path does not exist...', and finally exit normally.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.2.1_csv_config.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1 Multi-line SQL Input and Execution: Supports entry and combined execution of multi-line SQL statements.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'SQL Query' function interface by inputting '[2]' and pressing Enter?\n2. Preparation: Enter the SQL query interface.\n3. Execution: Input the following three lines sequentially, pressing Enter after each line:\n   'SELECT Ticker, CompanyName'\n   'FROM stocks'\n   'WHERE Industry = \"Technology\";'\n   Finally, submit for execution (e.g., via an empty line or specific command).\n4. Assertion: The program should merge the three lines into a single complete SQL statement and execute it successfully, returning the query results.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1.1_multiline_sql.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should successfully execute the multi-line SQL query and display the results.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.1_multiline_sql.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2 Basic SQL Syntax Validation: Performs basic syntax validation on input SQL based on `sqlparse`.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'SQL Query' function interface by inputting '[2]' and pressing Enter?\n2. Execution (Unmatched Parentheses): Input 'SELECT * FROM stocks WHERE (Industry = \"Technology\"' and attempt execution.\n3. Assertion (Unmatched Parentheses): The program should catch the error and prompt 'Syntax error: Unmatched parentheses' or similar, rather than sending the SQL to the backend.\n4. Execution (Keyword Error): Input 'SELEKT * FROM stocks' and attempt execution.\n5. Assertion (Keyword Error): The program should catch the error and prompt 'Syntax error: Unrecognized keyword SELEKT' or similar.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1.2_sql_validation.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should give a prompt like 'SQL syntax error' for erroneous SQL.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.2_sql_validation.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.3 Query Interrupt Function: Supports users interrupting ongoing queries via Ctrl+C.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'SQL Query' function interface by inputting '[2]' and pressing Enter?\n2. Preparation: Execute a time-consuming query (e.g., an unindexed query on a very large dataset).\n3. Execution: Immediately after the program displays 'Querying...' or similar progress information, press the Ctrl+C key combination. (This test requires the test runner to support sending SIGINT)\n4. Assertion: The program should immediately terminate the query, print 'Query interrupted' or similar, and stably return to the SQL query menu or main menu, without crashing or exiting.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "After receiving the interrupt signal, the program should print 'Query interrupted by user.' and safely return to the menu, not crash.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.3_long_sql.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.4a Query Failure Reason Prompt (Non-existent Field): Returns specific reason when a queried field does not exist.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'SQL Query' function interface by inputting '[2]' and pressing Enter?\n2. Preparation: Successfully configured a CSV data source containing the 'Ticker' field.\n3. Execution: Execute the SQL query 'SELECT NonExistentField FROM stocks'.\n4. Assertion: The error message returned by the program should clearly indicate 'Field does not exist' or 'Invalid column name: NonExistentField'.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1.4a_invalid_field.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should indicate query failure and include information similar to 'no such column: NonExistentField'.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.4a_invalid_field.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.4b Query Failure Reason Prompt (Data Source Not Configured): Returns specific reason when no data source is configured.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'SQL Query' function interface by inputting '[2]' and pressing Enter?\n2. Preparation: Ensure no CSV data source is configured after program startup.\n3. Execution: Directly enter the SQL query function and execute any valid SQL, e.g., 'SELECT * FROM stocks'.\n4. Assertion: The error message returned by the program should clearly indicate 'Data source not configured' or 'Please configure CSV file path first'.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1.4b_no_datasource.in"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should prompt \"Please load a CSV file first.\"",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.4b_no_datasource.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.5a History Query Recording and Display: Automatically saves the last 10 valid queries and supports viewing them.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'View History Queries' function interface by inputting '[5]' and pressing Enter?\n2. Preparation: In the SQL query function, execute 3 different valid SQL statements consecutively.\n3. Execution: Enter the 'View History Queries' function.\n4. Assertion: The program should list the 3 historical SQL records with numbers, in the correct order (most recent query has the smallest number, e.g., number 1).",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1.5a_history_view.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should list 3 SQL queries in reverse execution order within the history menu.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.5a_history_view.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.5b History Query Reuse: Supports reusing historical queries by inputting their number.",
+    "description": "1. Precondition Check (User Path): From the main menu, can the user clearly enter the 'View History Queries' function interface by inputting '[5]' and pressing Enter?\n2. Preparation: At least 2 different valid SQL statements have been executed, and the history query list interface is entered.\n3. Execution: According to the list prompt, input number '2' (representing the second last executed SQL) and submit.\n4. Assertion: The program should automatically execute the historical SQL numbered 2 and return exactly the same query results as when it was originally executed.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.1.5b_history_reuse.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should successfully reuse and execute the second query from the history records and display its results.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.5b_history_reuse.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.1 Preset Market Cap Tier Screening: Based on query results, can screen according to preset market cap categories.",
+    "description": "1. Precondition Check (User Path): After a successful SQL query, can the user clearly enter the 'Screen Stocks' function interface by inputting '[3]' and pressing Enter from the main menu?\n2. Preparation: Execute an SQL query ensuring the result contains a 'MarketCap' field and data covering multiple market cap tiers.\n3. Execution: After entering the screening function, select the preset 'Large-Cap' category for screening.\n4. Assertion: Verify if the 'MarketCap' value for all stocks in the output results is greater than or equal to 10,000,000,000 (10 billion).",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The Pytest test should pass, indicating all returned stocks have a market cap greater than or equal to 10 billion.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_logic.py::test_market_cap_preset_filter",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.2.2 Custom Market Cap Range Screening: Supports users inputting custom market cap lower and upper limits for screening.",
+    "description": "1. Precondition Check (User Path): After a successful SQL query, can the user clearly enter the 'Screen Stocks' function interface by inputting '[3]' and pressing Enter from the main menu, and find the 'Custom Range' option?\n2. Preparation: Execute an SQL query ensuring the result contains a 'MarketCap' field.\n3. Execution: In the screening function, select the custom market cap range, and input the lower limit '5000000000' and the upper limit '8000000000'.\n4. Assertion: Verify if the 'MarketCap' value for all stocks in the output results is >= 5000000000 and <= 8000000000.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2.2_custom_filter.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The market cap of stocks in the screening results should strictly fall between 5 billion and 8 billion.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2.2_custom_filter.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.3a Combined Logic Screening (AND Logic): Supports adding other dimensions for 'AND' logic screening based on market cap screening.",
+    "description": "1. Precondition Check (User Path): In the screening function, can the user find the option to add extra screening conditions?\n2. Preparation: Execute an SQL query ensuring the result contains 'MarketCap' and 'Industry' fields.\n3. Execution: First select 'Large-Cap' for screening, then choose to add a condition, screen the 'Industry' field for 'Technology', and explicitly use 'AND' logic.\n4. Assertion: Verify if all stocks in the result set simultaneously satisfy both conditions: MarketCap >= 10 billion AND Industry == 'Technology'.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2.3a_and_logic.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Stocks in the results should simultaneously satisfy both conditions: Market Cap >= 10 billion AND Industry == 'Technology'.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2.3a_and_logic.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.3b Combined Logic Screening (OR Logic): Supports 'OR' logic screening between different dimensions.",
+    "description": "1. Precondition Check (User Path): In the screening function, can the user find the option to add extra screening conditions and select 'OR' logic?\n2. Preparation: Execute an SQL query ensuring the result contains the 'Industry' field.\n3. Execution: Do not perform market cap screening. Directly add a condition, screen the 'Industry' field for 'Technology', then add another condition screening for 'Healthcare', and explicitly use 'OR' logic.\n4. Assertion: Verify if the value of the 'Industry' field for all stocks in the result set is either 'Technology' or 'Healthcare'.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2.3b_or_logic.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The industry of stocks in the results should be either 'Technology' or 'Healthcare'.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2.3b_or_logic.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.4a Result Pagination Display: Screening results can be displayed in pages, 10 items per page.",
+    "description": "1. Precondition Check (User Path): For query/screening results exceeding 10 items, does the program automatically enable pagination and provide clear instructions for page navigation?\n2. Preparation: Obtain a screening result with over 15 records.\n3. Execution & Assertion 1 (First Page): Verify if the program by default only displays the first 10 records.\n4. Execution & Assertion 2 (Next Page): Perform a page turn operation according to the prompt (e.g., 'Input n for next page'), verify if records 11-15 can be seen.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2.4a_pagination.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should correctly display the first page and navigate between pages using 'n' and 'p' commands.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2.4a_pagination.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.4b Result Sorting Function: Screening results support ascending or descending sorting by specified fields.",
+    "description": "1. Precondition Check (User Path): For query/screening results, does the program provide an option to sort by field?\n2. Preparation: Obtain a screening result containing the 'MarketCap' field.\n3. Execution: According to the prompt, choose to sort by the 'MarketCap' field in descending order.\n4. Assertion: Verify if the 'MarketCap' values of the output results on the first page are strictly arranged in order from high to low.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.2.4b_sorting.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The result list should be sorted in descending order by market cap.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2.4b_sorting.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.1 Target Metric Selection for Analysis: Allows user to select one numerical field from query results as the analysis target.",
+    "description": "1. Precondition Check (User Path): After a successful SQL query, can the user clearly enter the 'Analyze Metric Fluctuation' function interface by inputting '[4]' and pressing Enter from the main menu?\n2. Preparation: Execute an SQL query where the result contains numerical fields (e.g., 'MarketCap', 'PE') and non-numerical fields (e.g., 'Industry').\n3. Execution: Enter the first step of the analysis function.\n4. Assertion: Does the program automatically list, and only list, all numerical fields ('MarketCap', 'PE') for user selection by number, excluding 'Industry'?",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.3.1_metric_selection.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should list all numerical columns (e.g., PE, Market Cap) for user selection, and not include non-numerical columns.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.3.1_metric_selection.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.2 Analysis Dimension Selection: Automatically extracts non-numerical fields as candidate dimensions and supports user selection.",
+    "description": "1. Precondition Check (User Path): After selecting the target metric, does the program automatically enter the analysis dimension selection interface?\n2. Preparation: Based on the previous step, a target metric has been selected. The query result contains non-numerical fields (e.g., 'Industry', 'Region') and numerical fields (e.g., 'PE').\n3. Execution: Observe the candidate analysis dimensions listed by the program.\n4. Assertion: Does the program automatically list, and only list, all non-numerical fields ('Industry', 'Region') as candidates, and support user selection of multiple ones via a format like '1,2'?",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.3.2_dimension_selection.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should list all non-numerical columns (e.g., Industry, Sector) for user selection, and not include numerical columns.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.3.2_dimension_selection.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.3 Variance Decomposition Contribution Calculation and Display: Correctly calculates and outputs the contribution of each dimension and interaction effects to metric fluctuation.",
+    "description": "1. Precondition Check (User Path): After selecting the metric and dimensions, can the program successfully execute the analysis and display results?\n2. Preparation: Select a metric (e.g., 'PE') and at least two dimensions (e.g., 'Industry', 'Region') for analysis.\n3. Execution: Trigger the analysis calculation.\n4. Assertion: Observe if the output contains variance explained proportion information, with clear formatting, e.g.: 'Dimension Contribution:\\n- Industry: 42.0%\\n- Region: 28.0%\\n- Interaction Effect (Industry*Region): 15.0%\\n- Residual: 15.0%'",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The Pytest test should pass, indicating the structure and content of the variance decomposition results meet expectations.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_logic.py::test_variance_decomposition",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.3.4 Core Dimension In-depth Analysis: Drills down into the dimension with the highest contribution, displaying sub-category statistical information.",
+    "description": "1. Precondition Check (User Path): After the variance decomposition results are displayed, does the program automatically trigger or provide an option for in-depth analysis?\n2. Preparation: Perform a variance decomposition ensuring one dimension's contribution exceeds 30% (e.g., 'Industry' contributes 42%).\n3. Execution: Observe the output below the variance decomposition results.\n4. Assertion: Does the program automatically perform in-depth analysis on the 'Industry' dimension and output the metric's statistical information (mean and standard deviation) for its sub-categories (e.g., 'Technology', 'Healthcare')?",
+    "type": "unit_test",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The Pytest test should pass, indicating the mean and standard deviation calculated by the deep dive analysis are correct.",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_logic.py::test_deep_dive_analysis",
+        "test_input": null
+      }
+    ]
+  },
+  {
+    "metric": "2.4.1 Textual Table Display of Results: Analysis results support display via formatted text tables.",
+    "description": "1. Preparation: Perform a screening to obtain a result set with multiple rows and columns.\n2. Execution: Before result output, observe if the program asks the user 'Display results in table format? [y/n]'.\n3. Assertion: After selecting 'y', is the output content a well-aligned, column-width adaptive, easy-to-read text table (similar to `pretty-table` effect)? Selecting 'n' outputs raw data.",
+    "type": "shell_interaction",
+    "input_files": [
+      "evaluation/2.4.1_table_display.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "Query results should be displayed in a well-formatted, aligned text table (psql style).",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.4.1_table_display.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.4.2a Report Saving Function: Supports saving analysis results as a TXT file.",
+    "description": "1. Precondition Check (User Path): After completing a full analysis process, does the program provide a 'Save Report' option?\n2. Preparation: Complete one 'Query-Screen-Analyze' process.\n3. Execution: In the final step, choose to save the report, and input the filename 'report.txt' as prompted.\n4. Assertion: The program prompts 'Report successfully saved to report.txt', and the file is indeed generated in the current directory.",
+    "type": "file_comparison",
+    "input_files": [
+      "evaluation/2.4.2a_report_generation.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_report.txt"
+    ],
+    "expected_output": "The program should prompt that the report was saved successfully and generate the 'report.txt' file at the specified path.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.4.2a_report_generation.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.4.2b Report Content Verification (Context): The report file must contain complete analysis context information.",
+    "description": "1. Preparation: The 'report.txt' file has been generated.\n2. Execution: Use `cat report.txt` or a text editor to view the file content.\n3. Assertion: Check if the file content contains the following two parts: 1) The originally executed SQL statement; 2) The applied screening conditions (e.g., 'Market Cap Category: Large-Cap').",
+    "type": "file_comparison",
+    "input_files": [
+      "evaluation/2.4.2b_report_context_validation.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_report.txt"
+    ],
+    "expected_output": "The content of the generated 'report.txt' file must exactly match 'expected_report.txt', and must include analysis context information.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.4.2b_report_context_validation.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.4.2c Report Content Verification (Analysis Results): The report file must contain the complete analysis process and conclusions.",
+    "description": "1. Preparation: The 'report.txt' file has been generated.\n2. Execution: Use `cat report.txt` or a text editor to view the file content.\n3. Assertion: Check if the file content contains the following three parts: 1) The selected analysis metric and dimensions; 2) The variance decomposition contribution data; 3) The final in-depth analysis results table.",
+    "type": "file_comparison",
+    "input_files": [
+      "evaluation/2.4.2c_report_analysis_validation.in",
+      "evaluation/sample_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_report.txt"
+    ],
+    "expected_output": "The content of the generated 'report.txt' file must exactly match 'expected_report.txt', and must include the complete analysis results.",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.4.2c_report_analysis_validation.in"
+      }
+    ]
+  }
+]

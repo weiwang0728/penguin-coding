@@ -1,0 +1,4 @@
+dish_id,ingredient_name,quantity,unit,cost_per_unit,allergen
+1,Beef,0.5,kg,80,
+3,Egg,0.2,kg,12,Egg
+3,Peanut Oil,0.05,L,40,Peanut

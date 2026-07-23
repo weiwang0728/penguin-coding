@@ -1,0 +1,10 @@
+1
+evaluation/sample_data.csv
+
+2
+SELEKT * FROM df
+
+
+2
+SELECT * FROM df WHERE (Industry = 'Technology'
+

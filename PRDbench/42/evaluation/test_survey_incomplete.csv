@@ -1,0 +1,7 @@
+Name,Department,Position,ManagementLevel,LeadershipMotivationSkills,PlanningOrganizationCoordinationSkills,DecisionInnovationSkills,ProfessionalControlSkills
+Zhang San,Technical Dept,Department Manager,Middle,4.2,4.0,,4.5
+Li Si,Marketing Dept,,Junior,3.5,3.8,4.0,3.2
+Wang Wu,HR Dept,Team Leader,Senior,,4.5,4.2,4.0
+Zhao Liu,Finance Dept,Department Manager,,3.8,4.2,3.5,4.1
+Qian Qi,,Project Manager,Junior,3.2,3.5,3.8,
+Sun Ba,Marketing Dept,Team Leader,Middle,4.1,3.9,4.3,3.7

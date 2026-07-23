@@ -1,0 +1,21 @@
+item_id,title,category,brand,price,description,tags
+1,Electronics_0001,Electronics,Brand1,1299.99,This is a description of an electronics product,Electronics Popular
+2,Clothing_0002,Clothing,Brand2,299.99,This is a description of a clothing product,Clothing New
+3,HomeGoods_0003,HomeGoods,Brand3,199.99,This is a description of a home goods product,HomeGoods Promotion
+4,Books_0004,Books,Brand4,49.99,This is a description of a books product,Books Popular
+5,Sports_0005,Sports,Brand5,599.99,This is a description of a sports product,Sports New
+6,Beauty_0006,Beauty,Brand6,199.99,This is a description of a beauty product,Beauty Promotion
+7,Food_0007,Food,Brand7,29.99,This is a description of a food product,Food Popular
+8,Automotive_0008,Automotive,Brand8,399.99,This is a description of an automotive product,Automotive New
+9,Electronics_0009,Electronics,Brand9,899.99,This is a description of an electronics product,Electronics Promotion
+10,Clothing_0010,Clothing,Brand10,159.99,This is a description of a clothing product,Clothing Popular
+11,HomeGoods_0011,HomeGoods,Brand11,99.99,This is a description of a home goods product,HomeGoods New
+12,Books_0012,Books,Brand12,79.99,This is a description of a books product,Books Promotion
+13,Sports_0013,Sports,Brand13,799.99,This is a description of a sports product,Sports Popular
+14,Beauty_0014,Beauty,Brand14,129.99,This is a description of a beauty product,Beauty New
+15,Food_0015,Food,Brand15,19.99,This is a description of a food product,Food Promotion
+16,Automotive_0016,Automotive,Brand16,299.99,This is a description of an automotive product,Automotive Popular
+17,Electronics_0017,Electronics,Brand17,1599.99,This is a description of an electronics product,Electronics New
+18,Clothing_0018,Clothing,Brand18,249.99,This is a description of a clothing product,Clothing Promotion
+19,HomeGoods_0019,HomeGoods,Brand19,149.99,This is a description of a home goods product,HomeGoods Popular
+20,Books_0020,Books,Brand20,59.99,This is a description of a books product,Books New

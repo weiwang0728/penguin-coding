@@ -1,0 +1,118 @@
+```json
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g. `python src/main.py`).\n2. **Assert:** Observe whether the program starts successfully and displays a welcome message and enters the personal information entry process.",
+    "expected_output": "2 points: The program starts successfully and correctly displays the welcome message and enters the first interaction section. 1 point: The program starts, but the welcome message is garbled or has format issues. 0 points: The program fails to start or crashes immediately after launch.",
+    "weight": 5.0
+  },
+  {
+    "metric": "1.1a User Info Entry - Valid Name Input",
+    "description": "1. **Pre-check (User Path):** After starting the program, does it automatically enter or clearly prompt the user to enter the name?\n2. **Arrange:** Prepare the following test input: 'Zhang San'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should accept the valid input.",
+    "expected_output": "2 points: Pre-check passes, correctly validates the valid input and continues the process. 1 point: Pre-check passes, but there are minor issues in handling. 0 points: Pre-check fails, or the name format is not validated; any input is accepted or the program crashes.",
+    "weight": 2.0
+  },
+  {
+    "metric": "1.1b User Info Entry - Invalid Name Input",
+    "description": "1. **Pre-check (User Path):** After starting the program, does it automatically enter or clearly prompt the user to enter the name?\n2. **Arrange:** Prepare the following test input: 'VeryLongNameThatExceedsTwentyCharactersLimit'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should reject invalid input.",
+    "expected_output": "2 points: Pre-check passes, correctly rejects invalid input, provides a clear prompt and requires re-entry. 1 point: Pre-check passes, but the prompt is unclear. 0 points: Pre-check fails, or the name format is not validated; any input is accepted or the program crashes.",
+    "weight": 2.0
+  },
+  {
+    "metric": "1.2a User Info Entry - Valid Birth Date Input",
+    "description": "1. **Pre-check (User Path):** After successful name input, does it automatically or clearly prompt the user to enter the birth date?\n2. **Arrange:** Prepare the following test input: '1990-01-01'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should accept the valid input.",
+    "expected_output": "2 points: Pre-check passes, correctly validates the valid input and continues the process. 1 point: Pre-check passes, but there are minor issues in handling. 0 points: Pre-check fails, or the date format and validity are not checked; any input is accepted or the program crashes.",
+    "weight": 2.0
+  },
+  {
+    "metric": "1.2b User Info Entry - Invalid Birth Date Input",
+    "description": "1. **Pre-check (User Path):** After successful name input, does it automatically or clearly prompt the user to enter the birth date?\n2. **Arrange:** Prepare the following test input: '1990-13-01'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should reject invalid input.",
+    "expected_output": "2 points: Pre-check passes, correctly rejects invalid input, provides clear prompt and requires re-entry. 1 point: Pre-check passes, but the prompt is unclear. 0 points: Pre-check fails, or the date format and validity are not checked; any input is accepted or the program crashes.",
+    "weight": 2.0
+  },
+  {
+    "metric": "1.3a User Info Entry - Valid Gender Input",
+    "description": "1. **Pre-check (User Path):** After successful birth date input, does it automatically or clearly prompt the user to enter gender?\n2. **Arrange:** Prepare the following test input: '1'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should accept the valid input.",
+    "expected_output": "2 points: Pre-check passes, correctly validates the valid input and continues the process. 1 point: Pre-check passes, but there are minor issues in handling. 0 points: Pre-check fails, or the gender format is not validated; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "1.3b User Info Entry - Invalid Gender Input",
+    "description": "1. **Pre-check (User Path):** After successful birth date input, does it automatically or clearly prompt the user to enter gender?\n2. **Arrange:** Prepare the following test input: 'male'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should reject invalid input.",
+    "expected_output": "2 points: Pre-check passes, correctly rejects invalid input and provides a clear prompt and requires re-entry. 1 point: Pre-check passes, but the prompt is unclear. 0 points: Pre-check fails, or the gender format is not validated; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "1.4 User Info Save and Load",
+    "description": "1. **Arrange:** Run the program for the first time, fully enter personal information (e.g., name: Zhang San, birthday: 1990-01-01, gender: Male).\n2. **Act:** Complete the full fortune calculation flow. Run the program again.\n3. **Assert:** The program should display \"Welcome back, Zhang San!\" and ask whether to use the saved information. Check the contents of the `src/data/user_data.json` file for correctness.",
+    "expected_output": "2 points: Can correctly save and load user information, file content format is correct, and the program can properly handle according to the user's choice. 1 point: Can save or load information, but with minor issues (e.g., unclear prompts, slight formatting deviation in the file). 0 points: Cannot save or load user information, or file content is seriously incorrect.",
+    "weight": 4.0
+  },
+  {
+    "metric": "2.1a Fortune Drawing Game - Mode Selection - Valid Input",
+    "description": "1. **Pre-check (User Path):** After confirming user info, does the program clearly prompt the user to select a game mode (coin spinning wheel / number stick draw)?\n2. **Arrange:** Prepare the following test input: '1'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should accept the valid input and enter the corresponding game.",
+    "expected_output": "2 points: Pre-check passes, correctly responds to valid input and enters the corresponding game. 1 point: Pre-check passes, but there are minor issues in handling. 0 points: Pre-check fails, or cannot properly select the game mode; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "2.1b Fortune Drawing Game - Mode Selection - Invalid Input",
+    "description": "1. **Pre-check (User Path):** After confirming user info, does the program clearly prompt the user to select a game mode (coin spinning wheel / number stick draw)?\n2. **Arrange:** Prepare the following test input: '3'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should reject invalid input.",
+    "expected_output": "2 points: Pre-check passes, correctly rejects invalid input and provides a clear prompt. 1 point: Pre-check passes, but the prompt is unclear. 0 points: Pre-check fails, or cannot properly select the game mode; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "2.2 Fortune Drawing Game - Coin Spinning Wheel - Game Interface",
+    "description": "1. **Pre-check (User Path):** After selecting 'coin spinning wheel' mode, does it prompt the user to press Enter to start the game?\n2. **Act:** Select 'coin spinning wheel' mode and press Enter to start the game.\n3. **Assert:** Observe whether a 3x3 game grid is displayed, with symbols like 'Lucky', 'Unlucky', or 'Neutral', and results are shown.",
+    "expected_output": "2 points: Pre-check passes, and correctly displays the 3x3 game grid and symbols. 1 point: Pre-check passes, but there are minor interface display issues (such as symbol garbled). 0 points: Pre-check fails, or cannot display the game grid.",
+    "weight": 3.0
+  },
+  {
+    "metric": "2.3 Fortune Drawing Game - Number Stick Draw - Game Interface",
+    "description": "1. **Pre-check (User Path):** After selecting 'number stick draw' mode, does it prompt the user to press Enter to start the game?\n2. **Act:** Select 'number stick draw' mode and press Enter to start the game.\n3. **Assert:** Observe whether a number between 1-100 is generated and the result is displayed.",
+    "expected_output": "2 points: Pre-check passes, and can generate a number between 1-100. 1 point: Pre-check passes, but the number range is not correct. 0 points: Pre-check fails, or fails to generate a number.",
+    "weight": 3.0
+  },
+  {
+    "metric": "3.1a Daily Status Entry - Outfit Color - Valid Input",
+    "description": "1. **Pre-check (User Path):** After the game ends, does it clearly prompt the user to enter the main outfit color?\n2. **Arrange:** Prepare the following test input: 'Red'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should accept the valid input.",
+    "expected_output": "2 points: Pre-check passes, correctly validates the valid input and continues the process. 1 point: Pre-check passes, but there are minor issues in handling. 0 points: Pre-check fails, or color format is not validated; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "3.1b Daily Status Entry - Outfit Color - Invalid Input",
+    "description": "1. **Pre-check (User Path):** After the game ends, does it clearly prompt the user to enter the main outfit color?\n2. **Arrange:** Prepare the following test input: 'Pink'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should reject invalid input.",
+    "expected_output": "2 points: Pre-check passes, correctly rejects invalid input and provides a clear prompt and selectable range. 1 point: Pre-check passes, but the prompt is unclear. 0 points: Pre-check fails, or color format is not validated; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "3.2a Daily Status Entry - Jewelry Type - Valid Input",
+    "description": "1. **Pre-check (User Path):** After successful color input, does it clearly prompt the user to enter the jewelry type?\n2. **Arrange:** Prepare the following test input: 'Metal'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should accept the valid input.",
+    "expected_output": "2 points: Pre-check passes, correctly validates the valid input and continues the process. 1 point: Pre-check passes, but there are minor issues in handling. 0 points: Pre-check fails, or jewelry type format is not validated; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "3.2b Daily Status Entry - Jewelry Type - Invalid Input",
+    "description": "1. **Pre-check (User Path):** After successful color input, does it clearly prompt the user to enter the jewelry type?\n2. **Arrange:** Prepare the following test input: 'Necklace'.\n3. **Act:** Enter the prepared data.\n4. **Assert:** The program should reject invalid input.",
+    "expected_output": "2 points: Pre-check passes, correctly rejects invalid input and provides a clear prompt and selectable range. 1 point: Pre-check passes, but the prompt is unclear. 0 points: Pre-check fails, or jewelry type format is not validated; any input is accepted or the program crashes.",
+    "weight": 1.5
+  },
+  {
+    "metric": "3.3 Daily Status Entry - Info Confirmation and Edit",
+    "description": "1. **Pre-check (User Path):** After entering outfit and jewelry, does it clearly ask the user to confirm the information?\n2. **Arrange:** Prepare inputs 'n' (re-enter) and 'y' (confirm).\n3. **Act:** First, input 'n', then input 'y'.\n4. **Assert:** Entering 'n' should return to the input section, entering 'y' should proceed to the next step.",
+    "expected_output": "2 points: Pre-check passes, correctly responds to user's confirmation or re-entry request and executes the corresponding process. 1 point: Pre-check passes, but the operation may be incomplete or minor issues exist. 0 points: Pre-check fails, or cannot correctly handle user's confirmation or re-entry request.",
+    "weight": 3.0
+  },
+  {
+    "metric": "4.1 Overall Fortune Calculation - Report Generation",
+    "description": "1. **Act:** Run a complete calculation process.\n2. **Assert:** Check whether the generated report contains complete information.",
+    "expected_output": "2 points: Can correctly calculate and display the Eight Characters and Five Elements distribution, format is clear. 1 point: Can display partial information or format has minor issues. 0 points: Cannot calculate or display Eight Characters and Five Elements information.",
+    "weight": 2.0
+  },
+  {
+    "metric": "5.1 Fortune Report Saving",
+    "description": "1. **Pre-check (User Path):** After the report is generated, does it clearly ask the user whether to save the report?\n2. **Arrange:** Prepare to input 'y'.\n3. **Act:** After the report is generated, input 'y' to choose save.\n4. **Assert:** Check whether a new txt file is created in the `reports` directory, whether the file name contains the date, and whether the content matches the screen display.",
+    "expected_output": "2 points: Pre-check passes, and the report can be correctly saved as a txt file; file naming is standard and content is complete. 1 point: Pre-check passes, but file naming or content has minor issues. 0 points: Pre-check fails, or cannot save the report or file has serious errors.",
+    "weight": 3.0
+  }
+]
+```

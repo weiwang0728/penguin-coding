@@ -1,0 +1,132 @@
+[
+  {
+    "metric": "1.1 System Startup and Basic Availability: System can successfully start through command line and execute basic functions.",
+    "description": "1. **Act:** Execute system demonstration command in shell (e.g., `python src/demo.py`).\n2. **Assert:** Observe whether terminal displays startup success prompt information and function demonstration output.\n3. **Act:** Execute CLI tool help command (e.g., `python src/main_cli.py --help`).\n4. **Assert:** Observe whether system can return expected CLI command list and usage instructions.",
+    "expected_output": "2 points: System can successfully start and execute basic CLI functions, output correct demonstration results and help information. 1 point: System can start, but output has abnormalities or requires specific parameters to run. 0 points: System cannot start, or cannot execute any CLI commands after starting."
+  },
+  {
+    "metric": "2.1.1a Questionnaire Data Import - Excel Format Support",
+    "description": "1. **Arrange:** Prepare a questionnaire Excel file conforming to common format.\n2. **Act:** Import this Excel file through CLI command (e.g., `python src/cli.py data import-data -f file.xlsx -c 'Company Name' -t survey`).\n3. **Assert:** Check CLI output and system logs, confirm data successfully imported and stored.",
+    "expected_output": "2 points: Can successfully import Excel format questionnaire data, and correctly store. 1 point: Import process has warnings or requires specific configuration, but still completes import. 0 points: Cannot import Excel format questionnaire data, or data lost/incorrect after import."
+  },
+  {
+    "metric": "2.1.1b Questionnaire Data Import - CSV Format Support",
+    "description": "1. **Arrange:** Prepare a questionnaire CSV file conforming to common format.\n2. **Act:** Import this CSV file through CLI command (e.g., `python src/cli.py data import-data -f file.csv -c 'Company Name' -t survey`).\n3. **Assert:** Check CLI output and system logs, confirm data successfully imported and stored.",
+    "expected_output": "2 points: Can successfully import CSV format questionnaire data, and correctly store. 1 point: Import process has warnings or requires specific configuration, but still completes import. 0 points: Cannot import CSV format questionnaire data, or data lost/incorrect after import."
+  },
+  {
+    "metric": "2.1.2a Interview Text Import - Manual Entry",
+    "description": "1. **Arrange:** Prepare an interview text segment for entry.\n2. **Act:** Manually input prepared interview text through CLI command and submit (e.g., `python src/cli.py data add-interview -c 'Company Name' --manual`).\n3. **Assert:** Check CLI output and database, confirm text successfully saved.",
+    "expected_output": "2 points: Can successfully manually enter and save interview text. 1 point: Entry process has minor problems or feedback unclear. 0 points: Cannot manually enter interview text, or content lost/incorrect after entry."
+  },
+  {
+    "metric": "2.1.2b Interview Text Import - .docx File Upload",
+    "description": "1. **Arrange:** Prepare a .docx file containing interview content.\n2. **Act:** Import this .docx format interview text file through CLI command (e.g., `python src/cli.py data import-data -f interview.docx -c 'Company Name' -t interview`).\n3. **Assert:** Check CLI output and database, confirm text successfully parsed and saved.",
+    "expected_output": "2 points: Can successfully import and save .docx format interview text. 1 point: Import process has minor problems or feedback unclear. 0 points: .docx file import not supported, or content lost/incorrect after import."
+  },
+  {
+    "metric": "2.1.2c Interview Text Import - .txt File Upload",
+    "description": "1. **Arrange:** Prepare a .txt file containing interview content.\n2. **Act:** Import this .txt format interview text file through CLI command (e.g., `python src/cli.py data import-data -f interview.txt -c 'Company Name' -t interview`).\n3. **Assert:** Check CLI output and database, confirm text successfully saved.",
+    "expected_output": "2 points: Can successfully import and save .txt format interview text. 1 point: Import process has minor problems or feedback unclear. 0 points: .txt file import not supported, or content lost/incorrect after import."
+  },
+  {
+    "metric": "2.1.3 Data Validation: Validate questionnaire response completeness.",
+    "description": "1. **Arrange:** Prepare a questionnaire data file containing missing response items.\n2. **Act:** Import this questionnaire data containing missing items through CLI command.\n3. **Assert:** Through CLI output confirm whether system can identify missing items and display corresponding validation warning information.",
+    "expected_output": "2 points: Can automatically identify missing items in questionnaire and clearly mark. 1 point: Can identify partial missing situations, or marking method unclear. 0 points: Cannot identify or mark missing items."
+  },
+  {
+    "metric": "2.1.4a Sample Management - Multi-dimensional Filtering",
+    "description": "1. **Arrange:** Ensure database already imported and contains sample data with different enterprise, department, position, management level labels.\n2. **Act:** Through CLI command try filtering samples by enterprise, department (e.g., `python src/cli.py data filter-samples -c 'Company Name' -d 'Department Name'`).\n3. **Assert:** Check CLI output sample list, confirm filtering function effective, results correct.",
+    "expected_output": "2 points: Supports filtering samples by main dimensions (enterprise, department, position, level), and returns correct results. 1 point: Supports partial filtering dimensions or filtering results flawed. 0 points: Cannot perform effective sample filtering."
+  },
+  {
+    "metric": "2.1.4b Sample Management - Batch Metadata Tagging",
+    "description": "1. **Arrange:** Ensure database already has batch sample data.\n2. **Act:** Through CLI interaction, try adding metadata labels for this batch samples (e.g., 'Source A', 'Valid').\n3. **Assert:** Check database or sample list, confirm metadata labels successfully added and viewed.",
+    "expected_output": "2 points: Can successfully add and view custom metadata labels. 1 point: Tagging function limited or feedback unclear. 0 points: Cannot perform metadata tagging."
+  },
+  {
+    "metric": "2.1.5 Historical Data Version Management: Each data import/update generates read-only version snapshot.",
+    "description": "1. **Arrange:** Prepare initial dataset and import system.\n2. **Act:** Through CLI query historical version information.\n3. **Arrange:** Prepare updated dataset and import or update partial data.\n4. **Act:** Again through CLI query historical version information.\n5. **Assert:** Confirm whether generated new version snapshot. Try viewing different version data contents, verify their read-only property.",
+    "expected_output": "2 points: Each data change generates new read-only snapshot, and can conveniently query and compare different versions. 1 point: Has version records, but query or comparison function incomplete. 0 points: No version management function."
+  },
+  {
+    "metric": "2.2.1 Preset Management Skill Dimensions: System presets four core management skill dimensions.",
+    "description": "1. **Act:** Through CLI command, request obtain system preset skill dimension list.\n2. **Assert:** Check return result whether contains 'Leadership and Motivation Skills', 'Planning Organization and Coordination Skills', 'Decision-making and Innovation Skills', 'Professional and Control Skills' these four items.",
+    "expected_output": "2 points: System default contains all four preset skill dimensions. 1 point: Contains partial preset dimensions. 0 points: No preset dimensions or dimension names incorrect."
+  },
+  {
+    "metric": "2.2.2a Custom Dimensions and Indicators - Add New Dimension",
+    "description": "1. **Arrange:** Prepare new skill dimension name (e.g., 'Communication Ability').\n2. **Act:** Through CLI interaction, try adding this new skill dimension.\n3. **Assert:** Query dimension list, confirm new dimension successfully added.",
+    "expected_output": "2 points: Can successfully add new dimension. 1 point: Addition process complex or has minor problems. 0 points: Cannot add custom dimension."
+  },
+  {
+    "metric": "2.2.2b Custom Dimensions and Indicators - Add Indicator and Weight for Dimension",
+    "description": "1. **Arrange:** Prepare indicator name and corresponding weight value.\n2. **Act:** Under newly added dimension, through CLI interaction add indicator and set weight.\n3. **Assert:** Query this dimension configuration details, confirm indicator and its weight successfully saved.",
+    "expected_output": "2 points: Can successfully add indicator and set weight for dimension. 1 point: Configuration process complex or has minor problems. 0 points: Cannot add indicator and weight for dimension."
+  },
+  {
+    "metric": "2.2.3 Factor Analysis Engine Execution: Call principal component analysis/factor analysis algorithm to automatically model sample questionnaire data.",
+    "description": "1. **Arrange:** Ensure already has imported questionnaire dataset.\n2. **Act:** Through CLI command trigger factor analysis task (requires specifying dataset).\n3. **Assert:** Wait task completion, check whether generated factor scores, loading matrices and cumulative explanation rate etc. analysis results.",
+    "expected_output": "2 points: Can successfully execute factor analysis, and output core results (factor scores, loading matrices, explanation rate). 1 point: Can execute but results incomplete or requires manual intervention. 0 points: Cannot execute factor analysis."
+  },
+  {
+    "metric": "2.2.4a Algorithm Parameter Customization - Factor Quantity",
+    "description": "1. **Arrange:** Prepare custom factor quantity (e.g., 3).\n2. **Act:** When triggering factor analysis task, through CLI interaction, set factor quantity to prepared value.\n3. **Assert:** Check generated report or results, confirm factor quantity parameter whether set effective.",
+    "expected_output": "2 points: Can successfully customize factor quantity, and reflect in results. 1 point: Setting process not intuitive or result reflection unclear. 0 points: Factor quantity fixed default value, cannot modify."
+  },
+  {
+    "metric": "2.2.4b Algorithm Parameter Customization - Rotation Method",
+    "description": "1. **Arrange:** Prepare different from default rotation method (e.g., 'promax').\n2. **Act:** When triggering factor analysis task, through CLI interaction, set rotation method to prepared value.\n3. **Assert:** Check generated report or results, confirm rotation method parameter whether set effective.",
+    "expected_output": "2 points: Can successfully customize rotation method, and reflect in results. 1 point: Setting process not intuitive or result reflection unclear. 0 points: Rotation method fixed default value, cannot modify."
+  },
+  {
+    "metric": "2.2.5 Statistical Significance Test: Model resultsare accompanied by statistical significance test report.",
+    "description": "1. **Act:** Execute one factor analysis.\n2. **Act:** Obtain or download analysis report.\n3. **Assert:** Check report content whether contains KMO test, Bartlett spherical test etc. statistical significance test results.",
+    "expected_output": "2 points: Report contains clear statistical significance test results (e.g., p-value, KMO value). 1 point: Has relevant tests, but result display unclear. 0 points: No statistical significance test content."
+  },
+  {
+    "metric": "2.2.6a Multi-dimensional Data Comparative Analysis - Grouping Dimension Setting",
+    "description": "1. **Arrange:** Ensure has sample data containing different enterprise, department, level labels.\n2. **Act:** Through CLI interaction, set grouping conditions (e.g., by 'Enterprise' and 'Management Level' grouping).\n3. **Assert:** Confirm system accepted grouping condition settings.",
+    "expected_output": "2 points: Can successfully set at least two main business dimensions as grouping conditions. 1 point: Supported grouping dimensions fewer or setting process not intuitive. 0 points: Cannot set grouping conditions."
+  },
+  {
+    "metric": "2.2.6b Multi-dimensional Data Comparative Analysis - Result Output",
+    "description": "1. **Act:** After already set grouping conditions, execute comparative analysis.\n2. **Assert:** Check output results (e.g., mean, standard deviation) whether correctly grouped by set dimensions.",
+    "expected_output": "2 points: Can by set dimensions correctly execute comparative analysis, and correctly output each group statistical results (e.g., mean, standard deviation). 1 point: Can execute analysis but result grouping or display flawed. 0 points: Cannot execute multi-dimensional comparative analysis or results completely wrong."
+  },
+  {
+    "metric": "2.2.7a Comparative Result Visualization - Histogram",
+    "description": "1. **Act:** Execute one multi-dimensional comparative analysis. Through CLI obtain analysis results histogram.\n2. **Assert:** Check return content whether contains or can generate histogram.",
+    "expected_output": "2 points: Can successfully generate histogram. 1 point: Chart generation has warnings or incomplete. 0 points: Cannot generate histogram."
+  },
+  {
+    "metric": "2.2.7b Comparative Result Visualization - Box Plot",
+    "description": "1. **Act:** Execute one multi-dimensional comparative analysis. Through CLI obtain analysis results box plot.\n2. **Assert:** Check return content whether contains or can generate box plot.",
+    "expected_output": "2 points: Can successfully generate box plot. 1 point: Chart generation has warnings or incomplete. 0 points: Cannot generate box plot."
+  },
+  {
+    "metric": "2.2.7c Comparative Result Visualization - Radar Chart",
+    "description": "1. **Act:** Execute one multi-dimensional comparative analysis. Through CLI obtain analysis results radar chart.\n2. **Assert:** Check return content whether contains or can generate radar chart.",
+    "expected_output": "2 points: Can successfully generate radar chart. 1 point: Chart generation has warnings or incomplete. 0 points: Cannot generate radar chart."
+  },
+  {
+    "metric": "2.3.1a Chart Export Function - PNG Format",
+    "description": "1. **Act:** Through CLI command generate one PNG format chart.\n2. **Assert:** Check specified output directory whether generated .PNG file, and verify file can normally open.",
+    "expected_output": "2 points: Supports export as PNG format, file can normally open. 1 point: Export process has warnings or file open abnormal. 0 points: PNG format export not supported."
+  },
+  {
+    "metric": "2.3.1b Chart Export Function - SVG Format",
+    "description": "1. **Act:** Through CLI command generate one SVG format chart.\n2. **Assert:** Check specified output directory whether generated .SVG file, and verify file can normally open.",
+    "expected_output": "2 points: Supports export as SVG format, file can normally open. 1 point: Export process has warnings or file open abnormal. 0 points: SVG format export not supported."
+  },
+  {
+    "metric": "2.3.1c Chart Export Function - CSV Format Raw Data",
+    "description": "1. **Act:** Through CLI command export raw data as CSV format.\n2. **Assert:** Check specified output directory whether generated .CSV file, and verify file content correct.",
+    "expected_output": "2 points: Supports export as CSV format, file content correct. 1 point: Export process has warnings or file content incomplete. 0 points: CSV format export not supported."
+  },
+  {
+    "metric": "2.3.1d Chart Export Function - Excel Format Raw Data",
+    "description": "1. **Act:** Through CLI command export raw data as Excel format.\n2. **Assert:** Check specified output directory whether generated .Excel file, and verify file content correct.",
+    "expected_output": "2 points: Supports export as Excel format, file content correct. 1 point: Export process has warnings or file content incomplete. 0 points: Excel format export not supported."
+  }
+]

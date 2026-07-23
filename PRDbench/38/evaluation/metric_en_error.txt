@@ -1,0 +1,178 @@
+```json
+[
+  {
+    "ScorePoint": "0.1 ProgramStartandMainMenu",
+    "VerifyOfficialMethod": "1. **Act:** Execute the program start command in the shell (e.g., `python main.py`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu with at least 4 actionable options (e.g., \"Data Management\", \"Recommendation Algorithms\", \"Experiment Evaluation\", \"Log Viewing\").",
+    "ScoreRuleRange": "2 points: The program starts successfully and displays a main menu with 4 or more clear, actionable options. 1 point: The program starts, but the menu options are fewer than 4, unclear, or display garbled text. 0 points: The program cannot start or crashes immediately after starting.",
+    "attributeDivideWeightWeight": 5
+  },
+  {
+    "ScorePoint": "2.1.1a UserInformationManagement-CSVData Import",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a clear option for \"User Data Management\" or similar function in the main menu?\n2. **Arrange:** Create a CSV test file containing User ID, Age, Gender, and Purchase History.\n3. **Act:** Select the data import function to import the test CSV file.\n4. **Assert:** Verify that the data is successfully imported and you can view the imported user records.",
+    "ScoreRuleRange": "2 points: Pre-check passes, and CSV data is imported completely and correctly. 1 point: Pre-check passes, but there are partial errors or data loss during import. 0 points: Pre-check fails, or import function is unavailable.",
+    "attributeDivideWeightWeight": 1.5
+  },
+  {
+    "ScorePoint": "2.1.1b UserInformationManagement-CSVData Export",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an \"Export Data\" option in the user data management interface?\n2. **Arrange:** Ensure user data already exists in the system.\n3. **Act:** Select the data export function and specify export path.\n4. **Assert:** Verify the exported CSV file exists and its content is consistent with the system data.",
+    "ScoreRuleRange": "2 points: Pre-check passes and exported CSV file is complete and accurate. 1 point: Pre-check passes, but exported file has format issues or incomplete data. 0 points: Pre-check fails, or data cannot be exported.",
+    "attributeDivideWeightWeight": 1.5
+  },
+  {
+    "ScorePoint": "2.1.2a ProductAttributeManagement-AddProductBrand",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an option for \"Product Management\" or similar in the main menu?\n2. **Arrange:** Prepare complete information for a new product (Product ID, Name, Category, Price, Brand).\n3. **Act:** Select Add Product function and input the prepared product information.\n4. **Assert:** Verify the product is successfully added to the system and can be viewed in the product list.",
+    "ScoreRuleRange": "2 points: Pre-check passes, and product is added successfully with all fields correctly saved. 1 point: Pre-check passes, but there are field errors or incomplete save during addition. 0 points: Pre-check fails, or cannot add product.",
+    "attributeDivideWeightWeight": 0.75
+  },
+  {
+    "ScorePoint": "2.1.2b ProductAttributeManagement-ViewProductList",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an option for \"View Product List\" or similar in the product management interface?\n2. **Arrange:** Ensure there are at least 5 product records in the system.\n3. **Act:** Select the View Product List function.\n4. **Assert:** Verify the product list displays correctly and includes key details like Product ID, Name, Category, Price, and Brand.",
+    "ScoreRuleRange": "2 points: Pre-check passes and product list displays all 5 key fields. 1 point: Pre-check passes but product list is missing 1-2 key fields. 0 points: Pre-check fails or cannot view product list.",
+    "attributeDivideWeightWeight": 0.75
+  },
+  {
+    "ScorePoint": "2.1.2c ProductAttributeManagement-ModifyProductAttribute",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an option for \"Edit Product\" or \"Edit\" in the product management interface?\n2. **Arrange:** Select an existing product and prepare to modify its price and category.\n3. **Act:** Choose Edit function and change the product's price and category.\n4. **Assert:** Verify the updated product information is correctly updated and shown in the product list.",
+    "ScoreRuleRange": "2 points: Pre-check passes and product attributes are successfully updated and effective. 1 point: Pre-check passes, but some information is not correctly updated. 0 points: Pre-check fails or cannot modify product attributes.",
+    "attributeDivideWeightWeight": 0.75
+  },
+  {
+    "ScorePoint": "2.1.2d ProductAttributeManagement-DeleteProductRecord",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Delete Product\" option in the product management interface?\n2. **Arrange:** Ensure there is a test product in the system that can be deleted.\n3. **Act:** Select the delete function and delete the designated product.\n4. **Assert:** Verify the product is successfully deleted from the system and no longer appears in the product list.",
+    "ScoreRuleRange": "2 points: Pre-check passes and product is deleted successfully, product list updates correctly. 1 point: Pre-check passes but deletion confirmation prompt is missing or interface update delay. 0 points: Pre-check fails or unable to delete product.",
+    "attributeDivideWeightWeight": 0.75
+  },
+  {
+    "ScorePoint": "2.2.1 TF-IDFMatrixTransformation-RatingMatrixReconstruction",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an option in the main menu for \"Recommendation Algorithms\" or \"Matrix Transformation\"?\n2. **Arrange:** Prepare a user-product rating data file (containing at least 10 users and 20 product ratings).\n3. **Act:** Choose the TF-IDF matrix conversion function and perform conversion from user-product ratings to user-attribute ratings.\n4. **Assert:** Verify the generated user-attribute rating matrix file exists, matrix dimensions are correct, and contains normalized attribute weights.",
+    "ScoreRuleRange": "2 points: Pre-check passes and correct user-attribute rating matrix is successfully generated. 1 point: Pre-check passes, but there are format or content errors in the matrix. 0 points: Pre-check fails or matrix conversion function doesn't work.",
+    "attributeDivideWeightWeight": 4
+  },
+  {
+    "ScorePoint": "2.2.2 UserAttributePreferenceModeling-PreferenceVectorGeneration",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"User Preference Modeling\" option in the recommendation algorithm interface?\n2. **Arrange:** Ensure user behavior data and rating data are available.\n3. **Act:** Execute the user attribute preference modeling function.\n4. **Assert:** Verify the system generates user attribute preference vector files, the vector contains preference weights for each attribute, and is viewable.",
+    "ScoreRuleRange": "2 points: Pre-check passes and a complete user attribute preference vector is generated successfully. 1 point: Pre-check passes but generated preference vector content is incomplete. 0 points: Pre-check fails or cannot generate user attribute preference vector.",
+    "attributeDivideWeightWeight": 4
+  },
+  {
+    "ScorePoint": "2.2.3 ColdStartUserProcessing-AttributeDistributionInitialization",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Cold Start Handling\" option in the user preference modeling interface?\n2. **Arrange:** Create a brand new user data (User ID not present in historical data).\n3. **Act:** Perform attribute preference modeling for this new user.\n4. **Assert:** Verify the system can automatically initialize attribute preferences for new users based on global attribute distribution, and generates a reasonable initial preference vector.",
+    "ScoreRuleRange": "2 points: Pre-check passes and successful attribute distribution initialization for new user, preference vector is reasonable. 1 point: Pre-check passes but initialization effect is unsatisfactory. 0 points: Pre-check fails or unable to handle cold start user.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.3.1 AttributeUtilityOverlayRecommendation-RecommendationExplanationFunction",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an \"Attribute Utility Overlay Recommendation\" option in the recommendation algorithm interface?\n2. **Arrange:** Prepare an existing User ID and corresponding attribute preference data.\n3. **Act:** Select the attribute utility overlay recommendation algorithm and input User ID to execute recommendation.\n4. **Assert:** Verify the output Top-N recommendation list (at least 5 products), each recommendation includes a detailed explanation: attributes hitting the user preference, utility score details, and attribute contribution.",
+    "ScoreRuleRange": "2 points: Pre-check passes and recommendation list is generated with detailed attribute contribution explanations. 1 point: Pre-check passes but recommendation explanations are not detailed enough. 0 points: Pre-check fails or recommendation function is unavailable or lacks explanations.",
+    "attributeDivideWeightWeight": 4
+  },
+  {
+    "ScorePoint": "2.3.2 LightweightNeuralNetworkRecommendation-MLPRegressorUseUse",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Neural Network Recommendation\" option in the recommendation algorithm selection interface?\n2. **Arrange:** Prepare the training dataset.\n3. **Act:** Select the neural network recommendation algorithm and observe the training output log.\n4. **Assert:** Verify the log clearly shows the use of scikit-learn MLPRegressor, training is done on CPU, and training loss and recommendation results are output.",
+    "ScoreRuleRange": "2 points: Pre-check passes and MLPRegressor is clearly used, CPU training is successful, recommendation results output. 1 point: Pre-check passes but neural network is used but implementation details are unclear. 0 points: Pre-check fails or neural network recommendation not supported.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.3.3a Collaborative FilteringRecommendation-CosineSimilarity",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Collaborative Filtering Recommendation\" option in the recommendation algorithm interface?\n2. **Arrange:** Prepare user-product rating data.\n3. **Act:** Select collaborative filtering recommendation and set similarity calculation method to cosine similarity.\n4. **Assert:** Verify the cosine similarity method works properly, generates recommendation results, and displays similar user or product information.",
+    "ScoreRuleRange": "2 points: Pre-check passes, cosine similarity is calculated correctly, and recommendation results are reasonable. 1 point: Pre-check passes, but similarity calculation has minor deviations. 0 points: Pre-check fails or cosine similarity function is unavailable.",
+    "attributeDivideWeightWeight": 1
+  },
+  {
+    "ScorePoint": "2.3.3b Collaborative FilteringRecommendation-PearsonCorrelation",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Pearson Correlation Coefficient\" option in the collaborative filtering recommendation interface?\n2. **Arrange:** Use the same test data as cosine similarity.\n3. **Act:** Set similarity calculation method to Pearson correlation coefficient.\n4. **Assert:** Verify Pearson correlation method works properly and generates recommendation results different from cosine similarity.",
+    "ScoreRuleRange": "2 points: Pre-check passes, Pearson correlation coefficient is calculated correctly, and recommendation results differ reasonably from cosine method. 1 point: Pre-check passes, but calculation accuracy is mediocre. 0 points: Pre-check fails or Pearson method is unavailable.",
+    "attributeDivideWeightWeight": 1
+  },
+  {
+    "ScorePoint": "2.3.3c Collaborative FilteringRecommendation-EuclideanDistance",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an \"Euclidean Distance\" option in the collaborative filtering recommendation interface?\n2. **Arrange:** Use the same test data.\n3. **Act:** Set similarity calculation method to Euclidean distance.\n4. **Assert:** Verify the Euclidean distance method works properly and generates recommendation results.",
+    "ScoreRuleRange": "2 points: Pre-check passes, Euclidean distance calculated correctly, and recommendation results are reasonable. 1 point: Pre-check passes, but distance calculation is biased. 0 points: Pre-check fails or Euclidean distance function is unavailable.",
+    "attributeDivideWeightWeight": 1
+  },
+  {
+    "ScorePoint": "2.3.4 SparseMatrixProcessing-OperationsReportGeneration",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Sparse Matrix Processing\" or \"Operation Report\" option in the recommendation algorithm interface?\n2. **Arrange:** Prepare sparse user-product rating data (data sparsity >80%).\n3. **Act:** Execute the recommendation algorithm using sparse data.\n4. **Assert:** Verify the system automatically outputs a sparse matrix processing report including sparsity statistics, fill rate, cold start trigger rate, and other 3 key operation indicators.",
+    "ScoreRuleRange": "2 points: Pre-check passes and report includes all 3 key indicators for complete sparse matrix processing. 1 point: Pre-check passes but report only includes 1-2 indicators. 0 points: Pre-check fails or no sparse matrix processing capability.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.4.1 JiebaSegmentation-AttributeWordRecognition",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Review Mining\" or \"Text Processing\" option in the main menu?\n2. **Arrange:** Create a text file with product reviews that contain obvious attribute words (e.g., performance, appearance, price, etc.).\n3. **Act:** Execute the review segmentation function.\n4. **Assert:** Verify jieba segmentation results are correct, attribute keywords can be recognized, and segmentation results are saved to a file.",
+    "ScoreRuleRange": "2 points: Pre-check passes and jieba segmentation is used correctly, attribute words are accurately recognized. 1 point: Pre-check passes but segmentation works but attribute recognition accuracy is low. 0 points: Pre-check fails or segmentation function is unavailable.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.4.2 SentimentAnalysis-AttributeSentimentRecognition",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Sentiment Analysis\" option in the review mining interface?\n2. **Arrange:** Prepare reviews with obvious sentiment orientation (e.g., positive review, negative review).\n3. **Act:** Execute sentiment analysis on the review data.\n4. **Assert:** Verify system can identify attribute-sentiment pairs (e.g., portability/positive, heat dissipation/negative) and uses a sentiment dictionary rather than a pre-trained model.",
+    "ScoreRuleRange": "2 points: Pre-check passes and system accurately identifies attribute-sentiment pairs using dictionary method. 1 point: Pre-check passes and sentiment analysis works but accuracy is ordinary. 0 points: Pre-check fails or no sentiment analysis function.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.4.3 ReviewWeightFusion-PreferenceDirectionEditionUpdate",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Weight Fusion\" or \"Preference Update\" option in the review mining interface?\n2. **Arrange:** Prepare review data and initial preference vector for the same user.\n3. **Act:** Execute comment weight fusion for that user.\n4. **Assert:** Verify that after fusing review analysis results, the user's attribute preference vector changes reasonably, and weight updates reflect attribute mentions and sentiment in reviews.",
+    "ScoreRuleRange": "2 points: Pre-check passes and comment fusion effect is obvious, weight update is reasonable. 1 point: Pre-check passes but fusion function effect is not obvious. 0 points: Pre-check fails or unable to perform comment weight fusion.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.4.4 RecommendationExplanation-ReviewBasedDisplay",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Does the recommendation result interface display recommendation explanation information?\n2. **Arrange:** Prepare recommendation requests for users with review data.\n3. **Act:** Generate recommendations for the user.\n4. **Assert:** Verify the recommendation results display explanations based on reviews, e.g., \"Based on your multiple mentions of certain attributes in your reviews, we recommend this product to you.\"",
+    "ScoreRuleRange": "2 points: Pre-check passes and recommendation explanations clearly cite review basis. 1 point: Pre-check passes but review-based explanations are not clear enough. 0 points: Pre-check fails or recommendation explanations lack review basis.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "2.5.1a RecommendationCalculateMethodPerformanceEvaluateTest-BasicPrecisionRecall",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an \"Experiment Evaluation\" or \"Performance Assessment\" option in the main menu?\n2. **Arrange:** Prepare test dataset and select at least 2 different recommendation algorithms.\n3. **Act:** Conduct offline algorithm evaluation.\n4. **Assert:** Verify output includes 3 core metrics: Precision, Recall, and F1-score, with specific values for each.",
+    "ScoreRuleRange": "2 points: Pre-check passes and all 3 core metrics are fully calculated and displayed. 1 point: Pre-check passes but only 2 metrics are calculated. 0 points: Pre-check fails or fewer than 2 core metrics.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "2.5.1b RecommendationCalculateMethodPerformanceEvaluateTest-CoverageDiversity",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an \"Advanced Metrics\" or \"Diversity Analysis\" option in the performance assessment interface?\n2. **Arrange:** Use the same test data and algorithms.\n3. **Act:** Calculate coverage and diversity metrics for the recommendation system.\n4. **Assert:** Verify the output includes Coverage, Recommendation Diversity, and Cold Start Hit Rate as 3 advanced metrics.",
+    "ScoreRuleRange": "2 points: Pre-check passes and all 3 advanced metrics are fully calculated and displayed. 1 point: Pre-check passes but only 1-2 advanced metrics are displayed. 0 points: Pre-check fails or no advanced assessment metrics.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "2.5.2 MatplotlibChartGeneration-FileSave",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Generate Charts\" or \"Visualization\" option in the experiment evaluation interface?\n2. **Arrange:** Ensure algorithm performance evaluation is complete and evaluation data is available.\n3. **Act:** Select to generate visualization charts for evaluation results.\n4. **Assert:** Verify clear charts (e.g., algorithm performance comparison, metric trend chart) are generated using matplotlib and automatically saved as PNG format to specified file path.",
+    "ScoreRuleRange": "2 points: Pre-check passes and clear charts are generated and correctly saved as PNG files. 1 point: Pre-check passes but charts are generated but there are format or saving issues. 0 points: Pre-check fails or no chart generation function.",
+    "attributeDivideWeightWeight": 3
+  },
+  {
+    "ScorePoint": "2.5.3 UserDecisionComplexityEvaluation-TrendProcessRecord",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a \"Decision Analysis\" or \"Process Evaluation\" option in the experiment evaluation interface?\n2. **Arrange:** Prepare a complete test scenario for the recommendation process.\n3. **Act:** Fully execute a user recommendation process (from data import to getting recommendation results).\n4. **Assert:** Verify the system records time consumed, number of steps, processing time per step, and provides a decision complexity analysis report.",
+    "ScoreRuleRange": "2 points: Pre-check passes and full decision process is recorded, along with a complexity analysis report. 1 point: Pre-check passes but only partial process information is recorded. 0 points: Pre-check fails or no decision complexity assessment function.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "2.5.4 A/BTest-CalculateMethodforBiferImplementationExperience",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there an \"A/B Test\" option in the experiment evaluation interface?\n2. **Arrange:** Select two different recommendation algorithms (e.g., collaborative filtering vs neural network).\n3. **Act:** Set up and execute the A/B comparison test.\n4. **Assert:** Verify the system can run both algorithms simultaneously and outputs comparison result tables showing differences and statistical significance for each metric.",
+    "ScoreRuleRange": "2 points: Pre-check passes and comprehensive A/B test comparison with clear results. 1 point: Pre-check passes but algorithm comparison is not clearly displayed. 0 points: Pre-check fails or no A/B test function.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "2.6.1 CoreOperationLog-CompleteEntireRecord",
+    "VerifyOfficialMethod": "1. **Arrange:** Plan a series of operations: data import, matrix transformation, recommendation algorithms, review processing.\n2. **Act:** Execute these operations sequentially.\n3. **Assert:** Check the generated log file to verify it contains detailed records of all operations: operation time, input parameters, processing result, operator user, and other 4 key information types.",
+    "ScoreRuleRange": "2 points: Log records are complete and detailed, containing all 4 key information types. 1 point: Logs exist but contain only 2-3 information types. 0 points: No operation log function or information less than 2 types.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "2.6.2 PermissionManagement-RoleBasedAccessControl",
+    "VerifyOfficialMethod": "1. **Pre-check (User Path):** Is there a user role switching or login function in the system?\n2. **Arrange:** Prepare two accounts: regular user and system administrator.\n3. **Act:** Log in to the system with both identities and test function access permissions.\n4. **Assert:** Verify that system administrators have extra permissions: model training supervision, log export, cold start process quality checks, and other 3 management functions, while regular users cannot access these functions.",
+    "ScoreRuleRange": "2 points: Pre-check passes and strict permission control, administrator has all 3 extra permissions. 1 point: Pre-check passes but administrator has only 1-2 extra permissions. 0 points: Pre-check fails or no permission management, or all users have the same permissions.",
+    "attributeDivideWeightWeight": 2
+  },
+  {
+    "ScorePoint": "3.1 AbnormalData Processing-CapacityWrongMachineControl",
+    "VerifyOfficialMethod": "1. **Arrange:** Create test data containing 4 types of anomalies: missing values, format errors, encoding issues, oversized files.\n2. **Act:** Try importing these anomaly data sequentially.\n3. **Assert:** Verify the program can gracefully handle all 4 types of anomalies, displays friendly error messages, and does not crash or show technical error stack.",
+    "ScoreRuleRange": "2 points: Gracefully handles all 4 types of anomalies, and error messages are friendly. 1 point: Can handle 3 types of anomalies but messages are not friendly enough. 0 points: Can handle fewer than 3 types of anomalies or program crashes.",
+    "attributeDivideWeightWeight": 4
+  },
+  {
+    "ScorePoint": "3.2 ConfigurationFileManagement-ParameterDriven",
+    "VerifyOfficialMethod": "1. **Arrange:** Locate the system configuration file and prepare to modify 3 key parameters: recommendation quantity, similarity threshold, learning rate.\n2. **Act:** Modify these 3 parameters in the configuration file and then restart the program.\n3. **Assert:** Verify that after modifying the configuration file, program behavior changes accordingly and all 3 parameters take effect.",
+    "ScoreRuleRange": "2 points: Supports complete configuration file management and all 3 parameter modifications are effective. 1 point: Supports configuration file but only 1-2 parameter modifications take effect. 0 points: Parameters are hardcoded, no configuration file support or no parameter effective.",
+    "attributeDivideWeightWeight": 2
+  }
+]
+```

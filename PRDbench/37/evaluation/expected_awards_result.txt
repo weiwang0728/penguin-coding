@@ -1,0 +1,3 @@
+Name,Department,Prize Name,Win Time
+Zhang San,Tech Department,Third Prize - Movie Ticket,2024-01-01 12:00:00
+Li Si,Product Department,Second Prize - Shopping Card,2024-01-01 12:01:00

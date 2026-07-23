@@ -1,0 +1,117 @@
+[
+{
+    "metric": "0.1 Program Startup & Command Line Interface",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., `python main.py` or `python -m subway_system.main`).\n2. **Assert:** Observe whether the program starts successfully and displays a clear command line interactive interface with input prompt information.",
+    "expected_output": "2 points: Program starts successfully and displays a clear interactive interface and input prompt. 1 point: Program starts but the interface prompt is not clear enough or has minor display issues. 0 points: Program fails to start or crashes immediately after startup."
+},
+{
+    "metric": "1.1 Basic Input Reception Function",
+    "description": "1. **Pre-check (User Path):** After program startup, is there a clear input prompt guiding the user on how to enter the origin and destination stations?\n2. **Arrange:** Prepare valid origin and destination station names (e.g., \"Tiananmen East\" and \"Xidan\").\n3. **Act:** Enter the origin and destination stations as prompted by the program.\n4. **Assert:** Observe whether the program can correctly receive the input without format errors.",
+    "expected_output": "2 points: Pre-check passes, and standard format station input is correctly received. 1 point: Pre-check passes, but input format requirements are too strict or prompts are unclear. 0 points: Pre-check fails, or basic station input cannot be correctly received."
+},
+{
+    "metric": "2.1 Basic Path Calculation Function",
+    "description": "1. **Arrange:** Prepare a valid pair of origin and destination stations (e.g., \"Tiananmen East\" to \"Xidan\").\n2. **Act:** Enter the origin and destination stations to trigger path calculation.\n3. **Assert:** Verify whether the program outputs a valid path with a complete sequence of stations.",
+    "expected_output": "2 points: Correct path is calculated and a complete sequence of stations is displayed (including start, end, and all intermediate stations). 1 point: Path is calculated but the station sequence is incomplete (missing 1-2 intermediate stations). 0 points: Cannot calculate a valid path or the result is obviously incorrect."
+},
+{
+    "metric": "2.2 Basic Fare Calculation Function",
+    "description": "1. **Arrange:** Prepare 3 groups of station pairs with different distances: short distance (expected 3 yuan), medium distance (expected 4-5 yuan), long distance (expected 6 yuan or more).\n2. **Act:** Query the path and fare for each group.\n3. **Assert:** Verify whether the calculated fare complies with Beijing Subway fare structure (0-6 km 3 yuan, 6-12 km 4 yuan, 12-22 km 5 yuan, 22-32 km 6 yuan).",
+    "expected_output": "2 points: All 3 test fares fully comply with the official Beijing Subway fare structure. 1 point: 2 tests are correct, 1 has a minor deviation. 0 points: 2 or more fare calculations are wrong, or fare information cannot be displayed."
+},
+{
+    "metric": "2.3 Multiple Path Query Functions",
+    "description": "1. **Pre-check (User Path):** Does the program provide multiple path query modes (shortest distance, least transfers, comprehensive optimal)?\n2. **Arrange:** Prepare a pair of stations requiring transfer, with multiple possible paths.\n3. **Act:** Test the path calculation results for different query modes.\n4. **Assert:** Verify whether different modes provide corresponding optimized path results.",
+    "expected_output": "2 points: Pre-check passes, supports shortest distance, least transfers, and comprehensive optimal modes, results meet their respective optimization goals. 1 point: Pre-check passes, supports 2 query modes, results basically correct. 0 points: Pre-check fails, or only supports a single query mode."
+},
+{
+    "metric": "2.4 Path Preference Setting Function",
+    "description": "1. **Pre-check (User Path):** Does the program support setting maximum transfer times and line preferences?\n2. **Arrange:** Prepare test case: set maximum transfers to 2, set preference for a specific line.\n3. **Act:** Perform path query under these constraints.\n4. **Assert:** Verify whether the query result complies with the set constraints.",
+    "expected_output": "2 points: Pre-check passes, supports maximum transfer limit and line preference, path calculation strictly follows constraints. 1 point: Pre-check passes, supports partial preference setting. 0 points: Pre-check fails, or does not support path preference setting."
+},
+{
+    "metric": "3.1a Path Information Display - Station Sequence",
+    "description": "1. **Act:** Perform a complete path query (e.g., \"Tiananmen East\" to \"Zhongguancun\").\n2. **Assert:** Check whether the output includes a complete list of station names, displayed in order from start to end.",
+    "expected_output": "2 points: Complete station sequence is displayed, including start, end, and all intermediate stations, order is correct. 1 point: Station sequence is displayed but missing 1-2 intermediate stations or order is wrong. 0 points: Station sequence is incomplete (missing 3 or more stations) or format is messy."
+},
+{
+    "metric": "3.1b Path Information Display - Total Distance",
+    "description": "1. **Act:** Perform a path query.\n2. **Assert:** Check whether the output includes total distance information, uses appropriate units (meters or kilometers), and clearly displays the final fare in an easy-to-read format.",
+    "expected_output": "3 points: Accurate total distance is displayed, units are reasonable (meters for short, kilometers for long), final fare is shown, format is readable. 1 point: Information is displayed but units are not reasonable or precision is problematic. 0 points: Missing information or display error."
+},
+{
+    "metric": "4.1 Input Format Validation - Semicolon-separated Format",
+    "description": "1. **Arrange:** Prepare different input formats: correct format (\"Start;End\"), incorrect formats (\"Start,End\", \"Start End\", single station, etc.).\n2. **Act:** Enter these different formats for queries.\n3. **Assert:** Verify whether the program correctly recognizes format requirements and provides appropriate prompts.",
+    "expected_output": "2 points: Strictly requires \"Start;End\" format, gives clear prompt for incorrect formats. 1 point: Basically supports semicolon separation but tolerance is too high or prompt is unclear. 0 points: Does not support specified format or lacks format validation."
+},
+{
+    "metric": "4.2 Input Validation - Invalid Station Detection",
+    "description": "1. **Arrange:** Prepare non-existent station names (e.g., \"Nonexistent Station\", \"Test Station\").\n2. **Act:** Enter queries containing invalid stations.\n3. **Assert:** Observe whether the program can recognize invalid input and give a clear error prompt, rather than crashing or giving a wrong result.",
+    "expected_output": "2 points: Accurately detects invalid stations and gives clear, specific error prompt (e.g., \"Station 'Nonexistent Station' is not in the system\"). 1 point: Detects invalid input but error prompt is too simple or unclear. 0 points: Cannot detect invalid input or program crashes."
+},
+{
+    "metric": "5.1a Transfer Information Display - Transfer Station Identification",
+    "description": "1. **Arrange:** Prepare origin and destination stations requiring transfer (e.g., \"Tiananmen East\" to \"Zhongguancun\").\n2. **Act:** Enter query and get result.\n3. **Assert:** Check whether the output clearly identifies all transfer stations and displays information about the subway lines involved.",
+    "expected_output": "4 points: Accurately identifies and clearly marks all transfer stations, clearly displays all subway line names involved in the path. 2 points: Identifies transfer stations but marking is unclear or misses 1 transfer station, line information is incomplete or unclear. 1 point: Cannot correctly identify transfer stations or misses 2 or more, lacks line info or info is wrong."
+},
+{
+    "metric": "5.2 Special Handling for Transfer Stations",
+    "description": "1. **Arrange:** Prepare path query involving complex transfer stations (large transfer stations with multiple lines).\n2. **Act:** Perform path calculation involving complex transfer stations.\n3. **Assert:** Verify whether the program can correctly handle path calculation at multi-line transfer points, including special handling of transfer time and distance.",
+    "expected_output": "2 points: Correctly handles path calculation at multi-line transfer points, transfer logic is accurate, special handling is in place. 1 point: Basically handles transfer logic but special handling is not perfect. 0 points: Cannot correctly handle complex transfer stations or transfer logic is wrong."
+},
+{
+    "metric": "6.1 Fare Calculation Boundary Handling",
+    "description": "1. **Arrange:** Prepare 4 test cases: origin-destination pairs with distances close to 6km, 12km, 22km, 32km.\n2. **Act:** Query the fare for these 4 pairs.\n3. **Assert:** Verify whether fare calculation correctly handles boundary cases and ceiling rounding logic.",
+    "expected_output": "2 points: All 4 boundary cases are handled correctly. 1 point: 3 cases correct, 1 case has deviation. 0 points: 2 or more cases are wrong, or ceiling rounding logic is not implemented."
+},
+{
+    "metric": "6.2 Extended Fare Calculation Validation",
+    "description": "1. **Arrange:** Prepare ultra-long-distance origin-destination pairs: 32-52km (expected 7 yuan), 52-72km (expected 8 yuan), etc.\n2. **Act:** Query the fare for these ultra-long-distance pairs.\n3. **Assert:** Verify whether the extended fare rule of adding 1 yuan for every 20km above 32km is correctly implemented.",
+    "expected_output": "2 points: Extended fare rule is fully correct, ultra-long distance fare calculation is accurate. 1 point: Extended fare rule is basically correct but has minor discrepancy. 0 points: Extended fare rule not implemented or calculation error."
+},
+{
+    "metric": "7.1 Continuous Query Support",
+    "description": "1. **Pre-check (User Path):** After completing a query, does the program provide an option or prompt to continue querying?\n2. **Act:** After the first query, follow the prompt to perform a second and third query.\n3. **Assert:** Verify whether continuous queries can be performed without restarting the program.",
+    "expected_output": "2 points: Pre-check passes, supports smooth continuous queries, good user experience. 1 point: Pre-check passes, supports continuous queries but operation is not smooth or prompt is unclear. 0 points: Pre-check fails, or continuous queries not supported (program exits after each query)."
+},
+{
+    "metric": "8.1 Logical Validation - Origin-Destination Same Station Detection",
+    "description": "1. **Arrange:** Prepare identical origin and destination station names (e.g., both \"Tiananmen East\").\n2. **Act:** Enter same origin and destination stations.\n3. **Assert:** Observe whether the program can detect this logical inconsistency and give an appropriate error message.",
+    "expected_output": "2 points: Accurately detects logical inconsistency and gives clear and specific error message (e.g., \"Origin station cannot be the same as destination station\"). 1 point: Detects error but error message is unclear or not specific. 0 points: Cannot detect logical inconsistency or handles it incorrectly."
+},
+{
+    "metric": "8.2 Performance Validation - Response Time",
+    "description": "1. **Arrange:** Prepare 5 groups of queries of varying complexity: short direct, medium with transfer, long with multiple transfers, etc.\n2. **Act:** Execute these queries and record response times.\n3. **Assert:** Verify whether each query's response time is within 1 second.",
+    "expected_output": "2 points: All 5 test response times are within 1 second, excellent performance. 1 point: 4 tests within 1 second, 1 slightly exceeding but within 2 seconds. 0 points: 2 or more tests exceed 1 second, performance fails to meet the requirement."
+},
+{
+    "metric": "9.1 Shortest Path Algorithm Verification",
+    "description": "1. **Arrange:** Prepare 3 origin-destination pairs with predefined optimal paths, including direct routes and routes with transfers.\n2. **Act:** Query the path for these 3 pairs.\n3. **Assert:** Verify whether the calculation result is truly the shortest path (can be judged by distance and station count).",
+    "expected_output": "2 points: All 3 tests find the shortest path, algorithm is correct. 1 point: 2 tests find shortest path, 1 is suboptimal. 0 points: 2 or more tests give non-optimal path, or algorithm implementation is incorrect."
+},
+{
+    "metric": "10.1 Data Coverage Validation",
+    "description": "1. **Arrange:** Prepare representative stations from main lines mentioned in PRD: Line 1 (Tiananmen East, Xidan), Line 2 (Chaoyangmen, Dongzhimen), Line 4 (Xidan, Zhongguancun), Line 5 (Dongdan, Yonghegong), etc.\n2. **Act:** Test whether these representative stations can be identified by the system.\n3. **Assert:** Verify whether the system contains data for these main line stations.",
+    "expected_output": "2 points: All tested main line representative stations (8 or more) are identified. 1 point: Most stations (6-7) are identified. 0 points: Fewer than 6 stations identified, data coverage is critically inadequate."
+},
+{
+    "metric": "10.2 Data Management Function Validation",
+    "description": "1. **Arrange:** Prepare data integrity verification: station data coverage, connection integrity, distance   data accuracy.\n2. **Act:** Perform data integrity verification, test data maintenance  mechanism (e.g., new line addition, station info modification).\n3. **Assert:** Verify whether data management can correctly check data integrity and support data updates.",
+    "expected_output": "2 points: Data integrity check is complete, supports data update and scalability, runs normally. 1 point: Basically supports data integrity verification, maintenance  mechanism is limited. 0 points: Data management is missing or malfunctioning."
+},
+{
+    "metric": "11.1 Result Export Function - Text Format",
+    "description": "1. **Pre-check (User Path):** Does the program provide export option or related prompt?\n2. **Act:** After path query, try to use export function.\n3. **Assert:** Verify whether query results can be exported successfully, and check the format and content integrity of the export file.",
+    "expected_output": "2 points: Pre-check passes, export is supported, content is complete and accurate (includes path, distance, fare, etc.). 1 point: Pre-check passes, basic export supported but content is limited or format is simple. 0 points: Pre-check fails, or export not supported."
+},
+{
+    "metric": "11.2 Multi-format Export Support",
+    "description": "1. **Pre-check (User Path):** Does the program support multiple export formats (e.g., text and JSON)?\n2. **Act:** Try exporting to different formats (text and JSON).\n3. **Assert:** Verify whether export to multiple formats is successful, and check structure and content integrity of each format.",
+    "expected_output": "2 points: Pre-check passes, supports multiple export formats, JSON is well-structured. 1 point: Pre-check passes, supports multiple formats but structure is limited. 0 points: Pre-check fails, or only single format supported."
+},
+{
+    "metric": "12.1 Estimated Time Calculation Function",
+    "description": "1. **Act:** Perform a path query.\n2. **Assert:** Check whether the query result includes estimated travel time information, and verify the reasonableness of the estimation (based on distance and number of transfers, usually 1-2 minutes per km, each transfer adds 2-3 minutes).",
+    "expected_output": "2 points: Provides reasonable time estimation, considers distance and transfers, estimate is within reasonable range. 1 point: Provides time estimation but accuracy is limited or calculation logic is simple. 0 points: No time estimation function."
+}
+]

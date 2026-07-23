@@ -1,0 +1,172 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu",
+    "description": "1. **Act:** Run the program start command `python src/main.py --help` in the shell.\n2. **Assert:** Observe whether the program starts successfully and displays a clear main menu or help information.",
+    "expected_output": "2 points: The program starts successfully and displays a clear main menu or help information. 1 point: The program starts, but the menu or help information is unclear, incomplete, or contains garbled characters. 0 points: The program cannot start or crashes immediately after starting."
+  },
+  {
+    "metric": "1.1 Scale Management Module Entry",
+    "description": "1. **Act:** Execute the command `python src/main.py scales --help`.\n2. **Assert:** Check if the program can successfully display the scale management subcommands, including options such as list, show, import-csv, export, etc.",
+    "expected_output": "2 points: Successfully displays the scale management subcommands help information with clear and complete options. 1 point: Help information is displayed, but some options are unclear or functions are incomplete. 0 points: Unable to display scale management help information."
+  },
+  {
+    "metric": "1.2 Data Management Module Entry",
+    "description": "1. **Act:** Execute the command `python src/main.py data --help`.\n2. **Assert:** Check if the program can successfully display the data management subcommands, including options such as import-participants, import-responses, summary, check, etc.",
+    "expected_output": "2 points: Successfully displays the data management subcommands help information with clear and complete options. 1 point: Help information is displayed, but some options are unclear or functions are incomplete. 0 points: Unable to display data management help information."
+  },
+  {
+    "metric": "1.3 Analysis Module Entry",
+    "description": "1. **Act:** Execute the command `python src/main.py analysis --help`.\n2. **Assert:** Check if the program can successfully display the analysis subcommands, including options such as descriptive, reliability, factor, correlation, group-comparison, etc.",
+    "expected_output": "2 points: Successfully displays the analysis subcommands help information with clear and complete options. 1 point: Help information is displayed, but some options are unclear or functions are incomplete. 0 points: Unable to display analysis help information."
+  },
+  {
+    "metric": "1.4 Reports and Export Module Entry",
+    "description": "1. **Act:** Execute the command.\n2. **Assert:** Check if the program can successfully display the report generation and visualization subcommands, including options such as comprehensive, descriptive, correlation, etc.",
+    "expected_output": "2 points: Successfully displays the report and visualization subcommands help information with clear and complete options. 1 point: Help information is displayed, but some options are unclear or functions are incomplete. 0 points: Unable to display report export help information."
+  },
+  {
+    "metric": "2.1.1a Scale Creation - Basic Information Definition",
+    "description": "1. **Arrange:** Prepare a scale name (such as \"Test Scale\") and description.\n2. **Act:** Use the interactive creation command and unit tests to verify the basic information creation function for the scale.\n3. **Assert:** Observe if the program accepts the input and successfully creates a new empty scale. The interactive command displays a creation success message, and the new scale appears in the scale list.",
+    "expected_output": "2 points: Both the interactive command and unit tests pass, successfully creating a scale and displaying it in the list. 1 point: Some tests pass or feedback is unclear. 0 points: Test fails."
+  },
+  {
+    "metric": "2.1.1b Scale Creation - Item and Dimension Definition",
+    "description": "1. **Arrange:** Prepare at least 2 item contents, associated dimensions, and scoring methods.\n2. **Act:** Use the interactive creation command to verify the function of defining items and dimensions.\n3. **Assert:** Check whether the program successfully saves the item information. The interactive command displays \"Scale created successfully\", and the scale details include all items and dimensions.",
+    "expected_output": "2 points: The interactive command successfully creates a scale containing at least 2 items. The item information is complete and saved correctly. 1 point: Some items are saved successfully or information is incorrect. 0 points: Unable to create a scale with items."
+  },
+  {
+    "metric": "2.1.2a Scale Import (CSV)",
+    "description": "1. **Arrange:** Prepare a scale CSV file that meets the specification.\n2. **Act:** Execute the command.\n3. **Assert:** Check if the program can successfully read and load the scale from the file, and whether the scale structure and content match the file.",
+    "expected_output": "2 points: Successfully imports the CSV file and loads the scale correctly. 1 point: Errors occur during import or the loaded content is incorrect. 0 points: Unable to import CSV format file."
+  },
+  {
+    "metric": "2.1.2b Scale Import (JSON)",
+    "description": "1. **Arrange:** Prepare a scale JSON file that meets the specification.\n2. **Act:** Import the JSON file using a shell command.\n3. **Assert:** Check if the program can successfully read and load the scale from the file, display a success message for the import, and show the imported scale in the scale list.",
+    "expected_output": "2 points: Successfully imports the JSON file and loads the scale correctly. The structure and content match the file. 1 point: Errors occur during import or the loaded content is incorrect. 0 points: Unable to import JSON format file."
+  },
+  {
+    "metric": "2.1.2c Scale Export (CSV)",
+    "description": "1. **Arrange:** Ensure there is a scale to be exported.\n2. **Act:** Execute the command.\n3. **Assert:** Check if a CSV file is generated at the specified path, and whether the file content matches the exported scale.",
+    "expected_output": "2 points: Successfully exports the scale as a CSV file with correct content. 1 point: Errors occur during export or the file content is incorrect. 0 points: Unable to export as CSV format."
+  },
+  {
+    "metric": "2.1.2d Scale Export (JSON)",
+    "description": "1. **Arrange:** Ensure there is a scale to be exported.\n2. **Act:** Execute the command.\n3. **Assert:** Check if a JSON file is generated at the specified path, and whether the file content matches the exported scale.",
+    "expected_output": "2 points: Successfully exports the scale as a JSON file with correct content. 1 point: Errors occur during export or file content is incorrect. 0 points: Not supported to export as JSON format."
+  },
+  {
+    "metric": "2.1.3a Exploratory Factor Analysis (EFA) - KMO and Bartlett Test",
+    "description": "1. **Arrange:** Prepare a CSV file containing data for several scale items and import it successfully.\n2. **Act:** Execute the command and select a scale for factor analysis.\n3. **Assert:** Check if the output includes the KMO value (should be a number between 0 and 1) and the significance (p value) of Bartlett's test.",
+    "expected_output": "2 points: Successfully performs analysis and outputs KMO value and Bartlett p value. 1 point: Output is incomplete or format is not standard. 0 points: Unable to perform KMO and Bartlett test."
+  },
+  {
+    "metric": "2.1.3b Exploratory Factor Analysis (EFA) - Principal Component Analysis and Rotation",
+    "description": "1. **Arrange:** Ensure the scale with data has been loaded.\n2. **Act:** Execute the command to perform principal component analysis.\n3. **Assert:** Check if the output includes the factor loading matrix and the variance explained by each factor.",
+    "expected_output": "2 points: Successfully performs principal component analysis with output of factor loading matrix and variance explained. 1 point: Only part of the analysis is performed or output is incomplete. 0 points: Principal component analysis is not supported."
+  },
+  {
+    "metric": "2.1.4a Reliability and Validity Test - Cronbach's Alpha Coefficient",
+    "description": "1. **Arrange:** Ensure the scale with data has been loaded.\n2. **Act:** Execute the command.\n3. **Assert:** Check whether the output includes the value of Cronbach's alpha (should be a number between 0 and 1).",
+    "expected_output": "2 points: Successfully calculates and outputs Cronbach's alpha. 1 point: The output format is not standard or lacks other related indicators. 0 points: Unable to calculate Cronbach's alpha."
+  },
+  {
+    "metric": "2.1.4b Reliability Test - Item Deletion Recommendations",
+    "description": "1. **Arrange:** Ensure that the reliability calculation has been completed successfully.\n2. **Act:** Execute the command and view the detailed reliability analysis report.\n3. **Assert:** Check whether the report contains recommendations or similar metrics for the change in alpha value after each item is deleted.",
+    "expected_output": "2 points: The report clearly includes the change in alpha value or clear recommendations after each item is deleted. 1 point: Related metrics are present but not clear or incomplete. 0 points: No item deletion recommendations in the report."
+  },
+  {
+    "metric": "2.2.1a Data Collection - Participant Information Import",
+    "description": "1. **Arrange:** Prepare a CSV file containing participant information (e.g., ID, name, grade, gender).\n2. **Act:** Execute the command.\n3. **Assert:** Observe whether the program successfully reads and stores the participant information.",
+    "expected_output": "2 points: Successfully imports the participant information CSV file and stores it correctly. 1 point: Errors occur during import or stored information is incorrect. 0 points: Unable to import participant information."
+  },
+  {
+    "metric": "2.2.1b Data Collection - Response Data Import",
+    "description": "1. **Arrange:** Prepare a CSV file containing scale response data and ensure that the corresponding participant information has been imported.\n2. **Act:** Execute the command.\n3. **Assert:** Observe whether the program successfully reads and links the response data to the participant information.",
+    "expected_output": "2 points: Successfully imports the response data CSV file and links it correctly to participants. 1 point: Errors occur during import or linkage is incorrect. 0 points: Unable to import response data."
+  },
+  {
+    "metric": "2.2.2 Data Anomaly Detection",
+    "description": "1. **Arrange:** Prepare a response CSV file containing abnormal data and import it successfully.\n2. **Act:** Execute the command.\n3. **Assert:** Check whether the validation report output clearly points out the participant IDs or data rows with anomalies and specifies the type of anomaly.",
+    "expected_output": "2 points: Accurately identifies data anomalies and clearly reports them. 1 point: Partially identifies anomalies or the report is unclear. 0 points: Unable to identify any data anomaly."
+  },
+  {
+    "metric": "2.2.3 Data Grouping",
+    "description": "1. **Arrange:** Ensure participant data containing grouping fields such as grade, gender, etc. has been imported.\n2. **Act:** Execute the command to perform grouped analysis by \"gender\".\n3. **Assert:** Check whether the system successfully performs group analysis by the specified field and outputs the statistics for each group.",
+    "expected_output": "2 points: Successfully performs group analysis according to the specified field. 1 point: The grouping function is limited or the results are unclear. 0 points: Unable to perform grouped data analysis."
+  },
+  {
+    "metric": "2.3.1a Basic Characteristic Analysis",
+    "description": "1. **Arrange:** Ensure that the dataset has been imported.\n2. **Act:** Execute the command to perform descriptive statistical analysis on a scale.\n3. **Assert:** Check if the output contains at least 5 descriptive statistical indicators such as mean, standard deviation, quantiles, etc.",
+    "expected_output": "2 points: Generates a complete report containing at least 5 indicators such as mean, standard deviation, quantiles, etc. 1 point: Fewer than 5 indicators generated or the report format is unclear. 0 points: Unable to generate descriptive statistics."
+  },
+  {
+    "metric": "2.3.1b Basic Characteristic Analysis - Chart Visualization",
+    "description": "1. **Arrange:** Ensure that the dataset has been imported.\n2. **Act:** Use the shell command to generate a descriptive statistics chart.\n3. **Assert:** Check whether a descriptive statistics chart file (such as PNG) has been successfully generated, and a Python validation script confirms that the file exists and its size is greater than 0 bytes.",
+    "expected_output": "2 points: Successfully generates a clear descriptive statistics chart file and the validation script confirms file validity. 1 point: The generated chart is of poor quality or validation fails partially. 0 points: Unable to generate chart file."
+  },
+  {
+    "metric": "2.3.2a Group Difference Analysis - t-test",
+    "description": "1. **Arrange:** Ensure the dataset has been imported and divided by binary grouping (e.g., gender).\n2. **Act:** Execute the command to perform group difference analysis.\n3. **Assert:** Check whether the output contains means for the two groups, t value, degrees of freedom, and p value.",
+    "expected_output": "2 points: Correctly performs independent sample t-test and outputs group means, t value, df, and p value. 1 point: Output is incomplete or format is not standard. 0 points: Unable to perform t-test."
+  },
+  {
+    "metric": "2.3.2b Group Difference Analysis - ANOVA",
+    "description": "1. **Arrange:** Ensure the dataset has been imported and divided by multiple groups (e.g., grade).\n2. **Act:** Execute the command to perform ANOVA.\n3. **Assert:** Check whether the output contains F value and p value.",
+    "expected_output": "2 points: Correctly performs ANOVA and outputs F value and p value. 1 point: Output is incomplete or format is not standard. 0 points: Unable to perform ANOVA."
+  },
+  {
+    "metric": "2.3.3 Trend Analysis",
+    "description": "1. **Arrange:** Ensure that the dataset containing multiple ordered groups (e.g., grade 1, 2, 3, 4) has been imported.\n2. **Act:** Execute the command to perform trend analysis.\n3. **Assert:** Check whether the output contains regression slope, significance p value, and trend fitting statistics.",
+    "expected_output": "2 points: Correctly performs trend analysis and outputs regression slope, significance, and fitting statistics. 1 point: Results are incomplete. 0 points: Unable to perform trend analysis."
+  },
+  {
+    "metric": "2.4.1a Correlation Analysis - Correlation Coefficient Matrix",
+    "description": "1. **Arrange:** Ensure that the dataset has been imported.\n2. **Act:** Execute the command and select multiple scales for correlation analysis.\n3. **Assert:** Check whether the output contains a readable correlation coefficient matrix table (such as Pearson correlation coefficients).",
+    "expected_output": "2 points: Generates a complete and correctly formatted multivariate correlation coefficient matrix table. 1 point: The matrix table is incomplete or format is incorrect. 0 points: Unable to generate correlation coefficient matrix."
+  },
+  {
+    "metric": "2.4.1b Correlation Analysis - Heatmap Visualization",
+    "description": "1. **Arrange:** Ensure that the correlation coefficient matrix has been successfully computed.\n2. **Act:** Use shell command to generate a correlation analysis heatmap.\n3. **Assert:** Check whether a heatmap file (such as PNG) has been successfully generated, and a Python validation script confirms that at least 1 correlation chart file was generated and its size is greater than 0 bytes.",
+    "expected_output": "2 points: Successfully generates the clear correlation heatmap file, and the validation script confirms the file is valid. 1 point: Chart generation failed or validation fails partially. 0 points: Unable to generate a heatmap."
+  },
+  {
+    "metric": "2.4.2 Regression and Prediction Analysis",
+    "description": "1. **Arrange:** Ensure that the dataset has been imported.\n2. **Act:** Execute the command to conduct multiple regression analysis.\n3. **Assert:** Check whether the output includes standardized regression coefficients for each independent variable and corresponding p values.",
+    "expected_output": "2 points: Correctly conducts multiple linear regression analysis, outputting standardized coefficients and p values. 1 point: Results are incomplete or model is limited in definition. 0 points: Unable to perform regression analysis."
+  },
+  {
+    "metric": "2.4.3a Path Analysis - Model Setup and Execution",
+    "description": "1. **Arrange:** Ensure that the dataset has been imported.\n2. **Act:** Run unit tests to validate the path analysis feature.\n3. **Assert:** Check whether the tests pass and verify that the analysis can be started and completed successfully.",
+    "expected_output": "2 points: Unit tests pass and path model analysis is executed successfully. 1 point: Some tests pass or execution is unstable. 0 points: Unit tests fail."
+  },
+  {
+    "metric": "2.4.3b Path Analysis - Result Output and Visualization",
+    "description": "1. **Arrange:** Ensure that path analysis has been successfully completed.\n2. **Act:** View the path analysis results output.\n3. **Assert:** Check whether the results include the path coefficient table, effect decomposition, path diagram, and model fit indices.",
+    "expected_output": "2 points: Results fully include path coefficient table, effect decomposition, path diagram, and fit indices. 1 point: Some output content is missing. 0 points: Results output is seriously incomplete."
+  },
+  {
+    "metric": "2.5.1 Intelligent Report Generation",
+    "description": "1. **Arrange:** Ensure a series of analyses (such as descriptive statistics, factor analysis, correlation analysis) have been completed.\n2. **Act:** Execute the command.\n3. **Assert:** Check whether a report file (such as HTML, JSON, Markdown) is successfully generated. The report content should integrate sample description, main analysis results, and brief interpretation.",
+    "expected_output": "2 points: Generates a comprehensive and well-structured integrated analysis report. 1 point: The report is missing a lot of content or has unclear formatting. 0 points: Unable to export the integrated report."
+  },
+  {
+    "metric": "2.5.2a Chart Export (PNG)",
+    "description": "1. **Arrange:** Ensure a chart is available for export.\n2. **Act:** Use shell commands to generate a PNG format chart.\n3. **Assert:** Check whether a PNG file is generated at the specified path. A Python validation script confirms that at least one PNG chart file has been generated and its size is greater than 0 bytes.",
+    "expected_output": "2 points: Successfully generates a clear PNG chart file, and the validation script confirms the file is valid. 1 point: The exported PNG file is unclear or validation fails partially. 0 points: PNG format chart generation is not supported."
+  },
+  {
+    "metric": "2.5.2b Chart Export (PDF)",
+    "description": "1. **Arrange:** Ensure a chart is available for export.\n2. **Act:** Use shell commands to export the chart in PDF format.\n3. **Assert:** Check whether a PDF file is generated at the specified path. A Python validation script confirms the PDF file exists and its size is greater than 0 bytes.",
+    "expected_output": "2 points: Successfully exports the chart as a clear PDF file, and a validation script confirms the file is valid. 1 point: Errors occur during export or validation fails partially. 0 points: Unable to export as PDF format."
+  },
+  {
+    "metric": "2.5.2c Chart Export (SVG)",
+    "description": "1. **Arrange:** Ensure a chart is available for export.\n2. **Act:** Use shell commands to export the chart in SVG format.\n3. **Assert:** Check whether an SVG file is generated at the specified path. A Python validation script confirms the SVG file exists, size is greater than 0 bytes, and contains valid SVG tags.",
+    "expected_output": "2 points: Successfully exports the chart as a valid SVG file, and a validation script confirms the file format is correct. 1 point: Errors occur during export or validation fails partially. 0 points: Unable to export as SVG format."
+  },
+  {
+    "metric": "2.5.2d Data Export (CSV)",
+    "description": "1. **Arrange:** Ensure data (such as participant data, analysis results) has been imported or generated.\n2. **Act:** Use shell commands to export the data as CSV format.\n3. **Assert:** Check whether a CSV file is generated at the specified path. A Python validation script confirms that both response data and participant data files exist and their sizes are greater than 0 bytes, displaying 'CSV export test: PASSED'.",
+    "expected_output": "2 points: Successfully exports data as structurally correct CSV file. Validation script shows test passed. 1 point: Errors occur during export or validation fails partially. 0 points: Unable to export as CSV format."
+  }
+]

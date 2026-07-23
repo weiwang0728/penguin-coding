@@ -1,0 +1,6 @@
+name,category,unit,purchase_price,stock_quantity,processing_loss_rate
+potato,vegetable,kg,5.5,100,10
+chicken_breast,protein,kg,15,50,5
+wuchang_rice,staple,kg,8,200,0
+broccoli,vegetable,kg,12.5,30,15
+egg,protein,individual,1.2,300,2

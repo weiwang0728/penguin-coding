@@ -1,0 +1,7 @@
+item_number,content,dimension,is_reverse
+1,I can concentrate on studying for extended periods of time,Attention Sustaining,False
+2,I am easily distracted when studying,Attention Focusing,True
+3,I can control my attention,Attention Control,False
+4,My attention often wanders,Attention Focusing,True
+5,I can consciously regulate my attention,Attention Control,False
+6,I can stay focused in noisy environments,Attention Sustaining,False

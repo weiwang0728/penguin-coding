@@ -1,0 +1,5 @@
+{
+  "MeanRank": "PLACEHOLDER_FLOAT",
+  "Hit@10": "PLACEHOLDER_FLOAT",
+  "test_samples": "PLACEHOLDER_INT"
+}

@@ -1,0 +1,528 @@
+[
+  {
+    "metric": "1.1 System Startup and Environment Configuration",
+    "description": "1. **Execute (Act):** In the shell, execute the command to start the recommendation system (e.g., `python main.py` or `python -m recommendation_system`).\n2. **Assert (Assert):** Observe whether the program starts successfully and displays a clear main menu or status information with at least three actionable options (e.g., 'Data Preprocessing', 'Model Training', 'Recommendation Service').",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/1.1_system_startup_improved.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The terminal should display the recommendation system main menu with multiple actionable options, and the menu format is clear."
+  },
+  {
+    "metric": "2.1.1a Data Collection - JSON Format Support",
+    "description": "1. **Pre-validation (User Path):** Does the system provide an entry for data import or data collection function?\n2. **Prepare (Arrange):** Prepare a valid JSON file containing user, item, and behavioral data (including at least 10 user records, 20 item records, and 50 interaction records).\n3. **Execute (Act):** Import the prepared JSON data file through the system interface or functional module.\n4. **Assert (Assert):** Observe whether the JSON data is successfully parsed and loaded by the system without format error.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.1a_data_json_import_fixed.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/sample_data.json"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The terminal displays the CLI interface startup, enters the data management menu, chooses to load external data, the system prompts for data file path input, successfully parses and loads JSON data (10 user records, 20 item records, 50 interaction records), without format error, finally returns to the main menu."
+  },
+  {
+    "metric": "2.1.1b Data Collection - CSV Format Support",
+    "description": "1. **Pre-validation (User Path):** Is there a CSV format option in the data format selection?\n2. **Prepare (Arrange):** Prepare a valid CSV file containing user, item, and behavioral data (including at least 10 user records, 20 item records, and 50 interaction records).\n3. **Execute (Act):** Choose the CSV format and import the data file.\n4. **Assert (Assert):** Observe whether the system can successfully parse the CSV file and correctly identify the field types (numerical, text, date).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.1.1b_data_csv_import_fixed.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/users_sample.csv",
+      "evaluation/items_sample.csv",
+      "evaluation/interactions_sample.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The terminal displays the CLI interface startup, enters the data management menu, chooses to load external data, the system prompts sequentially for CSV file paths, successfully parses CSV files and correctly identifies field types (numerical, text, date), finally returns to the main menu."
+  },
+  {
+    "metric": "2.1.2a Data Cleaning - Outlier Detection",
+    "description": "1. **Prepare (Arrange):** Prepare test data containing obvious outliers (e.g., negative price, age value exceeding 200, abnormal rating over 5, with at least 5 different types of outliers).\n2. **Execute (Act):** Run the outlier detection function of the data cleaning module.\n3. **Assert (Assert):** Verify whether the system can identify and mark or handle outliers, outputting a detailed cleaning report with outlier types, counts, and handling methods.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_outlier_detection.py::TestOutlierDetection::test_outlier_detection -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the outlier detection function can identify outliers in the test data, the number of outliers is reduced after processing, data rationality is ensured (age ≥ 0, price ≥ 0, rating within reasonable range)."
+  },
+  {
+    "metric": "2.1.2b Data Cleaning - Missing Value Handling",
+    "description": "1. **Prepare (Arrange):** Prepare a test dataset containing missing values (missing rates of 10%, 30%, and 50% in different fields).\n2. **Execute (Act):** Run the missing value handling function.\n3. **Assert (Assert):** Verify whether the system provides multiple missing value handling strategies (e.g., deletion, mean filling, median filling, interpolation) and can execute correctly.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_missing_value_handling.py::TestMissingValueHandling::test_missing_value_handling -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the missing value handling function provides multiple handling strategies and can correctly process data with different missing rates, returning a complete dataset after processing."
+  },
+  {
+    "metric": "2.1.2c Chinese Text Segmentation",
+    "description": "1. **Prepare (Arrange):** Prepare test data containing Chinese product titles and descriptions (at least 50 Chinese text samples, containing vocabulary from different domains).\n2. **Execute (Act):** Run the Chinese text segmentation function of the text preprocessing module.\n3. **Assert (Assert):** Verify whether the system can correctly segment Chinese text, generating word vectors or features, segmentation accuracy should be ≥ 50%.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_chinese_text_segmentation.py::TestChineseTextSegmentation::test_chinese_text_segmentation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the Chinese text segmentation function can correctly process Chinese text and generate reasonable segmentation results and feature vectors."
+  },
+  {
+    "metric": "2.1.2d Data Normalization and Encoding",
+    "description": "1. **Prepare (Arrange):** Prepare raw data containing different types of features (5 numerical fields, 3 categorical fields, 2 text fields).\n2. **Execute (Act):** Run the data normalization and encoding function of data preprocessing.\n3. **Assert (Assert):** Verify whether numerical features are correctly normalized (range [0,1] or standardized) and categorical features are appropriately encoded (e.g., one-hot encoding, label encoding).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_data_normalization_encoding.py::TestDataNormalizationEncoding::test_data_normalization_encoding -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the normalization and encoding functions can correctly identify feature types and apply appropriate preprocessing methods."
+  },
+  {
+    "metric": "2.2.1a Content-Based Recommendation - TF-IDF Implementation",
+    "description": "1. **Prepare (Arrange):** Prepare a dataset containing product textual descriptions (at least 100 products, each product description ≥ 50 words).\n2. **Execute (Act):** Run the content-based recommendation algorithm, selecting the TF-IDF feature extraction method.\n3. **Assert (Assert):** Verify whether the system can generate a TF-IDF feature matrix and use it to calculate product similarity, ensuring the similarity matrix dimensions are correct.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_tfidf_implementation.py::TestTFIDFImplementation::test_tfidf_implementation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the TF-IDF feature extraction can generate a feature matrix with correct dimensions, and the similarity calculation results are reasonable."
+  },
+  {
+    "metric": "2.2.1b Content-Based Recommendation - Word2Vec or Embedding Support",
+    "description": "1. **Pre-validation (User Path):** Is there a Word2Vec or Embedding option in the content recommendation algorithm selection?\n2. **Prepare (Arrange):** Prepare text data for training the word vector model (at least 1000 documents).\n3. **Execute (Act):** Choose the Word2Vec or Embedding method for feature extraction.\n4. **Assert (Assert):** Verify whether the system can train or load a word vector model, generate vector representations of products, ensuring vector dimensions are ≥ 100.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_word2vec_embedding.py::TestWord2VecEmbedding::test_word2vec_training -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, Word2Vec word vector training should successfully train the word vector model, generating vector representations of products with dimensions ≥ 100, vocabulary coverage ≥ 60%, and verifying the functionality of semantic similarity calculation."
+  },
+  {
+    "metric": "2.2.1c Content-Based Recommendation - Similarity Threshold Configuration",
+    "description": "1. **Execute (Act):** Set different similarity thresholds in the content recommendation configuration (test 0.3, 0.5, 0.7, 0.9 four thresholds).\n2. **Assert (Assert):** Verify whether the system returns different numbers of recommendation results according to different thresholds, with fewer recommendations as the threshold increases.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_content_based_similarity_threshold.py::TestSimilarityThreshold::test_similarity_threshold_configuration -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the content recommendation algorithm can successfully set different similarity thresholds (0.3, 0.5, 0.7, 0.9), returning different numbers of recommendation results for each threshold, verifying the fewer recommendations as the threshold increases."
+  },
+  {
+    "metric": "2.2.2a Collaborative Filtering - User-Based Collaborative Filtering (UserCF)",
+    "description": "1. **Prepare (Arrange):** Prepare a dataset containing user-item interaction data (at least 50 users, 100 items, and 500 interaction records).\n2. **Execute (Act):** Run the user-based collaborative filtering algorithm.\n3. **Assert (Assert):** Verify whether the system can calculate the user similarity matrix and make recommendations based on similar users' behaviors, using cosine similarity or Pearson correlation coefficient.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_user_collaborative_filtering.py::TestUserCollaborativeFiltering::test_user_cf_training -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, user-based collaborative filtering should generate a user similarity matrix with correct dimensions, use cosine similarity calculations to provide personalized recommendations for users, supporting cold start processing."
+  },
+  {
+    "metric": "2.2.2b Collaborative Filtering - Item-Based Collaborative Filtering (ItemCF)",
+    "description": "1. **Prepare (Arrange):** Prepare user-item interaction data (at least 50 users, 100 items, and 500 interaction records).\n2. **Execute (Act):** Run the item-based collaborative filtering algorithm.\n3. **Assert (Assert):** Verify whether the system can calculate the item similarity matrix, recommending items similar to users' historical behaviors with a similarity matrix dimension of 100×100.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_item_collaborative_filtering.py::TestItemCollaborativeFiltering::test_item_cf_training -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, item-based collaborative filtering should generate an item similarity matrix with correct dimensions, recommending items similar to users' historical behaviors, supporting similar item recommendations and cold start processing."
+  },
+  {
+    "metric": "2.2.2c Matrix Factorization Algorithm - SVD or ALS Implementation",
+    "description": "1. **Pre-validation (User Path):** Does the system provide matrix factorization algorithm options (SVD or ALS)?\n2. **Prepare (Arrange):** Prepare a sparse user-item rating matrix (sparsity ≥ 90%).\n3. **Execute (Act):** Select and run the matrix factorization algorithm for collaborative filtering.\n4. **Assert (Assert):** Verify whether the algorithm can handle sparse data and generate latent feature vectors for users and items, with a configurable number of latent factors (default ≥ 50).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_matrix_factorization.py::TestMatrixFactorization::test_matrix_factorization_training -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, matrix factorization algorithm should handle data with sparsity ≥ 90%, generate latent feature vectors for users and items, with the number of latent factors ≥ 50, RMSE and MAE within reasonable range."
+  },
+  {
+    "metric": "2.2.3a Hybrid Recommendation - Overall Hybrid Strategy",
+    "description": "1. **Execute (Act):** Configure and run the overall hybrid recommendation, combining ≥ 3 recommendation algorithms (e.g., content recommendation + UserCF + ItemCF).\n2. **Assert (Assert):** Verify whether the system can blend scores from multiple algorithms, support custom weight allocation (weights sum to 1.0), and the final score is a weighted average.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_hybrid_recommender.py::TestHybridRecommender::test_weighted_hybrid_strategy -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the overall hybrid recommendation should combine ≥ 3 recommendation algorithms, support custom weight allocation (weights sum to 1.0), and the final score is a weighted average, with recommendations sorted in descending order by score."
+  },
+  {
+    "metric": "2.2.3b Hybrid Recommendation - Parallel Hybrid Strategy",
+    "description": "1. **Execute (Act):** Configure parallel hybrid recommendation, allowing ≥ 3 algorithms to generate candidate sets in parallel (each algorithm generates top-20 results).\n2. **Assert (Assert):** Verify whether the system can merge result sets from multiple algorithms, perform deduplication and sorting, and finally output a unified recommendation list.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_hybrid_recommender.py::TestHybridRecommender::test_parallel_hybrid_strategy -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, parallel hybrid recommendation should allow ≥ 3 algorithms to generate candidate sets in parallel, merge result sets from multiple algorithms, perform deduplication and sorting, and finally output a unified recommendation list."
+  },
+  {
+    "metric": "2.2.3c Hybrid Recommendation - Pipeline Hybrid Strategy",
+    "description": "1. **Execute (Act):** Configure pipeline hybrid recommendation, setting ≥ 3 stages for the recommendation process (e.g., content recall → collaborative filtering shuffle → diversity optimization).\n2. **Assert (Assert):** Verify whether the system can execute multiple recommendation stages sequentially, with the output of each stage serving as the input for the next stage.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_hybrid_recommender.py::TestHybridRecommender::test_pipeline_hybrid_strategy -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, pipeline hybrid recommendation should set ≥ 3 stages for the recommendation process (content recall → collaborative filtering shuffle → diversity optimization), executing multiple recommendation stages sequentially."
+  },
+  {
+    "metric": "2.2.4a Cold Start Handling - New User Recommendation",
+    "description": "1. **Prepare (Arrange):** Simulate a new user scenario (the user ID is not in the historical interaction data but has basic attribute information like age, gender, region).\n2. **Execute (Act):** Request recommendation results for the new user.\n3. **Assert (Assert):** Verify whether the system can provide ≥ 10 reasonable recommendations for the new user based on user attributes or popular items.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.2.4a_cold_start_new_user.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The terminal should display the CLI interface startup, enter the recommendation function menu, select the function to generate recommendations for the user, prompt for user ID input (simulate new user 9999) and recommendation quantity (10), generate simulated recommendation results, and display new user recommendations based on popular items."
+  },
+  {
+    "metric": "2.2.4b Cold Start Handling - New Item Recommendation",
+    "description": "1. **Prepare (Arrange):** Add new item data (item ID is not in the historical interaction data but has content description, category, price, and other attributes).\n2. **Execute (Act):** Run the recommendation algorithm.\n3. **Assert (Assert):** Verify whether the new item can be recommended to ≥ 5 suitable users through content features or item attributes.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_cold_start_new_item.py::TestColdStartNewItem::test_new_item_recommendation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, after adding new item data (item ID not in historical interaction data but has content description, category, price, and other attributes), run the recommendation algorithm, verify that the new item can be recommended to ≥ 5 suitable users, with at least 10% of recommendations based on content matching."
+  },
+  {
+    "metric": "2.2.4c Long Tail Problem Handling - Diversity Enhancement",
+    "description": "1. **Prepare (Arrange):** Prepare a dataset containing popular items (interaction times ≥ 100) and long tail items (interaction times ≤ 10).\n2. **Execute (Act):** Configure diversity parameters of the recommendation algorithm.\n3. **Assert (Assert):** Verify that the proportion of long tail items in the recommendation results ≥ 30%, not just popular items.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_long_tail_diversity.py::TestLongTailDiversity::test_diversity_improvement -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, prepare a dataset containing popular items (interaction times ≥ 100) and long tail items (interaction times ≤ 10), configure diversity parameters of the recommendation algorithm, verify that the proportion of long tail items in the recommendation results ≥ 30%."
+  },
+  {
+    "metric": "2.3.2a Health Check API - System Status Check",
+    "description": "1. **Execute (Act):** Send a GET request to the `/health` endpoint.\n2. **Assert (Assert):** Verify whether the endpoint returns system health status information, including service running status, database connection status, memory usage rate, model loading status, etc., ≥ 4 indicators.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_api_health_check.py::TestAPIHealthCheck::test_health_endpoint -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, after sending a GET request to the /health endpoint, verify the interface returns system health status information, including service running status, database connection status, memory usage rate, model loading status, etc., ≥ 4 indicators."
+  },
+  {
+    "metric": "2.3.2b Monitoring Metrics Recording",
+    "description": "1. **Execute (Act):** After calling the recommendation API multiple times (≥ 20 times), check the system log or monitoring interface.\n2. **Assert (Assert):** Verify whether the system records key metrics such as interface call volume, average response time, recommendation hit rate, algorithm performance, etc., ≥ 5 key indicators.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_api_monitoring.py::TestAPIMonitoring::test_monitoring_metrics -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, after calling the recommendation API multiple times (≥ 20 times), check the system log or monitoring interface, verify that the system records key metrics such as interface call volume, average response time, recommendation hit rate, algorithm performance, etc., ≥ 5 key monitoring indicators."
+  },
+  {
+    "metric": "2.4.1a Recommendation Effect Evaluation - Accuracy Metrics",
+    "description": "1. **Prepare (Arrange):** Prepare a test dataset containing real user preferences (at least 1000 interaction records, divided into 8:2 training set and test set).\n2. **Execute (Act):** Run the recommendation evaluation module, calculating metrics such as Precision@K, Recall@K, F1-score, etc. (K values of 5, 10, 20).\n3. **Assert (Assert):** Verify whether the system can correctly calculate and display ≥ 3 accuracy evaluation metrics.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_evaluation_metrics.py::TestEvaluationMetrics::test_precision_at_k -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the recommendation evaluation module should correctly calculate metrics such as Precision@K, Recall@K, F1-score, etc., ≥ 3 accuracy evaluation metrics (K values of 5, 10, 20), with metric values in the [0,1] range."
+  },
+  {
+    "metric": "2.4.1b Recommendation Effect Evaluation - Sorting Quality Metrics",
+    "description": "1. **Execute (Act):** Run recommendation evaluation, calculating sorting quality metrics such as MAP (Mean Average Precision), NDCG (Normalized Discounted Cumulative Gain).\n2. **Assert (Assert):** Verify whether the system can calculate ≥ 2 sorting-related evaluation metrics with reasonable result values.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_evaluation_metrics.py::TestEvaluationMetrics::test_ndcg_at_k -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, recommendation evaluation should calculate metrics such as MAP (Mean Average Precision), NDCG (Normalized Discounted Cumulative Gain), etc., ≥ 2 sorting quality metrics, with result values in the [0,1] range and reasonable."
+  },
+  {
+    "metric": "2.4.1c Recommendation Effect Evaluation - Diversity and Coverage Metrics",
+    "description": "1. **Execute (Act):** Run the evaluation module, calculating metrics such as novelty, diversity, coverage, etc.\n2. **Assert (Assert):** Verify whether the system can evaluate ≥ 3 quality metrics of recommendations (diversity, novelty, coverage).",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_evaluation_metrics.py::TestEvaluationMetrics::test_diversity_score -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, the evaluation module should calculate quality metrics such as diversity, novelty, coverage, etc., ≥ 3 quality metrics of recommendations, with metric values in the [0,1] range reflecting recommendation quality."
+  },
+  {
+    "metric": "2.4.2a Evaluation Process - Classification Evaluation Support",
+    "description": "1. **Execute (Act):** Run the evaluation function, choosing to perform grouped evaluation by dimension such as user, item, category, etc. (at least 3 dimensions).\n2. **Assert (Assert):** Verify whether the system supports fine-grained evaluation for ≥ 3 dimensions, with each dimension able to output an independent evaluation report.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.4.2a_evaluation_categorized.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The terminal displays the CLI interface startup, enters the system evaluation menu, system supports grouped evaluation by dimension such as user, item, category, etc., ≥ 3 dimensions, each dimension able to output an independent evaluation report, verifying the functionality of fine-grained evaluation."
+  },
+  {
+    "metric": "2.4.2b Experimental Data Import",
+    "description": "1. **Pre-validation (User Path):** Does the evaluation module provide custom data import functionality?\n2. **Prepare (Arrange):** Prepare a custom test dataset that meets format requirements (including user-item interaction data, at least 500 records).\n3. **Execute (Act):** Import the custom test dataset for evaluation experiment.\n4. **Assert (Assert):** Verify whether the system supports data import for external evaluation of recommendation effects.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/2.4.2b_evaluation_data_import_fixed.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/custom_test_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The terminal should display the CLI interface startup, enter the evaluation module menu, successfully import custom test dataset (custom_test_data.csv), display data import progress and statistics (≥ 500 interaction records), verify system supports external data import for recommendation effect tests."
+  },
+  {
+    "metric": "2.4.3a Result Visualization - Basic Chart Support",
+    "description": "1. **Execute (Act):** After running evaluation, view visualization of results.\n2. **Assert (Assert):** Verify whether the system can generate ≥ 3 types of basic charts (line chart, bar chart, scatter plot, etc.) to display evaluation results.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_visualization_basic.py::TestVisualizationBasic::test_basic_chart_generation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, after running evaluation, view visualization of results, verify system can generate ≥ 3 types of basic charts (line chart, bar chart, scatter plot, etc.) to display evaluation results."
+  },
+  {
+    "metric": "2.4.3b Result Visualization - Advanced Chart Support",
+    "description": "1. **Pre-validation (User Path):** Does the visualization module support advanced chart types such as heat maps, radar charts?\n2. **Execute (Act):** Generate heat maps or radar charts to display recommendation effects.\n3. **Assert (Assert):** Verify whether ≥ 2 types of advanced charts can correctly display complex evaluation results.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest evaluation/tests/test_visualization_advanced.py::TestVisualizationAdvanced::test_advanced_chart_generation -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test passed, generate heat maps or radar charts to display recommendation effects, verify ≥ 2 types of advanced charts can correctly display complex evaluation results."
+  },
+  {
+    "metric": "3.1 Technology Stack Dependencies - Python Environment",
+    "description": "1. **Execute (Act):** Check the project's requirements.txt or setup.py file to see the Python version requirement.\n2. **Assert (Assert):** Verify whether the libraries used by the project are generally correct.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "diff -u evaluation/expected_requirements.txt src/requirements.txt",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_requirements.txt"
+    ],
+    "expected_output": "The file src/requirements.txt should generally match the contents of evaluation/expected_requirements.txt, verifying that the technology stack dependencies are configured correctly."
+  },
+  {
+    "metric": "3.2a Core Dependency Library - Data Processing Library",
+    "description": "1. **Execute (Act):** Check the project's dependencies and code implementation.\n2. **Assert (Assert):** Verify whether the project correctly uses Pandas and NumPy for data processing operations, employing ≥ 5 core functionalities.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "grep -rE \"import pandas\\|import numpy\\|pd\\.\\|np\\.\" src/ --include=\"*.py\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_data_processing_usage.py"
+    ],
+    "expected_output": "The source code should include the correct use of Pandas and NumPy, including DataFrame operations, array calculations, data reading and writing, statistical analysis, etc., ≥ 5 core functions, consistent with expected_data_processing_usage.py example."
+  },
+  {
+    "metric": "3.2b Core Dependency Library - Recommendation Algorithm Library",
+    "description": "1. **Execute (Act):** Check recommendation algorithm implementation and usage of related libraries.\n2. **Assert (Assert):** Verify correct usage of Surprise and scikit-learn libraries for recommendation and machine learning, implementing ≥ 3 algorithms.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "grep -rE \"from sklearn\\|from surprise\\|import sklearn\\|import surprise\" src/ --include=\"*.py\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_recommendation_algorithms.py"
+    ],
+    "expected_output": "The source code should correctly use Surprise and scikit-learn libraries, including TF-IDF feature extraction, similarity calculation, matrix factorization, collaborative filtering, etc., ≥ 3 types of recommendation algorithm implementation, consistent with expected_recommendation_algorithms.py example."
+  },
+  {
+    "metric": "3.2c Core Dependency Library - Chinese Processing and Vectorization",
+    "description": "1. **Execute (Act):** Check Chinese text processing and vectorization implementation.\n2. **Assert (Assert):** Verify usage of jieba for Chinese text segmentation and Gensim for word vector processing, implementing a complete text processing workflow.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "grep -rE \"import jieba\\|import gensim\\|from gensim\" src/ --include=\"*.py\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_chinese_processing.py"
+    ],
+    "expected_output": "The source code should correctly use jieba for Chinese text segmentation and gensim for word vector processing, including text segmentation, word vector training, document vectorization, etc., implementing a complete text processing workflow, consistent with expected_chinese_processing.py example."
+  },
+  {
+    "metric": "3.2d Core Dependency Library - API Service Framework",
+    "description": "1. **Execute (Act):** Check the implementation framework of API services.\n2. **Assert (Assert):** Verify usage of FastAPI or Flask to build RESTful API services, implementing ≥ 3 API endpoints.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "grep -rE \"from fastapi\\|import fastapi\\|@app\\.\" src/ --include=\"*.py\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_api_framework.py"
+    ],
+    "expected_output": "The source code should correctly use FastAPI framework to build RESTful API services, including application initialization, data model definition, API endpoint implementation, etc., ≥ 3 core functions, consistent with the expected_api_framework.py example."
+  },
+  {
+    "metric": "3.2e Core Dependency Library - Caching and Database",
+    "description": "1. **Execute (Act):** Check the implementation of caching and database connections.\n2. **Assert (Assert):** Verify integration of Redis caching and MySQL database to implement data persistence and cache optimization.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "grep -rE \"import redis\\|import mysql\\|from sqlalchemy\" src/ --include=\"*.py\"",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_cache_database.py"
+    ],
+    "expected_output": "The source code should correctly integrate Redis caching and MySQL database, including cache operations, database connections, ORM usage, data persistence, and other functions, consistent with the expected_cache_database.py example."
+  },
+  {
+    "metric": "3.3a System Architecture - Layered Design",
+    "description": "1. **Execute (Act):** Check project code structure and module organization.\n2. **Assert (Assert):** Verify whether the system adopts a layered architecture, clearly separating ≥ 3 layers (data layer, algorithm layer, service layer), with each layer having distinct responsibilities.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "find src/ -type f -name \"*.py\" | head -20",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": [
+      "evaluation/expected_system_architecture.py"
+    ],
+    "expected_output": "The project should adopt a clear layered architecture design, including a data layer (data/), algorithm layer (algorithms/), service layer (api/) and other ≥ 3 layers, each with distinct responsibilities, consistent with the architectural design principles in expected_system_architecture.py."
+  },
+  {
+    "metric": "3.3b Unit Test Coverage",
+    "description": "1. **Execute (Act):** Check project test files and run pytest tests.\n2. **Assert (Assert):** Verify whether complete unit tests are written using pytest, covering ≥ 5 core functional modules.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "python -m pytest src/test_system.py -v",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The terminal displays pytest test run results, including test file discovery and test case execution status, verifying the system uses pytest to write complete unit tests, covering ≥ 5 core functional modules, and displaying detailed information on test passes or failures."
+  }
+]

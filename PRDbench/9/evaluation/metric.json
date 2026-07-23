@@ -1,0 +1,162 @@
+[
+  {
+    "metric": "0.1 Program Startup and Main Menu Display",
+    "description": "1. **Act:** Execute `python src/main.py` in the command line.\n2. **Assert:** Observe whether the program successfully starts and displays a complete interface containing the \"Business Travel Intelligent Planning System\" title and at least 6 main menu options (Create New Itinerary, Load Saved Itinerary, Use Itinerary Template, View Current Itinerary, System Settings, Exit System).",
+    "expected_output": "2 points: Program starts successfully, displays complete title and 6 main menu options, interface format is clear. 1 point: Program starts but interface display is incomplete, missing 1-2 menu options or has formatting issues. 0 points: Program cannot start, crashes after starting, or cannot display main menu."
+  },
+  {
+    "metric": "0.2 Unit Testing: Executable Unit Tests Provided",
+    "description": "1. **Arrange:** Check if test files exist (such as `test_*.py`) in the `tests/` directory.\n2. **Act:** Execute test commands (such as `pytest` or `python -m unittest discover tests`).\n3. **Assert:** Observe test results, verify whether the test framework can run, and whether all discovered test cases show as \"PASSED\".",
+    "expected_output": "2 points: Test files exist in `tests/` directory, and all tests pass. 1 point: Test files exist, but one or more test files fail (FAILED). 0 points: `tests/` directory is empty or no test files exist."
+  },
+  {
+    "metric": "1.1 Create New Itinerary Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"1. Create New Itinerary\" option in the main menu?\n2. **Arrange:** Prepare itinerary name \"Test Itinerary\".\n3. **Act:** Select \"1\", input the prepared itinerary name.\n4. **Assert:** Observe whether the system displays successful creation prompt and automatically jumps to the itinerary planning menu.",
+    "expected_output": "2 points: Pre-check passes, can successfully create itinerary and display clear success prompt, automatically jumps to itinerary planning menu. 1 point: Pre-check passes, can create itinerary but prompt is unclear or requires manual entry to planning menu. 0 points: Pre-check fails or cannot create itinerary."
+  },
+  {
+    "metric": "2.1.1a City Input - Valid City Recognition",
+    "description": "1. **Pre-check (User Path):** Is there a \"1. Add Itinerary Segment\" option in the itinerary planning menu?\n2. **Arrange:** Prepare valid city name list: \"Beijing\", \"Shanghai\", \"Guangzhou\".\n3. **Act:** Select add itinerary segment, sequentially input the prepared city names as departure and arrival cities.\n4. **Assert:** Observe whether the system can correctly recognize and accept all 3 valid city names.",
+    "expected_output": "2 points: Pre-check passes, can correctly recognize and accept all 3 valid city names. 1 point: Pre-check passes, can recognize 2 city names. 0 points: Pre-check fails or recognizes less than 2 city names."
+  },
+  {
+    "metric": "2.1.1b City Input - Invalid City Validation",
+    "description": "1. **Arrange:** Prepare invalid city name list: \"Non-existent City\", \"XXXX\", \"123\".\n2. **Act:** In the city input process, sequentially input the prepared invalid city names.\n3. **Assert:** Observe whether the system provides clear error prompts for all 3 invalid inputs and requires re-entry.",
+    "expected_output": "2 points: Provides clear error prompts and requires re-entry for all 3 invalid inputs. 1 point: Provides error prompts for 2 invalid inputs. 0 points: Provides error prompts for less than 2 invalid inputs or lacks validation mechanism."
+  },
+  {
+    "metric": "2.1.2a Stay Duration Setting - Integer Hour Support",
+    "description": "1. **Arrange:** Prepare integer stay durations: \"24\", \"48\", \"72\".\n2. **Act:** During the process of adding itinerary segments, sequentially input the prepared stay duration values.\n3. **Assert:** Observe whether the system can correctly receive and process all 3 integer hour values.",
+    "expected_output": "2 points: Can correctly receive and process all 3 integer hour values. 1 point: Can process 2 integer hour values. 0 points: Can process less than 2 integer hour values or cannot process hour-level input."
+  },
+  {
+    "metric": "2.1.2b Stay Duration Setting - Decimal Hour Support",
+    "description": "1. **Arrange:** Prepare decimal stay durations: \"2.5\", \"4.5\", \"0.5\".\n2. **Act:** In the stay duration input process, sequentially input the prepared decimal values.\n3. **Assert:** Observe whether the system can correctly receive and process all 3 decimal hour values.",
+    "expected_output": "2 points: Can correctly receive and process all 3 decimal hour values. 1 point: Can process 2 decimal hour values. 0 points: Can process less than 2 decimal hour values or does not support decimal input."
+  },
+  {
+    "metric": "2.1.3a Time Window Constraint - Menu Access",
+    "description": "1. **Pre-check (User Path):** Is there a \"2. Set Time Constraints\" option in the itinerary planning menu?\n2. **Arrange:** Ensure at least 1 itinerary segment has been added.\n3. **Act:** Select \"2\" to enter time constraint settings.\n4. **Assert:** Observe whether it can successfully enter the time constraint settings interface and display the existing itinerary segment list.",
+    "expected_output": "2 points: Pre-check passes, can successfully enter time constraint settings interface and display itinerary segment list. 1 point: Pre-check passes, can enter interface but display is incomplete. 0 points: Pre-check fails or cannot enter time constraint settings interface."
+  },
+  {
+    "metric": "2.1.3b Time Window Constraint - Constraint Setting Function",
+    "description": "1. **Arrange:** Prepare time constraints: earliest arrival \"2024-12-01 09:00\", latest arrival \"2024-12-01 18:00\".\n2. **Act:** Set the prepared time constraints for the added itinerary segment.\n3. **Assert:** Observe whether the system can successfully save constraints and display setup success prompt.",
+    "expected_output": "2 points: Can successfully set and save time constraints, display clear success prompt. 1 point: Can set constraints but save status is unclear or prompt is not clear. 0 points: Cannot set or save time constraints."
+  },
+  {
+    "metric": "2.1.4a Itinerary Template - Save Function",
+    "description": "1. **Pre-check (User Path):** Is there a function entry to save itinerary as template in the system?\n2. **Arrange:** Create a complete itinerary containing 2 itinerary segments.\n3. **Act:** Find and use template save function, save current itinerary as template.\n4. **Assert:** Observe whether template save success prompt is displayed.",
+    "expected_output": "2 points: Pre-check passes, can successfully save itinerary as template and display success prompt. 1 point: Pre-check passes, can save but prompt is unclear. 0 points: Pre-check fails or cannot save template."
+  },
+  {
+    "metric": "2.1.4b Itinerary Template - Load Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"3. Use Itinerary Template\" option in the main menu?\n2. **Arrange:** Ensure at least 1 itinerary template is saved.\n3. **Act:** Select \"3\", choose and load the saved template from template list.\n4. **Assert:** Observe whether it can successfully load template content and jump to itinerary planning menu.",
+    "expected_output": "2 points: Pre-check passes, can successfully load template content and jump to planning menu. 1 point: Pre-check passes, can load but content is incomplete or jump has issues. 0 points: Pre-check fails or cannot load template."
+  },
+  {
+    "metric": "2.2.1a Transportation Data - High-speed Rail Data Display",
+    "description": "1. **Pre-check (User Path):** Is there a \"3. Plan Route\" option in the itinerary planning menu?\n2. **Arrange:** Add Beijing to Shanghai itinerary segment.\n3. **Act:** Select \"3\" to plan route.\n4. **Assert:** Observe whether high-speed rail options are displayed, containing at least 4 pieces of information including train number, departure time, arrival time, price.",
+    "expected_output": "2 points: Pre-check passes, displays high-speed rail options and contains all 4 pieces of information (train number, departure time, arrival time, price). 1 point: Pre-check passes, displays high-speed rail options but information is incomplete, contains 2-3 pieces of information. 0 points: Pre-check fails or does not display high-speed rail options, or information less than 2 items."
+  },
+  {
+    "metric": "2.2.1b Transportation Data - Flight Data Display",
+    "description": "1. **Arrange:** Use Beijing to Shanghai itinerary segment.\n2. **Act:** View transportation options in route planning.\n3. **Assert:** Observe whether flight options are displayed, containing at least 4 pieces of information including flight number, departure time, arrival time, price.",
+    "expected_output": "2 points: Displays flight options and contains all 4 pieces of information (flight number, departure time, arrival time, price). 1 point: Displays flight options but information is incomplete, contains 2-3 pieces of information. 0 points: Does not display flight options or information less than 2 items."
+  },
+  {
+    "metric": "2.2.2a Optimization Target - Time-Optimal Plan",
+    "description": "1. **Arrange:** Prepare itinerary segment containing multiple transportation options.\n2. **Act:** Select \"Time Optimal\" optimization target in route planning.\n3. **Assert:** Observe whether the generated plan prioritizes the route combination with shortest total duration.",
+    "expected_output": "2 points: Provides time-optimal selection and generated plan clearly prioritizes time factors. 1 point: Provides time-optimal selection but plan optimization effect is not obvious. 0 points: Does not provide time-optimal selection option."
+  },
+  {
+    "metric": "2.2.2b Optimization Target - Cost-Optimal Plan",
+    "description": "1. **Arrange:** Use the same multi-option itinerary segment.\n2. **Act:** Select \"Cost Optimal\" optimization target in route planning.\n3. **Assert:** Observe whether the generated plan prioritizes the route combination with lowest total cost.",
+    "expected_output": "2 points: Provides cost-optimal selection and generated plan clearly prioritizes cost factors. 1 point: Provides cost-optimal selection but plan optimization effect is not obvious. 0 points: Does not provide cost-optimal selection option."
+  },
+  {
+    "metric": "2.2.2c Optimization Target - Balanced Plan",
+    "description": "1. **Arrange:** Use the same multi-option itinerary segment.\n2. **Act:** Select \"Balanced Plan\" optimization target in route planning.\n3. **Assert:** Observe whether the generated plan achieves balance between time and cost, showing clear differences from the previous two plans.",
+    "expected_output": "2 points: Provides balanced plan selection and generated plan shows clear differences from time-optimal and cost-optimal plans. 1 point: Provides balanced plan selection but differences from other plans are not obvious. 0 points: Does not provide balanced plan selection option."
+  },
+  {
+    "metric": "2.2.3 Transfer Count Limit Setting",
+    "description": "1. **Pre-check (User Path):** Is there a transfer count setting option during route planning process?\n2. **Arrange:** Prepare long-distance itinerary segment requiring multiple transfers.\n3. **Act:** Set maximum transfer count to 1 time, then plan route.\n4. **Assert:** Observe whether all generated route plans comply with the 1 transfer limit.",
+    "expected_output": "2 points: Pre-check passes, can set transfer limit and all generated routes comply with the limit. 1 point: Pre-check passes, can set limit but some routes exceed the limit. 0 points: Pre-check fails or does not support transfer count limit."
+  },
+  {
+    "metric": "2.3.1 Itinerary Conflict Detection Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"4. Detect Conflicts\" option in the itinerary planning menu?\n2. **Arrange:** Create itinerary containing time conflicts (such as transfer time less than 60 minutes).\n3. **Act:** Select \"4\" to run conflict detection.\n4. **Assert:** Observe whether the system can identify and report time conflicts, providing conflict location and description information.",
+    "expected_output": "2 points: Pre-check passes, can accurately detect conflicts and provide clear conflict description and location information. 1 point: Pre-check passes, can detect conflicts but description is not clear enough or location information is inaccurate. 0 points: Pre-check fails or cannot detect time conflicts."
+  },
+  {
+    "metric": "2.3.2a Hard Conflict Identification - High-speed Rail to Flight",
+    "description": "1. **Arrange:** Create high-speed rail to flight itinerary with transfer time of 60 minutes (less than 90-minute standard).\n2. **Act:** Run conflict detection.\n3. **Assert:** Observe whether the system identifies this as hard conflict and clearly marks conflict type.",
+    "expected_output": "2 points: Can accurately identify as hard conflict, clearly mark conflict type and provide specific insufficient time information. 1 point: Can identify conflict but hard conflict type not clearly distinguished or information incomplete. 0 points: Cannot identify this type of hard conflict."
+  },
+  {
+    "metric": "2.3.2b Hard Conflict Identification - Flight to High-speed Rail",
+    "description": "1. **Arrange:** Create flight to high-speed rail itinerary with transfer time of 60 minutes.\n2. **Act:** Run conflict detection.\n3. **Assert:** Observe whether the system identifies this as hard conflict.",
+    "expected_output": "2 points: Can accurately identify as hard conflict and provide corresponding prompt. 1 point: Can identify conflict but type marking is unclear. 0 points: Cannot identify this type of hard conflict."
+  },
+  {
+    "metric": "2.3.3 Soft Conflict Identification - Insufficient Rest Time",
+    "description": "1. **Arrange:** Create consecutive itineraries with rest time of 2 hours between them (less than 4-hour standard).\n2. **Act:** Run conflict detection.\n3. **Assert:** Observe whether the system identifies this as soft conflict and clearly marks conflict type.",
+    "expected_output": "2 points: Can accurately identify as soft conflict, clearly mark conflict type and provide specific information about insufficient rest time. 1 point: Can identify conflict but soft conflict type not clearly distinguished or information incomplete. 0 points: Cannot identify soft conflict."
+  },
+  {
+    "metric": "2.3.4a Conflict Resolution - Time Adjustment Suggestions",
+    "description": "1. **Arrange:** Use itinerary with detected conflicts.\n2. **Act:** View conflict detection results.\n3. **Assert:** Observe whether the system provides specific time adjustment suggestions (such as changing train/flight).",
+    "expected_output": "2 points: Provides specific feasible time adjustment suggestions, containing clear train/flight replacement plans. 1 point: Provides adjustment suggestions but content is relatively simple or feasibility is limited. 0 points: Does not provide time adjustment suggestions."
+  },
+  {
+    "metric": "2.3.4b Conflict Resolution - Itinerary Split Suggestions",
+    "description": "1. **Arrange:** Use conflict itinerary requiring splitting.\n2. **Act:** View conflict detection results.\n3. **Assert:** Observe whether the system provides itinerary split suggestions (such as adding intermediate accommodation).",
+    "expected_output": "2 points: Provides specific itinerary split suggestions, containing clear split points and accommodation suggestions. 1 point: Provides split suggestions but content is not specific enough. 0 points: Does not provide itinerary split suggestions."
+  },
+  {
+    "metric": "2.4.1a Decision Analysis - Multi-attribute Evaluation",
+    "description": "1. **Pre-check (User Path):** Is there a \"5. Decision Analysis\" option in the itinerary planning menu?\n2. **Arrange:** Create itinerary containing multiple route plans.\n3. **Act:** Select \"5\" for decision analysis.\n4. **Assert:** Observe whether evaluation results are displayed containing at least 3 dimensions including time efficiency, economic cost, comfort, reliability, transfer convenience.",
+    "expected_output": "2 points: Pre-check passes, displays complete evaluation results containing all 5 dimensions. 1 point: Pre-check passes, displays evaluation results for 3-4 dimensions. 0 points: Pre-check fails or displays evaluation for less than 3 dimensions."
+  },
+  {
+    "metric": "2.4.1b Decision Analysis - Quantitative Scoring",
+    "description": "1. **Arrange:** Use itinerary with multiple plans.\n2. **Act:** View decision analysis results.\n3. **Assert:** Observe whether each evaluation dimension provides quantitative scoring or percentage values.",
+    "expected_output": "2 points: All evaluation dimensions provide quantitative scoring or percentage values. 1 point: Most dimensions provide quantitative scoring, few dimensions are qualitative descriptions. 0 points: Most dimensions are qualitative descriptions, lacking quantitative scoring."
+  },
+  {
+    "metric": "2.4.2 Plan Priority Sorting",
+    "description": "1. **Arrange:** Ensure there are more than 3 route plans.\n2. **Act:** View plan sorting in decision analysis.\n3. **Assert:** Observe whether the system performs clear priority sorting for all plans based on comprehensive scoring.",
+    "expected_output": "2 points: Performs clear priority sorting for all plans, sorting basis is clear and logically consistent. 1 point: Provides sorting but sorting basis is not clear enough or logic has issues. 0 points: Does not provide plan priority sorting function."
+  },
+  {
+    "metric": "2.5.1 Export Function - Markdown Format",
+    "description": "1. **Pre-check (User Path):** Is there a \"7. Export Itinerary\" option in the itinerary planning menu?\n2. **Arrange:** Create itinerary with complete route.\n3. **Act:** Select \"7\", choose Markdown format export.\n4. **Assert:** Observe whether .md file is successfully generated and contains itinerary timeline and transportation details.",
+    "expected_output": "2 points: Pre-check passes, successfully generates Markdown file, content completely contains timeline and transportation details, format is standard. 1 point: Pre-check passes, can generate file but content is incomplete or format has issues. 0 points: Pre-check fails or cannot generate Markdown file."
+  },
+  {
+    "metric": "2.6.1 Input Validation - Menu Selection",
+    "description": "1. **Arrange:** Prepare invalid menu selections: \"9\", \"a\", \"@\" (assuming menu only has 1-6 options).\n2. **Act:** Input prepared invalid selections in main menu.\n3. **Assert:** Observe whether the system provides error prompts for all 3 invalid selections and redisplays menu.",
+    "expected_output": "2 points: Provides clear error prompts for all 3 invalid selections and redisplays menu. 1 point: Provides error prompts for 2 invalid selections. 0 points: Provides error prompts for less than 2 invalid selections or lacks menu validation."
+  },
+  {
+    "metric": "2.6.2a Date Format - Standard Format Support",
+    "description": "1. **Arrange:** Prepare standard date formats: \"2024-12-01\", \"2024-12-01 14:30\".\n2. **Act:** Input prepared date formats in time constraint settings.\n3. **Assert:** Observe whether the system can correctly parse and accept all 2 standard formats.",
+    "expected_output": "2 points: Can correctly parse and accept all 2 standard date formats. 1 point: Can parse 1 standard format. 0 points: Cannot correctly parse standard date formats."
+  },
+  {
+    "metric": "2.6.2b Date Format - Relative Date Support",
+    "description": "1. **Arrange:** Prepare relative dates: \"Tomorrow\", \"Day after tomorrow\".\n2. **Act:** Input prepared relative dates during date input process.\n3. **Assert:** Observe whether the system can correctly parse and convert all 2 relative dates to specific dates.",
+    "expected_output": "2 points: Can correctly parse and convert all 3 relative dates to specific dates. 1 point: Can parse 2 relative dates. 0 points: Can parse less than 2 relative dates or does not support relative dates."
+  },
+  {
+    "metric": "3.1.1 Itinerary Save - Save Function",
+    "description": "1. **Pre-check (User Path):** Is there a \"Save Itinerary\" option in itinerary planning menu?\n2. **Arrange:** Create complete itinerary with 2 itinerary segments, prepare file name \"Test Save\".\n3. **Act:** Select \"6\", input prepared file name to save itinerary.\n4. **Assert:** Observe whether save success prompt is displayed.",
+    "expected_output": "2 points: Pre-check passes, can successfully save itinerary and display clear success prompt. 1 point: Pre-check passes, can save but prompt is unclear or save status is unclear. 0 points: Pre-check fails or cannot save itinerary."
+  },
+  {
+    "metric": "3.1.2 Itinerary Save - Load Verification",
+    "description": "1. **Pre-check (User Path):** Is there a \"Load Saved Itinerary\" option in the main menu?\n2. **Arrange:** Use saved itinerary file.\n3. **Act:** Select \"2\", choose from list and load saved itinerary.\n4. **Assert:** Observe whether loaded itinerary content completely matches when saved.",
+    "expected_output": "2 points: Pre-check passes, loaded itinerary content completely matches when saved, containing all itinerary segments and settings. 1 point: Pre-check passes, can load itinerary but content is incomplete, missing some information. 0 points: Pre-check fails or cannot correctly load itinerary content."
+  }
+]

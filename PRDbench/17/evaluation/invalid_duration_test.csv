@@ -1,0 +1,4 @@
+Task ID,Task Name,Test Item,Equipment Duration,Test Status,Test Type,Test Item Feedback
+TASK-H-20231001,Test Task A,Functional Test,-1,Success,Regression Test,Trial shows no anomaly
+TASK-M-20231002,Test Task B,Performance Test,10.5,Success,New Feature Test,Trial shows no anomaly
+TASK-L-20231003,Test Task C,Integration Test,5,Success,Smoke Test,Trial shows no anomaly

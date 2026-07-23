@@ -1,0 +1,21 @@
+Expected correlation analysis heatmap characteristics:
+
+1. File format: PNG image File
+2. FilePath: output/figures/correlation_matrix.png
+3. Chart Content:
+   - Display correlation coefficients between dimensions of Scale 1 (Attention Stability) and Scale 2 (Self-Control)
+   - Use color intensity to represent correlation strength (dark color = strong correlation, light color = weak correlation)
+   - Include correlation coefficient numerical annotations (e.g., 0.65, -0.32, etc.)
+   - Have clear axis labels and legend
+   - Title Display "Correlation Coefficient Matrix Heatmap"
+
+4. Technical requirements:
+   - Use matplotlib/seaborn Generate
+   - Resolution at least 300dpi
+   - Color mapping uses standard correlation color scheme
+   - Include colorbar Display correlation coefficient range
+
+5. Test Verify:
+   - File Success Generate and size > 0
+   - File can be Normal opened
+   - Chart Content matches correlation analysis Result

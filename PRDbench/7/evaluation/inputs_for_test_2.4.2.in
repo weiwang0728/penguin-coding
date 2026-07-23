@@ -1,0 +1,27 @@
+python src/main.py
+5
+3
+yes
+
+1
+1
+PlayerA
+
+1
+PlayerB
+
+3
+4
+1
+1
+1
+2
+H8
+A1
+H7
+A2
+H6
+A3
+^C
+python src/main.py
+evaluation/2.4.2_recovery.in

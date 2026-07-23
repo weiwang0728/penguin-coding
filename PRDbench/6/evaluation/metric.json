@@ -1,0 +1,117 @@
+[
+  {
+    "metric": "1.1 Basic Interaction: Program Startup and Main Menu",
+    "description": "1. **Act:** Execute the program startup command in the shell (e.g., `python main.py`).\n2. **Assert:** Observe whether the program successfully starts and displays a clear Chinese main menu that must include core function entries such as 'Data Import', 'Data Format Operations', 'Data Content Cleaning', 'Statistical Analysis',  'Data Splitting and Export',etc",
+    "expected_output": "2 points: Program starts successfully and displays a clear Chinese main menu containing at least 5 core function entries from the PRD. 1 point: Program starts but menu options are incomplete (less than 5), unclear, or in English. 0 points: Program cannot start or crashes immediately after starting."
+  },
+  {
+    "metric": "1.2 Basic Interaction: User Input Validation and Error Prompts",
+    "description": "1. **Arrange:** In the program main menu interface.\n2. **Act:** Enter an invalid option that does not exist in the menu (such as 'xyz' or '99').\n3. **Assert:** Observe whether the program captures this invalid input and provides a clear Chinese error prompt (such as 'Invalid option, please re-enter'), and the program remains stable and continues to accept input.",
+    "expected_output": "2 points: Program can capture invalid input, provide clear Chinese prompt, and remain stable. 1 point: Can capture errors but prompt is unclear, in English, or program needs restart. 0 points: Entering invalid option causes program crash or freeze."
+  },
+  {
+    "metric": "1.3 State Management: Interactive Menu Switching",
+    "description": "1. **Arrange:** After successfully importing data, enter any sub-function menu (such as 'Missing Value Handling').\n2. **Act:** In the sub-menu, search for and test if there is an option to directly switch to another main function module (such as 'Statistical Analysis').\n3. **Assert:** Verify whether successful switching can be achieved without first executing 'Return to Main Menu' operation.",
+    "expected_output": "2 points: Implements convenient cross-function switching, users don't need to frequently return to main menu. 1 point: Must return to main menu before entering other function modules. 0 points: Menu navigation logic is confused, cannot return or switch, stuck in sub-menu."
+  },
+  {
+    "metric": "1.4 State Management: Operation History Record Viewing",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for 'View Operation History' in the main menu or universal menu?\n2. **Arrange:** Continuously execute 2-3 different data processing operations (such as filling missing values, formatting strings).\n3. **Act:** Select 'View Operation History'.\n4. **Assert:** Observe whether the program can sequentially list the operation sequence just executed (such as '1. Fill missing values: Column 'Age', Method 'mean'').",
+    "expected_output": "2 points: Pre-check passed, and can clearly and accurately display user's executed operation history records. 1 point: Pre-check passed, but displayed history records are incomplete, order is wrong, or format is messy. 0 points: Pre-check failed, or no such function."
+  },
+  {
+    "metric": "2.1 Data Import: Read .xlsx Files and Identify Worksheets",
+    "description": "1. **Pre-check (User Path):** Is there a clear option for 'Data Import' in the main menu?\n2. **Arrange:** Prepare a `test.xlsx` file containing 3 differently named worksheets (such as 'Sales', 'Inventory', 'HR').\n3. **Act:** Select 'Data Import', and input filename `test.xlsx` as prompted.\n4. **Assert:** Observe program output, check whether all 3 worksheet names are correctly listed.",
+    "expected_output": "2 points: Pre-check passed, and successfully identifies file and accurately lists all worksheet names. 1 point: Pre-check passed, but worksheet names or quantity identification is incomplete or incorrect. 0 points: Pre-check failed, or cannot identify/read .xlsx files."
+  },
+  {
+    "metric": "2.2a Metadata Parsing: Display Field Names and Infer Types",
+    "description": "1. **Arrange:** Prepare an Excel worksheet containing multiple data types (integer, float, string, date).\n2. **Act:** Successfully import and load this worksheet.\n3. **Assert:** Observe whether the program automatically outputs metadata information after loading, and check: (1) Whether all field names are listed; (2) Whether correct data types (numerical/categorical/date) are inferred for each field.",
+    "expected_output": "2 points: All field names are completely listed, and at least 90% of field type inferences are correct. 1 point: Field names are listed but have omissions, or over 10% of field type inferences are wrong. 0 points: Field names or type information not displayed."
+  },
+  {
+    "metric": "2.2b Metadata Parsing: Display Missing Value Proportion",
+    "description": "1. **Arrange:** Prepare an Excel worksheet containing different quantities of missing values (empty cells) in multiple columns. For example, column A has 10% missing, column B has 50% missing.\n2. **Act:** Successfully import and load this worksheet.\n3. **Assert:** Observe program automatically output metadata information, check whether missing value proportion is accurately calculated and displayed for each field (e.g., displayed as 0.1 or 10%).",
+    "expected_output": "2 points: For all fields containing missing values, their proportions are accurately calculated and displayed. 1 point: Missing value proportions are displayed but calculation results are inaccurate (error > 2%) or some fields are omitted. 0 points: Missing value proportion information not displayed."
+  },
+  {
+    "metric": "2.3 Data Preview: Display First N Rows of Data",
+    "description": "1. **Arrange:** Prepare a data file with over 10 rows.\n2. **Act:** After successfully loading worksheet, call data preview function.\n3. **Assert:** Observe whether the program displays the first 10 rows of data by default in clear table format.",
+    "expected_output": "2 points: Displays first 10 rows of data by default in clear table format. 1 point: Data preview displayed but default row count is not 10, or display format is messy. 0 points: No data preview function or call failed."
+  },
+  {
+    "metric": "3.1 Missing Value Handling: Statistics Function",
+    "description": "1. **Pre-check (User Path):** Can 'Missing Value Statistics' function be found through menu (e.g. 'Data Content Cleaning' -> 'Missing Value Handling')?\n2. **Arrange:** Import a data file containing missing values.\n3. **Act:** Call 'Missing Value Statistics' function.\n4. **Assert:** Observe whether output simultaneously contains missing value quantity or proportion statistics by field (column) and record (row) dimensions.",
+    "expected_output": "2 points: Pre-check passed, and can accurately provide missing value statistics by both field and record dimensions. 1 point: Pre-check passed, but can only provide statistics for one dimension, or statistical results are inaccurate. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "3.2a Missing Value Handling: Fill by Mean",
+    "description": "1. **Pre-check (User Path):** Is there a 'Mean Fill' option in the missing value handling menu?\n2. **Arrange:** Prepare a data file containing numerical column `[1, 2, null, 5]`, with mean of 2.67.\n3. **Act:** Import data, navigate to fill function, select 'Mean Fill' for this numerical column.\n4. **Assert:** Use data preview function to verify whether original null position has been replaced by correct mean (2.67).",
+    "expected_output": "2 points: Pre-check passed, and can successfully use mean fill with accurate results. 1 point: Pre-check passed, but fill result is incorrect or operation process has bugs. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "3.2b Missing Value Handling: Fill by Median",
+    "description": "1. **Pre-check (User Path):** Is there a 'Median Fill' option in the missing value handling menu?\n2. **Arrange:** Prepare a data file containing numerical column `[1, 2, null, 5, 10]`, with median of 3.5.\n3. **Act:** Import data, navigate to fill function, select 'Median Fill' for this numerical column.\n4. **Assert:** Use data preview function to verify whether original null position has been replaced by correct median (3.5).",
+    "expected_output": "2 points: Pre-check passed, and can successfully use median fill with accurate results. 1 point: Pre-check passed, but fill result is incorrect or operation process has bugs. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "3.2c Missing Value Handling: Fill by Mode",
+    "description": "1. **Pre-check (User Path):** Is there a 'Mode Fill' option in the missing value handling menu?\n2. **Arrange:** Prepare a data file containing categorical or numerical column `['A', 'B', null, 'B', 'C']`, with mode 'B'.\n3. **Act:** Import data, navigate to fill function, select 'Mode Fill' for this column.\n4. **Assert:** Use data preview function to verify whether original null position has been replaced by correct mode ('B').",
+    "expected_output": "2 points: Pre-check passed, and can successfully use mode fill with accurate results. 1 point: Pre-check passed, but fill result is incorrect or operation process has bugs. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "3.3 Outlier Detection: IQR Algorithm",
+    "description": "1. **Pre-check (User Path):** Can 'IQR Algorithm Detection' function be found through menu (e.g. 'Data Content Cleaning' -> 'Outlier Detection')?\n2. **Arrange:** Prepare a numerical column `[1, 10, 12, 11, 13, 9, 100]`, where 100 is an obvious outlier.\n3. **Act:** Execute IQR outlier detection on this column.\n4. **Assert:** Observe output, check whether program can correctly identify and mark 100 as outlier.",
+    "expected_output": "2 points: Pre-check passed, and can correctly identify outlier. 1 point: Pre-check passed, but identification result is incorrect or no output. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "4.1a Descriptive Statistics (Numerical): Central Tendency",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis' -> 'Descriptive Statistics')?\n2. **Arrange:** Import data containing numerical column `[1, 2, 3, 4, 5]`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct mean (3.0) and median (3.0).",
+    "expected_output": "2 points: Pre-check passed, and both mean and median are calculated correctly. 1 point: Pre-check passed, but only one item calculated correctly. 0 points: Pre-check failed, or both items calculated wrong/no output."
+  },
+  {
+    "metric": "4.1b Descriptive Statistics (Numerical): Dispersion",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis' -> 'Descriptive Statistics')?\n2. **Arrange:** Import data containing numerical column `[1, 2, 3, 4, 5]`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct standard deviation, range, and quartiles.",
+    "expected_output": "2 points: Pre-check passed, and completely and accurately calculates and displays all 3 statistics. 1 point: Pre-check passed, but only calculates and displays 1-2 statistics, or has calculation errors. 0 points: Pre-check failed, or no relevant output."
+  },
+  {
+    "metric": "4.2a Descriptive Statistics (Categorical): Frequency and Rate",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis' -> 'Descriptive Statistics')?\n2. **Arrange:** Import data containing categorical column `['A', 'B', 'A', 'A', 'C']`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct frequency (A:3, B:1, C:1) and rate (A:0.6, B:0.2, C:0.2).",
+    "expected_output": "2 points: Pre-check passed, and both frequency and rate are calculated correctly. 1 point: Pre-check passed, but only one calculated correctly. 0 points: Pre-check failed, or both calculated wrong/no output."
+  },
+  {
+    "metric": "4.2b Descriptive Statistics (Categorical): Mode and Unique Values",
+    "description": "1. **Pre-check (User Path):** Can function be accessed through menu (e.g. 'Statistical Analysis' -> 'Descriptive Statistics')?\n2. **Arrange:** Import data containing categorical column `['A', 'B', 'A', 'A', 'C']`.\n3. **Act:** Select this column for descriptive statistical analysis.\n4. **Assert:** Observe whether output contains correct mode ('A') and unique value count (3).",
+    "expected_output": "2 points: Pre-check passed, and both mode and unique value count are calculated correctly. 1 point: Pre-check passed, but only one calculated correctly. 0 points: Pre-check failed, or both calculated wrong/no output."
+  },
+  {
+    "metric": "5.1 Data Formatting: Enumerated Value Replacement",
+    "description": "1. **Pre-check (User Path):** Can 'Enumerated Value Replacement' function be found through menu (e.g. 'Data Format Operations' -> 'Data Formatting')?\n2. **Arrange:** Prepare a key-value mapping file (e.g. `mapping.json`, content `{\"A\":\"Excellent\", \"B\":\"Good\"}`) and data containing column `['A', 'B', 'C']`.\n3. **Act:** Call function, provide mapping file path and column to operate as prompted.\n4. **Assert:** Use data preview to check whether column values have changed to `['Excellent', 'Good', 'C']`.",
+    "expected_output": "2 points: Pre-check passed, and can successfully complete replacement according to user-provided mapping table. 1 point: Pre-check passed, but replacement result is incomplete or process is cumbersome. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "5.2a String Processing: Case Conversion",
+    "description": "1. **Pre-check (User Path):** Can 'String Processing' function be found through menu (e.g. 'Data Format Operations' -> 'Data Formatting'), and see case conversion option?\n2. **Arrange:** Import data containing string column `['Apple', 'banana', 'CAT']`.\n3. **Act:** Test 'Convert to Uppercase' and 'Convert to Lowercase' functions for this column.\n4. **Assert:** Preview data, verify 'Convert to Uppercase' result is `['APPLE', 'BANANA', 'CAT']`, 'Convert to Lowercase' result is `['apple', 'banana', 'cat']`.",
+    "expected_output": "2 points: Pre-check passed, and both case conversion functions work as expected. 1 point: Pre-check passed, but only one function works or result is incorrect. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "5.2b String Processing: Trim Spaces",
+    "description": "1. **Pre-check (User Path):** Is there a 'Trim Spaces' option in the string processing menu?\n2. **Arrange:** Import data containing string column `['  hello  ', 'world ']`.\n3. **Act:** Execute 'Trim Spaces' function on this column.\n4. **Assert:** Preview data, verify result is `['hello', 'world']`.",
+    "expected_output": "2 points: Pre-check passed, and can correctly remove spaces from both ends of strings. 1 point: Pre-check passed, but can only remove one end spaces or processing is incomplete. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "6.1 Data Splitting and Export: Split by Field Value to Multiple Worksheets",
+    "description": "1. **Pre-check (User Path):** Can 'Data Splitting and Export' function be found through menu?\n2. **Arrange:** Import data containing a categorical field (e.g. 'Region', values 'North China', 'South China').\n3. **Act:** Select field splitting function, specify 'Region' column, and export to Excel.\n4. **Assert:** Check current directory whether new Excel file is generated, open file to verify whether it contains worksheets named 'North China' and 'South China' with correct content.",
+    "expected_output": "2 points: Pre-check passed, successfully generates Excel file containing multiple worksheets correctly named by field values, and data splitting is correct. 1 point: Pre-check passed, but generated file worksheet naming is non-standard or data splitting is incorrect. 0 points: Pre-check failed, or function execution failed, no file generated."
+  },
+  {
+    "metric": "6.2a Data Export: Export as CSV (Custom Delimiter)",
+    "description": "1. **Pre-check (User Path):** Is there an 'Export as CSV' option in the export menu?\n2. **Arrange:** Import any data.\n3. **Act:** Select 'Export as CSV', and specify delimiter as '|' as prompted.\n4. **Assert:** Check generated CSV file, confirm its content uses '|' as delimiter.",
+    "expected_output": "2 points: Pre-check passed, successfully generates CSV, and user-specified delimiter takes effect. 1 point: Pre-check passed, but generates file while ignoring user-specified delimiter. 0 points: Pre-check failed, or function invalid."
+  },
+  {
+    "metric": "6.2b Data Export: Export as CSV (Custom Encoding)",
+    "description": "1. **Pre-check (User Path):** Is encoding option provided in export as CSV process?\n2. **Arrange:** Import data containing Chinese characters.\n3. **Act:** Select 'Export as CSV', and specify encoding as 'gbk' as prompted.\n4. **Assert:** Check generated CSV file, and use encoding detection supported tool (or open with Excel on Windows) to verify file encoding is GBK and Chinese characters display correctly without garbled text.",
+    "expected_output": "2 points: Pre-check passed, successfully generates CSV, and user-specified encoding takes effect. 1 point: Pre-check passed, but generates file while ignoring user-specified encoding (e.g. still default UTF-8). 0 points: Pre-check failed, or function invalid."
+  }
+]

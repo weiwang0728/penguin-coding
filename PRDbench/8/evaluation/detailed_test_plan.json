@@ -1,0 +1,394 @@
+[
+  {
+    "metric": "0.1.1 Application Startup and Main Menu",
+    "description": "1. **Act:** Execute the startup command in shell (e.g., `python src/main.py`).\n2. **Assert:** Observe whether the application successfully starts and displays a clear main menu with actionable options (such as \"User Management\", \"Organizational Structure Management\", \"Project Management\", etc.).",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Application successfully starts and displays a clear main menu with actionable options",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_0.1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.1.1 Organizational Structure Management - Department Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Organizational Structure Management\"?\n2. **Arrange:** Prepare a unique department name, description, and manager information.\n3. **Act:** Select \"Organizational Structure Management\", then select \"Add Department\", sequentially input the prepared department name, description, and manager.\n4. **Assert:** Observe whether the application clearly reports \"Department creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully create department",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.1.2 Organizational Structure Management - Department Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Organizational Structure Management\" menu, is there a clear option for \"Edit Department\"?\n2. **Arrange:** Ensure at least one existing department exists in the system.\n3. **Act:** Select \"Edit Department\", then select a department, modify its name, description, or manager.\n4. **Assert:** Observe whether the application clearly reports \"Department update successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully edit department",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.1.3 Organizational Structure Management - Department Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Organizational Structure Management\" menu, is there a clear option for \"Delete Department\"?\n2. **Arrange:** Ensure at least one department without members exists in the system.\n3. **Act:** Select \"Delete Department\", then select a department without members, confirm deletion operation.\n4. **Assert:** Observe whether the application clearly reports \"Department deletion successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully delete department",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.2.1 User Management - User Addition",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"User Management\"?\n2. **Arrange:** Prepare unique user information including username, password, name, email, etc.\n3. **Act:** Select \"User Management\", then select \"Add User\", sequentially input the prepared user information.\n4. **Assert:** Observe whether the application clearly reports \"User creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully add user",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.2.2 User Management - User Edit",
+    "description": "1. **Pre-check (User Path):** In the \"User Management\" menu, is there a clear option for \"Edit User\"?\n2. **Arrange:** Ensure at least one existing user exists in the system.\n3. **Act:** Select \"Edit User\", then select a user, modify their name, email, role, etc.\n4. **Assert:** Observe whether the application clearly reports \"User information update successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully edit user information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.2.3 User Management - User Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"User Management\" menu, is there a clear option for \"Delete User\"?\n2. **Arrange:** Ensure at least one non-super administrator user exists in the system.\n3. **Act:** Select \"Delete User\", then select a non-super administrator user, confirm deletion operation.\n4. **Assert:** Observe whether the application clearly reports \"User deletion successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully delete user",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.3.1 Project Management - Project Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Project Management\"?\n2. **Arrange:** Prepare unique project information including project name, description, type, importance level, etc.\n3. **Act:** Select \"Project Management\", then select \"Create New Project\", sequentially input the prepared project information.\n4. **Assert:** Observe whether the application clearly reports \"Project creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully create project",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.3.2 Project Management - Project Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Project Management\" menu, is there a clear option for \"Edit Project\"?\n2. **Arrange:** Ensure at least one existing project exists in the system.\n3. **Act:** Select \"Edit Project\", then select a project, modify its name, description, type, importance level, etc.\n4. **Assert:** Observe whether the application clearly reports \"Project update successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully edit project information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.3.3 Project Management - Project Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Project Management\" menu, is there a clear option for \"Delete Project\"?\n2. **Arrange:** Ensure at least one project with status \"Closed\" or \"Cancelled\" exists in the system.\n3. **Act:** Select \"Delete Project\", then select a qualifying project, confirm deletion operation.\n4. **Assert:** Observe whether the application clearly reports \"Project deletion successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully delete project",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "1.4.1 Project Status Management",
+    "description": "1. **Pre-check (User Path):** In the \"Project Management\" menu, is there a clear option for \"Project Status Management\" or similar function?\n2. **Arrange:** Ensure at least one existing project exists in the system.\n3. **Act:** Select the project, then modify its status (e.g., from \"Planning\" to \"In Progress\").\n4. **Assert:** Observe whether the application clearly reports \"Project status modified\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can successfully change project status",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.4.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.1 Requirement Management - Requirement Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Requirement Management\"?\n2. **Arrange:** Prepare information needed to create new requirement, including requirement title, description, project, requirement source, requirement level, priority, creator, etc.\n3. **Act:** Select \"Requirement Management\", then select \"Create New Requirement\", sequentially input the prepared requirement information.\n4. **Assert:** Observe whether the application clearly reports \"Requirement creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully create requirement",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.2 Requirement Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Requirement Management\" menu, is there a clear option for \"Requirement Edit\"?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select \"Edit Requirement\", then select an existing requirement, modify its title, description, priority, etc.\n4. **Assert:** Observe whether the application clearly reports \"Requirement update successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully edit requirement information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.1.3 Requirement Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Requirement Management\" menu, is there a clear option for \"Requirement Deletion\"?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select \"Delete Requirement\", then select an existing requirement, confirm deletion operation.\n4. **Assert:** Observe whether the application clearly reports \"Requirement deletion successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully delete requirement",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.1 Requirement Management - Requirement Status Change",
+    "description": "1. **Pre-check (User Path):** In the \"Requirement Management\" menu, is there a clear option for \"Requirement Status Management\" or similar function?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select the requirement, then modify its status (e.g., from \"New\" to \"Under Review\").\n4. **Assert:** Observe whether the application clearly reports \"Requirement status modified\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can successfully change all 8 requirement statuses (New, Under Review, Approved, To Be Developed, In Development, Under Testing, Completed, Rejected)",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.2.2 Requirement Management - Requirement Review",
+    "description": "1. **Pre-check (User Path):** In the \"Requirement Management\" menu, is there a clear option for \"Requirement Review\"?\n2. **Arrange:** Ensure at least one requirement with status \"New\" exists in the system.\n3. **Act:** Select the requirement, then execute review operation, select review result.\n4. **Assert:** Observe whether the application clearly reports review result and correctly updates requirement status.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can complete review operation and correctly update status",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "2.3.1 Requirement Traceability",
+    "description": "1. **Pre-check (User Path):** In the \"Requirement Management\" menu, is there a clear option for \"Requirement Traceability\" or viewing requirement details?\n2. **Arrange:** Ensure at least one existing requirement exists in the system.\n3. **Act:** Select the requirement, view its details page.\n4. **Assert:** Observe whether the page displays requirement information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can completely display requirement information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.1.1 Plan Management - Plan Creation",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Plan Management\"?\n2. **Arrange:** Prepare information needed to create new plan, including plan name, project, start date, end date, status, progress, etc.\n3. **Act:** Select \"Plan Management\", then select \"Create New Plan\", sequentially input the prepared requirement information.\n4. **Assert:** Observe whether the application clearly reports \"Plan creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully create requirement",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.1.2 Plan Management - Task Creation",
+    "description": "1. **Pre-check (User Path):** In the plan details page, is there task creation functionality?\n2. **Arrange:** Prepare information needed to create new task, including plan, task name, description, responsible person, estimated work hours, etc.\n3. **Act:** Select \"Task Management\", then select \"Add Task\", sequentially input the prepared requirement information.\n4. **Assert:** Observe whether the application clearly reports \"Task creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully create task",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.1.3 Plan Management - Progress Entry",
+    "description": "1. **Pre-check (User Path):** In the task details page, is there progress entry functionality?\n2. **Arrange:** Ensure at least one assigned task exists in the system.\n3. **Act:** Fill in status, actual work hours for the task.\n4. **Assert:** Observe whether the application can successfully save progress information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can fully follow interactive guidance and successfully edit task information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.2.1 Plan Management - Plan Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Plan Management\" menu, is there a clear option for \"Plan Edit\"?\n2. **Arrange:** Ensure at least one existing plan exists in the system.\n3. **Act:** Select \"Edit Plan\", then select an existing plan, modify its plan name, project, start date, end date, status, progress, etc.\n4. **Assert:** Observe whether the application clearly reports \"Plan update successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully edit plan information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.2.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "3.2.2 Plan Management - Plan Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Plan Management\" menu, is there a clear option for \"Plan Deletion\"?\n2. **Arrange:** Ensure at least one existing plan exists in the system.\n3. **Act:** Select \"Delete Plan\", then select an existing requirement, confirm deletion operation.\n4. **Assert:** Observe whether the application clearly reports \"Plan deletion successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully delete plan",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.2.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "4.1.1 Defect Management - Defect Creation",
+    "description": "1. **Pre-check (User Path):** In the \"Quality Management\" menu, is there a clear option for \"Create New Defect\"?\n2. **Arrange:** Prepare information needed for defect creation, including title, project, severity, etc.\n3. **Act:** Select \"Create New Defect\", sequentially input the prepared information.\n4. **Assert:** Observe whether the application clearly reports \"Defect creation successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully create defect",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.1.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "4.1.2 Defect Management - Defect Edit",
+    "description": "1. **Pre-check (User Path):** In the \"Quality Management\" menu, is there a clear option for \"Edit Defect\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Edit Defect\", then select a defect, modify its title, description, severity, etc.\n4. **Assert:** Observe whether the application clearly reports \"Defect update successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully edit defect",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.1.2.in"
+      }
+    ]
+  },
+  {
+    "metric": "4.1.3 Defect Management - Defect Deletion",
+    "description": "1. **Pre-check (User Path):** In the \"Quality Management\" menu, is there a clear option for \"Delete Defect\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Delete Defect\", then select a defect, confirm deletion operation.\n4. **Assert:** Observe whether the application clearly reports \"Defect deletion successful\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, and can fully follow interactive guidance and successfully delete defect",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.1.3.in"
+      }
+    ]
+  },
+  {
+    "metric": "4.1.4 Defect Management - Defect Status Management",
+    "description": "1. **Pre-check (User Path):** In the defect details page, is there status change functionality?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select the defect, modify its status.\n4. **Assert:** Observe whether the application clearly reports \"Defect status modified\".",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can successfully change defect status",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.1.4.in"
+      }
+    ]
+  },
+  {
+    "metric": "4.2.1 Quality Metrics Viewing",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Quality Management\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Quality Management\", then view quality metrics.\n4. **Assert:** Observe whether the application can successfully display quality metrics information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can display quality metrics information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.2.1.in"
+      }
+    ]
+  },
+  {
+    "metric": "4.2.2 Quality Report Viewing",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear option for \"Quality Management\"?\n2. **Arrange:** Ensure at least one existing defect exists in the system.\n3. **Act:** Select \"Quality Management\", then view quality report.\n4. **Assert:** Observe whether the application can successfully display quality report information.",
+    "type": "shell_interaction",
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Pre-check passes, can display quality report information",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.2.2.in"
+      }
+    ]
+  }
+]

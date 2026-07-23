@@ -1,0 +1,255 @@
+[
+  {
+    "metric": "0.1 Project Documentation: Provide Clear Installation and Running Guide",
+    "description": "1. **Execute (Act):** Execute the `ls -l` command in the project root directory.\n2. **Assert:** Check for the presence of the `README.md` file. If it exists, execute `cat README.md` and check that its contents include two specific sections: (1) How to install dependencies (e.g. `pip install -r requirements.txt`); (2) How to run the main program (e.g. `python main.py`).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "ls -l src/",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The command should successfully list the README.md file, confirming its existence."
+  },
+  {
+    "metric": "2.1.1 Data Import Functionality",
+    "description": "1. **Pre-Check (User Path):** Is there a clear option in the main menu (e.g., '1. Import Table Data') to trigger the data import function?\n2. **Prepare (Arrange):** Prepare a valid path and correctly formatted CSV file (e.g. `valid.csv`).\n3. **Execute (Act):** Select the import function and enter the prepared file path when prompted.\n4. **Assert:** Check if the program prints operation logs indicating successful data import and stably returns to the main menu.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.1.1_data_import.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/valid_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should print a success message indicating the data file has been loaded and processed."
+  },
+  {
+    "metric": "2.2.1 Task Data Aggregation and Duration Summation",
+    "description": "1. **Pre-Check (User Path):** Confirm access to the 'View Summary Table' function via the main menu.\n2. **Prepare (Arrange):** Prepare a table `aggregation.csv` with at least two records of the same task number (e.g., `TASK-H-20231001` with durations of 2.5 hours and 3.0 hours).\n3. **Execute (Act):** Import this file, then select to view the summary table.\n4. **Assert:** Inspect the output table, confirming the task number appears only once and the equipment duration is correctly summed (5.5 hours).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.2.1_aggregation.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/aggregation_test.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should display a summary table where task ‘TASK-H-20231001’ appears once with an ‘Equipment Duration’ of ‘5.5’."
+  },
+  {
+    "metric": "2.2.3a Feedback Column Generation: Text Simplification",
+    "description": "1. **Pre-Check (User Path):** Confirm access to the 'View Summary Table' function via the main menu.\n2. **Prepare (Arrange):** Prepare a table with feedback column content as 'Trial shows no anomaly'.\n3. **Execute (Act):** Import this file, then select to view the summary table.\n4. **Assert:** Inspect the output table's 'Feedback Column', confirming the content has been simplified to 'No anomalies'.",
+    "type": "unit_test",
+    "testcases": [
+      {
+        "test_command": "pytest evaluation/tests/test_feedback_simplification.py::test_feedback_simplification",
+        "test_input": null
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Test should pass without errors."
+  },
+  {
+    "metric": "2.2.3b Feedback Column Generation: Error Code Extraction",
+    "description": "1. **Pre-Check (User Path):** Confirm access to the 'View Summary Table' function via the main menu.\n2. **Prepare (Arrange):** Prepare a table with feedback column content as 'Error-404, Device Restart'.\n3. **Execute (Act):** Import this file, then select to view the summary table.\n4. **Assert:** Inspect the output table, confirming a new 'Anomaly Identifier' column is added, containing the extracted non-Chinese part from feedback 'Error-404,'.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.2.3b_feedback_extraction.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/error_code_test.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should display a summary table with a new column named ‘Anomaly Identifier’ containing ‘Error-404,’."
+  },
+  {
+    "metric": "2.3a Task Efficiency Analysis: Core KPI Calculation",
+    "description": "1. **Pre-Check (User Path):** Is there an option for 'Generate statistical charts (including KPI analysis)' in the main menu?\n2. **Prepare (Arrange):** Prepare a table such as `kpi.csv` with 10 tasks (8 successful), 20 test items (15 valid), total duration of 100 hours.\n3. **Execute (Act):** Import `kpi.csv`, then select 'Generate statistical charts (including KPI analysis)'.\n4. **Assert:** Check if the output includes 'Task Completion Rate', 'Test Validity Index', 'Average Equipment Duration' with calculated values matching expectations.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.3a_kpi_calculation.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/kpi_test.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should display a table with the following KPI indicators: 'Task Completion Rate', 'Test Validity Index', 'Average Equipment Duration' matching the expected calculation values."
+  },
+  {
+    "metric": "2.3b Task Efficiency Analysis: Layered Statistics by Priority",
+    "description": "1. **Pre-Check (User Path):** Enter 'Generate statistical charts (including KPI analysis)' in the main menu, verify grouping by priority (e.g., 'TASK-H', 'TASK-M') in the data presentation area.\n2. **Prepare (Arrange):** Prepare a table with at least two tasks of different priorities.\n3. **Execute (Act):** Import the table and access the KPI display function.\n4. **Assert:** Verify if the KPI data in the output is clearly divided into at least 2 priority categories.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.3a_kpi_calculation.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/kpi_test.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The program should display a KPI table grouped by priority."
+  },
+  {
+    "metric": "2.4a Visualization Report Generation: Task Status Distribution Chart",
+    "description": "1. **Pre-Check (User Path):** Is there a 'Generate statistical charts' or similar option in the main menu?\n2. **Prepare (Arrange):** Import a data table containing 'Success' and 'Failure' statuses.\n3. **Execute (Act):** Choose the chart generation function and enter the save directory.\n4. **Assert:** Check program output to confirm if it printed the save path of the chart (e.g., `task_status.png`) and use the `ls` command to confirm file creation.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.3a_kpi_calculation.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/kpi_test.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_TTA_Task_Status_Distribution.png"
+    ],
+    "expected_output": "The file TTA_Task_Status_Distribution_*.png should be successfully created."
+  },
+  {
+    "metric": "2.4b Visualization Report Generation: Test Effectiveness Distribution Chart",
+    "description": "1. **Pre-Check (User Path):** Is there a 'Generate statistical charts' or similar option in the main menu?\n2. **Prepare (Arrange):** Import a data table with 'Valid', 'Invalid', 'Unmarked' statuses.\n3. **Execute (Act):** Choose the chart generation function and enter the save directory.\n4. **Assert:** Check program output confirming if it printed the save path of the second chart (e.g., `test_effectiveness.png`) and use the `ls` command to confirm file creation.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.3a_kpi_calculation.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/kpi_test.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_TTA_Test_Effectiveness_Distribution.png"
+    ],
+    "expected_output": "The file TTA_Test_Effectiveness_Distribution_*.png should be successfully created."
+  },
+  {
+    "metric": "2.5 Program Start and Main Menu Display",
+    "description": "1. **Prepare (Arrange):** Complete dependency installation according to instructions in `README.md`.\n2. **Execute (Act):** Execute the program start command specified in `README.md`.\n3. **Assert:** Observe whether the program successfully starts and displays a clear main menu containing all 5 options in the PRD (1. Import, 2. View, 3. Generate Charts, 4. Export, 5. Exit).",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.5_program_start_main_menu.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should successfully start and display the main menu, which must include all 5 options (1. Import, 2. View, 3. Generate Charts, 4. Export, 5. Exit)."
+  },
+  {
+    "metric": "2.5.1 Export Functionality",
+    "description": "1. **Pre-Check (User Path):** Is there an 'Export Processed Results' option in the main menu?\n2. **Prepare (Arrange):** Successfully import a dataset.\n3. **Execute (Act):** Choose the export function and input `csv` or excel as prompted.\n4. **Assert:** Confirm if the file is generated and view the content to verify it is the processed table data.",
+    "type": "file_comparison",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.5.1_export.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/valid_data.csv"
+    ],
+    "expected_output_files": [
+      "evaluation/expected_TTA_Analysis_Data.csv",
+      "evaluation/expected_TTA_Analysis_KPIs.csv"
+    ],
+    "expected_output": "The program should successfully export the processed table and indicator files."
+  },
+  {
+    "metric": "2.5.2 Shortcut Key: 'q' Key to Return",
+    "description": "1. **Execute (Act):** In the main menu, select `2` (View Summary Table), and after displaying the table, directly press the `q` key without choosing any other operation.\n2. **Assert:** Observe if the program properly returns to the previous interface.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.5.2_shortcut_q_return.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/valid_data.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "After selecting option ‘2’, pressing ‘q’ should immediately return to the main menu."
+  },
+  {
+    "metric": "2.5.3 System Exit Function",
+    "description": "1. **Pre-Check (User Path):** Is there an '5. Exit System' option in the main menu?\n2. **Execute (Act):** On the main menu screen, select the exit option and press enter.\n3. **Assert:** Observe if the program process terminates cleanly and normally without printing any error messages.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.5.3_system_exit.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should terminate cleanly after displaying a farewell message."
+  },
+  {
+    "metric": "2.6.2a Exception Handling: File Path Does Not Exist",
+    "description": "1. **Pre-Check (User Path):** Confirm access to the 'Import Table Data' function via the main menu.\n2. **Prepare (Arrange):** Prepare a non-existent file path, such as `non_existent_file.csv`.\n3. **Execute (Act):** Select the import function and enter the non-existent path when prompted.\n4. **Assert:** Observe if the program prints a prompt message and stably returns to the main menu.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.6.2a_exception_file_not_exist.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "The program should print an error message indicating the file could not be found."
+  },
+  {
+    "metric": "2.6.2b Exception Handling: Task Number Format Validation",
+    "description": "1. **Prepare (Arrange):** Prepare a table `invalid_task_id.csv` containing at least one record with a task number not conforming to the pattern `^TASK-[HML]-(d{8})$`.\n2. **Execute (Act):** Import this file and execute `cat error.log` (or the log file name specified in the PRD).\n3. **Assert:** Check the log file content to confirm if there is a clear error record for the incorrect task number.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.6.2b_invalid_task_id.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/invalid_task_id.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The error log `logs/error.log` should contain a record explicitly indicating the task number format is incorrect."
+  },
+  {
+    "metric": "2.6.2c Exception Handling: Equipment Duration Range Validation",
+    "description": "1. **Prepare (Arrange):** Prepare a table `invalid_duration.csv` containing at least one record with an equipment duration less than 0 or greater than or equal to 10.\n2. **Execute (Act):** Import this file and execute `cat error.log` (or the log file name specified in the PRD).\n3. **Assert:** Check the log file content to confirm if there is a clear error record for the out-of-range duration.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/run.py interactive",
+        "test_input": "evaluation/test_2.6.2c_invalid_duration.in"
+      }
+    ],
+    "input_files": [
+      "evaluation/invalid_duration_test.csv"
+    ],
+    "expected_output_files": null,
+    "expected_output": "The error log `logs/error.log` should contain a record explicitly indicating the equipment duration is out of the valid range (between 0 and 10)."
+  }
+]

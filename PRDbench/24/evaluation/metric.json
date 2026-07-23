@@ -1,0 +1,67 @@
+[
+  {
+    "metric": "1.1.1 Excel File Reading: Successfully Read Input Data Files",
+    "description": "1. **Arrange:** Ensure files src/mdl4.xlsx and src/AfterClustering.xlsx exist in AHAU-logistics-GM project root directory.\n2. **Act:** Execute command `python -c \"import pandas as pd; data1=pd.read_excel('src/mdl4.xlsx'); data2=pd.read_excel('src/AfterClustering.xlsx'); print(f'mdl4 row count: {len(data1)}, column count: {len(data1.columns)}'); print(f'clustered data row count: {len(data2)}, column count: {len(data2.columns)}')\"`.\n3. **Assert:** Observe whether row and column count information for both files is successfully output.",
+    "expected_output": "2 points: Successfully read both Excel files and output complete row and column count information. 1 point: Can read files but output information incomplete or only one file readable. 0 points: Both files non-existent or reading failed."
+  },
+  {
+    "metric": "1.1.2 Data Field Integrity: Verify Excel File Contains 4 Core Fields",
+    "description": "1. **Arrange:** Ensure src/AfterClustering.xlsx file is readable.\n2. **Act:** Execute command `python -c \"import pandas as pd; data=pd.read_excel('src/AfterClustering.xlsx'); print('Column count:', len(data.columns)); print('Data types:', data.dtypes.tolist())\"`.\n3. **Assert:** Verify file contains 4 or more data columns, and data types are reasonable.",
+    "expected_output": "2 points: Excel file contains 4 or more data columns, data types reasonable. 1 point: Contains 3 data columns. 0 points: Less than 3 data columns or data types abnormal."
+  },
+  {
+    "metric": "1.1.3 Coordinate Validity Verification: Verify Longitude and Latitude Coordinates Within Valid Range",
+    "description": "1. **Arrange:** Ensure src/mdl4.xlsx file is readable.\n2. **Act:** Execute command `python -c \"import pandas as pd; data=pd.read_excel('src/mdl4.xlsx'); lon_col=data.iloc[:,1]; lat_col=data.iloc[:,2]; print('Longitude range:', lon_col.min(), '-', lon_col.max()); print('Latitude range:', lat_col.min(), '-', lat_col.max()); lon_valid=(lon_col >= 73) & (lon_col <= 135); lat_valid=(lat_col >= 3) & (lat_col <= 54); print('Valid longitude count:', lon_valid.sum(), '/', len(lon_col)); print('Valid latitude count:', lat_valid.sum(), '/', len(lat_col))\"`.\n3. **Assert:** Verify proportion of longitudes within 73-135 range and latitudes within 3-54 range.",
+    "expected_output": "2 points: 100% longitude coordinates within 73-135 range and 100% latitude coordinates within 3-54 range. 1 point: Over 90% longitude and latitude coordinates within valid range. 0 points: Less than 90% longitude and latitude coordinates within valid range."
+  },
+  {
+    "metric": "1.1.4 Weight Data Non-Negativity: Verify Weight Data Non-Negative",
+    "description": "1. **Arrange:** Ensure src/mdl4.xlsx file is readable.\n2. **Act:** Execute command `python -c \"import pandas as pd; data=pd.read_excel('src/mdl4.xlsx'); weight_col=data.iloc[:,3]; print('Weight range:', weight_col.min(), '-', weight_col.max()); non_negative_count=(weight_col >= 0); print('Non-negative weight count:', non_negative_count.sum(), '/', len(weight_col))\"`.\n3. **Assert:** Verify proportion of non-negative weight data.",
+    "expected_output": "2 points: 100% weight data non-negative. 1 point: Over 95% weight data non-negative. 0 points: Less than 95% weight data non-negative."
+  },
+  {
+    "metric": "1.2.1 Single Centroid Method Algorithm: Calculate Global Optimal Logistics Center Coordinates",
+    "description": "1. **Arrange:** Ensure src/AfterClustering.xlsx file exists.\n2. **Act:** Execute command `python src/SingleCentroidMethod.py`.\n3. **Assert:** Observe whether console outputs \"Centroid Longitude:\" and \"Centroid Latitude:\" two lines of information.",
+    "expected_output": "2 points: Successfully outputs centroid longitude and latitude two complete information items. 1 point: Outputs information but format non-standard or missing one item. 0 points: Program reports error or no coordinate output."
+  },
+  {
+    "metric": "1.2.2 Single Centroid Method Coordinate Reasonableness and Visualization: Verify Centroid Coordinate Reasonableness and Generate Complete Scatter Plot",
+    "description": "1. **Arrange:** Ensure matplotlib can normally display charts and src/AfterClustering.xlsx file exists.\n2. **Act:** Execute unit tests to verify coordinate reasonableness, and execute script to generate visualization chart.\n3. **Assert:** Verify centroid longitude within 115-120 range, latitude within 30-35 range, and scatter plot contains blue store scatter points, red centroid point, coordinate axis labels, legend description.",
+    "expected_output": "2 points: Centroid coordinates within Anhui Province geographic range and chart contains all 4 elements (blue store scatter points, red centroid point, coordinate axis labels, legend description). 1 point: Coordinate reasonableness or visualization elements one item meets standard. 0 points: Coordinates exceed reasonable range and chart elements less than 3."
+  },
+  {
+    "metric": "1.3.1 Silhouette Coefficient Analysis and Visualization: Calculate Optimal K Value and Generate Relationship Chart",
+    "description": "1. **Arrange:** Ensure src/mdl4.xlsx file exists and matplotlib can normally display charts.\n2. **Act:** Execute command `python src/SilhouetteCoefficient.py`.\n3. **Assert:** Observe console outputs \"Largest silhouette coefficient:\" and \"Corresponding K value:\" information (K value within 2-92 range), and pops up K value and silhouette coefficient relationship chart, Chinese labels display normally.",
+    "expected_output": "2 points: Successfully outputs maximum silhouette coefficient and K value information (K value within 2-92 range) and displays complete chart, Chinese labels display normally. 1 point: Console output or chart display one item meets standard. 0 points: Program reports error, no relevant output or chart cannot display."
+  },
+  {
+    "metric": "1.3.2 K-means Clustering Comprehensive Functionality: Calculate Cluster Centers, Generate Excel File and Visualize Scatter Plot",
+    "description": "1. **Arrange:** Ensure src/mdl4.xlsx file exists and matplotlib can normally display charts.\n2. **Act:** Execute command `python src/ClusteringAlgorithm.py`.\n3. **Assert:** Verify console outputs 14 cluster center coordinates, generates cluster_points.xlsx file, displays complete cluster scatter plot containing colored store scatter points and red X markers.",
+    "expected_output": "2 points: Console outputs 14 cluster center coordinates, successfully generates Excel file (≥14 worksheets), displays complete cluster scatter plot (colored store scatter points, 14 red X markers, color bar, Chinese labels) all 3 functionalities. 1 point: Completes 2 functionalities or cluster center count 10-13. 0 points: Completes less than 2 functionalities or cluster centers <10."
+  },
+  {
+    "metric": "1.3.3 K-means Clustering Coordinate Reasonableness: Cluster Center Coordinates Within Anhui Province Range",
+    "description": "1. **Arrange:** Execute src/ClusteringAlgorithm.py to obtain cluster center coordinates.\n2. **Act:** Check all output cluster center coordinates.\n3. **Assert:** Verify all longitudes within 115-120 range, latitudes within 30-35 range.",
+    "expected_output": "2 points: All 14 cluster center coordinates within Anhui Province geographic range. 1 point: 12-13 cluster center coordinates within reasonable range. 0 points: Less than 12 cluster center coordinates within reasonable range."
+  },
+  {
+    "metric": "1.3.4 Coordinate Standardization Processing: Use StandardScaler for Coordinate Standardization",
+    "description": "1. **Arrange:** Open src/ClusteringAlgorithm.py file.\n2. **Act:** Execute command `python -c \"with open('src/ClusteringAlgorithm.py', 'r', encoding='utf-8') as f: content=f.read(); print('Contains StandardScaler:', 'StandardScaler' in content); print('Contains fit_transform:', 'fit_transform' in content)\"`.\n3. **Assert:** Verify whether code imports and uses StandardScaler.",
+    "expected_output": "2 points: Code clearly imports and uses StandardScaler for coordinate standardization. 1 point: Code contains StandardScaler but usage method incomplete. 0 points: Code does not use StandardScaler for standardization."
+  },
+  {
+    "metric": "1.3.5 Excel Worksheet Structure: Contains Multiple Cluster Worksheets",
+    "description": "1. **Arrange:** Ensure cluster_points.xlsx file generated.\n2. **Act:** Execute command `python -c 'import openpyxl; wb=openpyxl.load_workbook(\"cluster_points.xlsx\"); print(\"Worksheet count:\", len(wb.sheetnames)); print(\"First 5 worksheets:\", wb.sheetnames[:5])'`.\n3. **Assert:** Observe whether outputs worksheet count ≥14 and worksheet names contain \"Cluster\" text.",
+    "expected_output": "2 points: Excel file contains ≥14 worksheets and worksheet name format \"Cluster X\". 1 point: Contains 10-13 worksheets or worksheet name format basically correct. 0 points: Worksheet count <10 or name format non-standard."
+  },
+  {
+    "metric": "2.1 Weight Normalization Processing: Normalize Weight Data",
+    "description": "1. **Arrange:** Open src/SingleCentroidMethod.py file.\n2. **Act:** Execute command `python -c \"with open('src/SingleCentroidMethod.py', 'r', encoding='utf-8') as f: content=f.read(); print('Contains weight normalization:', 'weights /=' in content or 'weights = weights /' in content or 'np.sum(weights)' in content)\"`.\n3. **Assert:** Verify whether code contains weight normalization processing logic.",
+    "expected_output": "2 points: Code clearly contains weight normalization processing logic. 1 point: Contains weight processing but method non-standard. 0 points: No weight normalization processing performed."
+  },
+  {
+    "metric": "3.1 Output Result Consistency: Multiple Runs Produce Stable Results",
+    "description": "1. **Arrange:** Ensure src/SingleCentroidMethod.py can execute normally.\n2. **Act:** Continuously execute `python src/SingleCentroidMethod.py` twice, record centroid coordinates for both outputs.\n3. **Assert:** Compare whether centroid longitude and latitude coordinates from both runs completely consistent (precise to 6 decimal places).",
+    "expected_output": "2 points: Two run results completely consistent, coordinates precise to 6 decimal places identical. 1 point: Two run results identical to 4-5 decimal places. 0 points: Two run results significantly different or differ within 3 decimal places."
+  }
+]

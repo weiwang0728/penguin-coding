@@ -1,0 +1,9 @@
+session_id,collector,location,session_created_at,question_id,question_text,question_module,answer
+1,Surveyor A,Practice Course B,2023-10-26 10:00:00,1,What is your name?,Personal Basic Information,Zhang San
+1,Surveyor A,Practice Course B,2023-10-26 10:00:00,2,What is your phone number?,Personal Basic Information,13812345678
+1,Surveyor A,Practice Course B,2023-10-26 10:00:00,3,What is your gender?,Personal Basic Information,Male
+1,Surveyor A,Practice Course B,2023-10-26 10:00:00,4,What is your age group?,Personal Basic Information,30-40 years old
+2,Surveyor B,Resort C,2023-10-26 11:00:00,1,What is your name?,Personal Basic Information,Li Xiaohong
+2,Surveyor B,Resort C,2023-10-26 11:00:00,2,What is your phone number?,Personal Basic Information,15987654321
+2,Surveyor B,Resort C,2023-10-26 11:00:00,3,What is your gender?,Personal Basic Information,Female
+2,Surveyor B,Resort C,2023-10-26 11:00:00,4,What is your age group?,Personal Basic Information,25-35 years old

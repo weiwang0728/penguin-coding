@@ -1,0 +1,92 @@
+[
+  {
+    "metric": "1.1 Robustness - Return Usage Instructions for Invalid Parameters",
+    "description": "1. **Preparation (Arrange):** No special preparation needed.\n2. **Execution (Act):** Execute `python src/main.py --help` or `python src/main.py --unknown-arg`.\n3. **Assertion (Assert):** Observe whether the program returns clear usage instructions, including available parameter options (--model, --input) and descriptions for each.",
+    "expected_output": "2 points: The program clearly displays complete usage instructions, including detailed explanations and examples for all parameters. 1 point: The program displays basic usage instructions, but the information is incomplete or formatted poorly. 0 points: The program doesn't display usage instructions and instead crashes or becomes unresponsive."
+  },
+  {
+    "metric": "1.2 Robustness - Invalid Model Parameters",
+    "description": "1. **Preparation (Arrange):** Prepare a valid matrix data file, e.g., `data/LU.txt`.\n2. **Execution (Act):** Execute `python src/main.py --model INVALIDMODEL --input src/data/LU.txt`, where `INVALIDMODEL` is an algorithm name not defined in the PRD.\n3. **Assertion (Assert):** Check if the program returns a clear error message, mentioning 'invalid parameter' or similar text, and lists all available algorithm options (LU, QR, HR, GR, URV).",
+    "expected_output": "2 points: The program clearly indicates the model parameter error and lists all 5 available algorithm options. 1 point: The program indicates an error, but the message is vague or doesn't provide a complete list of available options. 0 points: The program doesn't indicate any error and instead crashes, executes incorrect logic, or becomes unresponsive."
+  },
+  {
+    "metric": "1.3 Robustness - Invalid File Path",
+    "description": "1. **Preparation (Arrange):** Ensure that the file named `non_existent_file.txt` does not exist in the execution path.\n2. **Execution (Act):** Execute `python main.py --model LU --input non_existent_file.txt`.\n3. **Assertion (Assert):** Check whether the program returns a clear file error message, such as 'file not found', 'path error', or similar user-friendly information.",
+    "expected_output": "2 points: The program provides a clear message indicating the file is not found or there is a path error. 1 point: The program gives an error, but it is a general Python exception stack and not user-friendly. 0 points: The program doesn’t indicate any error and instead crashes or hangs indefinitely."
+  },
+  {
+    "metric": "2.1a Core Functionality - LU Decomposition: Accuracy of Results",
+    "description": "1. **Preparation (Arrange):** Prepare a specific input matrix (e.g., in `data/LU.txt`), and pre-calculate its standard L and U matrices for reference.\n2. **Execution (Act):** Execute `python src/main.py --model LU --input src/data/LU.txt`.\n3. **Assertion (Assert):** Compare the L and U matrices output by the program with the pre-calculated standard results. The error for each matrix element should be within an acceptable range (e.g., 1e-6).",
+    "expected_output": "2 points: The output L and U matrices match the standard results exactly (within precision error range). 1 point: The program outputs L and U matrices, but there are significant calculation errors in comparison to the standard results. 0 points: The program doesn't output L and U matrices, or execution fails."
+  },
+  {
+    "metric": "2.1b Core Functionality - LU Decomposition: Output Format Norms",
+    "description": "1. **Preparation (Arrange):** Prepare an input matrix containing numbers with varying decimal places.\n2. **Execution (Act):** Execute `python src/main.py --model LU --input src/data/LU.txt`.\n3. **Assertion (Assert):** Check the output L and U matrices to verify that all numbers are formatted consistently to a uniform decimal precision (e.g., 4 decimal places).",
+    "expected_output": "2 points: All matrix elements in the output are strictly aligned to a consistent decimal place precision. 1 point: The program outputs matrices, but the decimals are not unified, leading to chaotic formatting. 0 points: No matrix results are output."
+  },
+  {
+    "metric": "2.1c Core Functionality - LU Decomposition: Matrix Rank Calculation",
+    "description": "1. **Preparation (Arrange):** Prepare an input matrix with a known rank (e.g., a 3x3 non-singular matrix with a rank of 3).\n2. **Execution (Act):** Execute `python src/main.py --model LU --input src/data/LU.txt`.\n3. **Assertion (Assert):** Check if the program's output includes a clear indication of 'matrix rank' or similar labeling, and that the value matches the known rank.",
+    "expected_output": "2 points: The program correctly computes and clearly displays the matrix rank. 1 point: The program computes the rank but does not clearly label it, or there is a computation error. 0 points: There is no output regarding matrix rank."
+  },
+  {
+    "metric": "2.2a Core Functionality - QR Decomposition: Accuracy of Results",
+    "description": "1. **Preparation (Arrange):** Prepare a specific input matrix (`data/GramSchmidt.txt`) and pre-calculate the standard Q and R matrices.\n2. **Execution (Act):** Execute `python src/main.py --model QR --input src/data/GramSchmidt.txt`.\n3. **Assertion (Assert):** Compare the Q and R matrices output by the program with the standard results. The element error should be within an acceptable range.",
+    "expected_output": "2 points: The output Q and R matrices match the standard results exactly. 1 point: There are calculation errors in the output matrices. 0 points: No matrices are output, or execution fails."
+  },
+  {
+    "metric": "2.2b Core Functionality - QR Decomposition: Output Format Norms",
+    "description": "1. **Execution (Act):** Execute `python src/main.py --model QR --input src/data/GramSchmidt.txt`.\n2. **Assertion (Assert):** Check the output Q and R matrices to verify all values are formatted consistently to a uniform decimal precision.",
+    "expected_output": "2 points: Output is strictly aligned to a uniform decimal place. 1 point: Output format is chaotic. 0 points: No matrix output."
+  },
+  {
+    "metric": "2.2c Core Functionality - QR Decomposition: Matrix Rank Calculation",
+    "description": "1. **Preparation (Arrange):** Prepare an input matrix with a known rank.\n2. **Execution (Act):** Execute `python src/main.py --model QR --input src/data/GramSchmidt.txt`.\n3. **Assertion (Assert):** Check if the output contains clear and correct information about the 'matrix rank'.",
+    "expected_output": "2 points: Correctly calculates and clearly displays the rank. 1 point: Computation error or unclear labeling. 0 points: No rank information output."
+  },
+  {
+    "metric": "2.3a Core Functionality - HR Decomposition: Accuracy of Results",
+    "description": "1. **Preparation (Arrange):** Prepare a specific input matrix (`data/Household.txt`) and pre-calculate the standard results.\n2. **Execution (Act):** Execute `python src/main.py --model HR --input src/data/Household.txt`.\n3. **Assertion (Assert):** Compare the output matrix with the standard results, with the element error within an acceptable range.",
+    "expected_output": "2 points: The output matrix matches the standard results exactly. 1 point: There are calculation errors in the output matrix. 0 points: No matrix is output, or execution fails."
+  },
+  {
+    "metric": "2.3b Core Functionality - HR Decomposition: Output Format Norms",
+    "description": "1. **Execution (Act):** Execute `python src/main.py --model HR --input src/data/Household.txt`.\n2. **Assertion (Assert):** Check the output matrix to verify all numbers are formatted consistently to a uniform decimal precision.",
+    "expected_output": "2 points: Output is strictly aligned to a uniform decimal place. 1 point: Output format is chaotic. 0 points: No matrix output."
+  },
+  {
+    "metric": "2.3c Core Functionality - HR Decomposition: Matrix Rank Calculation",
+    "description": "1. **Preparation (Arrange):** Prepare an input matrix with a known rank.\n2. **Execution (Act):** Execute `python src/main.py --model HR --input src/data/Household.txt`.\n3. **Assertion (Assert):** Check if the output contains clear and correct information about the 'matrix rank'.",
+    "expected_output": "2 points: Correctly calculates and clearly displays the rank. 1 point: Computation error or unclear labeling. 0 points: No rank information output."
+  },
+  {
+    "metric": "2.4a Core Functionality - GR Decomposition: Accuracy of Results",
+    "description": "1. **Preparation (Arrange):** Prepare a specific input matrix (`data/Givens.txt`) and pre-calculate the standard results.\n2. **Execution (Act):** Execute `python src/main.py --model GR --input src/data/Givens.txt`.\n3. **Assertion (Assert):** Compare the output matrix with the standard results, with the element error within an acceptable range.",
+    "expected_output": "2 points: The output matrix matches the standard results exactly. 1 point: There are calculation errors in the output matrix. 0 points: No matrix is output, or execution fails."
+  },
+  {
+    "metric": "2.4b Core Functionality - GR Decomposition: Output Format Norms",
+    "description": "1. **Execution (Act):** Execute `python src/main.py --model GR --input src/data/Givens.txt`.\n2. **Assertion (Assert):** Check the output matrix to verify all numbers are formatted consistently to a uniform decimal precision.",
+    "expected_output": "2 points: Output is strictly aligned to a uniform decimal place. 1 point: Output format is chaotic. 0 points: No matrix output."
+  },
+  {
+    "metric": "2.4c Core Functionality - GR Decomposition: Matrix Rank Calculation",
+    "description": "1. **Preparation (Arrange):** Prepare an input matrix with a known rank.\n2. **Execution (Act):** Execute `python src/main.py --model GR --input src/data/Givens.txt`.\n3. **Assertion (Assert):** Check if the output contains clear and correct information about the 'matrix rank'.",
+    "expected_output": "2 points: Correctly calculates and clearly displays the rank. 1 point: Computation error or unclear labeling. 0 points: No rank information output."
+  },
+  {
+    "metric": "2.5a Core Functionality - URV Decomposition: Accuracy of Results",
+    "description": "1. **Preparation (Arrange):** Prepare a specific input matrix (`data/URV.txt`) and pre-calculate the standard U, R, V matrices.\n2. **Execution (Act):** Execute `python src/main.py --model URV --input src/data/URV.txt`.\n3. **Assertion (Assert):** Compare the U, R, V matrices output by the program with the standard results, with element errors within an acceptable range.",
+    "expected_output": "2 points: The output U, R, V matrices match the standard results exactly. 1 point: There are calculation errors in the output matrices. 0 points: No matrices are output, or execution fails."
+  },
+  {
+    "metric": "2.5b Core Functionality - URV Decomposition: Output Format Norms",
+    "description": "1. **Execution (Act):** Execute `python src/main.py --model URV --input src/data/URV.txt`.\n2. **Assertion (Assert):** Check the output U, R, V matrices to verify all numbers are formatted consistently to a uniform decimal precision.",
+    "expected_output": "2 points: Output is strictly aligned to a uniform decimal place. 1 point: Output format is chaotic. 0 points: No matrix output."
+  },
+  {
+    "metric": "2.5c Core Functionality - URV Decomposition: Matrix Rank Calculation",
+    "description": "1. **Preparation (Arrange):** Prepare an input matrix with a known rank.\n2. **Execution (Act):** Execute `python src/main.py --model URV --input src/data/URV.txt`.\n3. **Assertion (Assert):** Check if the output contains clear and correct information about the 'matrix rank'.",
+    "expected_output": "2 points: Correctly calculates and clearly displays the rank. 1 point: Computation error or unclear labeling. 0 points: No rank information output."
+  }
+]

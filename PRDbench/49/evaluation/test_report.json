@@ -1,0 +1,487 @@
+{
+  "test_summary": {
+    "total_tests": 19,
+    "passed_tests": 15,
+    "failed_tests": 4,
+    "total_score": 110,
+    "max_possible_score": 136,
+    "percentage_score": 80.88,
+    "grade": "B"
+  },
+  "category_breakdown": {
+    "SystemFoundationFoundationFunction": {
+      "score": 10,
+      "max_score": 10,
+      "tests": 1
+    },
+    "MQTT Communication Function": {
+      "score": 24,
+      "max_score": 24,
+      "tests": 3
+    },
+    "DataManagementFunction": {
+      "score": 14,
+      "max_score": 20,
+      "tests": 3
+    },
+    "Machine Learning Function": {
+      "score": 14,
+      "max_score": 24,
+      "tests": 3
+    },
+    "System Monitoring Function": {
+      "score": 14,
+      "max_score": 14,
+      "tests": 2
+    },
+    "WebInterfaceFunction": {
+      "score": 8,
+      "max_score": 8,
+      "tests": 1
+    },
+    "ConfigureManagementFunction": {
+      "score": 6,
+      "max_score": 6,
+      "tests": 1
+    },
+    "DataQualityEditionControl": {
+      "score": 12,
+      "max_score": 12,
+      "tests": 2
+    },
+    "ErrorProcessing": {
+      "score": 0,
+      "max_score": 6,
+      "tests": 1
+    },
+    "LogFunction": {
+      "score": 4,
+      "max_score": 4,
+      "tests": 1
+    },
+    "UserIntegratedExperience": {
+      "score": 4,
+      "max_score": 8,
+      "tests": 1
+    }
+  },
+  "detailed_results": [
+    {
+      "test_id": "T001",
+      "test_name": "System Start and Help Information",
+      "weight": 5,
+      "success": true,
+      "score": 10,
+      "max_score": 10,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "python run.py help",
+          "success": true,
+          "stdout": "Usage: main.py [OPTIONS] COMMAND [ARGS]...\n\n  IoT Environmental Data Collection and Intelligent Prediction System\n\n  A comprehensive system for collecting, processing, and predicting\n  environmental data using MQTT protocol and machine learning algorithms.\n\nOptions:\n  --version  Show the version and exit.\n  --help     Show this message and exit.\n\nCommands:\n  data    Data management commands for processing and analyzing...\n  ml      Machine learning commands for training and prediction\n  mqtt    ",
+          "stderr": "",
+          "expected_output": "Display the system title and available command list"
+        },
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py --help",
+          "success": true,
+          "stdout": "Usage: main.py [OPTIONS] COMMAND [ARGS]...\n\n  IoT Environmental Data Collection and Intelligent Prediction System\n\n  A comprehensive system for collecting, processing, and predicting\n  environmental data using MQTT protocol and machine learning algorithms.\n\nOptions:\n  --version  Show the version and exit.\n  --help     Show this message and exit.\n\nCommands:\n  data    Data management commands for processing and analyzing...\n  ml      Machine learning commands for training and prediction\n  mqtt    ",
+          "stderr": "",
+          "expected_output": "Display detailed CLI command help information"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T002",
+      "test_name": "MQTT Single Data Publish",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py mqtt publish --random",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:23:52,616 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:23:52,616 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:23:52,616 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭────────────────────────╮\n│ 📡 MQTT Data Publisher │\n╰────────────────────────╯\n🎲 Publishing 1 random data points\n2025-09-07 09:23:52,623 - interfaces.mqtt_client - INFO - Connecting to MQTT broker iot-as-mqtt.cn-shanghai.a",
+          "stderr": "",
+          "expected_output": "Generate random data and attempt to publish it to MQTT"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T003",
+      "test_name": "MQTTBatchDataSendDistribution",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py mqtt publish --file samples/environmental_sample.csv --count 5",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:23:54,479 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:23:54,479 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:23:54,479 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭────────────────────────╮\n│ 📡 MQTT Data Publisher │\n╰────────────────────────╯\n📁 Publishing data from file: samples/environmental_sample.csv\n2025-09-07 09:23:54,487 - interfaces.mqtt_client - INFO - Connecting to MQTT brok",
+          "stderr": "",
+          "expected_output": "Read data from a CSV file and publish it in batches"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T004",
+      "test_name": "MQTT Data Subscription",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py mqtt subscribe --duration 10 --save",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:23:56,276 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:23:56,276 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:23:56,276 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭─────────────────────────╮\n│ 📥 MQTT Data Subscriber │\n╰─────────────────────────╯\n2025-09-07 09:23:56,282 - interfaces.mqtt_client - INFO - Connecting to MQTT broker iot-as-mqtt.cn-shanghai.aliyuncs.com:8883\n2025-09-07 09:",
+          "stderr": "",
+          "expected_output": "Start subscription mode and wait for incoming messages"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T005",
+      "test_name": "Data AnalysisFunction",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py data analyze",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:23:58,042 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:23:58,043 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:23:58,043 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭──────────────────╮\n│ 📊 Data Analysis │\n╰──────────────────╯\n2025-09-07 09:23:58,045 - core.data_manager - WARNING - No data available for merging\n2025-09-07 09:23:58,045 - core.data_manager - WARNING - No data available f",
+          "stderr": "",
+          "expected_output": "Analyze data and display system statistics in table format"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T006",
+      "test_name": "Data CleaningFunction",
+      "weight": 3,
+      "success": true,
+      "score": 6,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py data clean",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:23:59,759 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:23:59,759 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:23:59,759 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭──────────────────╮\n│ 🧹 Data Cleaning │\n╰──────────────────╯\n2025-09-07 09:23:59,761 - core.data_manager - INFO - Cleaning temperature data\n2025-09-07 09:23:59,761 - core.data_manager - WARNING - No data to clean\n2025-09-0",
+          "stderr": "",
+          "expected_output": "Execute data cleaning and display the processing result"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T007",
+      "test_name": "Data Merge Function",
+      "weight": 3,
+      "success": false,
+      "score": 0,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py data merge",
+          "success": false,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:01,459 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:01,460 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:01,460 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭─────────────────╮\n│ 🔗 Data Merging │\n╰─────────────────╯\n2025-09-07 09:24:01,463 - core.data_manager - WARNING - No data available for merging\n✓ Data merged successfully\nℹ Total records: 0\n✗ Data merging failed: 'timestam",
+          "stderr": "",
+          "expected_output": "Merge temperature, humidity, and pressure data"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T008",
+      "test_name": "Model Training Function",
+      "weight": 5,
+      "success": false,
+      "score": 0,
+      "max_score": 10,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py ml train --data-file samples/environmental_sample.csv --epochs 10",
+          "success": false,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:03,196 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:03,196 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:03,196 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭───────────────────╮\n│ 🤖 Model Training │\n╰───────────────────╯\n2025-09-07 09:24:03,197 - core.ml_predictor - INFO - ML Predictor initialized with device: cpu\n2025-09-07 09:24:03,197 - core.ml_predictor - INFO - Starting m",
+          "stderr": "",
+          "expected_output": "Train the neural network model and display the full training process"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T009",
+      "test_name": "Prediction Function",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py ml predict --temperature 25.0 --humidity 60.0 --pressure 1013.25",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:05,496 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:05,496 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:05,496 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭─────────────────────────────╮\n│ 🔮 Environmental Prediction │\n╰─────────────────────────────╯\n2025-09-07 09:24:05,497 - core.ml_predictor - INFO - ML Predictor initialized with device: cpu\n2025-09-07 09:24:05,503 - core.ml",
+          "stderr": "",
+          "expected_output": "Output prediction results and confidence information"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T010",
+      "test_name": "ModelAssessmentFunction",
+      "weight": 3,
+      "success": true,
+      "score": 6,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py ml evaluate",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:07,219 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:07,219 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:07,219 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭─────────────────────╮\n│ 📏 Model Evaluation │\n╰─────────────────────╯\n2025-09-07 09:24:07,220 - core.ml_predictor - INFO - ML Predictor initialized with device: cpu\n2025-09-07 09:24:07,226 - core.ml_predictor - INFO - Mode",
+          "stderr": "",
+          "expected_output": "DisplayModelAssessmentIndicatorMark"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T011",
+      "test_name": "System Status Monitoring",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py system status",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:08,907 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:08,907 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:08,907 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭──────────────────╮\n│ 💻 System Status │\n╰──────────────────╯\n2025-09-07 09:24:08,907 - core.system_monitor - INFO - System monitor initialized\n        System Resources        \n┏━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┓\n┃ Resource ┃ ",
+          "stderr": "",
+          "expected_output": "Display system resource utilization status"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T012",
+      "test_name": "Real-time Monitoring Function",
+      "weight": 3,
+      "success": true,
+      "score": 6,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py system monitor --duration 15",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:18,182 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:18,182 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:18,182 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭────────────────────────────────╮\n│ 📊 Real-time System Monitoring │\n╰────────────────────────────────╯\n2025-09-07 09:24:18,182 - core.system_monitor - INFO - System monitor initialized\n2025-09-07 09:24:18,183 - core.system",
+          "stderr": "",
+          "expected_output": "Start real-time monitoring and output results at fixed intervals"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T013",
+      "test_name": "Web Service Start",
+      "weight": 4,
+      "success": true,
+      "score": 8,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && timeout 10 python main.py web --host 127.0.0.1 --port 5000 || echo 'Web service started'",
+          "success": true,
+          "stdout": "Web service started",
+          "stderr": "/bin/sh: timeout: command not found",
+          "expected_output": "Start the web service and display the access address"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T014",
+      "test_name": "Configuration Export Function",
+      "weight": 3,
+      "success": true,
+      "score": 6,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "interactive_cli",
+          "command": "cd src && python main.py setup",
+          "success": true,
+          "message": "Interactive command started successfully",
+          "interactions_count": 3
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T015",
+      "test_name": "DataFormatStyleVerify",
+      "weight": 3,
+      "success": true,
+      "score": 6,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "read_file",
+          "file_path": "src/samples/environmental_sample.csv",
+          "success": true,
+          "content_length": 2816,
+          "expected_content": "Containstimestamp、temperature、humidity、pressureCharacterSegment"
+        },
+        {
+          "action": "validate_data_ranges",
+          "success": true,
+          "validation_result": {
+            "valid": true,
+            "row_count": 51,
+            "columns": [
+              "temperature",
+              "pressure",
+              "humidity",
+              "timestamp",
+              "device_id",
+              "quality_flag"
+            ],
+            "range_violations": []
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T016",
+      "test_name": "AbnormalData Processing",
+      "weight": 3,
+      "success": true,
+      "score": 6,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py data analyze",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:39,337 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:39,337 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:39,337 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭──────────────────╮\n│ 📊 Data Analysis │\n╰──────────────────╯\n2025-09-07 09:24:39,340 - core.data_manager - WARNING - No data available for merging\n2025-09-07 09:24:39,340 - core.data_manager - WARNING - No data available f",
+          "stderr": "",
+          "expected_output": "Data AnalysisOverProcessinDisplayQualityEditionCheckInformation"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T017",
+      "test_name": "ErrorProcessingMachineControl",
+      "weight": 3,
+      "success": false,
+      "score": 0,
+      "max_score": 6,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py invalid_command",
+          "success": false,
+          "stdout": "",
+          "stderr": "Usage: main.py [OPTIONS] COMMAND [ARGS]...\nTry 'main.py --help' for help.\n\nError: No such command 'invalid_command'.",
+          "expected_output": "Display an error message without crashing"
+        },
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py ml predict --temperature abc",
+          "success": false,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:42,747 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:42,748 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:42,748 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully",
+          "stderr": "Usage: main.py ml predict [OPTIONS]\nTry 'main.py ml predict --help' for help.\n\nError: Invalid value for '--temperature' / '-t': 'abc' is not a valid float.",
+          "expected_output": "Display a parameter error message"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T018",
+      "test_name": "LogRecordFunction",
+      "weight": 2,
+      "success": true,
+      "score": 4,
+      "max_score": 4,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "cd src && python main.py system status",
+          "success": true,
+          "stdout": "✓ Configuration loaded successfully\n2025-09-07 09:24:44,491 - utils.logger - INFO - Logging system initialized\n2025-09-07 09:24:44,491 - utils.logger - INFO - Log level: INFO\n2025-09-07 09:24:44,491 - utils.logger - INFO - Log directory: logs\n✓ System initialized successfully\n╭──────────────────╮\n│ 💻 System Status │\n╰──────────────────╯\n2025-09-07 09:24:44,492 - core.system_monitor - INFO - System monitor initialized\n        System Resources        \n┏━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━┓\n┃ Resource ┃ ",
+          "stderr": "",
+          "expected_output": "ExecuteOperationandGenerateLog"
+        },
+        {
+          "action": "check_files",
+          "file_pattern": "logs/*.log",
+          "success": true,
+          "matching_files": [
+            "/Users/ccchen/Documents/project/AI_project/logs/ml.log",
+            "/Users/ccchen/Documents/project/AI_project/logs/mqtt.log",
+            "/Users/ccchen/Documents/project/AI_project/logs/data.log",
+            "/Users/ccchen/Documents/project/AI_project/logs/system.log"
+          ]
+        }
+      ],
+      "errors": []
+    },
+    {
+      "test_id": "T019",
+      "test_name": "EntireIntegratedUserIntegratedExperience",
+      "weight": 4,
+      "success": false,
+      "score": 4,
+      "max_score": 8,
+      "details": [
+        {
+          "action": "execute_command",
+          "command": "python run.py",
+          "success": false,
+          "stdout": "",
+          "stderr": "Command timeout after 30 seconds",
+          "expected_output": "Display a user-friendly interactive interface"
+        },
+        {
+          "action": "interactive_cli",
+          "command": "python run.py",
+          "success": true,
+          "message": "Interactive command started successfully",
+          "interactions_count": 1
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "recommendations": [
+    "Has 4 item(s)TestNotPass，need further changes for full compliance：",
+    "- Data Merge Function: CheckCameraRelatedFunctionImplementationImplementation",
+    "- Model Training Function: CheckCameraRelatedFunctionImplementationImplementation",
+    "- ErrorProcessingMachineControl: CheckCameraRelatedFunctionImplementationImplementation",
+    "- EntireIntegratedUserIntegratedExperience: CheckCameraRelatedFunctionImplementationImplementation"
+  ]
+}

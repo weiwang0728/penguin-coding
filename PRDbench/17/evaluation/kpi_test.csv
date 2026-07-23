@@ -1,0 +1,21 @@
+Task ID,Task Name,Test Item,Equipment Duration,Test Status,Test Type,Test Item Feedback,Anomaly Identifier
+TASK-H-20231001,Task A,Item 1,5,Success,Valid,Function Normal,
+TASK-L-20231002,Task B,Item 2,5,Success,Valid,Interface Display Normal,
+TASK-H-20231003,Task C,Item 3,5,Success,Valid,Fast Response,
+TASK-H-20231004,Task D,Item 4,5,Success,Valid,Data Saved Successfully,
+TASK-H-20231005,Task E,Item 5,5,Success,Valid,Layout Meets Expectations,
+TASK-M-20231006,Task F,Item 6,5,Success,Valid,Function Normal,
+TASK-M-20231007,Task G,Item 7,5,Success,Valid,Interface Display Normal,
+TASK-M-20231008,Task H,Item 8,5,Success,Valid,Fast Response,
+TASK-L-20231009,Task I,Item 9,5,Failure,Valid,API Interface Returns Error API-ERROR-008,API-ERROR-008
+TASK-H-20231010,Task J,Item 10,5,Failure,Valid,File Upload Failed UPLOAD-FAIL-010,UPLOAD-FAIL-010
+TASK-H-20231010,Task K,Item 11,5,Success,Valid,Data Saved Successfully,
+TASK-H-20231001,Task L,Item 12,5,Success,Valid,Layout Meets Expectations,
+TASK-H-20231003,Task M,Item 13,5,Success,Valid,Function Normal,
+TASK-H-20231004,Task N,Item 14,5,Success,Valid,Interface Display Normal,
+TASK-H-20231005,Task O,Item 15,5,Success,Valid,Fast Response,
+TASK-M-20231006,Task P,Item 16,5,Failure,Invalid,Login Failed ERR-LOGIN-001,ERR-LOGIN-001
+TASK-M-20231007,Task Q,Item 17,5,Failure,Invalid,Page Load Timeout TIMEOUT-002,TIMEOUT-002
+TASK-M-20231008,Task R,Item 18,5,Failure,Invalid,Data Submission Error ERR-DATA-003,ERR-DATA-003
+TASK-L-20231009,Task S,Item 19,5,Failure,Invalid,Permission Denied AUTH-DENIED-004,AUTH-DENIED-004
+TASK-L-20231002,Task T,Item 20,5,Failure,Invalid,Inaccurate Search Results SEARCH-FAIL-005,SEARCH-FAIL-005

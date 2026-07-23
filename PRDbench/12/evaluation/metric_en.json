@@ -1,0 +1,177 @@
+[
+  {
+    "metric": "1.1 Program Launch and Basic Command Line Interface",
+    "description": "1. **Act:** Execute the program's launch command in the shell (e.g., `python main.py`).\n2. **Assert:** Check whether the program starts successfully and displays a clear main menu of basic operations for the data analytics tool (such as data extraction, data cleaning, feature engineering, result display), containing at least four or more actionable options.",
+    "expected_output": "2 points: The program starts successfully and displays a main menu with four or more clear, actionable options. 1 point: The program starts, but menu options are fewer than four, unclear, or garbled. 0 points: The program fails to start or crashes immediately after starting."
+  },
+  {
+    "metric": "2.1.1a Multi-source Data Extraction - Store Dimension Table Reading",
+    "description": "1. **Pre-check (User Path):** In the main menu, is there a clear data extraction or similar function option?\n2. **Arrange:** Prepare a simulated data source containing the store dimension table (with fields: store_key, store_id, brand_name, org_path, private_domain_type).\n3. **Act:** Select the data extraction function, configure, and load the store dimension table data.\n4. **Assert:** Check whether the program successfully reads and displays the basic information of the store dimension table (number of records, field names, etc.).",
+    "expected_output": "2 points: Pre-check passes, and the complete information of the store dimension table (all 5 required fields) is successfully read and displayed. 1 point: Pre-check passes, but the reading process has warnings or incomplete information (missing 1-2 fields). 0 points: Pre-check fails, or the store dimension table data cannot be read."
+  },
+  {
+    "metric": "2.1.1b Multi-source Data Extraction - Sales Detail Table Reading",
+    "description": "1. **Arrange:** Prepare a simulated data source containing the sales detail table (with fields: trans_date, store_key, amount, biz_id).\n2. **Act:** Load sales detail table data.\n3. **Assert:** Check whether the program successfully reads and displays the basic information of the sales detail table, including the count of transaction records.",
+    "expected_output": "2 points: Successfully read the sales detail table and display complete information for all 4 fields and accurate data statistics. 1 point: Read successfully but missing 1-2 field information or statistical information is incomplete. 0 points: Cannot read sales detail table data or 3 or more fields are missing."
+  },
+  {
+    "metric": "2.1.1c Multi-source Data Extraction - Warehouse Information Table Reading",
+    "description": "1. **Arrange:** Prepare a simulated data source containing the warehouse information table (with fields: biz_id, git_repo).\n2. **Act:** Load warehouse information table data.\n3. **Assert:** Check whether the program successfully reads and displays the basic information of the warehouse information table.",
+    "expected_output": "2 points: Successfully read the warehouse information table and display complete information for both fields. 1 point: Read successfully but missing 1 field. 0 points: Cannot read warehouse information table data or all fields are missing."
+  },
+  {
+    "metric": "2.1.2a Multi-table Join Query - store_key Join Execution",
+    "description": "1. **Arrange:** Ensure that the store dimension table and sales detail table have been successfully loaded.\n2. **Act:** Execute join query between store dimension table and sales detail table (via store_key field).\n3. **Assert:** Verify whether the join query is successfully executed without error messages.",
+    "expected_output": "2 points: Join query executed successfully, with no errors or warnings. 1 point: Join query executed successfully, but with warning messages. 0 points: Join query failed, error messages appear."
+  },
+  {
+    "metric": "2.1.2b Multi-table Join Query - store_key Join Result Verification",
+    "description": "1. **Act:** Check the result data of the store_key join query.\n2. **Assert:** Verify whether the join result is correct, including the number of joined records and field integrity (should contain all fields from both the store dimension table and sales detail table).",
+    "expected_output": "2 points: Join result is completely correct, contains all expected fields and the join logic is accurate. 1 point: Join result is basically correct, but some data is missing or fields are missing (less than 20% data loss). 0 points: Join result is obviously wrong or data loss is severe (more than 20% data missing)."
+  },
+  {
+    "metric": "2.1.3a Multi-table Join Query - biz_id Join Execution",
+    "description": "1. **Arrange:** Ensure that the sales detail table and warehouse information table have been successfully loaded.\n2. **Act:** Execute join query between sales detail table and warehouse information table (via biz_id field).\n3. **Assert:** Verify whether the join query is successfully executed without error messages.",
+    "expected_output": "2 points: Join query executed successfully, with no errors or warnings. 1 point: Join query executed successfully, but with warning messages. 0 points: Join query failed, error messages appear."
+  },
+  {
+    "metric": "2.1.3b Multi-table Join Query - biz_id Join Result Verification",
+    "description": "1. **Act:** Check the result data of the biz_id join query.\n2. **Assert:** Verify whether the join result is correct, ensuring each sales record is correctly joined to the corresponding warehouse information.",
+    "expected_output": "2 points: Join result is completely correct, each sales record is successfully mapped to corresponding warehouse information. 1 point: Join result is basically correct, but a small number of records are not joined successfully (less than 10%). 0 points: Join query failed or a large number of records are not successfully joined (more than 10%)."
+  },
+  {
+    "metric": "2.1.4 Conditional Filtering - High-value Store Selection",
+    "description": "1. **Arrange:** Make sure the multi-table join is completed and data contains fields a_value_type and private_domain_type.\n2. **Act:** Apply filter conditions to retain only store data with a_value_type = 'High-value'.\n3. **Assert:** Verify whether the filtered results only contain high-value stores, and private_domain_type is 'Direct Headquarters' or 'Key Region'.",
+    "expected_output": "2 points: Filtering conditions are correctly applied, results fully meet the screening criteria (100% of records meet criteria). 1 point: Filtering function exists but conditions are not fully applied correctly (80%-99% of records meet criteria). 0 points: Filtering conditions cannot be correctly applied or the result is wrong (less than 80% of records meet criteria)."
+  },
+  {
+    "metric": "2.2.1a Data Cleaning - Missing Value Identification",
+    "description": "1. **Pre-check (User Path):** Is there a data cleaning option in the main menu?\n2. **Arrange:** Prepare data with missing values (brand_name empty in store dimension table, amount is NULL in sales detail table).\n3. **Act:** Select data cleaning function, execute missing value detection.\n4. **Assert:** Verify whether the program accurately identifies the positions and quantity of missing values.",
+    "expected_output": "2 points: Pre-check passes, and all missing locations and quantities are accurately identified. 1 point: Pre-check passes, but some missing values are missed (identification rate 80%-99%). 0 points: Pre-check fails, or missing value identification does not work (identification rate below 80%)."
+  },
+  {
+    "metric": "2.2.1b Data Cleaning - Missing Value Handling Execution",
+    "description": "1. **Act:** Fill empty brand_name records in the store dimension table with default value 'Unknown Brand', and remove records with NULL amount in the sales detail table.\n2. **Assert:** Verify whether handling of missing values is executed correctly.",
+    "expected_output": "2 points: Missing value handling is completely correct, all brand_name nulls are filled with 'Unknown Brand', all records with NULL amount are removed. 1 point: Missing value handling is basically correct, but some omissions exist (handling rate 80%-99%). 0 points: Missing value handling does not work or the result is wrong (handling rate below 80%)."
+  },
+  {
+    "metric": "2.2.2a Data Cleaning - Outlier Identification",
+    "description": "1. **Arrange:** Prepare sales detail table data with outliers (records with amount ≤ 0 or trans_date earlier than store opening date).\n2. **Act:** Execute outlier identification function.\n3. **Assert:** Verify whether the program accurately identifies abnormal transaction data.",
+    "expected_output": "2 points: Accurately identifies all outliers (100% identification rate). 1 point: Outlier identification is basically correct, but some omissions exist (identification rate 80%-99%). 0 points: Outlier identification does not work or identification rate below 80%."
+  },
+  {
+    "metric": "2.2.2b Data Cleaning - Outlier Filtering Execution",
+    "description": "1. **Act:** Remove abnormal transaction records in the sales detail table with amount ≤ 0 or trans_date earlier than store opening date.\n2. **Assert:** Verify whether the outlier filtering rule is correctly applied, and outlier data is completely removed.",
+    "expected_output": "2 points: Outlier filtering rule is fully correct, no omissions (100% removal rate). 1 point: Outlier handling is basically correct, but a few omissions exist (removal rate 80%-99%). 0 points: Outlier handling does not work or logic is wrong (removal rate below 80%)."
+  },
+  {
+    "metric": "2.2.3a Data Cleaning - Duplicate Data Identification",
+    "description": "1. **Arrange:** Prepare data containing duplicate records (based on composite key biz_id+trans_date+store_id).\n2. **Act:** Execute duplicate data detection function.\n3. **Assert:** Verify whether the program accurately identifies duplicate records.",
+    "expected_output": "2 points: Accurately identifies all duplicate records (100% identification rate). 1 point: Duplicate record identification is basically correct, but some omissions exist (identification rate 80%-99%). 0 points: Duplicate record identification does not work or identification rate below 80%."
+  },
+  {
+    "metric": "2.2.3b Data Cleaning - Duplicate Data Deduplication Execution",
+    "description": "1. **Act:** Deduplicate data based on composite key (biz_id+trans_date+store_id), retaining the most recent transaction record.\n2. **Assert:** Verify whether deduplication logic is correct and duplicates are retained according to the rule (keep the first record in descending trans_date order).",
+    "expected_output": "2 points: Deduplication logic is fully correct, keeping the first record in descending trans_date order (100% accuracy). 1 point: Deduplication function exists but logic has minor errors (accuracy 80%-99%). 0 points: Deduplication does not work or logic is wrong (accuracy below 80%)."
+  },
+  {
+    "metric": "2.3.1a RFM Metric Calculation - Accessibility of Recency Calculation Function",
+    "description": "1. **Pre-check (User Path):** Is there a feature engineering or RFM analysis option in the main menu?\n2. **Assert:** Verify whether the user can access the RFM calculation function via a clear menu path.",
+    "expected_output": "2 points: Pre-check passes, and clear feature engineering or RFM analysis option exists. 1 point: Pre-check passes, but the option description is not clear enough. 0 points: Pre-check fails, no related function option."
+  },
+  {
+    "metric": "2.3.1b RFM Metric Calculation - Recency Calculation Execution",
+    "description": "1. **Arrange:** Prepare store data with different transaction dates.\n2. **Act:** Calculate store recency interval (Recency, unit: days).\n3. **Assert:** Verify whether the Recency calculation result is accurate, and interval calculation is correct.",
+    "expected_output": "2 points: Recency calculation is completely accurate (100% accuracy). 1 point: Calculation is basically correct, with minor error (accuracy 80%-99%). 0 points: Recency calculation does not work or is faulty (accuracy below 80%)."
+  },
+  {
+    "metric": "2.3.2 RFM Metric Calculation - Frequency Calculation",
+    "description": "1. **Arrange:** Prepare store data with multiple transaction records.\n2. **Act:** Calculate transaction frequency (Frequency, unit: average monthly transactions).\n3. **Assert:** Verify whether Frequency calculation result is accurate, and average monthly transaction calculation is correct.",
+    "expected_output": "2 points: Frequency calculation is completely accurate, and average monthly transaction number is correct (100% accuracy). 1 point: Calculation is basically correct, with minor error (accuracy 80%-99%). 0 points: Frequency calculation does not work or is faulty (accuracy below 80%)."
+  },
+  {
+    "metric": "2.3.3 RFM Metric Calculation - Monetary Calculation",
+    "description": "1. **Arrange:** Prepare store data with different transaction amounts.\n2. **Act:** Calculate consumption amount (Monetary, unit: average monthly transaction amount).\n3. **Assert:** Verify whether Monetary calculation result is accurate, and monthly average amount calculation is correct.",
+    "expected_output": "2 points: Monetary calculation is completely accurate, and monthly average is correct (100% accuracy). 1 point: Calculation is basically correct, with minor error (accuracy 80%-99%). 0 points: Monetary calculation does not work or is faulty (accuracy below 80%)."
+  },
+  {
+    "metric": "2.3.4a Time Series Decomposition - STL Decomposition Execution",
+    "description": "1. **Arrange:** Prepare time series data of store average monthly transaction amount.\n2. **Act:** Apply STL decomposition to store monthly average transaction amount.\n3. **Assert:** Verify whether STL decomposition is successfully executed, without error messages.",
+    "expected_output": "2 points: STL decomposition executed successfully, without any errors or warnings. 1 point: STL decomposition executed successfully but with warning messages. 0 points: STL decomposition execution failed, error messages occur."
+  },
+  {
+    "metric": "2.3.4b Time Series Decomposition - STL Decomposition Result Validation",
+    "description": "1. **Act:** Check STL decomposition results.\n2. **Assert:** Verify whether trend, seasonal, and residual components are correctly extracted, and all three are present and reasonable.",
+    "expected_output": "2 points: STL decomposition succeeded, all three components (trend, seasonality, residual) are correctly calculated and reasonable. 1 point: STL decomposition succeeded but component calculation has errors or one component is missing. 0 points: STL decomposition result is wrong or two or more components are missing."
+  },
+  {
+    "metric": "2.3.5 High-value Attribute Label Generation",
+    "description": "1. **Arrange:** Ensure RFM metric calculation and STL decomposition are completed.\n2. **Act:** Combine RFM metrics and STL trend to generate label field value_tag.\n3. **Assert:** Verify whether growth-type high-value, stable-type high-value, potential-type high-value, etc. labels are generated correctly.",
+    "expected_output": "2 points: Label generation logic is correct, classification is accurate (100% correct classification). 1 point: Label generation is basically correct, but classification has errors (accuracy 80%-99%). 0 points: Label generation does not work or classification is wrong (accuracy below 80%)."
+  },
+  {
+    "metric": "2.4.1a RFM Customer Segmentation Model - Accessibility",
+    "description": "1. **Pre-check (User Path):** Is there an RFM customer segmentation option?\n2. **Assert:** Verify whether the user can access RFM customer segmentation via a clear menu path.",
+    "expected_output": "2 points: Pre-check passes, and clear RFM customer segmentation option exists. 1 point: Pre-check passes, but the option description is not clear enough. 0 points: Pre-check fails, no relevant function option."
+  },
+  {
+    "metric": "2.4.1b RFM Customer Segmentation Model - Three-level Division Execution",
+    "description": "1. **Arrange:** Ensure calculation of all three RFM metrics is complete.\n2. **Act:** Divide Recency, Frequency, and Monetary into high/middle/low three levels according to industry thresholds.\n3. **Assert:** Verify whether three-level division is correct and whether threshold settings are reasonable.",
+    "expected_output": "2 points: Three-level division is completely correct, all three metrics are properly divided into high/middle/low. 1 point: Three-level division is basically correct, but one metric division or threshold setting has errors. 0 points: Three-level division does not work or two or more metrics are divided incorrectly."
+  },
+  {
+    "metric": "2.4.2a RFM Customer Segmentation Model - 8-type Combination Generation",
+    "description": "1. **Act:** Based on the results of RFM three-level division, combine to generate 8 types of store segmentation.\n2. **Assert:** Verify whether all 8 segmentation types (such as important value customers, important retention customers, etc.) are generated correctly.",
+    "expected_output": "2 points: All 8 segmentation types are generated correctly. 1 point: 6-7 segmentation types are generated, with 1-2 types missing or incorrect. 0 points: Fewer than 6 segmentation types are generated or combination logic is wrong."
+  },
+  {
+    "metric": "2.4.2b RFM Customer Segmentation Model - Segmentation Combination Logic Verification",
+    "description": "1. **Act:** Check RFM combination logic for each segment type.\n2. **Assert:** Verify whether combination logic is correct (e.g., high R + high F + high M = important value customer).",
+    "expected_output": "2 points: Combination logic is completely correct for all 8 segmentation types. 1 point: Combination logic is correct for 6-7 segmentation types. 0 points: Combination logic is correct for fewer than 6 segmentation types."
+  },
+  {
+    "metric": "2.4.3 Segmentation Result Statistics - Quantity Proportion Calculation",
+    "description": "1. **Act:** Calculate quantity proportion for each segmentation type.\n2. **Assert:** Verify whether quantity proportion calculation is accurate, whether the sum of each type equals 100%.",
+    "expected_output": "2 points: Quantity proportion calculation is completely accurate, all types sum to 100% (error <0.1%). 1 point: Calculation is basically correct, with minor error (error 0.1%-1%). 0 points: Quantity calculation does not work or error exceeds 1%."
+  },
+  {
+    "metric": "2.4.4 Segmentation Result Statistics - Transaction Amount Contribution Proportion",
+    "description": "1. **Act:** Calculate transaction amount contribution proportion for each segmentation type.\n2. **Assert:** Verify whether transaction amount contribution proportion calculation is accurate, whether the sum of each type equals 100%.",
+    "expected_output": "2 points: Transaction amount contribution proportion calculation is completely accurate, all types sum to 100% (error <0.1%). 1 point: Calculation is basically correct, with minor error (error 0.1%-1%). 0 points: Contribution calculation does not work or error exceeds 1%."
+  },
+  {
+    "metric": "2.4.5 Segmentation Result Statistics - Filter by Segmentation Type",
+    "description": "1. **Arrange:** Select a specific segmentation type as a filter condition.\n2. **Act:** Execute the function to filter store data by segmentation type.\n3. **Assert:** Verify whether the filter function is correct, and whether the filtered results only contain the specified segmentation type.",
+    "expected_output": "2 points: Filter function is completely correct, filtered results are 100% accurate (only contain specified type). 1 point: Filter is basically correct, but few omissions or misinclusions (accuracy rate 80%-99%). 0 points: Filter does not work or accuracy below 80%."
+  },
+  {
+    "metric": "2.5.1a Tabular Data Display - Accessibility",
+    "description": "1. **Pre-check (User Path):** Is there a result display option in the main menu?\n2. **Assert:** Verify whether the user can access result display function via a clear menu path.",
+    "expected_output": "2 points: Pre-check passes, clear result display option exists. 1 point: Pre-check passes, but option description is not clear enough. 0 points: Pre-check fails, no related function option."
+  },
+  {
+    "metric": "2.5.1b Tabular Data Display - Business Group and Date Expansion",
+    "description": "1. **Act:** Expand data rows by business group (biz_id) and transaction date (trans_date).\n2. **Assert:** Verify whether data is correctly expanded by the specified dimensions and table structure is clear.",
+    "expected_output": "2 points: Data expansion is completely correct, table structure is clear, and all records are correctly expanded by biz_id and trans_date. 1 point: Data expansion is basically correct, but some records are expanded incorrectly or table structure is unclear (error rate <20%). 0 points: Data expansion does not work or error rate exceeds 20%."
+  },
+  {
+    "metric": "2.5.2a Tabular Data Display - Required Columns Integrity Check",
+    "description": "1. **Act:** Check table column information.\n2. **Assert:** Verify whether the table contains all 7 required columns: Store ID, Brand, Organization Structure, Private Domain Type, RFM Segmentation Type, Monthly Average Transaction Amount, value_tag.",
+    "expected_output": "2 points: Table contains all 7 required columns. 1 point: Table contains 5-6 required columns, 1-2 columns are missing. 0 points: Table is missing 3 or more required columns."
+  },
+  {
+    "metric": "2.5.2b Tabular Data Display - Data Integrity Validation",
+    "description": "1. **Act:** Check data contents in the table.\n2. **Assert:** Verify whether data in each column is complete, with no obvious missing or abnormal values.",
+    "expected_output": "2 points: Table data is complete, all columns have no missing values and data format is correct. 1 point: Table data is basically complete, but a few missing values or format problems (<10%). 0 points: Table data is incomplete, with significant missing or format problems (≥10%)."
+  },
+  {
+    "metric": "2.5.3a Data Detail Link Generation - Link Format Validation",
+    "description": "1. **Act:** Generate data detail link column at the end of the table.\n2. **Assert:** Verify whether link format is correct, should be: repo://{git_repo}/detail?store_id={store_id}&date={trans_date}.",
+    "expected_output": "2 points: Data detail link format is completely correct, 100% meets specified format. 1 point: Link is basically correct but format has minor errors (e.g., missing protocol header or parameter separator). 0 points: Data detail link does not work or format is seriously wrong."
+  },
+  {
+    "metric": "2.5.3b Data Detail Link Generation - Parameter Filling Validation",
+    "description": "1. **Act:** Check parameters in generated data detail links.\n2. **Assert:** Verify whether parameters in links are correctly filled (git_repo, store_id, trans_date should all be actual data values).",
+    "expected_output": "2 points: Parameter filling is completely correct, all 3 parameters in every link are actual values. 1 point: Parameter filling is basically correct, but a few parameters are wrong (<10%). 0 points: Parameter filling does not work or error rate ≥10%."
+  }
+]

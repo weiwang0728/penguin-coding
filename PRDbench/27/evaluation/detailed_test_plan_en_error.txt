@@ -1,0 +1,270 @@
+```json
+[
+  {
+    "metric": "0.1 Program Start and Main Menu",
+    "description": "1. **Act:** Execute the program start command in the shell (such as `python src/main.py`).\n2. **Assert:** Observe whether the program starts successfully, displays the welcome message, and enters the personal information input flow.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_0.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program displays successful startup"
+  },
+  {
+    "metric": "1.1a User Information Entry Flow - Valid Name Input",
+    "description": "1. **Pre-check (User Path):** After starting the program, does it automatically enter or clearly guide the user to the name input stage?\n2. **Arrange:** Prepare the following test input: 'Zhang San'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should accept valid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program accepts and proceeds"
+  },
+  {
+    "metric": "1.1b User Information Entry Flow - Invalid Name Input",
+    "description": "1. **Pre-check (User Path):** After starting the program, does it automatically enter or clearly guide the user to the name input stage?\n2. **Arrange:** Prepare the following test input: 'Zhang San Li Si Wang Wu Zhao Liu Qian'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should reject invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "For invalid input, the program prompts an error and asks for re-entry"
+  },
+  {
+    "metric": "1.2a User Information Entry Flow - Valid Birthdate Input",
+    "description": "1. **Pre-check (User Path):** After successful name input, does it automatically or clearly guide the user to the birthdate input stage?\n2. **Arrange:** Prepare the following test input: '1990-01-01'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should accept valid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program accepts and proceeds"
+  },
+  {
+    "metric": "1.2b User Information Entry Flow - Invalid Birthdate Input",
+    "description": "1. **Pre-check (User Path):** After successful name input, does it automatically or clearly guide the user to the birthdate input stage?\n2. **Arrange:** Prepare the following test input: '1990-13-01'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should reject invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.2b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "For invalid input, the program prompts an error and asks for re-entry"
+  },
+  {
+    "metric": "1.3a User Information Entry Flow - Valid Gender Input",
+    "description": "1. **Pre-check (User Path):** After successful birthdate input, does it automatically or clearly guide the user to the gender input stage?\n2. **Arrange:** Prepare the following test input: '1'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should accept valid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program accepts and proceeds"
+  },
+  {
+    "metric": "1.3b User Information Entry Flow - Invalid Gender Input",
+    "description": "1. **Pre-check (User Path):** After successful birthdate input, does it automatically or clearly guide the user to the gender input stage?\n2. **Arrange:** Prepare the following test input: 'male'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should reject invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.3b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "For invalid input, the program prompts an error and asks for re-entry"
+  },
+  {
+    "metric": "1.4 User Information Storage and Loading",
+    "description": "1. **Arrange:** Run the program for the first time, enter complete personal information (such as name: Zhang San, birthday: 1990-01-01, gender: male).\n2. **Act:** Complete a full fortune calculation process. Run the program again.\n3. **Assert:** The program should display \"Welcome back, Zhang San!\" and ask whether to use the saved information. Check whether the contents of the `src/data/user_data.json` file are correct.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_1.4.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "After the first run, the user information is correctly saved. And upon subsequent runs, the program uses the saved information"
+  },
+  {
+    "metric": "2.1a Fortune Draw Game - Mode Selection - Valid Input",
+    "description": "1. **Pre-check (User Path):** After user information confirmation, does it clearly prompt the user to select the game mode (Coin spin/number draw)?\n2. **Arrange:** Prepare the following test input: '1'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should accept valid input and enter the corresponding game.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program accepts and proceeds"
+  },
+  {
+    "metric": "2.1b Fortune Draw Game - Mode Selection - Invalid Input",
+    "description": "1. **Pre-check (User Path):** After user information confirmation, does it clearly prompt the user to select the game mode (Coin spin/number draw)?\n2. **Arrange:** Prepare the following test input: '3'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should reject invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "For invalid input, the program prompts an error and asks for reselection"
+  },
+  {
+    "metric": "2.2 Fortune Draw Game - Coin Spin - Game Interface",
+    "description": "1. **Pre-check (User Path):** After choosing the 'Coin spin' mode, does it guide the user to press Enter to start the game?\n2. **Act:** Select the 'Coin spin' mode, press Enter to start the game.\n3. **Assert:** Observe whether a 3x3 game grid is displayed, and whether the symbols in the grid are one of 'Lucky', 'Unlucky', or 'Neutral', and the result is shown.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.2.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program correctly displays game interface and result."
+  },
+  {
+    "metric": "2.3 Fortune Draw Game - Number Draw - Game Interface",
+    "description": "1. **Pre-check (User Path):** After choosing the 'Number draw' mode, does it guide the user to press Enter to start the game?\n2. **Act:** Select the 'Number draw' mode, press Enter to start the game.\n3. **Assert:** Observe whether a number between 1-100 is generated and the result is shown.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_2.3.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program correctly displays game interface and result."
+  },
+  {
+    "metric": "3.1a Daily State Input - Outfit Color - Valid Input",
+    "description": "1. **Pre-check (User Path):** After the game ends, does it clearly guide the user to enter the main color of the outfit?\n2. **Arrange:** Prepare the following test input: 'red'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should accept valid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program accepts and proceeds"
+  },
+  {
+    "metric": "3.1b Daily State Input - Outfit Color - Invalid Input",
+    "description": "1. **Pre-check (User Path):** After the game ends, does it clearly guide the user to enter the main color of the outfit?\n2. **Arrange:** Prepare the following test input: 'pink'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should reject invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.1b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "For invalid input, the program prompts an error and asks for re-entry"
+  },
+  {
+    "metric": "3.2a Daily State Input - Jewelry Type - Valid Input",
+    "description": "1. **Pre-check (User Path):** After successful outfit color input, does it clearly guide the user to enter the jewelry type?\n2. **Arrange:** Prepare the following test input: 'metal type'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should accept valid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.2a.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program accepts and proceeds"
+  },
+  {
+    "metric": "3.2b Daily State Input - Jewelry Type - Invalid Input",
+    "description": "1. **Pre-check (User Path):** After successful outfit color input, does it clearly guide the user to enter the jewelry type?\n2. **Arrange:** Prepare the following test input: 'necklace'.\n3. **Act:** Enter the prepared data above.\n4. **Assert:** The program should reject invalid input.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.2b.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "For invalid input, the program prompts an error and asks for re-entry"
+  },
+  {
+    "metric": "3.3 Daily State Input - Information Confirmation and Modification",
+    "description": "1. **Pre-check (User Path):** After entering outfit and jewelry, does it clearly ask the user to confirm the information?\n2. **Arrange:** Prepare input 'n' (re-enter) and 'y' (confirm).\n3. **Act:** Enter 'n' first, then 'y'.\n4. **Assert:** When entering 'n', it should return to the input stage; after entering 'y', it should proceed to the next step.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_3.3.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program correctly performs information confirmation and modification"
+  },
+  {
+    "metric": "4.1 Fortune Comprehensive Calculation - Report Generation",
+    "description": "1. **Act:** Run a complete calculation flow.\n2. **Assert:** Check whether the generated report contains complete information.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_4.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Generated report contains complete information"
+  },
+  {
+    "metric": "5.1 Fortune Report Saving",
+    "description": "1. **Pre-check (User Path):** After the report is generated, does it clearly ask the user whether to save the report?\n2. **Arrange:** Prepare input 'y'.\n3. **Act:** After the report is generated, enter 'y' to choose to save.\n4. **Assert:** Check whether a new txt file is generated under the `reports` directory, whether the file name contains the date, and whether the file content matches what was displayed on screen.",
+    "type": "shell_interaction",
+    "testcases": [
+      {
+        "test_command": "python src/main.py",
+        "test_input": "evaluation/inputs/inputs_for_test_5.1.in"
+      }
+    ],
+    "input_files": null,
+    "expected_output_files": null,
+    "expected_output": "Program correctly saves the report"
+  }
+]
+```

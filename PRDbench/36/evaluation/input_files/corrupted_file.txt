@@ -1,0 +1,3 @@
+this is acorruptedFileContent
+ContainsOnesomeNoEffectCharacterSymbol: ����
+andNotCompleteEntiresentenceSub...

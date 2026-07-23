@@ -1,0 +1,17 @@
+Name,Birthplace,Birth Date,Death Date,Height,Education,Occupation,Highest Position,Relative,Relationship,Gender
+Wang Daming,Beijing,19500101,0,170.0,High School,Worker,Workshop Director,,0,Male
+Zhang Meihua,Tianjin,19520303,0,160.0,Middle School,Textile Worker,Group Leader,Wang Daming,0,Female
+Wang Xiaoqiang,Guangzhou,19800808,0,172.0,Bachelor's Degree,Engineer,Project Manager,Wang Daming,1,Male
+Li Xiaoli,Shenzhen,19820315,0,165.0,Bachelor's Degree,Teacher,Class Teacher,Wang Xiaoqiang,0,Female
+Wang Baobao,Hangzhou,20100101,0,120.0,Elementary School,Student,,Wang Xiaoqiang,1,Male
+Wang Niuniu,Chengdu,20120505,0,115.0,Elementary School,Student,,Wang Xiaoqiang,1,Female
+Liu Fangfang,Shanghai,19900101,0,160.0,Bachelor's Degree,Nurse,Head Nurse,,0,Female
+Chen Zhiqiang,Wuhan,19950505,0,175.0,Bachelor's Degree,Programmer,Senior Engineer,,0,Male
+Zhao Jianguo,Xi'an,19700101,0,168.0,High School,Driver,Captain,,0,Male
+Sun Lihua,Xi'an,19720202,0,158.0,High School,Accountant,Supervisor,Zhao Jianguo,0,Female
+Li Minghua,Nanjing,19600101,0,170.0,Bachelor's Degree,Doctor,Director,,0,Male
+Li Xiaoming,Suzhou,19900101,0,165.0,Bachelor's Degree,Lawyer,Partner,Li Minghua,1,Male
+Zhou Dafu,Chongqing,19580101,0,175.0,High School,Businessman,Boss,,0,Male
+Zhou Daqiang,Chongqing,19850101,0,170.0,Bachelor's Degree,Manager,Director,Zhou Dafu,1,Male
+Zhou Erqiang,Chongqing,19870101,0,168.0,Bachelor's Degree,Engineer,Supervisor,Zhou Dafu,1,Male
+Zhou Xiaohua,Chongqing,19900101,0,162.0,Bachelor's Degree,Designer,Supervisor,Zhou Dafu,1,Female
