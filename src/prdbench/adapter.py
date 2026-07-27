@@ -278,12 +278,22 @@ def run_prdbench_agent(
 
     exec_log = ExecutionLog(path=log_file, enabled=bool(log_file), run_id=run_id) if log_file else None
 
+    # Streamed text_delta is accumulated and flushed as a single llm_text event
+    # per LLM message (flushed on tool_start or at run end).
+    pending_text: list[str] = []
+
+    def _flush_text() -> None:
+        if exec_log and pending_text:
+            exec_log.log_llm_text("".join(pending_text))
+            pending_text.clear()
+
     def _on_content(text: str) -> None:
         if exec_log:
-            exec_log.log_llm_text(text)
+            pending_text.append(text)
 
     def _on_tool_start(name: str, kwargs: dict) -> None:
         if exec_log:
+            _flush_text()
             exec_log.log_tool_start(name, kwargs)
 
     def _on_tool_result(name: str, result: str) -> None:
@@ -319,6 +329,7 @@ def run_prdbench_agent(
             session.touch()
 
             if exec_log:
+                _flush_text()
                 exec_log.log_run_finished(
                     turn_count=len(messages) // 2,
                     tool_call_count=exec_log.tool_call_count,
@@ -339,6 +350,7 @@ def run_prdbench_agent(
                 time.sleep(5)
                 continue
             if exec_log:
+                _flush_text()
                 exec_log.log_run_terminated(reason=f"{type(e).__name__}: {e}")
             logger.error(f"Agent loop error after {max_retries + 1} attempts: {e}", exc_info=True)
             return {
@@ -350,6 +362,7 @@ def run_prdbench_agent(
 
         except Exception as e:
             if exec_log:
+                _flush_text()
                 exec_log.log_run_terminated(reason=f"{type(e).__name__}: {e}")
             logger.error(f"Agent loop error: {e}", exc_info=True)
             return {
