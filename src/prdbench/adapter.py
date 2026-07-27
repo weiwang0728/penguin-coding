@@ -121,6 +121,12 @@ DEV_SYSTEM_PROMPT = f"""You are an expert Python developer. Your task is to impl
 5. Fix any issues with edit_file.
 6. Call exit_loop when done.
 
+# Completion
+- After running tests and verifying the project works, call `exit_loop` IMMEDIATELY.
+- Do NOT run additional "final verification" checks after tests pass.
+- Do NOT re-read files you already wrote. One verification run is enough.
+- If tests pass and all required files exist, the task is done - call `exit_loop` right away.
+
 # Tools Available
 - `write_file`: Write content to a file
 - `edit_file`: Edit an existing file (use for fixes)
