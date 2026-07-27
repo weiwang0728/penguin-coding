@@ -21,9 +21,10 @@ os.environ["PRDBENCH_MODE"] = "true"
 
 from anthropic import Anthropic
 
-from .._constants import ALLOWED_BASE_DIR, client
+from .._constants import ALLOWED_BASE_DIR, client, eval_client, EVAL_MODEL_ID, MODEL_ID
 from ..agent_loop import agent_loop, stream_response
 from ..compact import estimate_messages_tokens
+from ..execution_log import ExecutionLog
 from ..tools import (
     TOOL_DEFINITIONS as BASE_TOOL_DEFINITIONS,
     dispatcher as base_dispatcher,
@@ -107,27 +108,23 @@ You have access to these tools:
 
 DEV_SYSTEM_PROMPT = f"""You are an expert Python developer. Your task is to implement a complete Python project according to the given PRD (Product Requirements Document) and test plan.
 
-# CRITICAL RULES — READ CAREFULLY
-1. **START WRITING CODE IMMEDIATELY.** Read ONLY the PRD.md and detailed_test_plan.json, then begin writing code. Do NOT read other files.
-2. **Write each file in a SINGLE write_file call.** Write COMPLETE file contents — never write partial or placeholder code.
-3. **Write ALL source files under the project's src/ directory** using absolute paths.
-4. **Do NOT read files you just wrote.** Trust that write_file succeeded — it returns a confirmation.
-5. **Maximum 2 read_file calls** before you start writing code. No exceptions.
-6. **Use absolute paths for all file operations.**
-7. **Do NOT ask questions.** Complete the entire project and submit directly.
+# Rules
+1. **Write ALL source files under the project's src/ directory** using absolute paths.
+2. **Use absolute paths for all file operations.**
+3. **Do NOT ask questions.** Complete the entire project and submit directly.
 
 # Implementation Strategy
-1. Read PRD.md and detailed_test_plan.json (2 read_file calls max)
-2. Plan the file structure in your head
-3. Write ALL source files one by one using write_file (main.py, models, utils, etc.)
-4. Run tests with run_command to verify
-5. Fix any issues with edit_file
-6. Call exit_loop when done
+1. Read PRD.md and detailed_test_plan.json to understand requirements.
+2. Plan the file structure.
+3. Write source files one by one using write_file.
+4. Run tests with run_command to verify.
+5. Fix any issues with edit_file.
+6. Call exit_loop when done.
 
 # Tools Available
-- `write_file`: Write content to a file (PREFERRED — use this for all new files)
+- `write_file`: Write content to a file
 - `edit_file`: Edit an existing file (use for fixes)
-- `read_file`: Read file contents (USE SPARINGLY — max 2 calls before writing code)
+- `read_file`: Read file contents
 - `run_command`: Run a shell command (for testing)
 - `list_directory`: List directory contents
 - `list_workspace`: List all files in a workspace directory
@@ -233,6 +230,8 @@ def run_prdbench_agent(
     session: PRDBenchSession,
     mode: str = "eval",
     max_iterations: int = MAX_ITERATIONS,
+    log_file: str | None = None,
+    run_id: str | None = None,
 ) -> dict[str, Any]:
     """Run penguin-coding's agent loop in headless PRDBench mode.
 
@@ -256,9 +255,39 @@ def run_prdbench_agent(
     else:
         system_prompt = EVAL_SYSTEM_PROMPT
 
+    # EVAL 模式用独立模型解耦 DEV/EVAL 系统性偏差
+    if mode == "eval":
+        if not EVAL_MODEL_ID:
+            logger.warning(
+                "EVAL_MODEL_ID not set in .env; falling back to main MODEL_ID. "
+                "DEV/EVAL systematic bias cannot be decoupled in this run."
+            )
+        run_client = eval_client
+        run_model_id = EVAL_MODEL_ID or MODEL_ID
+    else:
+        run_client = client
+        run_model_id = MODEL_ID
+
     # Build dispatcher and tool definitions for this run
     disp = _build_prdbench_dispatcher()
     tools = disp.get_tool_definitions()
+
+    exec_log = ExecutionLog(path=log_file, enabled=bool(log_file), run_id=run_id) if log_file else None
+
+    def _on_content(text: str) -> None:
+        if exec_log:
+            exec_log.log_llm_text(text)
+
+    def _on_tool_start(name: str, kwargs: dict) -> None:
+        if exec_log:
+            exec_log.log_tool_start(name, kwargs)
+
+    def _on_tool_result(name: str, result: str) -> None:
+        if exec_log:
+            exec_log.log_tool_result(name, result)
+
+    if exec_log:
+        exec_log.log_run_started(case_id=session.session_id, workspace_dir=workspace_dir)
 
     session.touch()
 
@@ -267,7 +296,7 @@ def run_prdbench_agent(
         try:
             # Run agent_loop headlessly — skip all permission checks
             content, messages = agent_loop(
-                client=client,
+                client=run_client,
                 user_message=user_message,
                 max_iterations=max_iterations,
                 messages=session.messages,
@@ -275,14 +304,22 @@ def run_prdbench_agent(
                 tools=tools,
                 tool_dispatcher=disp,
                 confirm_callback=lambda name, args, reason: True,  # auto-approve all
-                on_content=None,
-                on_tool_start=None,
-                on_tool_result=None,
+                on_content=_on_content,
+                on_tool_start=_on_tool_start,
+                on_tool_result=_on_tool_result,
+                model_id=run_model_id,
             )
 
             # Update session messages for continuation
             session.messages = messages
             session.touch()
+
+            if exec_log:
+                exec_log.log_run_finished(
+                    turn_count=len(messages) // 2,
+                    tool_call_count=exec_log.tool_call_count,
+                    exit_code=0,
+                )
 
             return {
                 "status": "success",
@@ -297,6 +334,8 @@ def run_prdbench_agent(
                 import time
                 time.sleep(5)
                 continue
+            if exec_log:
+                exec_log.log_run_terminated(reason=f"{type(e).__name__}: {e}")
             logger.error(f"Agent loop error after {max_retries + 1} attempts: {e}", exc_info=True)
             return {
                 "status": "error",
@@ -306,6 +345,8 @@ def run_prdbench_agent(
             }
 
         except Exception as e:
+            if exec_log:
+                exec_log.log_run_terminated(reason=f"{type(e).__name__}: {e}")
             logger.error(f"Agent loop error: {e}", exc_info=True)
             return {
                 "status": "error",
@@ -313,6 +354,9 @@ def run_prdbench_agent(
                 "session_id": session.session_id,
                 "timestamp": datetime.now().isoformat(),
             }
+
+    if exec_log:
+        exec_log.log_run_terminated(reason="Max retries exceeded")
 
     # Should not reach here
     return {

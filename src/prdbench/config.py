@@ -31,7 +31,8 @@ MAX_OUTPUT_TOKENS = int(os.getenv("PRDBENCH_MAX_OUTPUT_TOKENS", "16384"))
 ESCALATED_MAX_TOKENS = 65536
 
 # ── Model ──
-# Uses penguin-coding's existing .env MODEL_ID / API_KEY / BASE_URL
+# DEV 阶段用 .env 的 MODEL_ID / API_KEY / BASE_URL
+# EVAL 阶段用 .env 的 EVAL_MODEL_ID / EVAL_API_KEY / EVAL_BASE_URL（未配置时 fallback 到主配置）
 MODEL_NAME = os.getenv("PRDBENCH_MODEL_NAME", "penguin")
 
 # ── Security ──

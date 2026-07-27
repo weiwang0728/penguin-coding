@@ -22,6 +22,17 @@ client = Anthropic(
     timeout=_timeout,
 )
 
+# EVAL 阶段独立模型配置（用于 PRDBench EVAL 解耦 DEV/EVAL 系统性偏差）
+# 未配置时 fallback 到主 client + 主 MODEL_ID（语义等同现状，adapter 会打 WARNING）
+EVAL_MODEL_ID = os.getenv("EVAL_MODEL_ID")
+EVAL_API_KEY = os.getenv("EVAL_API_KEY") or API_KEY
+EVAL_BASE_URL = os.getenv("EVAL_BASE_URL") or BASE_URL
+eval_client = Anthropic(
+    api_key=EVAL_API_KEY,
+    base_url=EVAL_BASE_URL,
+    timeout=_timeout,
+)
+
 # PRDBench mode: relaxes dangerous command checks for benchmark execution
 _PRDBENCH_MODE = os.getenv("PRDBENCH_MODE", "false").lower() == "true"
 DANGEROUS_COMMANDS = [

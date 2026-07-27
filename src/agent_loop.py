@@ -109,6 +109,7 @@ def stream_response(
     system_prompt: str | None = None,
     tools: list[dict] | None = None,
     max_tokens: int = MAX_OUTPUT_TOKENS,
+    model_id: str | None = None,
 ) -> Generator[tuple[str, Any], None, None]:
     """逐 token 流式消费 API 响应，实时 yield 事件。
 
@@ -121,7 +122,7 @@ def stream_response(
     was_truncated = False
 
     with client.messages.stream(
-        model=MODEL_ID,
+        model=(model_id or MODEL_ID),
         max_tokens=max_tokens,
         system=system_prompt or SYSTEM_PROMPT,
         messages=messages,
@@ -433,9 +434,12 @@ def agent_loop(
     tool_dispatcher=None,
     parallel_enabled: bool = True,
     parallel_max_workers: int = 4,
+    model_id: str | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
     if messages is None:
         messages = []
+
+    _model_id = model_id or MODEL_ID
 
     # Use provided dispatcher or fall back to global
     _dispatcher = tool_dispatcher or dispatcher
@@ -454,7 +458,7 @@ def agent_loop(
             usage_stats["last_input_tokens"], usage_stats["pending_delta"]
         ):
             messages[:] = llm_compact_messages(
-                messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
+                messages, client, _model_id, max_tokens=MAX_CONTEXT_TOKENS
             )
             usage_stats["last_input_tokens"] = estimate_messages_tokens(messages)
             usage_stats["pending_delta"] = 0
@@ -483,6 +487,7 @@ def agent_loop(
                         client, messages,
                         system_prompt=_iter_system_prompt, tools=_tools,
                         max_tokens=current_max_tokens,
+                        model_id=_model_id,
                     ):
                         if event_type == "text_delta":
                             collected_content += data

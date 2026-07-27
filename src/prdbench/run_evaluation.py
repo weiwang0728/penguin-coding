@@ -28,6 +28,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import shutil
 import time
 from pathlib import Path
@@ -106,6 +107,8 @@ def run_dev_project(
     source_dir: str,
     root_path: str,
     max_iterations: int = MAX_ITERATIONS,
+    log_dir: str | None = None,
+    run_id: str | None = None,
 ) -> bool:
     """Run DEV stage: agent reads PRD.md and develops code in src/."""
     project_dir = os.path.abspath(os.path.join(root_path, str(project_id)))
@@ -138,11 +141,18 @@ def run_dev_project(
     session = session_manager.create(session_id, "penguin", "code_agent_local")
 
     logger.info(f"DEV project {project_id}: {project_dir}")
+    log_file = None
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
+        rid = run_id or "default"
+        log_file = os.path.join(log_dir, f"dev_{project_id}_{rid}.jsonl")
     result = run_prdbench_agent(
         user_message=prompt,
         session=session,
         mode="dev",
         max_iterations=max_iterations,
+        log_file=log_file,
+        run_id=run_id,
     )
 
     # Save response
@@ -190,17 +200,61 @@ def transfer_metric_abs_path(metric_data: dict, project_dir: str) -> dict:
     return data
 
 
+_METRIC_ID_RE = re.compile(r"^(\d+\.\d+\.\d+[a-z]?)")
+
+
+def _extract_metric_id(metric_name: str) -> str | None:
+    match = _METRIC_ID_RE.match(metric_name)
+    return match.group(1) if match else None
+
+
+def _load_rubric_by_metric_id(metric_json_path: str) -> dict[str, str]:
+    """Load metric.json, index rubric expected_output by metric ID prefix.
+
+    metric.json uses '&', detailed_test_plan.json uses 'and' in metric names,
+    so matching by ID prefix (e.g. '0.1.1') is more robust than full name.
+    """
+    try:
+        with open(metric_json_path, "r", encoding="utf-8") as f:
+            rubrics = json.load(f)
+    except Exception as e:
+        logger.warning(f"Failed to load rubric from {metric_json_path}: {e}")
+        return {}
+
+    index: dict[str, str] = {}
+    for item in rubrics:
+        metric_name = item.get("metric", "")
+        metric_id = _extract_metric_id(metric_name)
+        if metric_id:
+            index[metric_id] = item.get("expected_output", "")
+    return index
+
+
 def build_eval_prompt(
     metric_data: dict,
     project_dir: str,
     metric_report_file: str,
     retry_round: int = 0,
+    rubric_text: str | None = None,
 ) -> str:
     """Build the per-metric evaluation prompt (matches PRDBench's ready_test.py format)."""
     metric_name = metric_data.get("metric", "Unknown Metric")
     description = metric_data.get("description", "")
 
     abs_metric_data = transfer_metric_abs_path(metric_data, project_dir)
+
+    if rubric_text:
+        scoring_block = f"""### Scoring Rubric (authoritative)
+Score the metric according to the rubric below. The rubric is the source of truth for 0/1/2 thresholds.
+
+{rubric_text}
+
+The score must be 0, 1, or 2."""
+    else:
+        scoring_block = """The score should be 0, 1, or 2.
+0 means the test metric is completely not passed.
+1 means the test metric is partially passed. For shell_interaction and file_comparison types, this indicates that all steps except the final verification step are correct; for unit_test type, this means that pytest runs without any module import errors.
+2 means the test metric is completely passed."""
 
     prompt = f"""[Round {retry_round}] ### Task
 Please evaluate the implementation of {project_dir} based on the evaluation metric: {metric_name}. The project code is located in the src/ directory and the evaluation auxiliary files are located in the evaluation/ directory.
@@ -239,10 +293,7 @@ The JSON file should contain the evaluation result in the following format:
 "explanation": "Detailed explanation of the evaluation result"
 }}
 
-The score should be 0, 1, or 2.
-0 means the test metric is completely not passed.
-1 means the test metric is partially passed. For shell_interaction and file_comparison types, this indicates that all steps except the final verification step are correct; for unit_test type, this means that pytest runs without any module import errors.
-2 means the test metric is completely passed.
+{scoring_block}
 
 ### Final Reminder
 The interface of the code must be completed strictly in accordance with the evaluation criteria to be considered qualified.
@@ -274,6 +325,8 @@ def run_eval_project(
     root_path: str,
     retry_round: int = 0,
     max_iterations: int = MAX_ITERATIONS,
+    log_dir: str | None = None,
+    run_id: str | None = None,
 ) -> bool:
     """Run EVAL stage: evaluate each metric one by one (matches PRDBench's ready_test.py)."""
     project_dir = os.path.abspath(os.path.join(root_path, str(project_id)))
@@ -293,6 +346,14 @@ def run_eval_project(
     report_dir = os.path.join(project_dir, "reports")
     os.makedirs(report_dir, exist_ok=True)
 
+    # Load rubric for scoring guidance (metric.json's 0/1/2 three-tier rubric)
+    rubric_path = os.path.join(project_dir, "evaluation", "metric.json")
+    rubric_by_id = _load_rubric_by_metric_id(rubric_path)
+
+    # Prepare execution log directory
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
+
     # Get already completed metrics
     completed = get_completed_metrics(report_dir)
     logger.info(f"Project {project_id}: {len(completed)} metrics already completed")
@@ -309,12 +370,17 @@ def run_eval_project(
             logger.info(f"  [{i+1}/{total}] {metric_name}: already done, skipping")
             continue
 
+        # Lookup rubric for this metric by ID prefix
+        metric_id = _extract_metric_id(metric_name)
+        rubric_text = rubric_by_id.get(metric_id) if metric_id else None
+
         # Build per-metric prompt
         prompt = build_eval_prompt(
             metric_data=metric_data,
             project_dir=project_dir,
             metric_report_file=metric_report_file,
             retry_round=retry_round,
+            rubric_text=rubric_text,
         )
 
         # Create session for this metric
@@ -329,11 +395,19 @@ def run_eval_project(
         logger.info(f"  [{i+1}/{total}] {metric_name}: evaluating...")
         start = time.time()
 
+        exec_log_file = None
+        if log_dir:
+            safe_metric = re.sub(r"[^\w.\-]", "_", metric_name)
+            rid = run_id or "default"
+            exec_log_file = os.path.join(log_dir, f"eval_{project_id}_{safe_metric}_{rid}.jsonl")
+
         result = run_prdbench_agent(
             user_message=prompt,
             session=session,
             mode="eval",
             max_iterations=max_iterations,
+            log_file=exec_log_file,
+            run_id=run_id,
         )
 
         elapsed = time.time() - start
@@ -456,11 +530,21 @@ def main():
         "--max_retries", type=int, default=3,
         help="Max retries for failed metrics (eval mode)",
     )
+    parser.add_argument(
+        "--log_dir", type=str, default=None,
+        help="Directory for structured execution logs (JSONL). Default: <root_path>/.logs",
+    )
+    parser.add_argument(
+        "--run_id", type=str, default=None,
+        help="Run identifier included in log filenames",
+    )
     args = parser.parse_args()
 
     root_path = args.root_path or os.path.join(
         WORKSPACE_DIR, f"penguin_{args.mode}_output"
     )
+
+    log_dir = args.log_dir or os.path.join(root_path, ".logs")
 
     logging.basicConfig(
         level=logging.INFO,
@@ -480,6 +564,8 @@ def main():
                 source_dir=args.source_dir,
                 root_path=root_path,
                 max_iterations=args.max_iterations,
+                log_dir=log_dir,
+                run_id=args.run_id,
             )
 
     elif args.mode == "eval":
@@ -490,6 +576,8 @@ def main():
                 root_path=root_path,
                 retry_round=0,
                 max_iterations=args.max_iterations,
+                log_dir=log_dir,
+                run_id=args.run_id,
             )
 
             # Retry incomplete metrics
@@ -525,6 +613,8 @@ def main():
                     root_path=root_path,
                     retry_round=retry,
                     max_iterations=args.max_iterations,
+                    log_dir=log_dir,
+                    run_id=args.run_id,
                 )
 
     elif args.mode == "score":
