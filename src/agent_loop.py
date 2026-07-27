@@ -605,6 +605,11 @@ def agent_loop(
         if not has_tool_calls:
             return collected_content, messages
 
+        # exit_loop signal: agent requested completion, stop the loop immediately
+        if any(tc.get("name") == "exit_loop" for tc in tool_calls_list):
+            logger.info("Agent signaled exit_loop, stopping agent_loop")
+            return collected_content, messages
+
         # PRDBench mode: log tool calls for progress tracking
         if os.environ.get("PRDBENCH_MODE") == "true":
             tool_names = [tc["name"] for tc in tool_calls_list]
