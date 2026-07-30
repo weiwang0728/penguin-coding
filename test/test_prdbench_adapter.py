@@ -276,5 +276,140 @@ class TestReportFormat(unittest.TestCase):
             os.unlink(path)
 
 
+class TestMetricIdExtraction(unittest.TestCase):
+    def test_three_level_id(self):
+        from src.prdbench.run_evaluation import _extract_metric_id
+        self.assertEqual(
+            _extract_metric_id("0.1.1 Environment and Documentation"),
+            "0.1.1",
+        )
+
+    def test_letter_suffix_id(self):
+        from src.prdbench.run_evaluation import _extract_metric_id
+        self.assertEqual(_extract_metric_id("2.5.1a User Input Validation"), "2.5.1a")
+
+    def test_four_level_id_not_truncated(self):
+        from src.prdbench.run_evaluation import _extract_metric_id
+        # Project 34 uses four-level IDs; truncating to 2.1.1 would collide
+        self.assertEqual(
+            _extract_metric_id("2.1.1.1 Member Information Entry: Date"),
+            "2.1.1.1",
+        )
+        self.assertEqual(
+            _extract_metric_id("2.2.2.1b Relationship Query"),
+            "2.2.2.1b",
+        )
+
+    def test_two_level_id(self):
+        from src.prdbench.run_evaluation import _extract_metric_id
+        self.assertEqual(_extract_metric_id("1.1 System Startup"), "1.1")
+
+    def test_no_id(self):
+        from src.prdbench.run_evaluation import _extract_metric_id
+        self.assertIsNone(_extract_metric_id("No numeric prefix here"))
+
+
+class TestDevelopmentPromptIsolation(unittest.TestCase):
+    def test_dev_prompt_hides_test_plan(self):
+        from src.prdbench.prompts import DEVELOPMENT_PROMPT
+        result = DEVELOPMENT_PROMPT.format(ID="1", project_path="/tmp/test")
+        self.assertNotIn("detailed_test_plan", result)
+        self.assertNotIn("evaluation/", result)
+        self.assertIn("PRD.md", result)
+
+
+class TestCalculateScores(unittest.TestCase):
+    def _make_project(self, root: str, name: str, plan_metrics, reports: dict):
+        project_dir = os.path.join(root, name)
+        eval_dir = os.path.join(project_dir, "evaluation")
+        report_dir = os.path.join(project_dir, "reports")
+        os.makedirs(eval_dir, exist_ok=True)
+        os.makedirs(report_dir, exist_ok=True)
+        if plan_metrics is not None:
+            with open(os.path.join(eval_dir, "detailed_test_plan.json"), "w") as f:
+                json.dump([{"metric": m} for m in plan_metrics], f)
+        for metric, score in reports.items():
+            with open(os.path.join(report_dir, f"{metric}.json"), "w") as f:
+                json.dump({"metric": metric, "score": score, "explanation": "x"}, f)
+
+    def test_missing_metrics_count_as_zero(self):
+        from src.prdbench.run_evaluation import calculate_scores
+        with tempfile.TemporaryDirectory() as root:
+            # Plan has 3 metrics; only one report exists (score 2/2)
+            self._make_project(root, "1", ["a", "b", "c"], {"a": 2})
+            result = calculate_scores(root)
+            # 2 / (3 * 2) = 0.3333 — not 1.0 as partial-coverage averaging would give
+            self.assertEqual(result["scores"]["1"], 0.3333)
+            self.assertEqual(result["coverage"]["1"], {"evaluated": 1, "expected": 3})
+
+    def test_fallback_without_test_plan(self):
+        from src.prdbench.run_evaluation import calculate_scores
+        with tempfile.TemporaryDirectory() as root:
+            self._make_project(root, "2", None, {"a": 2, "b": 1})
+            result = calculate_scores(root)
+            # (2 + 1) / (2 * 2) = 0.75
+            self.assertEqual(result["scores"]["2"], 0.75)
+
+    def test_numeric_project_order(self):
+        from src.prdbench.run_evaluation import calculate_scores
+        with tempfile.TemporaryDirectory() as root:
+            self._make_project(root, "10", ["a"], {"a": 2})
+            self._make_project(root, "2", ["a"], {"a": 2})
+            result = calculate_scores(root)
+            self.assertEqual(list(result["scores"].keys()), ["2", "10"])
+
+
+class TestSrcIntegritySnapshot(unittest.TestCase):
+    def test_restore_modified_and_deleted(self):
+        from src.prdbench.run_evaluation import _snapshot_src, _verify_and_restore_src
+        with tempfile.TemporaryDirectory() as project_dir:
+            src_dir = os.path.join(project_dir, "src")
+            os.makedirs(src_dir)
+            with open(os.path.join(src_dir, "main.py"), "w") as f:
+                f.write("print('original')\n")
+            with open(os.path.join(src_dir, "util.py"), "w") as f:
+                f.write("X = 1\n")
+
+            backup = _snapshot_src(project_dir)
+            self.assertTrue(os.path.isdir(backup))
+
+            # Evaluator tampers: modifies main.py, deletes util.py, adds output
+            with open(os.path.join(src_dir, "main.py"), "w") as f:
+                f.write("print('tampered')\n")
+            os.unlink(os.path.join(src_dir, "util.py"))
+            os.makedirs(os.path.join(src_dir, "output"))
+            with open(os.path.join(src_dir, "output", "result.txt"), "w") as f:
+                f.write("generated\n")
+
+            diff = _verify_and_restore_src(project_dir, backup)
+            self.assertEqual(diff["modified"], ["main.py"])
+            self.assertEqual(diff["deleted"], ["util.py"])
+            self.assertEqual(diff["added"], [os.path.join("output", "result.txt")])
+
+            # Modified/deleted restored; added file kept
+            with open(os.path.join(src_dir, "main.py")) as f:
+                self.assertEqual(f.read(), "print('original')\n")
+            self.assertTrue(os.path.exists(os.path.join(src_dir, "util.py")))
+            self.assertTrue(os.path.exists(os.path.join(src_dir, "output", "result.txt")))
+
+    def test_pycache_excluded(self):
+        from src.prdbench.run_evaluation import _snapshot_src, _verify_and_restore_src
+        with tempfile.TemporaryDirectory() as project_dir:
+            src_dir = os.path.join(project_dir, "src")
+            cache_dir = os.path.join(src_dir, "__pycache__")
+            os.makedirs(cache_dir)
+            with open(os.path.join(src_dir, "main.py"), "w") as f:
+                f.write("pass\n")
+            with open(os.path.join(cache_dir, "main.cpython-311.pyc"), "w") as f:
+                f.write("bytecode")
+
+            backup = _snapshot_src(project_dir)
+            os.unlink(os.path.join(cache_dir, "main.cpython-311.pyc"))
+            diff = _verify_and_restore_src(project_dir, backup)
+            # __pycache__ churn is not reported as tampering
+            self.assertEqual(diff["deleted"], [])
+            self.assertEqual(diff["modified"], [])
+
+
 if __name__ == "__main__":
     unittest.main()

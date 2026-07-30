@@ -23,12 +23,14 @@ logger = logging.getLogger("penguin.prdbench")
 _shell_sessions: dict[str, subprocess.Popen] = {}
 _session_lock = threading.Lock()
 _session_counter = 0
+_counter_lock = threading.Lock()
 
 
 def _next_session_id() -> str:
     global _session_counter
-    _session_counter += 1
-    return f"shell_{_session_counter}_{int(time.time())}"
+    with _counter_lock:
+        _session_counter += 1
+        return f"shell_{_session_counter}_{int(time.time())}"
 
 
 # ── Judge Tool ──

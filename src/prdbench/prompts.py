@@ -1,12 +1,13 @@
 """PRDBench prompt templates for Development and Debug stages."""
 
-DEVELOPMENT_PROMPT = """Please develop a complete Python project (ID:{ID}) located at {project_path} according to the requirements specified in the project documentation (src/PRD.md), and with reference to the expected test metrics (evaluation/detailed_test_plan.json).
+DEVELOPMENT_PROMPT = """Please develop a complete Python project (ID:{ID}) located at {project_path} according to the requirements specified in the project documentation (src/PRD.md).
 
 ### Requirements
 1. Strictly implement all functional requirements described in PRD.md, ensuring that every feature is fully realized and that no requirements are omitted.
-2. Closely follow the testing schemes defined in detailed_test_plan.json, ensuring that your implementation process and interfaces fully comply with the testing specifications, so that QA testing can be carried out directly using detailed_test_plan.
-3. Submit all project code and related files completely under the src/ directory, ensuring that the project structure is clear and maintainable.
-4. Do not ask any intermediate questions during the development process. Complete the entire project and submit directly.
+2. Submit all project code and related files completely under the src/ directory, ensuring that the project structure is clear and maintainable.
+3. Do not ask any intermediate questions during the development process. Complete the entire project and submit directly.
+
+Note: The evaluation test plan is intentionally not provided. Implement from the PRD alone.
 """
 
 DEBUG_PROMPT = """Please debug and fix the Python project (ID:{ID}) located at {project_path}.

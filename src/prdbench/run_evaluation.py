@@ -1,9 +1,17 @@
 """PRDBench evaluation runner — drives penguin-coding through the full DEV + EVAL pipeline.
 
-Matches PRDBench's actual evaluation flow:
-  - DEV:  generate_dev.py sends one prompt per project, agent develops code in src/
-  - EVAL: ready_test.py sends one prompt per METRIC, agent writes {metric_name}.json
-  - SCORE: score_cal.py reads reports/{metric_name}.json and averages scores
+Matches PRDBench's actual evaluation flow, with three hardening changes:
+  - DEV:  agent develops code in src/ from PRD.md ONLY — the evaluation/
+          materials (test plan, rubrics, expected outputs) are NOT copied into
+          the dev workspace (no teaching to the test).
+  - EVAL: ready_test.py-style, one prompt per METRIC, agent writes
+          {metric_name}.json. evaluation/ is pulled from the source benchmark
+          on demand. src/ is snapshotted before eval and verified/restored
+          after each metric so a tampering evaluator cannot fake passes.
+  - SCORE: reads reports/{metric_name}.json; the denominator is the FULL
+          metric set from detailed_test_plan.json (missing metrics score 0).
+
+DEV and EVAL modes run projects in parallel (see --workers).
 
 Usage:
     # DEV stage — develop code from PRD
@@ -25,12 +33,14 @@ Usage:
 """
 
 import argparse
+import hashlib
 import json
 import logging
 import os
 import re
 import shutil
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from .adapter import run_prdbench_agent, PRDBenchSession, session_manager
@@ -110,21 +120,22 @@ def run_dev_project(
     log_dir: str | None = None,
     run_id: str | None = None,
 ) -> bool:
-    """Run DEV stage: agent reads PRD.md and develops code in src/."""
+    """Run DEV stage: agent reads PRD.md and develops code in src/.
+
+    Only src/ (which contains PRD.md) is copied into the workspace. The
+    evaluation/ materials are deliberately withheld so the agent cannot
+    tailor the implementation to the test plan or copy expected outputs;
+    EVAL mode pulls them from source_dir on demand.
+    """
     project_dir = os.path.abspath(os.path.join(root_path, str(project_id)))
     os.makedirs(project_dir, exist_ok=True)
 
-    # Copy PRD and evaluation from source
+    # Copy PRD from source — evaluation materials stay out of the dev workspace
     src_source = os.path.join(source_dir, str(project_id), "src")
     src_target = os.path.join(project_dir, "src")
-    eval_source = os.path.join(source_dir, str(project_id), "evaluation")
-    eval_target = os.path.join(project_dir, "evaluation")
 
     if os.path.exists(src_source) and not os.path.exists(src_target):
         shutil.copytree(src_source, src_target)
-
-    if os.path.exists(eval_source) and not os.path.exists(eval_target):
-        shutil.copytree(eval_source, eval_target)
 
     # Skip if already developed
     output_path = os.path.join(project_dir, "query_response.json")
@@ -155,13 +166,96 @@ def run_dev_project(
         run_id=run_id,
     )
 
-    # Save response
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
+    # Only mark the project as developed on success. A failed run writes its
+    # result to query_response.error.json instead, so reruns will retry it.
+    if result.get("status") == "success":
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(result, f, ensure_ascii=False, indent=2)
+    else:
+        error_path = os.path.join(project_dir, "query_response.error.json")
+        try:
+            with open(error_path, "w", encoding="utf-8") as f:
+                json.dump(result, f, ensure_ascii=False, indent=2)
+        except OSError:
+            pass
+        logger.error(
+            f"DEV project {project_id} failed (status={result.get('status')}); "
+            "not marking as developed — rerun dev mode to retry"
+        )
 
     session_manager.delete(session_id)
     logger.info(f"DEV project {project_id} done (status={result.get('status')})")
     return result.get("status") == "success"
+
+
+# ── src/ integrity snapshot (anti-tamper for EVAL) ──
+
+SRC_SNAPSHOT_DIR_NAME = ".src_integrity_snapshot"
+_SNAPSHOT_IGNORE = shutil.ignore_patterns("__pycache__", "*.pyc", ".git")
+
+
+def _hash_tree(src_dir: str) -> dict[str, tuple[str, int]]:
+    """Hash every file under src_dir -> {relpath: (sha256, size)}."""
+    hashes: dict[str, tuple[str, int]] = {}
+    for dirpath, dirnames, filenames in os.walk(src_dir):
+        dirnames[:] = sorted(d for d in dirnames if d != "__pycache__")
+        for filename in sorted(filenames):
+            if filename.endswith(".pyc"):
+                continue
+            full = os.path.join(dirpath, filename)
+            rel = os.path.relpath(full, src_dir)
+            try:
+                digest = hashlib.sha256()
+                with open(full, "rb") as f:
+                    for chunk in iter(lambda: f.read(1 << 20), b""):
+                        digest.update(chunk)
+                hashes[rel] = (digest.hexdigest(), os.path.getsize(full))
+            except OSError:
+                continue
+    return hashes
+
+
+def _snapshot_src(project_dir: str) -> str | None:
+    """Back up src/ so EVAL-stage tampering can be detected and reverted."""
+    src_dir = os.path.join(project_dir, "src")
+    if not os.path.isdir(src_dir):
+        return None
+    backup_dir = os.path.join(project_dir, SRC_SNAPSHOT_DIR_NAME)
+    if os.path.exists(backup_dir):
+        shutil.rmtree(backup_dir)
+    shutil.copytree(src_dir, backup_dir, ignore=_SNAPSHOT_IGNORE)
+    return backup_dir
+
+
+def _verify_and_restore_src(project_dir: str, backup_dir: str | None) -> dict:
+    """Diff src/ against the snapshot; restore modified/deleted files.
+
+    Returns {"modified": [...], "deleted": [...], "added": [...]}.
+    Added files (typically outputs produced by running the project during a
+    test) are kept but recorded; modified or deleted files are restored from
+    the snapshot so later metrics still evaluate the original code.
+    """
+    result: dict[str, list[str]] = {"modified": [], "deleted": [], "added": []}
+    src_dir = os.path.join(project_dir, "src")
+    if not backup_dir or not os.path.isdir(backup_dir):
+        return result
+
+    before = _hash_tree(backup_dir)
+    after = _hash_tree(src_dir) if os.path.isdir(src_dir) else {}
+
+    result["deleted"] = sorted(before.keys() - after.keys())
+    result["added"] = sorted(after.keys() - before.keys())
+    result["modified"] = sorted(
+        rel for rel in before.keys() & after.keys() if before[rel] != after[rel]
+    )
+
+    for rel in result["modified"] + result["deleted"]:
+        src_file = os.path.join(backup_dir, rel)
+        dst_file = os.path.join(src_dir, rel)
+        os.makedirs(os.path.dirname(dst_file), exist_ok=True)
+        shutil.copy2(src_file, dst_file)
+
+    return result
 
 
 # ── EVAL stage (per-metric, matching PRDBench's ready_test.py) ──
@@ -200,7 +294,10 @@ def transfer_metric_abs_path(metric_data: dict, project_dir: str) -> dict:
     return data
 
 
-_METRIC_ID_RE = re.compile(r"^(\d+\.\d+\.\d+[a-z]?)")
+# Metric IDs may have arbitrary depth: 1.1, 0.1.1, 2.5.1a, 2.2.2.1b (project 34).
+# Truncating to three levels collapses distinct four-level metrics onto the
+# same rubric, so match the full ID instead.
+_METRIC_ID_RE = re.compile(r"^(\d+(?:\.\d+)+[a-z]?)")
 
 
 def _extract_metric_id(metric_name: str) -> str | None:
@@ -278,7 +375,6 @@ If you encounter a "No such file or directory" error, please check whether you a
 
 ### Tips
 If the code is unable to run, please give the score of 0 and report it in the report.
-If the detailed_test_plan mentions that image analysis is required, use the "deal_graph" tool to analyze the images.
 Use the write_file tool to write the report content into a file, passing it to the content variable as a string type when writing.
 If the metric has more than one testcase, you should use "start_interactive_shell" tool to start a new shell session for each testcase. And if you need to input content to the shell, use the "run_interactive_shell" tool.
 
@@ -323,6 +419,7 @@ def get_completed_metrics(report_dir: str) -> set[str]:
 def run_eval_project(
     project_id: int,
     root_path: str,
+    source_dir: str | None = None,
     retry_round: int = 0,
     max_iterations: int = MAX_ITERATIONS,
     log_dir: str | None = None,
@@ -335,8 +432,16 @@ def run_eval_project(
         logger.warning(f"Project directory {project_dir} does not exist, skipping")
         return False
 
+    # DEV stage no longer copies evaluation materials into the workspace
+    # (information isolation), so pull them from the source benchmark here.
+    eval_dir = os.path.join(project_dir, "evaluation")
+    if not os.path.exists(eval_dir) and source_dir:
+        eval_source = os.path.join(source_dir, str(project_id), "evaluation")
+        if os.path.isdir(eval_source):
+            shutil.copytree(eval_source, eval_dir)
+
     # Load test plan
-    test_plan_path = os.path.join(project_dir, "evaluation", "detailed_test_plan.json")
+    test_plan_path = os.path.join(eval_dir, "detailed_test_plan.json")
     test_plan = load_test_plan(test_plan_path)
     if not test_plan:
         logger.warning(f"No test plan for project {project_id}, skipping")
@@ -347,8 +452,12 @@ def run_eval_project(
     os.makedirs(report_dir, exist_ok=True)
 
     # Load rubric for scoring guidance (metric.json's 0/1/2 three-tier rubric)
-    rubric_path = os.path.join(project_dir, "evaluation", "metric.json")
+    rubric_path = os.path.join(eval_dir, "metric.json")
     rubric_by_id = _load_rubric_by_metric_id(rubric_path)
+
+    # Snapshot src/ so any tampering by the evaluator is detected and reverted
+    snapshot_dir = _snapshot_src(project_dir)
+    integrity: dict[str, dict] = {}
 
     # Prepare execution log directory
     if log_dir:
@@ -421,6 +530,16 @@ def run_eval_project(
                 f"  [{i+1}/{total}] {metric_name}: no valid report generated ({elapsed:.1f}s)"
             )
 
+        # Verify the evaluator did not modify src/; restore from snapshot if it did
+        diff = _verify_and_restore_src(project_dir, snapshot_dir)
+        if diff["modified"] or diff["deleted"]:
+            logger.warning(
+                f"  [{i+1}/{total}] {metric_name}: src/ tampered during eval "
+                f"(modified={diff['modified']}, deleted={diff['deleted']}); restored"
+            )
+        if any(diff.values()):
+            integrity[metric_name] = diff
+
         # Save log
         log_file = os.path.join(report_dir, f"{metric_name}.log")
         try:
@@ -431,34 +550,140 @@ def run_eval_project(
 
         session_manager.delete(session_id)
 
+    # Persist integrity findings (merged across retry rounds) and drop the backup
+    if snapshot_dir:
+        if integrity:
+            report_path = os.path.join(project_dir, "integrity_report.json")
+            existing: dict = {}
+            if os.path.exists(report_path):
+                try:
+                    with open(report_path, "r", encoding="utf-8") as f:
+                        existing = json.load(f)
+                except Exception:
+                    existing = {}
+            existing.update(integrity)
+            try:
+                with open(report_path, "w", encoding="utf-8") as f:
+                    json.dump(existing, f, ensure_ascii=False, indent=2)
+            except OSError:
+                pass
+        shutil.rmtree(snapshot_dir, ignore_errors=True)
+
     logger.info(
         f"Project {project_id} eval done: {done}/{total} metrics completed"
     )
     return True
 
 
+def run_eval_project_with_retries(
+    project_id: int,
+    root_path: str,
+    source_dir: str | None = None,
+    max_iterations: int = MAX_ITERATIONS,
+    max_retries: int = 3,
+    log_dir: str | None = None,
+    run_id: str | None = None,
+) -> None:
+    """Initial EVAL pass plus retries for metrics that produced no valid report."""
+    run_eval_project(
+        project_id=project_id,
+        root_path=root_path,
+        source_dir=source_dir,
+        retry_round=0,
+        max_iterations=max_iterations,
+        log_dir=log_dir,
+        run_id=run_id,
+    )
+
+    for retry in range(1, max_retries + 1):
+        project_dir = os.path.join(root_path, str(project_id))
+        report_dir = os.path.join(project_dir, "reports")
+        test_plan_path = os.path.join(
+            project_dir, "evaluation", "detailed_test_plan.json"
+        )
+
+        if not os.path.exists(test_plan_path):
+            break
+
+        test_plan = load_test_plan(test_plan_path)
+        if not test_plan:
+            break
+
+        completed = get_completed_metrics(report_dir)
+        expected = {m["metric"] for m in test_plan if "metric" in m}
+        missing = expected - completed
+
+        if not missing:
+            logger.info(f"Project {project_id}: all metrics completed!")
+            break
+
+        logger.info(
+            f"Project {project_id}: retry {retry}, {len(missing)} metrics missing"
+        )
+        run_eval_project(
+            project_id=project_id,
+            root_path=root_path,
+            source_dir=source_dir,
+            retry_round=retry,
+            max_iterations=max_iterations,
+            log_dir=log_dir,
+            run_id=run_id,
+        )
+
+
+# ── Parallel execution ──
+
+def _run_in_parallel(items, fn, workers: int, label: str) -> None:
+    """Run fn(item) for each item, in parallel across projects when workers > 1."""
+    if workers <= 1:
+        for item in items:
+            fn(item)
+        return
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(fn, item): item for item in items}
+        for future in as_completed(futures):
+            item = futures[future]
+            try:
+                future.result()
+            except Exception:
+                logger.exception(f"{label} project {item} failed with unexpected error")
+
+
 # ── SCORE stage ──
 
 def calculate_scores(root_path: str) -> dict:
-    """Calculate average scores across all projects (matches PRDBench's score_cal.py)."""
+    """Calculate average scores across all projects.
+
+    Unlike PRDBench's score_cal.py, the denominator is the FULL metric set
+    from evaluation/detailed_test_plan.json: metrics without a valid report
+    count as 0, so partial coverage can no longer inflate scores. Projects
+    without a test plan fall back to averaging their existing reports.
+    """
     results = {}
+    coverage = {}
     total_sum = 0.0
     valid_count = 0
 
+    def _sort_key(d: str):
+        return (0, int(d)) if d.isdigit() else (1, d)
+
     subdirs = sorted(
-        d for d in os.listdir(root_path)
-        if os.path.isdir(os.path.join(root_path, d)) and not d.startswith(".")
+        (
+            d for d in os.listdir(root_path)
+            if os.path.isdir(os.path.join(root_path, d)) and not d.startswith(".")
+        ),
+        key=_sort_key,
     )
 
     for subdir in subdirs:
-        report_dir = os.path.join(root_path, subdir, "reports")
+        project_dir = os.path.join(root_path, subdir)
+        report_dir = os.path.join(project_dir, "reports")
         if not os.path.exists(report_dir):
             results[subdir] = "no reports directory"
             continue
 
-        project_score = 0.0
-        metric_count = 0
-
+        # Collect valid per-metric scores from report files
+        scores_by_metric: dict[str, float] = {}
         for filename in os.listdir(report_dir):
             if not filename.endswith(".json"):
                 continue
@@ -471,23 +696,42 @@ def calculate_scores(root_path: str) -> dict:
                 if isinstance(data, dict) and "score" in data:
                     score = data["score"]
                     if isinstance(score, (int, float)) and 0 <= score <= 2:
-                        project_score += score
-                        metric_count += 1
+                        scores_by_metric[filename[:-5]] = score
             except Exception:
                 continue
 
-        if metric_count > 0:
-            # Normalize to 0-1 range (each metric is 0-2)
-            normalized = project_score / metric_count / 2.0
-            results[subdir] = round(normalized, 4)
-            total_sum += normalized
-            valid_count += 1
+        # Full denominator: every metric in the test plan (missing => 0)
+        test_plan_path = os.path.join(
+            project_dir, "evaluation", "detailed_test_plan.json"
+        )
+        test_plan = (
+            load_test_plan(test_plan_path) if os.path.exists(test_plan_path) else None
+        )
+        expected = [m["metric"] for m in test_plan if "metric" in m] if test_plan else None
+
+        if expected:
+            project_score = sum(scores_by_metric.get(name, 0) for name in expected)
+            denominator = len(expected)
+            evaluated = sum(1 for name in expected if name in scores_by_metric)
+        elif scores_by_metric:
+            project_score = sum(scores_by_metric.values())
+            denominator = len(scores_by_metric)
+            evaluated = denominator
         else:
             results[subdir] = "no valid data"
+            continue
+
+        # Normalize to 0-1 range (each metric is 0-2)
+        normalized = project_score / denominator / 2.0
+        results[subdir] = round(normalized, 4)
+        coverage[subdir] = {"evaluated": evaluated, "expected": denominator}
+        total_sum += normalized
+        valid_count += 1
 
     average = total_sum / valid_count if valid_count > 0 else 0
     return {
         "scores": results,
+        "coverage": coverage,
         "valid_count": valid_count,
         "average_score": round(average, 4),
     }
@@ -531,6 +775,10 @@ def main():
         help="Max retries for failed metrics (eval mode)",
     )
     parser.add_argument(
+        "--workers", type=int, default=4,
+        help="Number of projects to process in parallel (dev/eval modes). 1 = sequential.",
+    )
+    parser.add_argument(
         "--log_dir", type=str, default=None,
         help="Directory for structured execution logs (JSONL). Default: <root_path>/.logs",
     )
@@ -558,64 +806,35 @@ def main():
     logger.info(f"Source: {args.source_dir}, Output: {root_path}")
 
     if args.mode == "dev":
-        for i in range(args.start, args.end + 1):
-            run_dev_project(
+        _run_in_parallel(
+            items=list(range(args.start, args.end + 1)),
+            fn=lambda i: run_dev_project(
                 project_id=i,
                 source_dir=args.source_dir,
                 root_path=root_path,
                 max_iterations=args.max_iterations,
                 log_dir=log_dir,
                 run_id=args.run_id,
-            )
+            ),
+            workers=args.workers,
+            label="dev",
+        )
 
     elif args.mode == "eval":
-        for i in range(args.start, args.end + 1):
-            # Initial evaluation
-            run_eval_project(
+        _run_in_parallel(
+            items=list(range(args.start, args.end + 1)),
+            fn=lambda i: run_eval_project_with_retries(
                 project_id=i,
                 root_path=root_path,
-                retry_round=0,
+                source_dir=args.source_dir,
                 max_iterations=args.max_iterations,
+                max_retries=args.max_retries,
                 log_dir=log_dir,
                 run_id=args.run_id,
-            )
-
-            # Retry incomplete metrics
-            for retry in range(1, args.max_retries + 1):
-                project_dir = os.path.join(root_path, str(i))
-                report_dir = os.path.join(project_dir, "reports")
-                test_plan_path = os.path.join(
-                    project_dir, "evaluation", "detailed_test_plan.json"
-                )
-
-                if not os.path.exists(test_plan_path):
-                    break
-
-                test_plan = load_test_plan(test_plan_path)
-                if not test_plan:
-                    break
-
-                completed = get_completed_metrics(report_dir)
-                expected = {
-                    m["metric"] for m in test_plan if "metric" in m
-                }
-                missing = expected - completed
-
-                if not missing:
-                    logger.info(f"Project {i}: all metrics completed!")
-                    break
-
-                logger.info(
-                    f"Project {i}: retry {retry}, {len(missing)} metrics missing"
-                )
-                run_eval_project(
-                    project_id=i,
-                    root_path=root_path,
-                    retry_round=retry,
-                    max_iterations=args.max_iterations,
-                    log_dir=log_dir,
-                    run_id=args.run_id,
-                )
+            ),
+            workers=args.workers,
+            label="eval",
+        )
 
     elif args.mode == "score":
         scores = calculate_scores(root_path)
@@ -629,9 +848,16 @@ def main():
             f"({scores['valid_count']} valid projects)"
         )
 
-        # Print per-project scores
+        # Print per-project scores with coverage
         for project, score in sorted(scores["scores"].items()):
-            logger.info(f"  Project {project}: {score}")
+            cov = scores.get("coverage", {}).get(project)
+            if cov:
+                logger.info(
+                    f"  Project {project}: {score} "
+                    f"({cov['evaluated']}/{cov['expected']} metrics evaluated)"
+                )
+            else:
+                logger.info(f"  Project {project}: {score}")
 
 
 if __name__ == "__main__":
