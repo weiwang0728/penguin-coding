@@ -106,7 +106,7 @@ You have access to these tools:
 
 # ── System Prompt for PRDBench Development Agent ──
 
-DEV_SYSTEM_PROMPT = f"""You are an expert Python developer. Your task is to implement a complete Python project according to the given PRD (Product Requirements Document) and test plan.
+DEV_SYSTEM_PROMPT = """You are an expert Python developer. Your task is to implement a complete Python project according to the given PRD (Product Requirements Document).
 
 # Rules
 1. **Write ALL source files under the project's src/ directory** using absolute paths.
@@ -114,7 +114,7 @@ DEV_SYSTEM_PROMPT = f"""You are an expert Python developer. Your task is to impl
 3. **Do NOT ask questions.** Complete the entire project and submit directly.
 
 # Implementation Strategy
-1. Read PRD.md and detailed_test_plan.json to understand requirements.
+1. Read PRD.md to understand requirements.
 2. Plan the file structure.
 3. Write source files one by one using write_file.
 4. Run tests with run_command to verify.
@@ -134,8 +134,6 @@ DEV_SYSTEM_PROMPT = f"""You are an expert Python developer. Your task is to impl
 - `list_workspace`: List all files in a workspace directory
 - `search_files`: Search for patterns in files
 - `exit_loop`: Signal that you have finished all tasks
-
-Working directory: {{workspace_dir}}
 """
 
 
@@ -253,9 +251,9 @@ def run_prdbench_agent(
     # Select system prompt based on mode
     workspace_dir = WORKSPACE_DIR
     if mode == "dev":
-        system_prompt = DEV_SYSTEM_PROMPT.format(workspace_dir=workspace_dir)
+        system_prompt = DEV_SYSTEM_PROMPT
     elif mode == "debug":
-        system_prompt = DEV_SYSTEM_PROMPT.format(workspace_dir=workspace_dir)
+        system_prompt = DEV_SYSTEM_PROMPT
     else:
         system_prompt = EVAL_SYSTEM_PROMPT
 
@@ -328,6 +326,28 @@ def run_prdbench_agent(
             session.messages = messages
             session.touch()
 
+            # agent_loop returns terminal API errors as ordinary content
+            # strings (e.g. quota exhausted mid-run). Surface them as errors
+            # so the runner writes an error marker instead of a success
+            # marker that would poison idempotent reruns.
+            if isinstance(content, str) and content.startswith((
+                "API error (status",
+                "API connection error after retries",
+                "[Subagent error] API status",
+                "[Subagent error] Connection failed",
+                "Context too long even after reactive compact",
+            )):
+                if exec_log:
+                    _flush_text()
+                    exec_log.log_run_terminated(reason=content[:200])
+                logger.error(f"Agent loop terminated by API error: {content[:200]}")
+                return {
+                    "status": "error",
+                    "error": content[:500],
+                    "session_id": session.session_id,
+                    "timestamp": datetime.now().isoformat(),
+                }
+
             if exec_log:
                 _flush_text()
                 exec_log.log_run_finished(
@@ -356,6 +376,29 @@ def run_prdbench_agent(
             return {
                 "status": "error",
                 "error": str(e),
+                "session_id": session.session_id,
+                "timestamp": datetime.now().isoformat(),
+            }
+
+        except AttributeError as e:
+            # The anthropic SDK's stream accumulator raises AttributeError
+            # ('dict' object has no attribute 'to_dict') when the provider
+            # emits an unrecognized content-block type. Observed to be
+            # transient on the provider side - retry after a backoff.
+            if attempt < max_retries:
+                logger.warning(
+                    f"Agent loop SDK stream error (attempt {attempt + 1}/{max_retries + 1}): {e}; retrying..."
+                )
+                import time
+                time.sleep(15)
+                continue
+            if exec_log:
+                _flush_text()
+                exec_log.log_run_terminated(reason=f"{type(e).__name__}: {e}")
+            logger.error(f"Agent loop SDK stream error after retries: {e}", exc_info=True)
+            return {
+                "status": "error",
+                "error": f"{type(e).__name__}: {e}",
                 "session_id": session.session_id,
                 "timestamp": datetime.now().isoformat(),
             }

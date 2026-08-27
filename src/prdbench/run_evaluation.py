@@ -168,6 +168,22 @@ def run_dev_project(
 
     # Only mark the project as developed on success. A failed run writes its
     # result to query_response.error.json instead, so reruns will retry it.
+    # A "successful" run that produced no code (only the PRD remains) is
+    # treated as a failure too - e.g. an API error the loop swallowed.
+    src_dir = os.path.join(project_dir, "src")
+    has_code = any(
+        name != "PRD.md"
+        for dirpath, _, filenames in os.walk(src_dir)
+        for name in filenames
+        if not name.endswith(".pyc")
+    )
+    if result.get("status") == "success" and not has_code:
+        logger.error(
+            f"DEV project {project_id} finished with no code written; "
+            "treating as failure"
+        )
+        result = {**result, "status": "error", "error": "no code produced"}
+
     if result.get("status") == "success":
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
