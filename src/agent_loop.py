@@ -70,7 +70,8 @@ usage_stats = {
 }
 
 MAX_OUTPUT_TOKENS = 16384
-ESCALATED_MAX_TOKENS = 65536  # 64K — escalation when default output limit is insufficient
+# 64K default. Some providers cap max_tokens lower (e.g. kimi-k2.7-code: 32768); override via env.
+ESCALATED_MAX_TOKENS = int(os.getenv("ESCALATED_MAX_TOKENS", "65536"))  # 64K — escalation when default output limit is insufficient
 MAX_RECOVERY_RETRIES = 3
 
 
