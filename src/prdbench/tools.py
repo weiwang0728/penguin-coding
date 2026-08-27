@@ -270,18 +270,22 @@ class RunInteractiveShellTool(Tool):
         # Give the process a moment to produce output
         time.sleep(min(2, timeout))
 
-        # Non-blocking read of available output
+        # Non-blocking read of available output.
+        # Use os.read on the raw fd: a buffered read(4096) blocks until the
+        # full chunk or EOF, which deadlocks when the child prints less than
+        # 4096 bytes and then waits for more input.
         import select
+        import os
         output = ""
         try:
             while True:
                 ready, _, _ = select.select([proc.stdout], [], [], 1.0)
                 if not ready:
                     break
-                chunk = proc.stdout.read(4096)
+                chunk = os.read(proc.stdout.fileno(), 65536)
                 if not chunk:
                     break
-                output += chunk
+                output += chunk.decode("utf-8", errors="replace")
         except Exception:
             pass
 
