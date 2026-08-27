@@ -18,9 +18,12 @@ SYSTEM_OPERATIONS_PORT = os.getenv("SYSTEM_OPERATIONS_PORT", "8003")
 
 # ── Workspace ──
 # PRDBench sets CODE_AGENT_WORKSPACE_DIR; fall back to penguin's workspace
+# Default must match ALLOWED_BASE_DIR in src/_constants.py (project-root
+# workspace/), so agent tools can read/write the runner's output dirs.
+# (src/prdbench/config.py -> parents[2] = project root.)
 WORKSPACE_DIR = os.getenv(
     "CODE_AGENT_WORKSPACE_DIR",
-    str(Path(__file__).resolve().parent.parent / "workspace"),
+    str(Path(__file__).resolve().parents[2] / "workspace"),
 )
 if not os.path.isabs(WORKSPACE_DIR):
     WORKSPACE_DIR = os.path.abspath(WORKSPACE_DIR)
