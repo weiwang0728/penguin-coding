@@ -606,8 +606,29 @@ def agent_loop(
         if not has_tool_calls:
             return collected_content, messages
 
-        # exit_loop signal: agent requested completion, stop the loop immediately
+        # Close every tool call before exiting so this history can be reused.
         if any(tc.get("name") == "exit_loop" for tc in tool_calls_list):
+            tool_results = []
+            for tc in tool_calls_list:
+                if tc["name"] == "exit_loop":
+                    result = {
+                        "type": "tool_result",
+                        "tool_use_id": tc["id"],
+                        "content": "Loop exit signaled. Task complete.",
+                    }
+                else:
+                    result = {
+                        "type": "tool_result",
+                        "tool_use_id": tc["id"],
+                        "content": "Tool execution skipped because exit_loop was requested.",
+                        "is_error": True,
+                    }
+                tool_results.append(result)
+
+            result_msg = {"role": "user", "content": tool_results}
+            messages.append(result_msg)
+            usage_stats["pending_delta"] += estimate_messages_tokens([result_msg])
+
             logger.info("Agent signaled exit_loop, stopping agent_loop")
             return collected_content, messages
 
