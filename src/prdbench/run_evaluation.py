@@ -10,8 +10,14 @@ Matches PRDBench's actual evaluation flow, with three hardening changes:
           after each metric so a tampering evaluator cannot fake passes.
   - SCORE: reads reports/{metric_name}.json; the denominator is the FULL
           metric set from detailed_test_plan.json (missing metrics score 0).
+  - REFLECT: collects failed metrics (missing report or score <= threshold),
+          runs one reflection agent per affected project to distill
+          generalizable lessons into <root_path>/reflection/skill_candidates.json
+          (status "pending"). Human review flips entries to "approved" /
+          "rejected"; approved skills are injected into future EVAL prompts,
+          so rerunning eval afterwards measures the recall effect.
 
-DEV and EVAL modes run projects in parallel (see --workers).
+DEV, EVAL and REFLECT modes run projects in parallel (see --workers).
 
 Usage:
     # DEV stage — develop code from PRD
@@ -30,21 +36,30 @@ Usage:
     python -m src.prdbench.run_evaluation \\
         --root_path workspace/penguin_dev_output \\
         --mode score
+
+    # REFLECT stage — standalone reflection over existing reports
+    # (in eval mode, pass --reflect to append it automatically)
+    python -m src.prdbench.run_evaluation \
+        --root_path workspace/penguin_dev_output \
+        --mode reflect [--reflect_threshold 0]
 """
 
 import argparse
+import glob
 import hashlib
 import json
 import logging
 import os
 import re
 import shutil
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime
 from pathlib import Path
 
 from .adapter import run_prdbench_agent, PRDBenchSession, session_manager
-from .prompts import DEVELOPMENT_PROMPT, DEBUG_PROMPT, EVALUATION_PROMPT
+from .prompts import DEVELOPMENT_PROMPT, DEBUG_PROMPT, EVALUATION_PROMPT, REFLECTION_PROMPT
 from .config import WORKSPACE_DIR, MAX_ITERATIONS
 
 logger = logging.getLogger("penguin.prdbench.runner")
@@ -349,8 +364,13 @@ def build_eval_prompt(
     metric_report_file: str,
     retry_round: int = 0,
     rubric_text: str | None = None,
+    skills_text: str | None = None,
 ) -> str:
-    """Build the per-metric evaluation prompt (matches PRDBench's ready_test.py format)."""
+    """Build the per-metric evaluation prompt (matches PRDBench's ready_test.py format).
+
+    skills_text, when given, is a rendered block of human-approved lessons from
+    previous reflection passes, injected so the evaluator can recall them.
+    """
     metric_name = metric_data.get("metric", "Unknown Metric")
     description = metric_data.get("description", "")
 
@@ -368,6 +388,15 @@ The score must be 0, 1, or 2."""
 0 means the test metric is completely not passed.
 1 means the test metric is partially passed. For shell_interaction and file_comparison types, this indicates that all steps except the final verification step are correct; for unit_test type, this means that pytest runs without any module import errors.
 2 means the test metric is completely passed."""
+
+    skills_block = ""
+    if skills_text:
+        skills_block = f"""
+### Lessons from Previous Evaluation Runs (human-reviewed)
+The following lessons were distilled from past failures and approved by human review. Recall and apply them where relevant:
+
+{skills_text}
+"""
 
     prompt = f"""[Round {retry_round}] ### Task
 Please evaluate the implementation of {project_dir} based on the evaluation metric: {metric_name}. The project code is located in the src/ directory and the evaluation auxiliary files are located in the evaluation/ directory.
@@ -393,7 +422,7 @@ If you encounter a "No such file or directory" error, please check whether you a
 If the code is unable to run, please give the score of 0 and report it in the report.
 Use the write_file tool to write the report content into a file, passing it to the content variable as a string type when writing.
 If the metric has more than one testcase, you should use "start_interactive_shell" tool to start a new shell session for each testcase. And if you need to input content to the shell, use the "run_interactive_shell" tool.
-
+{skills_block}
 ### *Important* File Output Requirement
 After completing your evaluation, you MUST write the evaluation result to a JSON file at the following path:
 {metric_report_file}
@@ -471,6 +500,9 @@ def run_eval_project(
     rubric_path = os.path.join(eval_dir, "metric.json")
     rubric_by_id = _load_rubric_by_metric_id(rubric_path)
 
+    # Human-approved reflection skills are injected into every metric prompt
+    skills_text = load_approved_skills(root_path)
+
     # Snapshot src/ so any tampering by the evaluator is detected and reverted
     snapshot_dir = _snapshot_src(project_dir)
     integrity: dict[str, dict] = {}
@@ -506,6 +538,7 @@ def run_eval_project(
             metric_report_file=metric_report_file,
             retry_round=retry_round,
             rubric_text=rubric_text,
+            skills_text=skills_text,
         )
 
         # Create session for this metric
@@ -647,6 +680,354 @@ def run_eval_project_with_retries(
         )
 
 
+# ── REFLECTION stage (distill failures into candidate skills) ──
+
+REFLECTION_DIR_NAME = "reflection"
+SKILL_CANDIDATES_FILENAME = "skill_candidates.json"
+
+
+def _exec_log_excerpt(
+    log_dir: str | None,
+    project_id: int,
+    metric_name: str,
+    max_events: int = 25,
+    max_chars: int = 3000,
+) -> str:
+    """Compact tail of the structured exec log for one metric (for reflection)."""
+    if not log_dir or not os.path.isdir(log_dir):
+        return ""
+    safe_metric = re.sub(r"[^\w.\-]", "_", metric_name)
+    pattern = os.path.join(log_dir, f"eval_{project_id}_{safe_metric}_*.jsonl")
+    candidates = glob.glob(pattern)
+    if not candidates:
+        return ""
+    newest = max(candidates, key=os.path.getmtime)
+
+    lines: list[str] = []
+    try:
+        with open(newest, "r", encoding="utf-8") as f:
+            for raw in f:
+                try:
+                    event = json.loads(raw)
+                except json.JSONDecodeError:
+                    continue
+                kind = event.get("event")
+                if kind == "tool_start":
+                    tool_input = json.dumps(
+                        event.get("input", {}), ensure_ascii=False
+                    )[:200]
+                    lines.append(f"tool_start {event.get('name')}: {tool_input}")
+                elif kind == "tool_result":
+                    lines.append(
+                        f"tool_result {event.get('name')}: "
+                        f"{str(event.get('result', ''))[:300]}"
+                    )
+                elif kind == "llm_text":
+                    lines.append(f"llm: {str(event.get('text', ''))[:300]}")
+                elif kind in ("run_finished", "run_terminated"):
+                    lines.append(json.dumps(event, ensure_ascii=False)[:300])
+    except OSError:
+        return ""
+
+    excerpt = "\n".join(lines[-max_events:])
+    return excerpt[-max_chars:]
+
+
+def collect_failed_metrics(
+    root_path: str,
+    threshold: int = 0,
+    log_dir: str | None = None,
+) -> dict[int, list[dict]]:
+    """Collect metrics whose report is missing or scores <= threshold.
+
+    Returns {project_id: [failure, ...]} where each failure carries the metric
+    name, score (None when the report is missing), the evaluator's
+    explanation, and a trajectory excerpt for root-cause analysis.
+    """
+    failures_by_project: dict[int, list[dict]] = {}
+    for entry in sorted(os.listdir(root_path)):
+        project_dir = os.path.join(root_path, entry)
+        if not entry.isdigit() or not os.path.isdir(project_dir):
+            continue
+
+        test_plan_path = os.path.join(
+            project_dir, "evaluation", "detailed_test_plan.json"
+        )
+        test_plan = (
+            load_test_plan(test_plan_path) if os.path.exists(test_plan_path) else None
+        )
+        if not test_plan:
+            continue
+
+        report_dir = os.path.join(project_dir, "reports")
+        failures: list[dict] = []
+        for metric_data in test_plan:
+            metric_name = metric_data.get("metric")
+            if not metric_name:
+                continue
+
+            report_file = os.path.join(report_dir, f"{metric_name}.json")
+            score = None
+            explanation = "(no valid report generated)"
+            if os.path.exists(report_file) and check_metric_json(report_file):
+                try:
+                    with open(report_file, "r", encoding="utf-8") as f:
+                        report = json.load(f)
+                    score = report.get("score")
+                    explanation = str(report.get("explanation", ""))[:1000]
+                except Exception:
+                    pass
+
+            if score is not None and score > threshold:
+                continue
+
+            failure: dict = {
+                "metric": metric_name,
+                "score": score,
+                "explanation": explanation,
+            }
+            excerpt = _exec_log_excerpt(log_dir, int(entry), metric_name)
+            if not excerpt:
+                # Fall back to the run result saved next to the report
+                log_file = os.path.join(report_dir, f"{metric_name}.log")
+                try:
+                    with open(log_file, "r", encoding="utf-8") as f:
+                        run_result = json.load(f)
+                    excerpt = str(
+                        run_result.get("content") or run_result.get("error") or ""
+                    )[:2000]
+                except Exception:
+                    excerpt = ""
+            if excerpt:
+                failure["trajectory_excerpt"] = excerpt
+            failures.append(failure)
+
+        if failures:
+            failures_by_project[int(entry)] = failures
+    return failures_by_project
+
+
+def run_reflection_project(
+    project_id: int,
+    failures: list[dict],
+    root_path: str,
+    threshold: int = 0,
+    max_iterations: int = MAX_ITERATIONS,
+    log_dir: str | None = None,
+    run_id: str | None = None,
+) -> list[dict]:
+    """Run one reflection agent over a project's failed metrics.
+
+    Returns the parsed candidate skill list (possibly empty).
+    """
+    project_dir = os.path.abspath(os.path.join(root_path, str(project_id)))
+    reflection_dir = os.path.join(project_dir, REFLECTION_DIR_NAME)
+    os.makedirs(reflection_dir, exist_ok=True)
+    output_file = os.path.join(reflection_dir, "candidate_skills.json")
+    if os.path.exists(output_file):
+        # Avoid mistaking a stale file from a previous run for this run's output
+        os.unlink(output_file)
+
+    prompt = REFLECTION_PROMPT.format(
+        project_dir=project_dir,
+        threshold=threshold,
+        failures=json.dumps(failures, ensure_ascii=False, indent=2),
+        output_file=output_file,
+    )
+
+    session_id = f"reflect_{project_id}"
+    session = session_manager.create(
+        session_id, "penguin", "code_eval_agent_workspace_dir"
+    )
+
+    exec_log_file = None
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
+        rid = run_id or "default"
+        exec_log_file = os.path.join(log_dir, f"reflect_{project_id}_{rid}.jsonl")
+
+    # The reflection agent may read the project; snapshot src/ as in EVAL so
+    # any modification is detected and reverted.
+    snapshot_dir = _snapshot_src(project_dir)
+    result = run_prdbench_agent(
+        user_message=prompt,
+        session=session,
+        mode="eval",
+        max_iterations=max_iterations,
+        log_file=exec_log_file,
+        run_id=run_id,
+    )
+    diff = _verify_and_restore_src(project_dir, snapshot_dir)
+    if diff["modified"] or diff["deleted"]:
+        logger.warning(
+            f"Reflection project {project_id}: src/ tampered {diff}; restored"
+        )
+    if snapshot_dir:
+        shutil.rmtree(snapshot_dir, ignore_errors=True)
+    session_manager.delete(session_id)
+
+    if result.get("status") != "success":
+        logger.error(
+            f"Reflection project {project_id} failed: {result.get('error')}"
+        )
+        return []
+
+    try:
+        with open(output_file, "r", encoding="utf-8") as f:
+            candidates = json.load(f)
+    except Exception as e:
+        logger.warning(
+            f"Reflection project {project_id}: no valid candidate file ({e})"
+        )
+        return []
+
+    if not isinstance(candidates, list):
+        return []
+    valid = [
+        c
+        for c in candidates
+        if isinstance(c, dict) and c.get("title") and c.get("guidance")
+    ]
+    logger.info(f"Reflection project {project_id}: {len(valid)} candidate skills")
+    return valid
+
+
+def _merge_skill_candidates(
+    root_path: str, project_id: int, candidates: list[dict]
+) -> int:
+    """Append new candidates to the shared review queue (dedupe by project+title).
+
+    New entries are added with status "pending" for human review.
+    Returns the number of NEW candidates added.
+    """
+    reflection_dir = os.path.join(root_path, REFLECTION_DIR_NAME)
+    os.makedirs(reflection_dir, exist_ok=True)
+    queue_path = os.path.join(reflection_dir, SKILL_CANDIDATES_FILENAME)
+
+    queue: list[dict] = []
+    if os.path.exists(queue_path):
+        try:
+            with open(queue_path, "r", encoding="utf-8") as f:
+                queue = json.load(f)
+        except Exception:
+            queue = []
+
+    existing = {(c.get("project"), c.get("title")) for c in queue}
+    added = 0
+    for cand in candidates:
+        key = (project_id, cand.get("title"))
+        if key in existing:
+            continue
+        entry = dict(cand)
+        entry["project"] = project_id
+        entry["status"] = "pending"  # human review flips to approved / rejected
+        entry["created_at"] = datetime.now().isoformat()
+        queue.append(entry)
+        existing.add(key)
+        added += 1
+
+    if added or not os.path.exists(queue_path):
+        with open(queue_path, "w", encoding="utf-8") as f:
+            json.dump(queue, f, ensure_ascii=False, indent=2)
+    return added
+
+
+def load_approved_skills(root_path: str) -> str:
+    """Render human-approved candidate skills for prompt injection; '' if none."""
+    queue_path = os.path.join(
+        root_path, REFLECTION_DIR_NAME, SKILL_CANDIDATES_FILENAME
+    )
+    try:
+        with open(queue_path, "r", encoding="utf-8") as f:
+            queue = json.load(f)
+    except Exception:
+        return ""
+
+    lines = []
+    for c in queue:
+        if not isinstance(c, dict) or c.get("status") != "approved":
+            continue
+        entry = f"- **{c.get('title')}**"
+        if c.get("trigger"):
+            entry += f"\n  When: {c['trigger']}"
+        if c.get("problem"):
+            entry += f"\n  Problem: {c['problem']}"
+        entry += f"\n  Guidance: {c.get('guidance', '')}"
+        lines.append(entry)
+    return "\n".join(lines)
+
+
+def run_reflection(
+    root_path: str,
+    threshold: int = 0,
+    workers: int = 1,
+    max_iterations: int = MAX_ITERATIONS,
+    log_dir: str | None = None,
+    run_id: str | None = None,
+) -> int:
+    """Reflection pass: distill failed metrics into candidate skills for review.
+
+    Collects failures (missing report or score <= threshold), runs one
+    reflection agent per affected project, and merges the results into
+    <root_path>/reflection/skill_candidates.json with status "pending".
+    A human flips entries to "approved"/"rejected"; approved entries are
+    injected into future EVAL prompts via load_approved_skills(), so rerunning
+    eval afterwards measures the recall effect.
+
+    Returns the number of new candidates added to the review queue.
+    """
+    failures_by_project = collect_failed_metrics(
+        root_path, threshold=threshold, log_dir=log_dir
+    )
+    if not failures_by_project:
+        logger.info("Reflection: no failed metrics found, nothing to distill")
+        return 0
+
+    total_failures = sum(len(v) for v in failures_by_project.values())
+    logger.info(
+        f"Reflection: {total_failures} failed metrics across "
+        f"{len(failures_by_project)} projects"
+    )
+
+    results: dict[int, list[dict]] = {}
+    results_lock = threading.Lock()
+
+    def _reflect(project_id: int) -> None:
+        candidates = run_reflection_project(
+            project_id=project_id,
+            failures=failures_by_project[project_id],
+            root_path=root_path,
+            threshold=threshold,
+            max_iterations=max_iterations,
+            log_dir=log_dir,
+            run_id=run_id,
+        )
+        with results_lock:
+            results[project_id] = candidates
+
+    _run_in_parallel(
+        items=sorted(failures_by_project),
+        fn=_reflect,
+        workers=workers,
+        label="reflect",
+    )
+
+    # Merge serially after the parallel runs to avoid write races on the queue
+    added = 0
+    for project_id in sorted(results):
+        added += _merge_skill_candidates(root_path, project_id, results[project_id])
+
+    queue_path = os.path.join(
+        root_path, REFLECTION_DIR_NAME, SKILL_CANDIDATES_FILENAME
+    )
+    logger.info(
+        f"Reflection done: {added} new candidate skills -> {queue_path}. "
+        "Review them and set status to 'approved' or 'rejected'; "
+        "approved skills are injected into future eval prompts."
+    )
+    return added
+
+
 # ── Parallel execution ──
 
 def _run_in_parallel(items, fn, workers: int, label: str) -> None:
@@ -767,8 +1148,8 @@ def main():
     )
     parser.add_argument(
         "--mode", type=str, default="dev",
-        choices=["dev", "eval", "score"],
-        help="Run mode: dev, eval, or score",
+        choices=["dev", "eval", "score", "reflect"],
+        help="Run mode: dev, eval, score, or reflect",
     )
     parser.add_argument(
         "--round", type=int, default=1,
@@ -801,6 +1182,16 @@ def main():
     parser.add_argument(
         "--run_id", type=str, default=None,
         help="Run identifier included in log filenames",
+    )
+    parser.add_argument(
+        "--reflect", action="store_true",
+        help="Run the reflection pass (distill failed metrics into candidate "
+             "skills) after eval completes",
+    )
+    parser.add_argument(
+        "--reflect_threshold", type=int, default=0,
+        help="Metrics scoring <= this value are treated as failures by the "
+             "reflection pass (default: 0)",
     )
     args = parser.parse_args()
 
@@ -850,6 +1241,25 @@ def main():
             ),
             workers=args.workers,
             label="eval",
+        )
+        if args.reflect:
+            run_reflection(
+                root_path=root_path,
+                threshold=args.reflect_threshold,
+                workers=args.workers,
+                max_iterations=args.max_iterations,
+                log_dir=log_dir,
+                run_id=args.run_id,
+            )
+
+    elif args.mode == "reflect":
+        run_reflection(
+            root_path=root_path,
+            threshold=args.reflect_threshold,
+            workers=args.workers,
+            max_iterations=args.max_iterations,
+            log_dir=log_dir,
+            run_id=args.run_id,
         )
 
     elif args.mode == "score":

@@ -39,7 +39,9 @@ class RunCommandTool(Tool):
         if cwd:
             cwd = str(cwd)
         else:
-            cwd = os.getenv("CODE_AGENT_WORKSPACE_DIR", str(ALLOWED_BASE_DIR))
+            cwd = str(ALLOWED_BASE_DIR)
+        if not os.path.isabs(cwd):
+            cwd = str(ALLOWED_BASE_DIR / cwd)
 
         danger_check = check_dangerous_command(command)
         if danger_check:

@@ -4,6 +4,7 @@ import sys
 import os
 import argparse
 import logging
+from functools import partial
 
 from rich.console import Console
 from rich.markdown import Markdown
@@ -21,6 +22,7 @@ from .compact import llm_compact_messages, estimate_tokens, MAX_CONTEXT_TOKENS
 from .tools import _changed_files
 from ._constants import ALLOWED_BASE_DIR
 from .agent import Agent
+from .permissions import PermissionManager
 from .session import load_session, list_sessions, autosave_session
 from . import __version__
 
@@ -190,6 +192,8 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
     @kb.add("escape", "enter")
     def _newline(event):
         event.current_buffer.insert_text("\n")
+
+    confirm_tool = partial(_confirm_tool, permission_manager=agent.permission_manager)
 
     while True:
         try:
@@ -379,7 +383,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
                 on_content=on_content,
                 on_tool_start=on_tool_start,
                 on_tool_result=on_tool_result,
-                confirm_callback=_confirm_tool,
+                confirm_callback=confirm_tool,
                 messages=conversation_history,
             )
             if conversation_history:
@@ -394,9 +398,10 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
             console.print(f"\n[red]Error: {e}[/red]")
 
 
-def _confirm_tool(name: str, args: dict, reason: str) -> bool:
+def _confirm_tool(
+    name: str, args: dict, reason: str, *, permission_manager: PermissionManager
+) -> bool:
     """Prompt the user for tool confirmation. Returns True if approved."""
-    from .tools import permission_manager
     console.print(Panel(
         f"[bold yellow]Permission Required[/bold yellow]\n\n"
         f"Tool: [cyan]{name}[/cyan]\n"

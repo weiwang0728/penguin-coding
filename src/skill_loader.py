@@ -4,7 +4,8 @@ from pathlib import Path
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-WORKDIR = PROJECT_ROOT / "workspace"
+from .workspace import WORKSPACE_DIR
+WORKDIR = WORKSPACE_DIR
 SKILLS_DIR = PROJECT_ROOT / "skill" / "skills"
 
 

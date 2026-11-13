@@ -411,5 +411,112 @@ class TestSrcIntegritySnapshot(unittest.TestCase):
             self.assertEqual(diff["modified"], [])
 
 
+class TestReflection(unittest.TestCase):
+    def _make_project(self, root: str, name: str, plan_metrics, reports: dict):
+        project_dir = os.path.join(root, name)
+        eval_dir = os.path.join(project_dir, "evaluation")
+        report_dir = os.path.join(project_dir, "reports")
+        os.makedirs(eval_dir, exist_ok=True)
+        os.makedirs(report_dir, exist_ok=True)
+        with open(os.path.join(eval_dir, "detailed_test_plan.json"), "w") as f:
+            json.dump([{"metric": m} for m in plan_metrics], f)
+        for metric, score in reports.items():
+            with open(os.path.join(report_dir, f"{metric}.json"), "w") as f:
+                json.dump({"metric": metric, "score": score, "explanation": "x"}, f)
+
+    def test_collect_failed_metrics(self):
+        from src.prdbench.run_evaluation import collect_failed_metrics
+        with tempfile.TemporaryDirectory() as root:
+            # metric a passed (2), b failed (0), c has no report
+            self._make_project(root, "1", ["a", "b", "c"], {"a": 2, "b": 0})
+            failures = collect_failed_metrics(root, threshold=0)
+            self.assertEqual([f["metric"] for f in failures[1]], ["b", "c"])
+            self.assertEqual(failures[1][0]["score"], 0)
+            self.assertIsNone(failures[1][1]["score"])
+
+    def test_collect_failed_metrics_threshold(self):
+        from src.prdbench.run_evaluation import collect_failed_metrics
+        with tempfile.TemporaryDirectory() as root:
+            self._make_project(root, "1", ["a", "b"], {"a": 2, "b": 1})
+            # threshold=1 treats partial passes as failures too
+            failures = collect_failed_metrics(root, threshold=1)
+            self.assertEqual([f["metric"] for f in failures[1]], ["b"])
+            # default threshold=0 treats score 1 as a pass
+            self.assertEqual(collect_failed_metrics(root), {})
+
+    def test_merge_skill_candidates_dedupes(self):
+        from src.prdbench.run_evaluation import _merge_skill_candidates
+        with tempfile.TemporaryDirectory() as root:
+            cands = [{"title": "T1", "guidance": "do X"}]
+            self.assertEqual(_merge_skill_candidates(root, 1, cands), 1)
+            # Same (project, title) is not added twice
+            self.assertEqual(_merge_skill_candidates(root, 1, cands), 0)
+            # Same title from another project is a separate entry
+            self.assertEqual(_merge_skill_candidates(root, 2, cands), 1)
+
+            with open(os.path.join(root, "reflection", "skill_candidates.json")) as f:
+                queue = json.load(f)
+            self.assertEqual(len(queue), 2)
+            self.assertTrue(all(c["status"] == "pending" for c in queue))
+            self.assertIn("created_at", queue[0])
+
+    def test_load_approved_skills_only_approved(self):
+        from src.prdbench.run_evaluation import _merge_skill_candidates, load_approved_skills
+        with tempfile.TemporaryDirectory() as root:
+            _merge_skill_candidates(root, 1, [
+                {"title": "T1", "guidance": "do X", "trigger": "when Y"},
+                {"title": "T2", "guidance": "do Z"},
+            ])
+            # Nothing approved yet
+            self.assertEqual(load_approved_skills(root), "")
+
+            queue_path = os.path.join(root, "reflection", "skill_candidates.json")
+            with open(queue_path) as f:
+                queue = json.load(f)
+            queue[0]["status"] = "approved"
+            queue[1]["status"] = "rejected"
+            with open(queue_path, "w") as f:
+                json.dump(queue, f)
+
+            text = load_approved_skills(root)
+            self.assertIn("T1", text)
+            self.assertIn("do X", text)
+            self.assertIn("when Y", text)
+            self.assertNotIn("T2", text)
+
+    def test_eval_prompt_injects_skills(self):
+        from src.prdbench.run_evaluation import build_eval_prompt
+        prompt = build_eval_prompt(
+            metric_data={"metric": "1.1 M", "description": "d"},
+            project_dir="/tmp/p",
+            metric_report_file="/tmp/p/reports/m.json",
+            skills_text="- **T1**\n  Guidance: do X",
+        )
+        self.assertIn("Lessons from Previous Evaluation Runs", prompt)
+        self.assertIn("do X", prompt)
+
+        prompt_without = build_eval_prompt(
+            metric_data={"metric": "1.1 M", "description": "d"},
+            project_dir="/tmp/p",
+            metric_report_file="/tmp/p/reports/m.json",
+        )
+        self.assertNotIn("Lessons from Previous Evaluation Runs", prompt_without)
+
+    def test_exec_log_excerpt(self):
+        from src.prdbench.run_evaluation import _exec_log_excerpt
+        with tempfile.TemporaryDirectory() as log_dir:
+            path = os.path.join(log_dir, "eval_1_1.1_M_run1.jsonl")
+            with open(path, "w") as f:
+                f.write(json.dumps({"event": "tool_start", "name": "run_shell_command",
+                                    "input": {"command": "python main.py"}}) + "\n")
+                f.write(json.dumps({"event": "tool_result", "name": "run_shell_command",
+                                    "result": "Traceback: boom"}) + "\n")
+            excerpt = _exec_log_excerpt(log_dir, 1, "1.1 M")
+            self.assertIn("tool_start run_shell_command", excerpt)
+            self.assertIn("Traceback: boom", excerpt)
+            # No matching log -> empty
+            self.assertEqual(_exec_log_excerpt(log_dir, 2, "1.1 M"), "")
+
+
 if __name__ == "__main__":
     unittest.main()

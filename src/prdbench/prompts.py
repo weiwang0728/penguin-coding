@@ -61,3 +61,34 @@ You are free to create or modify any auxiliary files, input data, or test script
 For every metric, design and execute a test. If a feature is missing or incompatible, document this in the report and score accordingly. **Do not skip any metrics.**
 The output report should be saved to {project_dir}/reports/round{round}.jsonl in JSON format.
 """
+
+REFLECTION_PROMPT = """You are a reflection agent analyzing failed evaluation metrics from an automated coding benchmark run, for the project located at {project_dir}.
+
+Below is a JSON list of metrics that failed (score <= {threshold}) or produced no valid report in the latest evaluation round. For each failure you are given the metric name, the score, the evaluator's explanation, and an excerpt of the evaluation trajectory.
+
+### Failed Metrics
+{failures}
+
+### Your Task
+Distill the failures into reusable lessons, written as candidate "skills" for the agents that develop and evaluate projects. The goal is harness-level improvement: a skill should help agents avoid the same class of mistake on FUTURE, UNSEEN projects.
+
+### Rules for Good Skills
+1. GENERALIZE. A skill must apply beyond this project. Bad: "Metric 1.1 expects the menu to print X". Good: "When a PRD specifies an interactive CLI menu, verify the exact prompt/output wording against the PRD before finishing development".
+2. Target the scaffolding, not the artifact. Prefer lessons about how to develop/test/evaluate (process, tool usage, verification habits) over facts about this specific project.
+3. Do NOT encode benchmark answers, expected outputs, or metric-specific pass criteria.
+4. One lesson per skill. Skip failures whose root cause is a one-off accident with no generalizable lesson.
+5. You may read files under {project_dir} (PRD, code, reports) to confirm a root cause, but do NOT modify anything outside the output file.
+
+### Output
+Write a JSON array to {output_file} using the write_file tool (pass the content as a string). Each entry:
+
+{{
+  "title": "short imperative name, e.g. 'Verify CLI output wording against PRD'",
+  "trigger": "the situation where an agent should recall this skill",
+  "problem": "the class of mistake observed (one or two sentences)",
+  "guidance": "concrete advice to avoid it (one to three sentences)",
+  "source_metrics": ["names of the failed metrics this skill was distilled from"]
+}}
+
+Write an empty array [] if nothing generalizes. Do not ask any questions; analyze and write the file directly.
+"""

@@ -1,7 +1,9 @@
 """Tests for the permission control system."""
 
-import pytest
 from pathlib import Path
+from unittest.mock import Mock, call
+
+import pytest
 
 from src.permissions import PermissionLevel, PermissionResult, PermissionManager
 from src.permissions_config import DEFAULT_CONFIG, load_permissions_config, _merge_config
@@ -202,6 +204,45 @@ class TestSessionAllowlist:
         # Session allowlist is checked in _resolve_level after pre-validation,
         # but pre-validation catches dangerous commands as DENY first
         assert r.level == PermissionLevel.DENY
+
+
+def test_repl_always_allow_applies_to_later_turns(monkeypatch):
+    from src import agent_loop, cli
+    from src.agent import Agent
+    from src.tools import DELEGATE_SCHEMA, permission_manager
+
+    agent = Agent(tools=[], skills=[])
+    delegate = Mock(return_value="Delegated")
+    agent.register_dynamic_tool("delegate", delegate, DELEGATE_SCHEMA)
+
+    def stream_response(client, messages, **kwargs):
+        if messages[-1]["content"] in ("first", "second"):
+            turn = messages[-1]["content"]
+            yield "tool_calls", [
+                {"id": f"call_{turn}", "name": "delegate", "input": {"prompt": turn}}
+            ]
+        else:
+            yield "text_delta", "Done"
+
+    monkeypatch.setattr(agent_loop, "stream_response", stream_response)
+    monkeypatch.setattr(agent_loop, "usage_stats", dict.fromkeys(agent_loop.usage_stats, 0))
+    monkeypatch.setattr(cli, "autosave_session", Mock())
+    monkeypatch.setattr(permission_manager, "_session_allowlist", set())
+    replies = iter(["first", "second", "quit"])
+    confirmations = []
+
+    def prompt(message, **kwargs):
+        if message == "You > ":
+            return next(replies)
+        confirmations.append(message)
+        return "a" if len(confirmations) == 1 else "n"
+
+    monkeypatch.setattr(cli, "pt_prompt", prompt)
+    cli._repl(agent, "test-model", [])
+
+    assert confirmations == ["Allow? [Y/n/a] "]
+    assert delegate.call_args_list == [call(prompt="first"), call(prompt="second")]
+    assert permission_manager.check("delegate", {}).level == PermissionLevel.CONFIRM
 
 
 class TestConfigLoading:

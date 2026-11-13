@@ -4,7 +4,8 @@ import re
 from anthropic import Anthropic
 from dotenv import load_dotenv
 import os
-ALLOWED_BASE_DIR = Path(__file__).resolve().parent.parent / "workspace"
+from .workspace import WORKSPACE_DIR
+ALLOWED_BASE_DIR = WORKSPACE_DIR
 
 MAX_OUTPUT_LENGTH = 30_000
 MAX_READ_SIZE = 100 * 1024  # 100KB

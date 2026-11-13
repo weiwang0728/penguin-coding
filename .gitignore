@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 .env
+/artifacts/swebench/
 
 # 本地工具与报告
 .vscode/
