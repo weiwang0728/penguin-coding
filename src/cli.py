@@ -174,7 +174,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
         + f"Tools: [dim]{', '.join(agent.active_tools)}[/dim]"
         + "\n"
         + f"Skills: [dim]{', '.join(sorted(agent.active_skills)) if agent.active_skills else 'none'}[/dim]"
-        + "\nWorkspace: [dim]{ALLOWED_BASE_DIR}[/dim]"
+        + f"\nWorkspace: [dim]{ALLOWED_BASE_DIR}[/dim]"
         + "\nType [bold]/help[/bold] for commands, [bold]Ctrl+C[/bold] to cancel, [bold]quit[/bold] to exit.",
         border_style="blue",
     ))
