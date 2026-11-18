@@ -819,6 +819,40 @@ class TestLlmCompactMessages:
         assert len(result) > 0
 
 
+@pytest.mark.parametrize("first_message, system_prompt, summary_index, summary_header", [
+    ("Start", COMPACT_SYSTEM_PROMPT, 1, "[Conversation Summary]"),
+    ("Start " * 200, COLLAPSE_SYSTEM_PROMPT, 0, "[Context collapsed - 3 turns summarized]"),
+])
+def test_repl_compact_uses_configured_client(
+    monkeypatch, first_message, system_prompt, summary_index, summary_header
+):
+    from src import cli
+
+    client = FakeClient(summary="Summary from the CLI client")
+    messages = [{"role": "user", "content": first_message}]
+    for i in range(3):
+        messages.extend([
+            {"role": "assistant", "content": "x" * 1000 if i == 0 else "Short reply"},
+            {"role": "user", "content": "Continue"},
+        ])
+
+    monkeypatch.setattr(cli.sys, "argv", ["penguin", "--api-key", "test-key", "--resume", "test"])
+    monkeypatch.setattr(cli, "Anthropic", lambda **kwargs: client)
+    monkeypatch.setattr(cli, "register_delegate_tool", lambda client: None)
+    monkeypatch.setattr(cli, "load_session", lambda session_id: (messages, "saved-model", {}))
+    monkeypatch.setattr(cli._al, "MODEL_ID", "initial-model")
+    monkeypatch.setattr(cli, "usage_stats", dict(cli.usage_stats))
+    monkeypatch.setattr(cli, "MAX_CONTEXT_TOKENS", 150)
+    replies = iter(["/model compact-model", "/compact", "quit"])
+    monkeypatch.setattr(cli, "pt_prompt", lambda *args, **kwargs: next(replies))
+
+    cli.main()
+
+    assert client.messages.last_call["model"] == "compact-model"
+    assert client.messages.last_call["system"] == system_prompt
+    assert messages[summary_index]["content"] == f"{summary_header}\nSummary from the CLI client"
+
+
 # --- trim_messages (preprocessing-only) ---
 
 

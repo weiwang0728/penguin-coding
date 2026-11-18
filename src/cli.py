@@ -127,7 +127,7 @@ def main():
         return
 
     # Interactive REPL
-    _repl(agent, model_id, conversation_history)
+    _repl(agent, model_id, conversation_history, client=client)
 
 
 def _run_once(agent: Agent, prompt: str, messages: list[dict]):
@@ -165,7 +165,7 @@ def _run_once(agent: Agent, prompt: str, messages: list[dict]):
         console.print(Markdown(response))
 
 
-def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
+def _repl(agent: Agent, model_id: str, conversation_history: list[dict], *, client: Anthropic):
     """Interactive read-eval-print loop."""
     console.print(Panel(
         f"[bold]Penguin Coding Agent[/bold] v{__version__}\n"
@@ -288,7 +288,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict]):
         if user_input == "/compact":
             before = estimate_tokens(str(conversation_history))
             compressed = llm_compact_messages(
-                conversation_history, client=None, model_id=model_id, max_tokens=MAX_CONTEXT_TOKENS
+                conversation_history, client=client, model_id=model_id, max_tokens=MAX_CONTEXT_TOKENS
             )
             conversation_history[:] = compressed
             after = estimate_tokens(str(conversation_history))
