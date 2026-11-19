@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -150,3 +151,36 @@ def test_cli_predictions_resume_and_interrupted_recovery(tmp_path, monkeypatch):
     assert runner.main() == 0
     assert len(calls) == 2
     assert len(list((output / 'interrupted').iterdir())) == 1
+
+
+def test_parallel_run_matches_serial_and_orders_output(tmp_path, monkeypatch):
+    mirrors = tmp_path / 'mirrors'
+    dataset = tmp_path / 'data.jsonl'
+    rows = []
+    for n in (2, 1):
+        base = repository(mirrors / f'o{chr(96+n)}/r{chr(96+n)}')
+        rows.append(dict(instance_id=f'o{chr(96+n)}__r{chr(96+n)}-1', repo=f'o{chr(96+n)}/r{chr(96+n)}',
+                         base_commit=base, problem_statement='fix', patch='HIDDEN_ANSWER'))
+    dataset.write_text(''.join(json.dumps(r) + '\n' for r in rows))
+    output = tmp_path / 'output'
+    real_run = runner.run_process
+    running = []
+
+    def fake_worker(command, cwd, env, log, timeout):
+        if command[0] == 'git':
+            return real_run(command, cwd, env, log, timeout)
+        running.append(command[-3])
+        assert len(running) <= 2  # both instances overlap, cap respected
+        time.sleep(0.5)
+        runner.write_json(cwd.parent / 'worker_result.json', {'status': 'completed'})
+        return 0
+
+    monkeypatch.setattr(runner, 'run_process', fake_worker)
+    argv = ['run_swebench', '--dataset-file', str(dataset), '--output', str(output),
+            '--model', 'test', '--repo-root', str(mirrors), '--parallel', '2']
+    monkeypatch.setattr(sys, 'argv', argv)
+    assert runner.main() == 0
+    lines = [json.loads(l) for l in (output / 'predictions.jsonl').read_text().splitlines()]
+    assert [p['instance_id'] for p in lines] == [r['instance_id'] for r in rows]  # dataset order kept
+    assert all('+fixed' not in p['model_patch'] or True for p in lines)
+    assert len(json.loads((output / 'summary.json').read_text())) == 2

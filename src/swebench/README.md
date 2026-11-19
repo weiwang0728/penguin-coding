@@ -35,10 +35,11 @@ python scripts/run_swebench.py \
 
 - `--dataset-file /absolute/path/instances.jsonl`：本地 JSONL，至少包含上面四个字段，无需 datasets 包。
 - `--repo-root /absolute/path/mirrors`：从本地 `mirrors/owner/repo` 克隆，适合离线与重复实验。
-- `--setup-command '...'`：每题仓库内运行的可信依赖安装命令；`--setup-timeout 900` 限制克隆及安装各阶段时间。安装命令不要修改受版本控制的源码，否则这些修改也会进入补丁。
+- `--setup-command '...'`：每题仓库内运行的可信依赖安装命令；`--setup-timeout 900` 限制克隆及安装各阶段时间;单题 agent 上限 `--timeout` 建议 7200。安装命令不要修改受版本控制的源码，否则这些修改也会进入补丁。
 - `--resume`：配合完全相同的参数恢复已有运行。已完成记录（包括失败记录）跳过；中断的题目目录归档到 `interrupted/`，重新执行。重试已结束但失败的题目请用新的输出目录和 `--instance-ids`。
+- `--parallel N`：同时运行 N 题（默认 1，串行）。各题使用独立目录与 worker 进程，`predictions.jsonl` 与 `summary.json` 仍按数据集原始顺序写出。并发受模型接口限流与本机资源约束，建议 2–4。
 
-进程超时会终止进程组，包括命令工具启动的子进程，并尽可能保留已有补丁。非 completed 状态使 runner 返回非零退出码，但仍输出预测，继续运行其他题目。
+worker 暴露 `exit_loop` 工具并在 system prompt 中声明;模型完成修复后主动调用它作为正常出口。进程超时会终止进程组，包括命令工具启动的子进程，并尽可能保留已有补丁。非 completed 状态使 runner 返回非零退出码，但仍输出预测，继续运行其他题目。
 
 ## 运行环境边界
 

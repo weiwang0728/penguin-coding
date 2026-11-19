@@ -3,12 +3,14 @@
 import argparse
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import re
 import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import uuid
 
@@ -155,6 +157,24 @@ def run_instance(item, args, output):
     return record
 
 
+def process_item(item, args, output):
+    """Run one instance, reusing a finished record or archiving an interrupted case."""
+    case = output / item['instance_id']
+    result_path = case / 'result.json'
+    if case.exists():
+        if not result_path.exists() or not json.loads(result_path.read_text()).get('finished'):
+            archived = output / 'interrupted'
+            archived.mkdir(exist_ok=True)
+            case.rename(archived / f"{item['instance_id']}-{uuid.uuid4().hex[:8]}")
+            record = run_instance(item, args, output)
+        else:
+            record = json.loads(result_path.read_text())
+    else:
+        record = run_instance(item, args, output)
+    prediction = json.loads((case / 'prediction.json').read_text())
+    return record, prediction
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dataset', default='princeton-nlp/SWE-bench_Lite')
@@ -171,8 +191,10 @@ def main():
     parser.add_argument('--setup-command', help='Trusted shell command run in each checkout before the agent')
     parser.add_argument('--repo-root', help='Local repository mirror root, arranged as owner/repo')
     parser.add_argument('--resume', action='store_true')
+    parser.add_argument('--parallel', type=int, default=1,
+                        help='Number of instances to run concurrently (default 1)')
     args = parser.parse_args()
-    if min(args.max_iterations, args.timeout, args.setup_timeout) <= 0 or (args.limit is not None and args.limit <= 0):
+    if min(args.max_iterations, args.timeout, args.setup_timeout, args.parallel) <= 0 or (args.limit is not None and args.limit <= 0):
         parser.error('Limits and timeouts must be positive')
     items = load_instances(args)
     output = Path(args.output).expanduser().resolve()
@@ -186,29 +208,34 @@ def main():
     else:
         output.mkdir(parents=True)
         write_json(output / 'run.json', config)
-    records = []
-    predictions = []
-    for item in items:
-        case = output / item['instance_id']
-        result_path = case / 'result.json'
-        if case.exists():
-            if not result_path.exists() or not json.loads(result_path.read_text()).get('finished'):
-                archived = output / 'interrupted'
-                archived.mkdir(exist_ok=True)
-                case.rename(archived / f"{item['instance_id']}-{uuid.uuid4().hex[:8]}")
-                record = run_instance(item, args, output)
-            else:
-                record = json.loads(result_path.read_text())
-        else:
-            record = run_instance(item, args, output)
-        records.append(record)
-        predictions.append(json.loads((case / 'prediction.json').read_text()))
+    records = {}
+    predictions = {}
+    persist_lock = threading.Lock()
+
+    def persist():
+        # Write in the dataset's original order regardless of completion order.
+        ordered_records = [records[i['instance_id']] for i in items if i['instance_id'] in records]
+        ordered_predictions = [predictions[i['instance_id']] for i in items if i['instance_id'] in predictions]
         tmp = output / 'predictions.jsonl.tmp'
-        tmp.write_text(''.join(json.dumps(p, ensure_ascii=False) + '\n' for p in predictions), encoding='utf-8')
+        tmp.write_text(''.join(json.dumps(p, ensure_ascii=False) + '\n' for p in ordered_predictions), encoding='utf-8')
         tmp.replace(output / 'predictions.jsonl')
-        write_json(output / 'summary.json', records)
+        write_json(output / 'summary.json', ordered_records)
+
+    def task(item):
+        record, prediction = process_item(item, args, output)
+        with persist_lock:
+            records[item['instance_id']] = record
+            predictions[item['instance_id']] = prediction
+            persist()
         print(f"{item['instance_id']}: {record['status']} ({record['patch_bytes']} patch bytes)", flush=True)
-    return int(any(r['status'] != 'completed' for r in records))
+
+    if args.parallel == 1:
+        for item in items:
+            task(item)
+    else:
+        with ThreadPoolExecutor(max_workers=args.parallel) as pool:
+            list(pool.map(task, items))  # iterating surfaces exceptions in dataset order
+    return int(any(r['status'] != 'completed' for r in records.values()))
 
 
 if __name__ == '__main__':

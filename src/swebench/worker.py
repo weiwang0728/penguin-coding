@@ -6,6 +6,7 @@ from pathlib import Path
 from ..agent import Agent
 from ..agent_loop import usage_stats
 from ..execution_log import ExecutionLog
+from ..prdbench.tools import ExitLoopTool  # noqa: F401 — registers exit_loop into ToolRegistry
 from ..workspace import WORKSPACE_DIR
 
 
@@ -28,7 +29,11 @@ def main():
                            'Read the code, reproduce the issue, implement a minimal correct fix and run relevant tests. '
                            'Leave changes in the working tree. Do not commit. '
                            'Do not access benchmark answers, future commits, or external solutions. '
-                           'Keep temporary artifacts out of the final changes.'))
+                           'Keep temporary artifacts out of the final changes. '
+                           'When you are done — the fix is implemented and verified — call the '
+                           'exit_loop tool as your final action to signal completion. '
+                           'Call exit_loop exactly once, after your work is finished.'))
+        agent.add_tool('exit_loop')
         response, messages = agent.run(
             None, item['problem_statement'], messages=[],
             confirm_callback=lambda *_: True,
