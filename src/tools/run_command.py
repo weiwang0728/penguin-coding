@@ -3,6 +3,7 @@ import subprocess
 
 from .._constants import ALLOWED_BASE_DIR, check_dangerous_command, _truncate_output
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 
 
@@ -45,6 +46,7 @@ class RunCommandTool(Tool):
 
         danger_check = check_dangerous_command(command)
         if danger_check:
+            set_status("permission_denied")
             return f"Error: {danger_check}"
 
         timeout = max(10, min(timeout, 600))
@@ -62,9 +64,14 @@ class RunCommandTool(Tool):
             if result.stderr:
                 output += f"\nSTDERR:\n{result.stderr}"
             if result.returncode != 0:
+                set_status("error", exit_code=result.returncode)
                 output += f"\nExit code: {result.returncode}"
+            else:
+                set_status("completed", exit_code=0)
             return _truncate_output(output) or "(no output)"
         except subprocess.TimeoutExpired:
+            set_status("timeout", timeout_seconds=timeout)
             return f"Error: Command timed out after {timeout} seconds"
         except Exception as e:
+            set_status("error", error_type=type(e).__name__)
             return f"Error running command: {e}"

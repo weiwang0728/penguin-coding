@@ -1,12 +1,14 @@
 """One fresh process per instance. Workspace env must be set before startup."""
 import argparse
 import json
+import os
 from pathlib import Path
 
 from ..agent import Agent
 from ..agent_loop import usage_stats
 from ..execution_log import ExecutionLog
 from ..workspace import WORKSPACE_DIR
+from ..observability import run_context, current_trace_fields, extract_trace_context, flush
 
 
 def main():
@@ -17,13 +19,27 @@ def main():
     args = parser.parse_args()
     item = json.loads(Path(args.input).read_text())
     output = Path(args.output)
-    log = ExecutionLog(output / 'events.jsonl', run_id=item['instance_id'])
+    try:
+        with run_context(
+            "swebench.worker", session_id=os.getenv('PENGUIN_SESSION_ID'),
+            run_id=os.getenv('PENGUIN_RUN_ID'),
+            trace_context=extract_trace_context({'traceparent': os.getenv('PENGUIN_TRACEPARENT', '')}),
+            metadata={"benchmark": "swebench", "instance_id": item['instance_id'],
+                      "experiment_id": os.getenv('PENGUIN_EXPERIMENT_ID')},
+        ) as span:
+            return _run_worker(item, output, args.max_iterations, span)
+    finally:
+        flush()
+
+
+def _run_worker(item, output, max_iterations, span):
+    log = ExecutionLog(output / 'events.jsonl', run_id=current_trace_fields().get('run_id'))
     log.log_run_started(item['instance_id'], str(WORKSPACE_DIR))
-    result = {'status': 'error'}
+    result = {**current_trace_fields(), 'status': 'error'}
     try:
         agent = Agent(
             tools=['read_file', 'write_file', 'edit_file', 'search_files', 'list_directory', 'run_command'],
-            skills=[], permission_profile='permissive', max_iterations=args.max_iterations,
+            skills=[], permission_profile='permissive', max_iterations=max_iterations,
             system_prompt=(f'You are fixing a repository issue. Workspace: {WORKSPACE_DIR}. '
                            'Read the code, reproduce the issue, implement a minimal correct fix and run relevant tests. '
                            'Leave changes in the working tree. Do not commit. '
@@ -48,6 +64,7 @@ def main():
         result['error'] = str(error)
         log.log_run_terminated(str(error))
     finally:
+        span.set_status(result['status'])
         result.update(usage=dict(usage_stats), tool_calls=log.tool_call_count)
         (output / 'worker_result.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
     return int(result['status'] != 'completed')

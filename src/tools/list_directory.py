@@ -1,4 +1,5 @@
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 from .utils import resolve_and_validate_path
 
@@ -24,6 +25,7 @@ class ListDirectoryTool(Tool):
         try:
             resolved = resolve_and_validate_path(path)
             if not resolved.is_dir():
+                set_status("error", error_type="NotADirectoryError")
                 return f"Error: '{path}' is not a directory"
             entries = sorted(
                 resolved.iterdir(), key=lambda p: (not p.is_dir(), p.name.lower())
@@ -40,6 +42,8 @@ class ListDirectoryTool(Tool):
                 lines.append(f"{prefix}{entry.name}{size}")
             return "\n".join(lines) if lines else "(empty directory)"
         except PermissionError as e:
+            set_status("permission_denied")
             return f"Error: {e}"
         except Exception as e:
+            set_status("error", error_type=type(e).__name__)
             return f"Error listing directory: {e}"

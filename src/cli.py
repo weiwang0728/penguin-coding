@@ -23,7 +23,9 @@ from .tools import _changed_files
 from ._constants import ALLOWED_BASE_DIR
 from .agent import Agent
 from .permissions import PermissionManager
-from .session import load_session, list_sessions, autosave_session
+from .session import (load_session, list_sessions, autosave_session,
+                      telemetry_session_id, reset_telemetry_session)
+from .observability import run_context, flush
 from . import __version__
 
 console = Console()
@@ -50,8 +52,16 @@ def _parse_args():
 
 
 def main():
+    try:
+        return _main()
+    finally:
+        flush()
+
+
+def _main():
     args = _parse_args()
     load_dotenv()
+    reset_telemetry_session()
 
     api_key = args.api_key or os.getenv("API_KEY")
     base_url = args.base_url or os.getenv("BASE_URL")
@@ -149,20 +159,35 @@ def _run_once(agent: Agent, prompt: str, messages: list[dict]):
     else:
         confirm_cb = lambda name, args, reason: False
 
-    response, messages = agent.run(
-        client=None,  # will be set by agent_loop via module-level client
-        user_message=prompt,
-        on_content=on_content,
-        on_tool_start=on_tool_start,
-        on_tool_result=on_tool_result,
-        confirm_callback=confirm_cb,
-        messages=messages,
-    )
+    with run_context("cli.request", session_id=telemetry_session_id(),
+                     metadata={"entrypoint": "cli", "mode": "oneshot"}) as span:
+        span.update(input=prompt)
+        response, messages = agent.run(
+            client=None,  # will be set by agent_loop via module-level client
+            user_message=prompt,
+            on_content=on_content,
+            on_tool_start=on_tool_start,
+            on_tool_result=on_tool_result,
+            confirm_callback=confirm_cb,
+            messages=messages,
+        )
+        span.update(output=response)
+        span.set_status(_response_status(response))
+
 
     if streamed:
         print()
     else:
         console.print(Markdown(response))
+
+
+def _response_status(response: str) -> str:
+    if response == "Agent reached maximum iterations without completing the task.":
+        return "iteration_limit"
+    if response.startswith(("API error (", "API connection error after retries:",
+                            "Context too long even after reactive compact.")):
+        return "api_error"
+    return "completed"
 
 
 def _repl(agent: Agent, model_id: str, conversation_history: list[dict], *, client: Anthropic):
@@ -220,6 +245,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict], *, clie
             continue
         if user_input == "/reset":
             conversation_history.clear()
+            reset_telemetry_session()
             _changed_files.clear()
             console.print("[yellow]Conversation reset.[/yellow]")
             continue
@@ -287,9 +313,11 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict], *, clie
             continue
         if user_input == "/compact":
             before = estimate_tokens(str(conversation_history))
-            compressed = llm_compact_messages(
-                conversation_history, client=client, model_id=model_id, max_tokens=MAX_CONTEXT_TOKENS
-            )
+            with run_context("cli.compact", session_id=telemetry_session_id(),
+                             metadata={"entrypoint": "cli"}):
+                compressed = llm_compact_messages(
+                    conversation_history, client=client, model_id=model_id, max_tokens=MAX_CONTEXT_TOKENS
+                )
             conversation_history[:] = compressed
             after = estimate_tokens(str(conversation_history))
             if before != after:
@@ -377,15 +405,20 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict], *, clie
                 console.print(f"[Result: {preview}]")
 
         try:
-            response, conversation_history = agent.run(
-                client=None,  # agent_loop uses module-level client
-                user_message=user_input,
-                on_content=on_content,
-                on_tool_start=on_tool_start,
-                on_tool_result=on_tool_result,
-                confirm_callback=confirm_tool,
-                messages=conversation_history,
-            )
+            with run_context("cli.request", session_id=telemetry_session_id(),
+                             metadata={"entrypoint": "cli", "mode": "repl"}) as span:
+                span.update(input=user_input)
+                response, conversation_history = agent.run(
+                    client=None,  # agent_loop uses module-level client
+                    user_message=user_input,
+                    on_content=on_content,
+                    on_tool_start=on_tool_start,
+                    on_tool_result=on_tool_result,
+                    confirm_callback=confirm_tool,
+                    messages=conversation_history,
+                )
+                span.update(output=response)
+                span.set_status(_response_status(response))
             if conversation_history:
                 autosave_session(conversation_history, model_id, usage_stats)
             if streamed:

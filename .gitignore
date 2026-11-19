@@ -1,11 +1,13 @@
 __pycache__/
 *.pyc
 .env
+.venv/
 /artifacts/swebench/
 
 # 本地工具与报告
 .vscode/
-docs/
+docs/*
+!docs/langfuse-integration.md
 workspace/
 /prdbench_dev*.log
 /TEST_PLAN.md

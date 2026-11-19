@@ -2,6 +2,7 @@
 
 from typing import Any, Callable
 
+from ..observability import observation, set_status
 from .base import Tool
 
 
@@ -29,30 +30,47 @@ class ToolDispatcher:
             self._dynamic_handlers[f"__schema__{name}"] = schema  # type: ignore[assignment]
 
     def dispatch(self, name: str, args: dict[str, Any], skip_permission_check: bool = False) -> str:
+        with observation(
+            f"tool.{name}", as_type="tool", input=args,
+            metadata={"tool_name": name},
+        ) as span:
+            result = self._dispatch(name, args, skip_permission_check)
+            span.update(output=result)
+            if span.status is None:
+                span.set_status("completed")
+            return result
+
+    def _dispatch(self, name: str, args: dict[str, Any], skip_permission_check: bool = False) -> str:
         # Check dynamic handlers first (e.g. delegate)
         if name in self._dynamic_handlers:
             if not skip_permission_check and self.permission_manager:
                 from ..permissions import PermissionLevel
                 result = self.permission_manager.check(name, args)
                 if result.level == PermissionLevel.DENY:
+                    set_status("permission_denied")
                     return f"Error: Permission denied — {result.reason}"
                 if result.level == PermissionLevel.CONFIRM:
                     if self.confirm_callback:
                         approved = self.confirm_callback(name, args, result.reason)
                         if not approved:
+                            set_status("permission_denied")
                             return f"Permission denied by user: {name}"
                     else:
+                        set_status("permission_denied")
                         return f"Error: Permission denied — {result.reason} (no confirmation callback)"
             try:
                 return self._dynamic_handlers[name](**args)
             except TypeError as e:
+                set_status("invalid_arguments", error_type=type(e).__name__)
                 return f"Error calling tool '{name}': {e}"
 
         if name not in self._registry:
+            set_status("unknown_tool")
             return f"Unknown tool: {name}"
         tool = self._registry[name]
         errors = self._validate_args(name, args)
         if errors:
+            set_status("invalid_arguments")
             return f"Error: invalid arguments for '{name}': {'; '.join(errors)}"
 
         # Permission check
@@ -60,18 +78,22 @@ class ToolDispatcher:
             from ..permissions import PermissionLevel
             result = self.permission_manager.check(name, args)
             if result.level == PermissionLevel.DENY:
+                set_status("permission_denied")
                 return f"Error: Permission denied — {result.reason}"
             if result.level == PermissionLevel.CONFIRM:
                 if self.confirm_callback:
                     approved = self.confirm_callback(name, args, result.reason)
                     if not approved:
+                        set_status("permission_denied")
                         return f"Permission denied by user: {name}"
                 else:
+                    set_status("permission_denied")
                     return f"Error: Permission denied — {result.reason} (no confirmation callback)"
 
         try:
             return tool.execute(**args)
         except TypeError as e:
+            set_status("invalid_arguments", error_type=type(e).__name__)
             return f"Error calling tool '{name}': {e}"
 
     def list_tools(self) -> list[str]:

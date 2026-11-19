@@ -1,0 +1,3 @@
+-r requirements.txt
+# Tested against the OpenTelemetry-based Python SDK; keep the integration reproducible.
+langfuse==5.2.0

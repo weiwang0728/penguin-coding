@@ -11,9 +11,9 @@ Events:
   tool_result    {name, result}
   llm_text       {text}
 
-Designed for headless serial runs (PRDBench DEV/EVAL). Does not track
-turn_id / tool_use_id / parent_span_id - those require extended callback
-signatures in agent_loop. Upgrade path: extend callbacks, add fields here.
+Trace fields are copied from the active execution context. UI callbacks can be
+replayed after parallel work completes; tool timing remains authoritative in
+execution-layer observations, not callback timestamps.
 """
 
 import json
@@ -21,6 +21,8 @@ import threading
 import time
 from pathlib import Path
 from typing import Any
+
+from .observability import current_trace_fields
 
 
 class ExecutionLog:
@@ -48,11 +50,14 @@ class ExecutionLog:
             return
         with self._lock:
             self._seq += 1
+            trace_fields = current_trace_fields()
             record = {
+                "schema_version": 2,
+                **trace_fields,
                 "seq": self._seq,
                 "ts": time.time(),
                 "event": event,
-                "run_id": self.run_id,
+                "run_id": self.run_id or trace_fields.get("run_id"),
                 **fields,
             }
             with open(self.path, "a", encoding="utf-8") as f:
