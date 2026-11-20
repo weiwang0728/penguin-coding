@@ -2,7 +2,11 @@ __pycache__/
 *.pyc
 .env
 .venv/
+
+# SWE-bench 本地测评产物
 /artifacts/swebench/
+/logs/
+/penguin-*.*.json
 
 # 本地工具与报告
 .vscode/
