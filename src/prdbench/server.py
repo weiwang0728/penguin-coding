@@ -28,6 +28,7 @@ from .adapter import (
     PRDBenchSession,
 )
 from .config import APP_NAME, DEFAULT_HOST, DEFAULT_PORT
+from ..observability import extract_trace_context, flush
 
 logger = logging.getLogger("penguin.prdbench.server")
 
@@ -136,6 +137,7 @@ class PRDBenchHandler(BaseHTTPRequestHandler):
                 user_message=prompt_text,
                 session=session,
                 mode=mode,
+                trace_context=extract_trace_context(dict(self.headers.items())),
             )
 
             # Format response to match ADK's expected format
@@ -150,6 +152,8 @@ class PRDBenchHandler(BaseHTTPRequestHandler):
                     ],
                 },
                 "author": app_name,
+                "trace_id": result.get("trace_id"),
+                "run_id": result.get("run_id"),
                 "timestamp": datetime.now().isoformat(),
             }
 
@@ -205,7 +209,11 @@ def run_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT):
         httpd.serve_forever()
     except KeyboardInterrupt:
         logger.info("Server shutting down...")
-        httpd.shutdown()
+        # serve_forever has already unwound on this thread. shutdown() waits
+        # for another serve_forever thread and would prevent the final flush.
+    finally:
+        flush()
+        httpd.server_close()
 
 
 if __name__ == "__main__":

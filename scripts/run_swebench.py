@@ -15,6 +15,9 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from src.observability import run_context, current_trace_fields, trace_headers, flush
 PUBLIC_FIELDS = ('instance_id', 'repo', 'base_commit', 'problem_statement')
 
 
@@ -100,15 +103,36 @@ def load_instances(args):
 
 
 def run_instance(item, args, output):
+    experiment_id = uuid.uuid5(uuid.NAMESPACE_URL, str(output.resolve())).hex
+    with run_context(
+        "swebench.instance", session_id=f"{experiment_id}:{item['instance_id']}",
+        run_id=uuid.uuid4().hex,
+        metadata={"benchmark": "swebench", "experiment_id": experiment_id,
+                  "instance_id": item['instance_id'], "model": args.model},
+    ) as span:
+        result = _run_instance(item, args, output)
+        span.set_status(result['status'], exit_code=result.get('exit_code'))
+        span.update(metadata={"patch_bytes": result['patch_bytes']})
+        return result
+
+
+def _run_instance(item, args, output):
     case = output / item['instance_id']
     case.mkdir()
     repo = case / 'repo'
     start = time.monotonic()
-    record = {'instance_id': item['instance_id'], 'status': 'preparing'}
+    record = {**current_trace_fields(), 'instance_id': item['instance_id'], 'status': 'preparing'}
+    write_json(case / 'result.json', record)
     patch = ''
     prepared = False
     env = dict(os.environ, CODE_AGENT_WORKSPACE_DIR=str(repo), PRDBENCH_MODE='false',
                MODEL_ID=args.model, PYTHONPATH=str(ROOT))
+    parent = trace_headers().get('traceparent')
+    if parent:
+        env['PENGUIN_TRACEPARENT'] = parent
+    for field in ('session_id', 'run_id', 'experiment_id'):
+        if record.get(field):
+            env[f'PENGUIN_{field.upper()}'] = str(record[field])
     try:
         source = (str(Path(args.repo_root).resolve() / item['repo']) if args.repo_root
                   else f"https://github.com/{item['repo']}.git")
@@ -131,7 +155,12 @@ def run_instance(item, args, output):
                             '--max-iterations', str(args.max_iterations)], repo, env,
                            case / 'worker.log', args.timeout)
         if (case / 'worker_result.json').exists():
-            record.update(json.loads((case / 'worker_result.json').read_text()))
+            worker_result = json.loads((case / 'worker_result.json').read_text())
+            if worker_result.get('span_id'):
+                record['worker_span_id'] = worker_result.pop('span_id')
+            if worker_result.get('parent_span_id'):
+                record['worker_parent_span_id'] = worker_result.pop('parent_span_id')
+            record.update(worker_result)
         else:
             record['status'] = 'worker_error'
         record['exit_code'] = code
@@ -176,6 +205,15 @@ def process_item(item, args, output):
 
 
 def main():
+    try:
+        return _main()
+    finally:
+        flush()
+
+
+def _main():
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / '.env')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--dataset', default='princeton-nlp/SWE-bench_Lite')
     parser.add_argument('--split', default='test')

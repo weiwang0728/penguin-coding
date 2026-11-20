@@ -1,4 +1,5 @@
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 from .utils import resolve_and_validate_path, unified_diff, _changed_files
 
@@ -42,6 +43,8 @@ class WriteFileTool(Tool):
                     result += f"\n\n{diff}"
             return result
         except PermissionError as e:
+            set_status("permission_denied")
             return f"Error: {e}"
         except Exception as e:
+            set_status("error", error_type=type(e).__name__)
             return f"Error writing file: {e}"

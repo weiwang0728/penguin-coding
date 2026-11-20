@@ -2,6 +2,7 @@ import subprocess
 
 from .._constants import ALLOWED_BASE_DIR, _truncate_output
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 from .utils import resolve_and_validate_path
 
@@ -37,6 +38,7 @@ class SearchFilesTool(Tool):
         try:
             resolve_and_validate_path(path)
         except PermissionError as e:
+            set_status("permission_denied")
             return f"Error: {e}"
 
         cmd = ["grep", "-rn", "--color=never", "-E", pattern]
@@ -55,11 +57,14 @@ class SearchFilesTool(Tool):
             if result.returncode == 1:
                 return "No matches found."
             if result.returncode != 0:
+                set_status("error", exit_code=result.returncode)
                 return (
                     f"Error: {result.stderr.strip()}" if result.stderr else "Search failed."
                 )
             return _truncate_output(result.stdout)
         except subprocess.TimeoutExpired:
+            set_status("timeout", timeout_seconds=30)
             return "Error: Search timed out after 30 seconds"
         except Exception as e:
+            set_status("error", error_type=type(e).__name__)
             return f"Error searching files: {e}"

@@ -55,14 +55,61 @@ import shutil
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextvars import copy_context
 from datetime import datetime
 from pathlib import Path
 
 from .adapter import run_prdbench_agent, PRDBenchSession, session_manager
 from .prompts import DEVELOPMENT_PROMPT, DEBUG_PROMPT, EVALUATION_PROMPT, REFLECTION_PROMPT
 from .config import WORKSPACE_DIR, MAX_ITERATIONS
+from ..observability import score as record_score, flush
 
 logger = logging.getLogger("penguin.prdbench.runner")
+
+
+def _trace_metadata(root_path, project_id, **extra):
+    experiment_id = hashlib.sha256(str(Path(root_path).resolve()).encode()).hexdigest()[:32]
+    return {"experiment_id": experiment_id, "project_id": str(project_id), **extra}
+
+
+def _read_trace_record(path):
+    try:
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def _score_id(trace_id, name):
+    return hashlib.sha256(f"{trace_id}:{name}".encode()).hexdigest()
+
+
+def _publish_metric_score(project_dir, metric_name, result=None, integrity_ok=True):
+    """Attach validated evaluation to the generated artifact, never to the judge."""
+    result = result if result is not None else _read_trace_record(
+        Path(project_dir) / "reports" / f"{metric_name}.log")
+    dev = _read_trace_record(Path(project_dir) / "query_response.json")
+    dev_trace = dev.get("trace_id")
+    eval_trace = result.get("trace_id")
+    path = Path(project_dir) / "reports" / f"{metric_name}.json"
+    valid = check_metric_json(str(path))
+    if eval_trace:
+        for name, value in (("prdbench.report_valid", valid),
+                            ("prdbench.eval_integrity_ok", integrity_ok)):
+            record_score(name, int(value), trace_id=eval_trace,
+                         score_id=_score_id(eval_trace, name), data_type="BOOLEAN")
+    # Reports from another development attempt must not score a newer artifact.
+    if not (valid and integrity_ok and dev_trace and result.get("dev_trace_id") == dev_trace):
+        return
+    if result.get("artifact_id") != dev.get("artifact_id"):
+        return
+    report = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(report, str):
+        report = json.loads(report)
+    name = f"prdbench.metric.{metric_name}"
+    record_score(name, float(report["score"]), trace_id=dev_trace,
+                 score_id=_score_id(dev_trace, name),
+                 comment=f"evaluation_trace_id={eval_trace or 'unavailable'}")
 
 
 # ── Report validation ──
@@ -179,6 +226,7 @@ def run_dev_project(
         max_iterations=max_iterations,
         log_file=log_file,
         run_id=run_id,
+        metadata=_trace_metadata(root_path, project_id, stage="dev"),
     )
 
     # Only mark the project as developed on success. A failed run writes its
@@ -200,6 +248,12 @@ def run_dev_project(
         result = {**result, "status": "error", "error": "no code produced"}
 
     if result.get("status") == "success":
+        try:
+            result["artifact_id"] = hashlib.sha256(
+                json.dumps(_hash_tree(src_dir), sort_keys=True).encode()
+            ).hexdigest()
+        except Exception as error:
+            logger.warning("Cannot fingerprint development artifact (%s)", type(error).__name__)
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
     else:
@@ -559,6 +613,7 @@ def run_eval_project(
             rid = run_id or "default"
             exec_log_file = os.path.join(log_dir, f"eval_{project_id}_{safe_metric}_{rid}.jsonl")
 
+        dev_record = _read_trace_record(Path(project_dir) / "query_response.json")
         result = run_prdbench_agent(
             user_message=prompt,
             session=session,
@@ -566,6 +621,10 @@ def run_eval_project(
             max_iterations=max_iterations,
             log_file=exec_log_file,
             run_id=run_id,
+            metadata=_trace_metadata(root_path, project_id, stage="eval",
+                                     metric=metric_name, retry_round=retry_round,
+                                     dev_trace_id=dev_record.get("trace_id"),
+                                     artifact_id=dev_record.get("artifact_id")),
         )
 
         elapsed = time.time() - start
@@ -588,6 +647,11 @@ def run_eval_project(
             )
         if any(diff.values()):
             integrity[metric_name] = diff
+
+        try:
+            _publish_metric_score(project_dir, metric_name, result, integrity_ok=not any(diff.values()))
+        except Exception as error:
+            logger.warning("Cannot synchronize metric observation (%s)", type(error).__name__)
 
         # Save log
         log_file = os.path.join(report_dir, f"{metric_name}.log")
@@ -856,6 +920,7 @@ def run_reflection_project(
         max_iterations=max_iterations,
         log_file=exec_log_file,
         run_id=run_id,
+        metadata=_trace_metadata(root_path, project_id, stage="reflect"),
     )
     diff = _verify_and_restore_src(project_dir, snapshot_dir)
     if diff["modified"] or diff["deleted"]:
@@ -1037,7 +1102,7 @@ def _run_in_parallel(items, fn, workers: int, label: str) -> None:
             fn(item)
         return
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = {pool.submit(fn, item): item for item in items}
+        futures = {pool.submit(copy_context().run, fn, item): item for item in items}
         for future in as_completed(futures):
             item = futures[future]
             try:
@@ -1122,6 +1187,24 @@ def calculate_scores(root_path: str) -> dict:
         normalized = project_score / denominator / 2.0
         results[subdir] = round(normalized, 4)
         coverage[subdir] = {"evaluated": evaluated, "expected": denominator}
+        try:
+            dev_trace = _read_trace_record(Path(project_dir) / "query_response.json").get("trace_id")
+            if dev_trace:
+                # An old report may remain on disk after a new DEV run.
+                lineage_matches = all(_read_trace_record(
+                    Path(project_dir) / "reports" / f"{metric}.log"
+                ).get("dev_trace_id") == dev_trace for metric in scores_by_metric)
+                if lineage_matches:
+                    for name, value in (("prdbench.project_score", normalized),
+                                        ("prdbench.coverage", evaluated / denominator)):
+                        record_score(name, float(value), trace_id=dev_trace,
+                                     score_id=_score_id(dev_trace, name))
+                integrity = _read_trace_record(Path(project_dir) / "integrity_report.json")
+                for metric_name in scores_by_metric:
+                    _publish_metric_score(project_dir, metric_name,
+                                          integrity_ok=not any(integrity.get(metric_name, {}).values()))
+        except Exception as error:
+            logger.warning("Cannot synchronize project observations (%s)", type(error).__name__)
         total_sum += normalized
         valid_count += 1
 
@@ -1137,6 +1220,13 @@ def calculate_scores(root_path: str) -> dict:
 # ── Main ──
 
 def main():
+    try:
+        return _main()
+    finally:
+        flush()
+
+
+def _main():
     parser = argparse.ArgumentParser(description="PRDBench evaluation runner for penguin-coding")
     parser.add_argument(
         "--source_dir", type=str, default="PRDbench/",

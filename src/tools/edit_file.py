@@ -1,4 +1,5 @@
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 from .utils import resolve_and_validate_path, unified_diff, _changed_files, fuzzy_replace
 
@@ -58,8 +59,10 @@ Rules:
 
         # Validate: either edits array or old_string/new_string pair, not both
         if edits and (old_string or new_string):
+            set_status("invalid_arguments")
             return "Error: Use either 'edits' array or 'old_string'/'new_string' pair, not both"
         if not edits and not old_string:
+            set_status("invalid_arguments")
             return "Error: Provide either 'edits' array or 'old_string'/'new_string' pair"
 
         # Normalize single edit into edits list
@@ -69,6 +72,7 @@ Rules:
         try:
             resolved_path = resolve_and_validate_path(path)
             if not resolved_path.is_file():
+                set_status("error", error_type="FileNotFoundError")
                 return f"Error: File not found: {path}"
 
             content = resolved_path.read_text(encoding="utf-8")
@@ -78,6 +82,7 @@ Rules:
             for i, edit in enumerate(edits):
                 result = fuzzy_replace(content, edit["old_string"], edit["new_string"])
                 if result is None:
+                    set_status("error", error_type="EditMatchError")
                     # Check why it failed for better error message
                     count = content.count(edit["old_string"])
                     if count > 1:
@@ -111,6 +116,8 @@ Rules:
             return result
 
         except PermissionError as e:
+            set_status("permission_denied")
             return f"Error: {e}"
         except Exception as e:
+            set_status("error", error_type=type(e).__name__)
             return f"Error editing file: {e}"

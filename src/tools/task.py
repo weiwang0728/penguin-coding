@@ -1,5 +1,6 @@
 from ..task_system import task_manager
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 
 
@@ -60,6 +61,7 @@ class TaskTool(Tool):
                 return task_manager.create(subject, description, add_blocked_by)
             elif action == "update":
                 if task_id is None:
+                    set_status("invalid_arguments")
                     return "Error: task_id is required for update action"
                 return task_manager.update(
                     task_id, status, subject, description, add_blocked_by, remove_blocked_by
@@ -67,6 +69,8 @@ class TaskTool(Tool):
             elif action == "list":
                 return task_manager.list_all()
             else:
+                set_status("invalid_arguments")
                 return f"Error: unknown action '{action}'"
         except (ValueError, PermissionError) as e:
+            set_status("permission_denied" if isinstance(e, PermissionError) else "invalid_arguments")
             return f"Error: {e}"

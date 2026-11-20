@@ -2,11 +2,27 @@
 
 import json
 import time
+import uuid
 from pathlib import Path
 
 SESSION_DIR = Path.home() / ".penguin_sessions"
 
 _current_session_file: str | None = None
+_telemetry_session_id: str | None = None
+
+
+def telemetry_session_id() -> str:
+    """Return an ID available before the first autosave and stable across resume."""
+    global _telemetry_session_id
+    if _telemetry_session_id is None:
+        _telemetry_session_id = uuid.uuid4().hex
+    return _telemetry_session_id
+
+
+def reset_telemetry_session() -> None:
+    global _telemetry_session_id, _current_session_file
+    _telemetry_session_id = uuid.uuid4().hex
+    _current_session_file = None
 
 
 def _extract_session_name(messages: list) -> str:
@@ -35,6 +51,7 @@ def save_session(messages: list, model: str, usage: dict | None = None) -> str:
     name = _extract_session_name(messages)
     data = {
         "id": session_id,
+        "telemetry_session_id": telemetry_session_id(),
         "name": name,
         "model": model,
         "messages": messages,
@@ -54,6 +71,7 @@ def autosave_session(messages: list, model: str, usage: dict | None = None) -> s
     if _current_session_file:
         path = SESSION_DIR / _current_session_file
         data = json.loads(path.read_text())
+        data["telemetry_session_id"] = telemetry_session_id()
         data["messages"] = messages
         data["name"] = name
         data["saved_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -68,6 +86,7 @@ def autosave_session(messages: list, model: str, usage: dict | None = None) -> s
     filename = f"{session_id}.json"
     data = {
         "id": session_id,
+        "telemetry_session_id": telemetry_session_id(),
         "name": name,
         "model": model,
         "messages": messages,
@@ -82,13 +101,16 @@ def autosave_session(messages: list, model: str, usage: dict | None = None) -> s
 
 
 def load_session(session_id: str) -> tuple | None:
-    global _current_session_file
+    global _current_session_file, _telemetry_session_id
     filename = f"{session_id}.json"
     path = SESSION_DIR / filename
     if not path.exists():
         return None
     data = json.loads(path.read_text())
     _current_session_file = filename
+    _telemetry_session_id = data.get("telemetry_session_id") or uuid.uuid5(
+        uuid.NAMESPACE_URL, str(path.resolve())
+    ).hex
     usage = data.get("usage")
     return data["messages"], data["model"], usage
 
