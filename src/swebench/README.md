@@ -85,6 +85,24 @@ python -m swebench.harness.run_evaluation \
 
 小样本评分可追加与生成阶段一致的 `--instance_ids ID1 ID2`。使用官方报告的 resolved 判定，按预先选定的题目总数计算解决率，另外记录空补丁、超时和基础设施失败。修改补丁重新评分时更换 `run_id`，避免缓存旧结果。
 
+## Docker 生成模式（`--docker`）
+
+默认生成模式在宿主机本地环境运行 worker，测试验证受限于本机依赖。`--docker` 让 worker 直接运行在该题的官方 `sweb.eval` 镜像内：
+
+```bash
+python scripts/run_swebench.py \
+  --dataset princeton-nlp/SWE-bench_Lite --split test \
+  --model <MODEL_ID> --model-name penguin-<MODEL_ID> \
+  --max-iterations 100 --timeout 7200 \
+  --docker \
+  --output artifacts/swebench/<run-name>
+```
+
+- worker 进程用镜像内 base conda Python（3.11）运行；agent 的 `run_command` 默认落在 `testbed` conda 环境（dev 镜像把 `testbed/bin` 前置到 `PATH`），跑测试用的就是与评分一致的解释器和依赖。
+- 镜像准备三层复用：已有 `sweb.eval.x86_64.<iid>` 直接使用；缺失时优先用本地历史 checkout 打 `git bundle` 离线构建（容器内不访问 GitHub）；env 镜像缺失时调用官方 harness 构建（仅 conda 网络）。`sweb.dev.x86_64.<iid>` 在实例镜像上追加 agent 依赖（pip 清华源）。
+- patch 在容器内导出（`/out/export_patch.sh`，与宿主机 `export_patch` 逻辑一致），超时时容器仍存活，先 `docker exec` 导出再清理；容器以宿主机 uid 运行，产物属主与本地模式一致。
+- 宿主机需安装 Docker 且磁盘预留充足（每题镜像 3GB+，env 镜像按仓库版本共享）。`--setup-command` 在该模式下不可用（env 镜像已带依赖）。
+
 参考：[官方评测指南](https://www.swebench.com/SWE-bench/guides/evaluation/)。
 
 ## 离线验证
