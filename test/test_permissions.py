@@ -238,7 +238,7 @@ def test_repl_always_allow_applies_to_later_turns(monkeypatch):
         return "a" if len(confirmations) == 1 else "n"
 
     monkeypatch.setattr(cli, "pt_prompt", prompt)
-    cli._repl(agent, "test-model", [])
+    cli._repl(agent, "test-model", [], client=Mock())
 
     assert confirmations == ["Allow? [Y/n/a] "]
     assert delegate.call_args_list == [call(prompt="first"), call(prompt="second")]

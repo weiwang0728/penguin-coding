@@ -1,5 +1,6 @@
 from .._constants import MAX_READ_SIZE
 from ..tool_registry import register_tool
+from ..observability import set_status
 from .base import Tool
 from .utils import resolve_and_validate_path
 
@@ -31,10 +32,14 @@ class ReadFileTool(Tool):
                     content += f"\n... [File truncated: {file_size} bytes total, showing first {MAX_READ_SIZE} bytes]"
             return content
         except PermissionError as e:
+            set_status("permission_denied")
             return f"Error: {e}"
         except FileNotFoundError:
+            set_status("error", error_type="FileNotFoundError")
             return f"Error: File not found: {path}"
         except UnicodeDecodeError:
+            set_status("error", error_type="UnicodeDecodeError")
             return f"Error: Cannot read binary file: {path}"
         except Exception as e:
+            set_status("error", error_type=type(e).__name__)
             return f"Error reading file: {e}"

@@ -3,8 +3,11 @@
 import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextvars import copy_context
 from dataclasses import dataclass
 from typing import Any, Callable
+
+from .observability import bind_context
 
 logger = logging.getLogger("penguin")
 
@@ -38,6 +41,12 @@ class ToolCall:
     id: str
     name: str
     input: dict[str, Any]
+
+
+def _dispatch_with_context(dispatch_fn, name, args, tool_use_id):
+    """Bind the model's call ID at the actual execution site."""
+    with bind_context(tool_use_id=tool_use_id):
+        return dispatch_fn(name, args)
 
 
 def _group_tool_calls(tool_calls: list[dict]) -> list[list[ToolCall]]:
@@ -126,14 +135,16 @@ def _execute_sequential(
     for tc in tool_calls_list:
         fn_name, fn_args = tc["name"], tc["input"]
         if on_tool_start:
-            on_tool_start(fn_name, fn_args)
+            with bind_context(tool_use_id=tc["id"]):
+                on_tool_start(fn_name, fn_args)
         try:
-            result = dispatch_fn(fn_name, fn_args)
+            result = _dispatch_with_context(dispatch_fn, fn_name, fn_args, tc["id"])
         except Exception as e:
             result = f"Error: {e}"
             logger.exception("Tool %s failed", fn_name)
         if on_tool_result:
-            on_tool_result(fn_name, result)
+            with bind_context(tool_use_id=tc["id"]):
+                on_tool_result(fn_name, result)
         tool_results.append({
             "type": "tool_result",
             "tool_use_id": tc["id"],
@@ -156,16 +167,22 @@ def _execute_parallel_group(
     # Fire start callbacks in order before submitting
     for tc in group:
         if on_tool_start:
-            on_tool_start(tc.name, tc.input)
+            with bind_context(tool_use_id=tc.id):
+                on_tool_start(tc.name, tc.input)
 
     # Submit all to executor
     futures = {}
     for tc in group:
-        future = executor.submit(dispatch_fn, tc.name, tc.input)
+        # A Context cannot be entered concurrently: capture one per task.
+        context = copy_context()
+        future = executor.submit(
+            context.run, _dispatch_with_context,
+            dispatch_fn, tc.name, tc.input, tc.id,
+        )
         futures[future] = tc
 
     # Collect results as they complete
-    buffered_callbacks: list[tuple[int, str, str]] = []
+    buffered_callbacks: list[tuple[int, str, str, str]] = []
 
     for future in as_completed(futures):
         tc = futures[future]
@@ -177,12 +194,13 @@ def _execute_parallel_group(
 
         results[tc.index] = _truncate_for_context(result)
         if on_tool_result:
-            buffered_callbacks.append((tc.index, tc.name, result))
+            buffered_callbacks.append((tc.index, tc.id, tc.name, result))
 
     # Fire result callbacks in original order
     buffered_callbacks.sort(key=lambda x: x[0])
-    for _idx, name, result in buffered_callbacks:
-        on_tool_result(name, result)
+    for _idx, tool_use_id, name, result in buffered_callbacks:
+        with bind_context(tool_use_id=tool_use_id):
+            on_tool_result(name, result)
 
 
 def _execute_sequential_group(
@@ -197,12 +215,14 @@ def _execute_sequential_group(
 
     for tc in group:
         if on_tool_start:
-            on_tool_start(tc.name, tc.input)
+            with bind_context(tool_use_id=tc.id):
+                on_tool_start(tc.name, tc.input)
         try:
-            result = dispatch_fn(tc.name, tc.input)
+            result = _dispatch_with_context(dispatch_fn, tc.name, tc.input, tc.id)
         except Exception as e:
             result = f"Error: {e}"
             logger.exception("Tool %s failed", tc.name)
         if on_tool_result:
-            on_tool_result(tc.name, result)
+            with bind_context(tool_use_id=tc.id):
+                on_tool_result(tc.name, result)
         results[tc.index] = _truncate_for_context(result)

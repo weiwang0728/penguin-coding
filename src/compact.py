@@ -1,7 +1,10 @@
 import json
 import logging
 import unicodedata
+from functools import wraps
 from typing import Any
+
+from .observability import observation, record_response
 
 MAX_CONTEXT_TOKENS = 100_000
 MAX_TOOL_RESULT_TOKENS = 3_000
@@ -9,6 +12,28 @@ MAX_TEXT_BLOCK_TOKENS = 15_000
 COMPACT_THRESHOLD = 0.80
 
 logger = logging.getLogger("penguin")
+
+
+def _observed_compaction(strategy: str):
+    def decorate(fn):
+        @wraps(fn)
+        def wrapped(messages, *args, **kwargs):
+            with observation(
+                "context.compact", metadata={"strategy": strategy, "messages_before": len(messages)},
+            ) as span:
+                # Disabled tracing must not add an extra traversal of long histories.
+                enabled = getattr(span, "enabled", False)
+                before = estimate_messages_tokens(messages) if enabled else None
+                result = fn(messages, *args, **kwargs)
+                metadata = {"messages_after": len(result)}
+                if enabled:
+                    metadata.update(estimated_tokens_before=before,
+                                    estimated_tokens_after=estimate_messages_tokens(result))
+                span.update(metadata=metadata)
+                return result
+        return wrapped
+    return decorate
+
 
 def needs_compaction(
     last_input_tokens: int,
@@ -267,14 +292,19 @@ def _context_collapse(
     old_text = _serialize_messages(messages[:-1])  # exclude last user message
 
     try:
-        collapse_response = client.messages.create(
-            model=model_id,
-            max_tokens=collapse_max_tokens,
-            system=COLLAPSE_SYSTEM_PROMPT,
-            messages=[
-                {"role": "user", "content": f"Collapsing {total_turns} turns of conversation:\n\n{old_text}"}
-            ],
-        )
+        request_messages = [
+            {"role": "user", "content": f"Collapsing {total_turns} turns of conversation:\n\n{old_text}"}
+        ]
+        with observation(
+            "llm.compact.collapse", as_type="generation", model=model_id,
+            input={"system": COLLAPSE_SYSTEM_PROMPT, "messages": request_messages},
+            model_parameters={"max_tokens": collapse_max_tokens},
+        ) as generation:
+            collapse_response = client.messages.create(
+                model=model_id, max_tokens=collapse_max_tokens,
+                system=COLLAPSE_SYSTEM_PROMPT, messages=request_messages,
+            )
+            record_response(generation, collapse_response)
         collapse_text = ""
         for block in collapse_response.content:
             if block.type == "text":
@@ -308,11 +338,10 @@ def _verify_tokens_within_budget(
 ) -> bool:
     """Use count_tokens API for precise budget check. Returns True if within budget."""
     try:
-        resp = client.messages.count_tokens(
-            model=model_id,
-            messages=messages,
-        )
-        actual = resp.input_tokens
+        with observation("llm.count_tokens", metadata={"model": model_id}) as span:
+            resp = client.messages.count_tokens(model=model_id, messages=messages)
+            actual = resp.input_tokens
+            span.update(output={"input_tokens": actual})
         if actual > max_tokens:
             logger.info("count_tokens verification: %d > %d", actual, max_tokens)
             return False
@@ -322,6 +351,7 @@ def _verify_tokens_within_budget(
         return True
 
 
+@_observed_compaction("proactive")
 def llm_compact_messages(
     messages: list[dict[str, Any]],
     client: Any,
@@ -359,7 +389,7 @@ def llm_compact_messages(
         return normalized
 
     # Step 3: LLM summarization with progressive reduction
-    for attempt_keep in (keep_recent, max(2, keep_recent // 2), 0):
+    for attempt, attempt_keep in enumerate((keep_recent, max(2, keep_recent // 2), 0), 1):
         try:
             split_idx = max(1, len(normalized) - attempt_keep)
             while split_idx < len(normalized) and normalized[split_idx].get("role") != "assistant":
@@ -374,14 +404,20 @@ def llm_compact_messages(
                 return normalized
 
             old_text = _serialize_messages(old_messages)
-            summary_response = client.messages.create(
-                model=model_id,
-                max_tokens=summary_max_tokens,
-                system=COMPACT_SYSTEM_PROMPT,
-                messages=[
-                    {"role": "user", "content": f"Summarize this conversation:\n\n{old_text}"}
-                ],
-            )
+            request_messages = [
+                {"role": "user", "content": f"Summarize this conversation:\n\n{old_text}"}
+            ]
+            with observation(
+                "llm.compact.summarize", as_type="generation", model=model_id,
+                input={"system": COMPACT_SYSTEM_PROMPT, "messages": request_messages},
+                metadata={"keep_recent": attempt_keep, "compact_attempt": attempt},
+                model_parameters={"max_tokens": summary_max_tokens},
+            ) as generation:
+                summary_response = client.messages.create(
+                    model=model_id, max_tokens=summary_max_tokens,
+                    system=COMPACT_SYSTEM_PROMPT, messages=request_messages,
+                )
+                record_response(generation, summary_response)
             summary_text = ""
             for block in summary_response.content:
                 if block.type == "text":
@@ -444,6 +480,7 @@ def trim_messages(
     return normalized
 
 
+@_observed_compaction("reactive")
 def reactive_compact(
     messages: list[dict[str, Any]],
     keep_recent: int = 5,

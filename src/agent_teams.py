@@ -9,11 +9,16 @@ import json
 import logging
 import time
 import threading
+import uuid
+from contextvars import copy_context
 from pathlib import Path
 from typing import Any
 
 from ._constants import ALLOWED_BASE_DIR, client, MODEL_ID
 from .compact import MAX_CONTEXT_TOKENS, llm_compact_messages
+from .observability import (
+    bind_context, current_trace_fields, observation, record_response, run_context,
+)
 
 logger = logging.getLogger("penguin")
 
@@ -172,7 +177,12 @@ class MessageBus:
             "from": sender,
             "content": content,
             "timestamp": time.time(),
+            "message_id": uuid.uuid4().hex,
         }
+        trace_fields = current_trace_fields()
+        for key in ("trace_id", "span_id"):
+            if trace_fields.get(key):
+                msg[f"sender_{key}"] = trace_fields[key]
         if extra:
             msg.update(extra)
         lock = self._get_lock(to)
@@ -319,9 +329,10 @@ class TeamManager:
         stop_event = threading.Event()
         self._stop_flags[name] = stop_event
 
+        context = copy_context()
         thread = threading.Thread(
-            target=self._teammate_loop,
-            args=(name, role, prompt, stop_event),
+            target=context.run,
+            args=(self._teammate_loop, name, role, prompt, stop_event),
             daemon=True,
         )
         self.threads[name] = thread
@@ -390,14 +401,23 @@ class TeamManager:
             # 1) Optimistic concurrency check
             conflict = self.version_tracker.check_before_write(agent, path)
             if conflict:
+                with observation(f"tool.{name}", as_type="tool", input=args,
+                                 metadata={"tool_name": name}) as span:
+                    span.set_status("conflict")
+                    span.update(output=conflict)
                 return conflict
             # 2) Acquire file lock
             if not self.lock_mgr.acquire(agent, path):
                 owner = self.lock_mgr.owner(path) or "another agent"
-                return (
+                result = (
                     f"CONFLICT: File '{path}' is currently being written by {owner}. "
                     f"Wait and retry."
                 )
+                with observation(f"tool.{name}", as_type="tool", input=args,
+                                 metadata={"tool_name": name}) as span:
+                    span.set_status("conflict")
+                    span.update(output=result)
+                return result
 
         # Track reads for later conflict detection
         if name in READ_TOOLS:
@@ -421,6 +441,14 @@ class TeamManager:
         prompt: str,
         stop_event: threading.Event,
     ):
+        with bind_context(agent_run_id=uuid.uuid4().hex, agent_name=name, agent_role=role):
+            with run_context("agent.team_run", metadata={"agent_kind": "teammate"}) as span:
+                outcome = self._run_teammate_loop(name, role, prompt, stop_event)
+                span.set_status(outcome)
+
+    def _run_teammate_loop(
+        self, name: str, role: str, prompt: str, stop_event: threading.Event,
+    ) -> str:
         # Lazy imports to break circular dependency with tools.py
         from .tools import TOOL_DEFINITIONS, _truncate_for_context
 
@@ -462,146 +490,164 @@ class TeamManager:
         max_output_tokens = 16384
 
         for iteration in range(max_iterations):
-            if stop_event.is_set():
-                self._set_status(name, "shutdown")
-                self.version_tracker.clear(name)
-                logger.info("Teammate '%s' stopped by shutdown request", name)
-                return
-
-            # Poll inbox and inject messages
-            inbox_msgs = self.bus.read_inbox(name)
-            if inbox_msgs:
-                msg_lines = []
-                for msg in inbox_msgs:
-                    if msg["type"] == "shutdown_request":
+            with bind_context(iteration=iteration + 1):
+                with observation("agent.team_iteration"):
+                    if stop_event.is_set():
                         self._set_status(name, "shutdown")
-                        self.bus.send(name, msg["from"], "Shutdown acknowledged", "shutdown_response")
                         self.version_tracker.clear(name)
-                        logger.info("Teammate '%s' shutting down per request", name)
-                        return
-                    msg_lines.append(f"[From {msg['from']} ({msg['type']})]: {msg['content']}")
-                messages.append({
-                    "role": "user",
-                    "content": "<inbox>\n" + "\n".join(msg_lines) + "\n</inbox>"
-                })
+                        logger.info("Teammate '%s' stopped by shutdown request", name)
+                        return "cancelled"
 
-            # Compact if needed
-            messages[:] = llm_compact_messages(
-                messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
-            )
+                    # Poll inbox and inject messages
+                    inbox_msgs = self.bus.read_inbox(name)
+                    if inbox_msgs:
+                        msg_lines = []
+                        for msg in inbox_msgs:
+                            if msg["type"] == "shutdown_request":
+                                self._set_status(name, "shutdown")
+                                self.bus.send(name, msg["from"], "Shutdown acknowledged", "shutdown_response")
+                                self.version_tracker.clear(name)
+                                logger.info("Teammate '%s' shutting down per request", name)
+                                return "cancelled"
+                            msg_lines.append(f"[From {msg['from']} ({msg['type']})]: {msg['content']}")
+                        messages.append({
+                            "role": "user",
+                            "content": "<inbox>\n" + "\n".join(msg_lines) + "\n</inbox>"
+                        })
 
-            collected_content = ""
-            has_tool_calls = False
-            was_truncated = False
-            tool_calls_list: list[dict] = []
+                    # Compact if needed
+                    messages[:] = llm_compact_messages(
+                        messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
+                    )
 
-            # Call LLM
-            try:
-                with client.messages.stream(
-                    model=MODEL_ID,
-                    max_tokens=max_output_tokens,
-                    system=sys_prompt,
-                    messages=messages,
-                    tools=teammate_tools,
-                ) as stream:
-                    tool_use_blocks: dict[int, dict[str, Any]] = {}
-                    for event in stream:
-                        if event.type == "content_block_delta":
-                            if event.delta.type == "text_delta":
-                                collected_content += event.delta.text
-                            elif event.delta.type == "input_json_delta":
-                                idx = event.index
-                                if idx in tool_use_blocks and not tool_use_blocks[idx].get("_complete"):
-                                    tool_use_blocks[idx]["_partial_json"] += event.delta.partial_json
-                        elif event.type == "content_block_start":
-                            if event.content_block.type == "tool_use":
-                                tool_use_blocks[event.index] = {
-                                    "id": event.content_block.id,
-                                    "name": event.content_block.name,
-                                    "_partial_json": "",
-                                    "_complete": False,
-                                }
-                        elif event.type == "content_block_stop":
-                            if event.index in tool_use_blocks:
-                                block = tool_use_blocks[event.index]
-                                block["_complete"] = True
-                                raw_json = block["_partial_json"]
-                                if raw_json:
-                                    try:
-                                        block["input"] = json.loads(raw_json)
-                                    except json.JSONDecodeError:
-                                        block["input"] = {}
-                                else:
-                                    block["input"] = {}
+                    collected_content = ""
+                    has_tool_calls = False
+                    was_truncated = False
+                    tool_calls_list: list[dict] = []
 
-                    final_msg = stream.get_final_message()
-                    if final_msg.stop_reason == "max_tokens":
-                        was_truncated = True
+                    # Call LLM
+                    try:
+                        with observation(
+                            "llm.team_generate", as_type="generation", model=MODEL_ID,
+                            input={"system": sys_prompt, "messages": messages, "tools": teammate_tools},
+                            model_parameters={"max_tokens": max_output_tokens},
+                        ) as generation:
+                            with client.messages.stream(
+                                model=MODEL_ID,
+                                max_tokens=max_output_tokens,
+                                system=sys_prompt,
+                                messages=messages,
+                                tools=teammate_tools,
+                            ) as stream:
+                                tool_use_blocks: dict[int, dict[str, Any]] = {}
+                                for event in stream:
+                                    if event.type == "content_block_delta":
+                                        if event.delta.type == "text_delta":
+                                            if event.delta.text:
+                                                generation.first_token()
+                                            collected_content += event.delta.text
+                                        elif event.delta.type == "input_json_delta":
+                                            if event.delta.partial_json:
+                                                generation.first_token()
+                                            idx = event.index
+                                            if idx in tool_use_blocks and not tool_use_blocks[idx].get("_complete"):
+                                                tool_use_blocks[idx]["_partial_json"] += event.delta.partial_json
+                                    elif event.type == "content_block_start":
+                                        if event.content_block.type == "tool_use":
+                                            tool_use_blocks[event.index] = {
+                                                "id": event.content_block.id,
+                                                "name": event.content_block.name,
+                                                "_partial_json": "",
+                                                "_complete": False,
+                                            }
+                                    elif event.type == "content_block_stop":
+                                        if event.index in tool_use_blocks:
+                                            block = tool_use_blocks[event.index]
+                                            block["_complete"] = True
+                                            raw_json = block["_partial_json"]
+                                            if raw_json:
+                                                try:
+                                                    block["input"] = json.loads(raw_json)
+                                                except json.JSONDecodeError:
+                                                    block["input"] = {}
+                                            else:
+                                                block["input"] = {}
 
-                tool_calls_list = [
-                    {"id": b["id"], "name": b["name"], "input": b["input"]}
-                    for _, b in sorted(tool_use_blocks.items())
-                ]
-                if tool_calls_list:
-                    has_tool_calls = True
+                                final_msg = stream.get_final_message()
+                                record_response(generation, final_msg)
+                                if final_msg.stop_reason == "max_tokens":
+                                    was_truncated = True
+                                    generation.set_status("truncated")
 
-            except Exception as e:
-                logger.error("Teammate '%s' API error: %s", name, e)
-                self._set_status(name, "error")
-                self.version_tracker.clear(name)
-                return
+                        tool_calls_list = [
+                            {"id": b["id"], "name": b["name"], "input": b["input"]}
+                            for _, b in sorted(tool_use_blocks.items())
+                        ]
+                        if tool_calls_list:
+                            has_tool_calls = True
 
-            # Build assistant message
-            assistant_content: list[dict[str, Any]] = []
-            if collected_content:
-                assistant_content.append({"type": "text", "text": collected_content})
-            for tc in tool_calls_list:
-                assistant_content.append({
-                    "type": "tool_use",
-                    "id": tc["id"],
-                    "name": tc["name"],
-                    "input": tc["input"],
-                })
-            messages.append({"role": "assistant", "content": assistant_content})
+                    except Exception as e:
+                        logger.error("Teammate '%s' API error: %s", name, e)
+                        self._set_status(name, "error")
+                        self.version_tracker.clear(name)
+                        return "api_error"
 
-            # Handle truncation
-            if was_truncated:
-                messages.append({
-                    "role": "user",
-                    "content": "[System: Response truncated. Continue from where you left off.]"
-                })
-                continue
+                    # Build assistant message
+                    assistant_content: list[dict[str, Any]] = []
+                    if collected_content:
+                        assistant_content.append({"type": "text", "text": collected_content})
+                    for tc in tool_calls_list:
+                        assistant_content.append({
+                            "type": "tool_use",
+                            "id": tc["id"],
+                            "name": tc["name"],
+                            "input": tc["input"],
+                        })
+                    messages.append({"role": "assistant", "content": assistant_content})
 
-            # No tool calls → task complete
-            if not has_tool_calls:
-                self._set_status(name, "idle")
-                self.version_tracker.clear(name)
-                logger.info("Teammate '%s' completed task", name)
-                return
+                    # Handle truncation
+                    if was_truncated:
+                        messages.append({
+                            "role": "user",
+                            "content": "[System: Response truncated. Continue from where you left off.]"
+                        })
+                        continue
 
-            # Execute tool calls with concurrency guards
-            tool_results: list[dict[str, Any]] = []
-            for tc in tool_calls_list:
-                fn_name = tc["name"]
-                fn_args = dict(tc["input"])  # copy to avoid mutating original
+                    # No tool calls → task complete
+                    if not has_tool_calls:
+                        self._set_status(name, "idle")
+                        self.version_tracker.clear(name)
+                        logger.info("Teammate '%s' completed task", name)
+                        return "completed"
 
-                if fn_name == "send_message":
-                    result = self.bus.send(name, fn_args.get("to", ""), fn_args.get("content", ""))
-                else:
-                    result = self._agent_execute_tool(name, fn_name, fn_args)
+                    # Execute tool calls with concurrency guards
+                    tool_results: list[dict[str, Any]] = []
+                    for tc in tool_calls_list:
+                        fn_name = tc["name"]
+                        fn_args = dict(tc["input"])  # copy to avoid mutating original
 
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": tc["id"],
-                    "content": _truncate_for_context(result),
-                })
+                        with bind_context(tool_use_id=tc["id"]):
+                            if fn_name == "send_message":
+                                with observation("tool.send_message", as_type="tool", input=fn_args,
+                                                 metadata={"tool_name": "send_message"}) as span:
+                                    result = self.bus.send(name, fn_args.get("to", ""), fn_args.get("content", ""))
+                                    span.update(output=result)
+                            else:
+                                result = self._agent_execute_tool(name, fn_name, fn_args)
 
-            messages.append({"role": "user", "content": tool_results})
+                        tool_results.append({
+                            "type": "tool_result",
+                            "tool_use_id": tc["id"],
+                            "content": _truncate_for_context(result),
+                        })
+
+                    messages.append({"role": "user", "content": tool_results})
 
         # Hit iteration limit
         self._set_status(name, "idle")
         self.version_tracker.clear(name)
         logger.warning("Teammate '%s' hit iteration limit", name)
+        return "iteration_limit"
 
     def _set_status(self, name: str, status: str):
         member = self._find_member(name)

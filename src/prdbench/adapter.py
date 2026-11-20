@@ -25,6 +25,7 @@ from .._constants import ALLOWED_BASE_DIR, client, eval_client, EVAL_MODEL_ID, M
 from ..agent_loop import agent_loop, stream_response
 from ..compact import estimate_messages_tokens
 from ..execution_log import ExecutionLog
+from ..observability import run_context, observation, current_trace_fields
 from ..tools import (
     TOOL_DEFINITIONS as BASE_TOOL_DEFINITIONS,
     dispatcher as base_dispatcher,
@@ -144,6 +145,7 @@ class PRDBenchSession:
 
     def __init__(self, session_id: str, user_id: str, app_name: str):
         self.session_id = session_id
+        self.telemetry_session_id = uuid.uuid4().hex
         self.user_id = user_id
         self.app_name = app_name
         self.created_at = datetime.now()
@@ -234,6 +236,41 @@ def run_prdbench_agent(
     max_iterations: int = MAX_ITERATIONS,
     log_file: str | None = None,
     run_id: str | None = None,
+    trace_context: dict | None = None,
+    metadata: dict | None = None,
+) -> dict[str, Any]:
+    """Trace one PRDBench execution, including all whole-loop retry attempts."""
+    metadata = dict(metadata or {})
+    telemetry_session = (f"{metadata['experiment_id']}:{metadata['project_id']}"
+                         if "experiment_id" in metadata and "project_id" in metadata
+                         else f"prdbench:{session.telemetry_session_id}")
+    if run_id:
+        metadata["batch_run_id"] = run_id
+    with run_context(
+        "prdbench.run", session_id=telemetry_session,
+        run_id=uuid.uuid4().hex, trace_context=trace_context,
+        metadata={"benchmark": "prdbench", "mode": mode, **(metadata or {})},
+    ) as span:
+        span.update(input=user_message)
+        result = _run_prdbench_agent(user_message, session, mode, max_iterations,
+                                    log_file, current_trace_fields().get("run_id") or run_id)
+        result.update({key: value for key, value in current_trace_fields().items()
+                       if key in ("trace_id", "span_id", "run_id", "dev_trace_id", "artifact_id")})
+        status = "completed" if result.get("status") == "success" else "error"
+        if result.get("content") == "Agent reached maximum iterations without completing the task.":
+            status = "iteration_limit"
+        span.set_status(status)
+        span.update(output=result.get("content"))
+        return result
+
+
+def _run_prdbench_agent(
+    user_message: str,
+    session: PRDBenchSession,
+    mode: str = "eval",
+    max_iterations: int = MAX_ITERATIONS,
+    log_file: str | None = None,
+    run_id: str | None = None,
 ) -> dict[str, Any]:
     """Run penguin-coding's agent loop in headless PRDBench mode.
 
@@ -307,20 +344,22 @@ def run_prdbench_agent(
     for attempt in range(max_retries + 1):
         try:
             # Run agent_loop headlessly — skip all permission checks
-            content, messages = agent_loop(
-                client=run_client,
-                user_message=user_message,
-                max_iterations=max_iterations,
-                messages=session.messages,
-                system_prompt=system_prompt,
-                tools=tools,
-                tool_dispatcher=disp,
-                confirm_callback=lambda name, args, reason: True,  # auto-approve all
-                on_content=_on_content,
-                on_tool_start=_on_tool_start,
-                on_tool_result=_on_tool_result,
-                model_id=run_model_id,
-            )
+            with observation("prdbench.attempt", metadata={"attempt": attempt + 1}):
+                content, messages = agent_loop(
+                    client=run_client,
+                    user_message=user_message,
+                    max_iterations=max_iterations,
+                    messages=session.messages,
+                    system_prompt=system_prompt,
+                    tools=tools,
+                    tool_dispatcher=disp,
+                    confirm_callback=lambda name, args, reason: True,  # auto-approve all
+                    on_content=_on_content,
+                    on_tool_start=_on_tool_start,
+                    on_tool_result=_on_tool_result,
+                    model_id=run_model_id,
+                )
+
 
             # Update session messages for continuation
             session.messages = messages
