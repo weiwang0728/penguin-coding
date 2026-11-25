@@ -592,25 +592,33 @@ class TeamManager:
                         self.version_tracker.clear(name)
                         return "api_error"
 
-                    # Build assistant message
+                    # Build assistant message. Truncated response: tool calls were
+                    # never executed, so do NOT backfill them — an assistant
+                    # tool_use must be followed by a matching tool_result or the
+                    # API rejects the next request.
                     assistant_content: list[dict[str, Any]] = []
                     if collected_content:
                         assistant_content.append({"type": "text", "text": collected_content})
-                    for tc in tool_calls_list:
-                        assistant_content.append({
-                            "type": "tool_use",
-                            "id": tc["id"],
-                            "name": tc["name"],
-                            "input": tc["input"],
-                        })
+                    if not was_truncated:
+                        for tc in tool_calls_list:
+                            assistant_content.append({
+                                "type": "tool_use",
+                                "id": tc["id"],
+                                "name": tc["name"],
+                                "input": tc["input"],
+                            })
                     messages.append({"role": "assistant", "content": assistant_content})
 
                     # Handle truncation
                     if was_truncated:
-                        messages.append({
-                            "role": "user",
-                            "content": "[System: Response truncated. Continue from where you left off.]"
-                        })
+                        if tool_calls_list:
+                            trunc_content = (
+                                "[System: Response truncated mid tool call. The call "
+                                "was NOT executed. Re-issue the complete tool call.]"
+                            )
+                        else:
+                            trunc_content = "[System: Response truncated. Continue from where you left off.]"
+                        messages.append({"role": "user", "content": trunc_content})
                         continue
 
                     # No tool calls → task complete

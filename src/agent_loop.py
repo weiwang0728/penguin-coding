@@ -221,7 +221,7 @@ def stream_response(
             if final_msg.stop_reason == "max_tokens":
                 was_truncated = True
                 generation.set_status("truncated", stop_reason="max_tokens")
-                logger.warning("Response truncated at max_tokens=%d", MAX_OUTPUT_TOKENS)
+                logger.warning("Response truncated at max_tokens=%d", max_tokens)
 
         tool_calls_list = []
         for idx in sorted(tool_use_blocks):
@@ -230,7 +230,9 @@ def stream_response(
                 {
                     "id": block["id"],
                     "name": block["name"],
-                    "input": block["input"],
+                    # Incomplete block (no content_block_stop, e.g. max_tokens cut
+                    # mid call): never executed, but must not raise KeyError.
+                    "input": block.get("input", {}),
                 }
             )
 
@@ -340,25 +342,33 @@ def run_subagent(
                     _set_run_status("api_error", error_type="connection")
                     return f"[Subagent error] Connection failed: {e}"
 
+            # Truncated response: tool calls were never executed, so do NOT
+            # backfill them — an assistant tool_use must be followed by a
+            # matching tool_result or the API rejects the next request.
             assistant_content: list[dict[str, Any]] = []
             if collected_content:
                 assistant_content.append({"type": "text", "text": collected_content})
-            for tc in tool_calls_list:
-                assistant_content.append({
-                    "type": "tool_use",
-                    "id": tc["id"],
-                    "name": tc["name"],
-                    "input": tc["input"],
-                })
+            if not was_truncated:
+                for tc in tool_calls_list:
+                    assistant_content.append({
+                        "type": "tool_use",
+                        "id": tc["id"],
+                        "name": tc["name"],
+                        "input": tc["input"],
+                    })
             assistant_msg = {"role": "assistant", "content": assistant_content}
             messages.append(assistant_msg)
             sub_pending_delta += estimate_messages_tokens([assistant_msg])
 
             if was_truncated:
-                trunc_msg = {
-                    "role": "user",
-                    "content": "[System: Response truncated. Continue from where you left off.]"
-                }
+                if tool_calls_list:
+                    trunc_content = (
+                        "[System: Response truncated mid tool call. The call was "
+                        "NOT executed. Re-issue the complete tool call.]"
+                    )
+                else:
+                    trunc_content = "[System: Response truncated. Continue from where you left off.]"
+                trunc_msg = {"role": "user", "content": trunc_content}
                 messages.append(trunc_msg)
                 sub_pending_delta += estimate_messages_tokens([trunc_msg])
                 continue
@@ -449,25 +459,33 @@ def run_subagent_with_tools(
                     _set_run_status("api_error", error_type="connection")
                     return f"[Subagent error] Connection failed: {e}"
 
+            # Truncated response: tool calls were never executed, so do NOT
+            # backfill them — an assistant tool_use must be followed by a
+            # matching tool_result or the API rejects the next request.
             assistant_content: list[dict[str, Any]] = []
             if collected_content:
                 assistant_content.append({"type": "text", "text": collected_content})
-            for tc in tool_calls_list:
-                assistant_content.append({
-                    "type": "tool_use",
-                    "id": tc["id"],
-                    "name": tc["name"],
-                    "input": tc["input"],
-                })
+            if not was_truncated:
+                for tc in tool_calls_list:
+                    assistant_content.append({
+                        "type": "tool_use",
+                        "id": tc["id"],
+                        "name": tc["name"],
+                        "input": tc["input"],
+                    })
             assistant_msg = {"role": "assistant", "content": assistant_content}
             messages.append(assistant_msg)
             sub_pending_delta += estimate_messages_tokens([assistant_msg])
 
             if was_truncated:
-                trunc_msg = {
-                    "role": "user",
-                    "content": "[System: Response truncated. Continue from where you left off.]"
-                }
+                if tool_calls_list:
+                    trunc_content = (
+                        "[System: Response truncated mid tool call. The call was "
+                        "NOT executed. Re-issue the complete tool call.]"
+                    )
+                else:
+                    trunc_content = "[System: Response truncated. Continue from where you left off.]"
+                trunc_msg = {"role": "user", "content": trunc_content}
                 messages.append(trunc_msg)
                 sub_pending_delta += estimate_messages_tokens([trunc_msg])
                 continue
@@ -634,27 +652,29 @@ def agent_loop(
                         )
                         continue  # messages unchanged, retry same request with more tokens
 
-                    # Already escalated: append truncated output + continuation prompt
+                    # Already escalated: append truncated output + continuation prompt.
+                    # Tool calls are NOT backfilled: none of them were executed, and
+                    # an assistant tool_use must be followed by a matching tool_result
+                    # or the API rejects the next request. Drop them and tell the
+                    # model to re-issue; it will regenerate the full call.
                     assistant_content: list[dict[str, Any]] = []
                     if collected_content:
                         assistant_content.append({"type": "text", "text": collected_content})
-                    for tc in tool_calls_list:
-                        assistant_content.append({
-                            "type": "tool_use",
-                            "id": tc["id"],
-                            "name": tc["name"],
-                            "input": tc["input"],
-                        })
                     messages.append({"role": "assistant", "content": assistant_content})
 
                     if recovery_state.recovery_count < MAX_RECOVERY_RETRIES:
-                        cont_msg = {
-                            "role": "user",
-                            "content": (
+                        if tool_calls_list:
+                            cont_content = (
+                                "Output token limit hit mid tool call. The call was "
+                                "NOT executed. Re-issue the complete tool call — no "
+                                "apology, no recap."
+                            )
+                        else:
+                            cont_content = (
                                 "Output token limit hit. Resume directly — "
                                 "no apology, no recap. Pick up mid-thought."
-                            ),
-                        }
+                            )
+                        cont_msg = {"role": "user", "content": cont_content}
                         messages.append(cont_msg)
                         recovery_state.recovery_count += 1
                         logger.warning(
