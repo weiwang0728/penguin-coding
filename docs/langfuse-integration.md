@@ -25,8 +25,8 @@ LANGFUSE_SECRET_KEY=sk-lf-...
 LANGFUSE_SAMPLE_RATE=1.0
 LANGFUSE_TRACING_ENVIRONMENT=development
 LANGFUSE_RELEASE=your-git-commit
-PENGUIN_OBSERVABILITY_CONTENT=metadata_only
-PENGUIN_OBSERVABILITY_MAX_CHARS=8000
+PENGUIN_OBSERVABILITY_CONTENT=redacted
+PENGUIN_OBSERVABILITY_MAX_CHARS=1000000
 ```
 
 `LANGFUSE_BASE_URL` 填项目所在 Cloud 区域或自托管服务地址，不能填模型 API 地址。模型仍使用已有的 `API_KEY`、`BASE_URL`、`MODEL_ID`。`.env` 不进入版本控制。也可直接由部署环境注入变量。
@@ -56,10 +56,10 @@ python -m src
 | `LANGFUSE_SAMPLE_RATE` | `1.0` | 0–1 的 Trace 采样比例；benchmark 建议 1.0 |
 | `LANGFUSE_TRACING_ENVIRONMENT` | SDK 默认值 | 开发、测试、生产环境区分 |
 | `LANGFUSE_RELEASE` | 无 | 建议填写构建版本或 Git SHA |
-| `PENGUIN_OBSERVABILITY_CONTENT` | `metadata_only` | `redacted` 开启经过处理的输入输出；其他值都不采集内容 |
-| `PENGUIN_OBSERVABILITY_MAX_CHARS` | `8000` | 内容截断阈值，限制在 256–65536 字符 |
+| `PENGUIN_OBSERVABILITY_CONTENT` | `redacted` | 默认采集经过处理的输入输出；`metadata_only` 只记录元数据，其他值不采集内容 |
+| `PENGUIN_OBSERVABILITY_MAX_CHARS` | `8000` | 内容截断阈值，限制在 256–2000000 字符；全量记录建议 1000000 |
 
-元数据模式记录 ID、模型、参数、耗时、状态、Token 用量等，不上传 prompt、响应正文、工具参数和工具输出。`redacted` 会处理常见密钥字段、Bearer Token 和已配置的模型密钥，并限制嵌套深度、列表长度和单字段内容。业务特定个人信息需要在 `src/observability.py` 的处理规则中补充。
+元数据模式记录 ID、模型、参数、耗时、状态、Token 用量等，不上传 prompt、响应正文、工具参数和工具输出。默认（`redacted`）采集全量输入输出：处理常见密钥字段、Bearer Token 和已配置的模型密钥，并限制嵌套深度、列表长度和单字段内容（阈值由 `PENGUIN_OBSERVABILITY_MAX_CHARS` 控制）。业务特定个人信息需要在 `src/observability.py` 的处理规则中补充。
 
 该开关只约束远程观测；原有本地 JSONL、消息文件和 benchmark 报告仍按现有行为保存内容。部署时应分别管理这些本地文件的访问和保留期限。
 
@@ -150,7 +150,7 @@ python scripts/import_langfuse_scores.py --run-dir artifacts/swebench/lf-run --r
 | 现象 | 检查方式 |
 | --- | --- |
 | 没有 Trace | 检查开关、可选依赖、两个项目 Key 和正确区域地址；运行 `scripts/check_langfuse.py` |
-| 有 Trace 但没有输入输出 | 默认 `metadata_only`；需要内容时设置 `redacted` 并重启 |
+| 有 Trace 但没有输入输出 | 检查 `PENGUIN_OBSERVABILITY_CONTENT` 是否为 `metadata_only` 或未知值；改后重启业务进程 |
 | Token 有值但费用为空 | 检查 Langfuse 中模型名称匹配、usage 类型和价格定义 |
 | 评测分数未出现 | 检查产物与评测结果文件的 Trace ID、报告有效性、完整性检查及 SDK 日志 |
 | 进程异常退出后缺最后几步 | 队列尚未导出；检查本地 JSONL 和主控的终态 |

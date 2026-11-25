@@ -55,7 +55,9 @@ def test_sdk_preserves_parentage_sessions_and_thread_context(tracing):
     assert all(s.attributes["session.id"] == "conversation" for s in spans)
 
 
-def test_sdk_generation_uses_response_usage_and_no_prompt_by_default(tracing):
+def test_sdk_generation_uses_response_usage_and_captures_content_by_default(tracing, monkeypatch):
+    # Delete the fixture override to exercise the code default (capture on).
+    monkeypatch.delenv("PENGUIN_OBSERVABILITY_CONTENT", raising=False)
     with obs.observation("llm.generate", as_type="generation", model="model", input="PRIVATE PROMPT") as span:
         span.first_token()
         span.first_token()
@@ -64,12 +66,23 @@ def test_sdk_generation_uses_response_usage_and_no_prompt_by_default(tracing):
             cache_creation_input_tokens=4, cache_creation=NS(ephemeral_5m_input_tokens=4))))
     exported = tracing.spans()[0]
     attributes = exported.attributes
-    assert "PRIVATE" not in repr(attributes)
+    assert "PRIVATE PROMPT" in attributes["langfuse.observation.input"]
+    assert "PRIVATE OUTPUT" in attributes["langfuse.observation.output"]
     usage = json.loads(attributes["langfuse.observation.usage_details"])
     assert usage == {"input": 13, "output": 7, "cache_read_input_tokens": 9, "cache_creation_input_tokens": 4}
     assert tracing.metadata(exported)["ephemeral_5m_input_tokens"] == 4
     assert "langfuse.observation.completion_start_time" in attributes
     assert tracing.metadata(exported)["ttft_ms"] >= 0
+
+
+def test_metadata_only_mode_still_suppresses_content(tracing, monkeypatch):
+    monkeypatch.setenv("PENGUIN_OBSERVABILITY_CONTENT", "metadata_only")
+    with obs.observation("llm.generate", as_type="generation", input="PRIVATE PROMPT") as span:
+        obs.record_response(span, NS(content="PRIVATE OUTPUT", stop_reason="end_turn"))
+    attributes = tracing.spans()[0].attributes
+    assert "PRIVATE" not in repr(attributes)
+    assert "langfuse.observation.input" not in attributes
+    assert "langfuse.observation.output" not in attributes
 
 
 def test_unknown_usage_is_not_zero_cost(tracing):

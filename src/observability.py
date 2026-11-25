@@ -63,7 +63,7 @@ def _redact_text(value: str) -> str:
 
 def _sanitize(value: Any, *, depth: int = 0) -> Any:
     """Bound traversal and redact secret keys before serialization."""
-    if depth > 6:
+    if depth > 8:
         return "[MAX_DEPTH]"
     if value is None or isinstance(value, (bool, int)):
         return value
@@ -73,9 +73,9 @@ def _sanitize(value: Any, *, depth: int = 0) -> Any:
         return _redact_text(value)[:_content_limit()]
     if isinstance(value, Mapping):
         return {str(key): "[REDACTED]" if _SECRET_KEY.search(str(key)) else _sanitize(item, depth=depth + 1)
-                for key, item in list(value.items())[:100]}
+                for key, item in list(value.items())[:200]}
     if isinstance(value, (list, tuple)):
-        return [_sanitize(item, depth=depth + 1) for item in value[:50]]
+        return [_sanitize(item, depth=depth + 1) for item in value[:1000]]
     if hasattr(value, "model_dump"):
         return _sanitize(value.model_dump(), depth=depth + 1)
     # Avoid arbitrary __str__ implementations (and object reprs containing secrets).
@@ -84,14 +84,15 @@ def _sanitize(value: Any, *, depth: int = 0) -> Any:
 
 def _content_limit() -> int:
     try:
-        return max(256, min(int(os.getenv("PENGUIN_OBSERVABILITY_MAX_CHARS", "8000")), 65536))
+        return max(256, min(int(os.getenv("PENGUIN_OBSERVABILITY_MAX_CHARS", "8000")), 2_000_000))
     except ValueError:
         return 8000
 
 
 def _capture_content() -> bool:
-    # Only this explicit opt-in enables IO; unknown values fail closed.
-    return os.getenv("PENGUIN_OBSERVABILITY_CONTENT", "metadata_only") == "redacted"
+    # Full input/output capture is the default; "metadata_only" opts out and
+    # unknown values still fail closed.
+    return os.getenv("PENGUIN_OBSERVABILITY_CONTENT", "redacted") == "redacted"
 
 
 def _payload(value: Any) -> Any:
