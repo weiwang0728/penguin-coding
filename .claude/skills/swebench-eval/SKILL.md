@@ -150,6 +150,7 @@ worker 已暴露 `exit_loop` 工具(复用 `src/prdbench/tools.py` 的 ExitLoopT
 ## 4. 失败重试策略
 
 - 一轮跑完后统计 `summary.json` 非 completed 的题,导出到新 JSONL,换新输出目录重试
+- `error` 且 0 patch、报 "Instance image build failed ... Neither 'setup.py' nor 'pyproject.toml' found":是 **pyproject-only repo**(sphinx≥7.2 等,无 setup.py、flit_core 后端)撞上 legacy 安装路径——2026-11-25 已在 `scripts/run_swebench.py` 按 setup.py 存在性分流修复;若复现说明用了旧代码,拉新代码后换新输出目录重跑
 - worker_error 且 0 patch:先查 `worker.log` 是否缺依赖(环境问题),修环境后该题必须重跑
 - Docker 模式下容器内 git clone 间歇 TLS 失败(容器/worker 异常退出):直接原参数重试该题,通常第二次即过;连续失败再查网络
 - timeout 带非空 patch:补丁可能有效,直接送评分判定,不必盲目重跑
@@ -180,11 +181,19 @@ Lite 评分仍用原命令（`--dataset_name princeton-nlp/SWE-bench_Lite` 或�
 ## 6. 现有产物
 
 **verified-030(当前验证集合,glm-5.3-flash,官方评分已完成)**
-- **最终结果:19/30 resolved(63.3%),unresolved 11,error 0**;合并 predictions 见 `verified-030-glm-merged-predictions.jsonl`,评分报告 `logs/run_evaluation/verified030-glm-*` 与 `reports/penguin-glm-5.3-flash.verified030-*.json`(harness 聚合报告统一归档在 `reports/`)
+- **最终结果:20/30 resolved(66.7%),error 0**——首轮 19/30(63.3%);11-25 对 11 个 unresolved 题做 Docker 模式重生成并评分,pylint-4970 翻盘(详见 `docs/verified-030-eval-report.md` §4.5)
+- 首轮合并 predictions 见 `verified-030-glm-merged-predictions.jsonl`,评分报告 `logs/run_evaluation/verified030-glm-*` 与 `reports/penguin-glm-5.3-flash.verified030-*.json`(harness 聚合报告统一归档在 `reports/`)
 - `verified-030-glm-20261123T083900Z`:30 题首轮生成(宿主机模式,parallel 3,timeout 7200;因 API 5h 限额中断过)
 - `verified-030-glm-retry2-20261124T065932Z`:5 个 api_error 题重跑(全部 completed)
+- **docker11 重生成(2026-11-25)**:
+  - `verified-030-unresolved11.public.jsonl`:11 个 unresolved 题清单
+  - `verified-030-glm-docker11-20261125T081103Z`:Docker 模式重生成 10 题 completed + 1 error(sphinx-11510 构建失败,已修复后重跑)
+  - `verified-030-glm-docker11-sph11510-20261125T101202Z`:sphinx-11510 修复后单题重跑(completed)
+  - `verified-030-glm-docker11-merged-predictions.jsonl`:11 题合并 predictions(全部非空 patch)
+  - 评分:`logs/run_evaluation/docker11-20261125T112035Z` + `reports/penguin-glm-5.3-flash.verified030-docker11-20261125T112035Z.json`;结果 **1/11 resolved**,20/30 总分
+  - 教训:django-11885 F2P 过但 P2P 回归 2;astropy-8872 是 pyparsing warning-as-error 环境问题(重评可豁免);sphinx 3 题测试基建仍跑不通
 - `verified-030.public.jsonl` / `manifest.json` / `SHA256SUMS`:抽样清单与公开字段
-- **env 镜像已存档**:featurize-restore 目录下 `images-env-verified030.tar.gz`(base+20 个 env,含 git HTTP/1.1 修复)+ `images-verified030.txt`(标签与 ID)+ `.sha256`;恢复后 Docker 模式生成与评分免构建
+- **env 镜像已存档**:featurize-restore 目录下 `images-env-verified030.tar.gz`(base+20 个 env,含 git HTTP/1.1 修复)+ `images-verified030.txt`(标签与 ID)+ `.sha256`;恢复后 Docker 模式生成与评分免构建;docker11 各题的 env 镜像均在此 20 个内,无需新存档(sweb.eval/dev 实例镜像为消耗品,从 env 镜像重建)
 - Lite 各题产物(历史基线):
   - `lite-020`:前 20 题基线(12 completed)
   - `lite-020-retry3`:11583 completed
