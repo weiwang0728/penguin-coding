@@ -101,9 +101,12 @@ def text_event(text):
     return NS(type="content_block_delta", delta=NS(type="text_delta", text=text))
 
 
-def final_message(text="done", *, stop_reason="end_turn", input_tokens=20, output_tokens=3):
+def final_message(text="done", *, stop_reason="end_turn", input_tokens=20, output_tokens=3,
+                  cache_read_input_tokens=None, cache_creation_input_tokens=None):
     return NS(content=[NS(type="text", text=text)], stop_reason=stop_reason,
-              usage=NS(input_tokens=input_tokens, output_tokens=output_tokens))
+              usage=NS(input_tokens=input_tokens, output_tokens=output_tokens,
+                       cache_read_input_tokens=cache_read_input_tokens,
+                       cache_creation_input_tokens=cache_creation_input_tokens))
 
 
 class FakeStream:
@@ -170,6 +173,26 @@ def test_stream_observation_lives_until_final_response_is_consumed(recorder):
     assert generation.responses == [response]
     assert loop.usage_stats["prompt_tokens"] == 123
     assert loop.usage_stats["completion_tokens"] == 7
+
+
+def test_stream_usage_includes_cached_prefix_for_compaction_baseline(recorder):
+    # Anthropic-convention providers report input_tokens as only the un-cached,
+    # un-written delta; the effective prompt size (compaction baseline) must
+    # include cache reads and cache writes.
+    stream = FakeStream([text_event("hi")], final_message(
+        input_tokens=474, output_tokens=5, cache_read_input_tokens=25_200))
+    result = list(loop.stream_response(scripted_client(stream), [], model_id="test-model"))
+    assert ("usage", 25_674) in result
+    assert loop.usage_stats["prompt_tokens"] == 474  # raw accounting unchanged
+
+
+def test_stream_usage_includes_cache_creation_first_turn(recorder):
+    # Cold start on a real Anthropic backend: the written prefix is part of
+    # the prompt and must count toward the compaction baseline.
+    stream = FakeStream([text_event("hi")], final_message(
+        input_tokens=1000, output_tokens=5, cache_creation_input_tokens=21_000))
+    result = list(loop.stream_response(scripted_client(stream), [], model_id="test-model"))
+    assert ("usage", 22_000) in result
 
 
 def test_tool_only_stream_has_first_response_and_preserves_tool_id(recorder):

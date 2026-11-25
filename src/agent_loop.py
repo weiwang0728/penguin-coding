@@ -245,10 +245,50 @@ def stream_response(
     if tool_calls_list:
         yield ("tool_calls", tool_calls_list)
     if input_tokens is not None:
-        yield ("usage", input_tokens)
+        # Anthropic-convention providers report input_tokens as only the
+        # un-cached, un-written delta; the cached prefix arrives separately
+        # (cache_read = hit, cache_creation = written this turn).  Compaction
+        # and usage tracking need the effective prompt size: sum all three.
+        cache_read = getattr(usage, "cache_read_input_tokens", None) or 0
+        cache_creation = getattr(usage, "cache_creation_input_tokens", None) or 0
+        effective_input = input_tokens + cache_read + cache_creation
+        yield ("usage", effective_input)
 
 
-def _repair_json(raw: str) -> dict[str, Any]:
+def _collect_tool_calls(tool_use_blocks: dict[int, dict[str, Any]]) -> list[dict[str, Any]]:
+    """Collect completed tool_use blocks, dropping unusable ones.
+
+    Blocks whose content_block_stop never fired (stream truncated mid-JSON)
+    and blocks with unparseable input are dropped: they have no input the
+    dispatcher could execute, and including them would crash or poison history.
+    """
+    tool_calls_list = []
+    for idx in sorted(tool_use_blocks):
+        block = tool_use_blocks[idx]
+        if not block.get("_complete"):
+            logger.warning(
+                "Dropping incomplete tool call %r (stream ended mid-JSON)", block["name"],
+            )
+            continue
+        if block.get("_parse_failed"):
+            logger.warning("Dropping tool call %r with unparseable input", block["name"])
+            continue
+        tool_calls_list.append(
+            {
+                "id": block["id"],
+                "name": block["name"],
+                "input": block.get("input", {}),
+            }
+        )
+    return tool_calls_list
+
+
+def _repair_json(raw: str) -> dict[str, Any] | None:
+    """Best-effort repair of a truncated/partial tool-input JSON string.
+
+    Returns the parsed dict, or None when the payload is beyond repair —
+    callers must treat None as "no usable tool input" rather than {}.
+    """
     try:
         return json.loads(raw)
     except json.JSONDecodeError:
