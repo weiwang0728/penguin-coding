@@ -4,6 +4,30 @@ from .base import Tool
 from .utils import resolve_and_validate_path, unified_diff, _changed_files, fuzzy_replace
 
 
+def _nearest_match_hint(content: str, old_string: str) -> str:
+    """Best-effort hint for a failed edit: locate the first non-empty line of
+    old_string in the file and report where it appears, so the model can
+    re-read the right region instead of guessing."""
+    lines = content.split('\n')
+    anchor = next((ln.strip() for ln in old_string.split('\n') if ln.strip()), '')
+    if not anchor:
+        return f"File has {len(lines)} lines; old_string was empty after normalization."
+    hits = [i + 1 for i, ln in enumerate(lines) if anchor in ln]
+    if hits:
+        show = ', '.join(str(h) for h in hits[:3])
+        more = f" (and {len(hits) - 3} more)" if len(hits) > 3 else ""
+        return (f"The first line of your old_string appears at line(s) {show}{more}, "
+                f"but the surrounding content differs — re-read that region "
+                f"(read_file with offset={max(1, hits[0] - 10)}) and retry with the exact text.")
+    anchor40 = anchor[:40]
+    partial = [i + 1 for i, ln in enumerate(lines) if anchor40 and anchor40 in ln]
+    if partial:
+        return (f"A line similar to your old_string's first line appears at line(s) "
+                f"{', '.join(str(h) for h in partial[:3])} — re-read that region and retry with the exact text.")
+    return (f"None of old_string's lines match the file ({len(lines)} lines) — "
+            f"the file content differs from what you expect; re-read it before editing.")
+
+
 @register_tool
 class EditFileTool(Tool):
     name = "edit_file"
@@ -91,9 +115,10 @@ Rules:
                             f"— must be unique to avoid ambiguous edits"
                         )
                     if count == 0:
+                        hint = _nearest_match_hint(content, edit["old_string"])
                         return (
                             f"Error in edit #{i + 1}: old_string not found in '{path}' "
-                            f"(exact match and normalized match both failed)"
+                            f"(exact match and normalized match both failed). {hint}"
                         )
 
                 new_content, match_type = result

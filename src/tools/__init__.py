@@ -72,8 +72,13 @@ def register_delegate_tool(client) -> None:
 
 
 # Convenience functions — allow direct calls like read_file("path")
-def read_file(path: str) -> str:
-    return ToolRegistry.create_instance("read_file").execute(path=path)
+def read_file(path: str, offset: int | None = None, limit: int | None = None) -> str:
+    kwargs = {"path": path}
+    if offset is not None:
+        kwargs["offset"] = offset
+    if limit is not None:
+        kwargs["limit"] = limit
+    return ToolRegistry.create_instance("read_file").execute(**kwargs)
 
 def write_file(path: str, content: str) -> str:
     return ToolRegistry.create_instance("write_file").execute(path=path, content=content)

@@ -169,6 +169,25 @@ class TestReadFile:
         assert "Error" in result
         assert "not found" in result
 
+    def test_read_offset_and_limit(self):
+        with tempfile.TemporaryDirectory(dir=ALLOWED_BASE_DIR) as tmpdir:
+            rel = os.path.relpath(tmpdir, ALLOWED_BASE_DIR)
+            filepath = os.path.join(rel, "paged.txt")
+            write_file(filepath, "\n".join(f"line {i}" for i in range(1, 31)))
+            result = read_file(filepath, offset=10, limit=5)
+            assert "[Showing lines 10-14 of 30 total]" in result
+            assert "line 10" in result and "line 14" in result
+            assert "line 15" not in result
+            assert f"use offset=15" in result
+
+    def test_read_offset_beyond_end(self):
+        with tempfile.TemporaryDirectory(dir=ALLOWED_BASE_DIR) as tmpdir:
+            rel = os.path.relpath(tmpdir, ALLOWED_BASE_DIR)
+            filepath = os.path.join(rel, "short.txt")
+            write_file(filepath, "only line")
+            result = read_file(filepath, offset=5)
+            assert "[Showing lines 5-4 of 1 total]" in result
+
     def test_read_path_traversal(self):
         result = read_file("../../../etc/passwd")
         assert "Error" in result
@@ -197,7 +216,11 @@ class TestWriteFile:
             filepath = os.path.join(rel, "test_write.txt")
             result = write_file(filepath, "hello world")
             assert "Successfully" in result
-            assert read_file(filepath).strip() == "hello world"
+            # read_file prepends a "[Showing lines X-Y of Z total]" header
+            content = read_file(filepath)
+            lines = content.split('\n')
+            assert lines[0].startswith("[Showing lines")
+            assert '\n'.join(lines[1:]).strip() == "hello world"
 
     def test_write_creates_parent_dirs(self):
         with tempfile.TemporaryDirectory(dir=ALLOWED_BASE_DIR) as tmpdir:
@@ -279,6 +302,30 @@ class TestSearchFiles:
 # --- edit_file ---
 
 class TestEditFile:
+
+    def _make_file(self, tmpdir, name="code.py"):
+        rel = os.path.relpath(tmpdir, ALLOWED_BASE_DIR)
+        filepath = os.path.join(rel, name)
+        body = "import os\n\n\ndef alpha():\n    return 1\n\n\ndef beta():\n    return 2\n"
+        write_file(filepath, body)
+        return filepath, body
+
+    def test_edit_not_found_hint_reports_anchor_line(self):
+        with tempfile.TemporaryDirectory(dir=ALLOWED_BASE_DIR) as tmpdir:
+            filepath, _ = self._make_file(tmpdir)
+            # anchor line exists, but surrounding content is wrong
+            result = edit_file(filepath, old_string="def alpha():\n    return 999\n",
+                               new_string="def alpha():\n    return 0\n")
+            assert "appears at line(s) 4" in result
+            assert "re-read that region" in result
+
+    def test_edit_mutually_exclusive_params_rejected(self):
+        with tempfile.TemporaryDirectory(dir=ALLOWED_BASE_DIR) as tmpdir:
+            filepath, _ = self._make_file(tmpdir)
+            result = edit_file(filepath, old_string="def alpha():",
+                               new_string="def alpha2():", edits=[])
+            assert "Error" in result
+
     def test_edit_replaces_string(self):
         with tempfile.TemporaryDirectory(dir=ALLOWED_BASE_DIR) as tmpdir:
             rel = os.path.relpath(tmpdir, ALLOWED_BASE_DIR)
