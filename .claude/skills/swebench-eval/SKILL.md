@@ -1,17 +1,23 @@
 ---
 name: swebench-eval
-description: SWE-bench Lite 测评全流程 runbook——Featurize 归还前保存、重新租用恢复、生成预测(串行/并行)、监控、重试与官方评分。当用户要求继续/启动/排查 swebench 测评,或更换模型重跑时使用。
+description: SWE-bench 测评全流程 runbook(当前验证集合 swebench-verify-30)——Featurize 归还前保存、重新租用恢复、生成预测(默认 Docker 模式,宿主机模式仅降级用)、监控、重试与官方评分。当用户要求继续/启动/排查 swebench 测评,或更换模型重跑时使用。
 ---
 
-# SWE-bench Lite 测评 Runbook
+# SWE-bench 测评 Runbook(验证集合:verified-030)
 
 生成与评分分离:`scripts/run_swebench.py` 调 agent 产 patch;官方 harness 在 Docker 里评分。完整文档见 `src/swebench/README.md`。
+
+**当前验证集合 `verified-030`**:从 SWE-bench_Verified(500 题)分层抽样 30 题——各 repo 平方根配额(每 repo ≥1,合计 30)× 4 档 Verified 难度轮转,seed=20261123。抽样清单与公开字段:
+- `artifacts/swebench/verified-030.public.jsonl`(30 行,instance_id/repo/base_commit/problem_statement)
+- `artifacts/swebench/verified-030.manifest.json`(抽样方法与分布)、`verified-030.SHA256SUMS`
+- 评分用完整数据:`$HOME/work/swebench-grading/verified-dl/verified-test.parquet`(含 test_patch/gold,不进 git)
+- 覆盖 12 个 repo(astropy 2、django 7、matplotlib 3、seaborn 1、flask 1、requests 1、xarray 2、pylint 1、pytest 2、sklearn 3、sphinx 3、sympy 4);本地 `repos/` 只覆盖 astropy+django,其余 repo 由 runner 从 GitHub 克隆(需网络)
 
 ## 1. Featurize 重新租用
 
 归还按量实例后，持久化目录是 `/home/featurize/work`。项目、未提交代码、项目根目录的 `.env`、历史 checkout、各轮预测、评分报告和 `logs/` 都已在云盘。新实例使用同一账号的云盘，选择可运行 Docker 的 Linux x86_64 环境。当前快照来自 Ubuntu 22.04、conda Python 3.11.8、Docker 26.1.0。[Featurize 实例归还说明](https://docs.featurize.cn/docs/manual/instance-rent)
 
-在同一终端运行以下命令。项目的恢复目录含镜像归档、Python 包、版本清单及只有公开字段的 Lite test JSONL。相邻的评分目录保存同一 revision 的完整 JSON 数组和 Arrow 缓存。
+在同一终端运行以下命令。项目的恢复目录含镜像归档、Python 包、版本清单及只有公开字段的 Lite test JSONL。相邻的评分目录保存 Lite 完整 JSON 数组和 Arrow 缓存,以及 Verified 完整 parquet(`verified-dl/`)。
 
 ```bash
 cd ~/work/penguin-coding
@@ -20,6 +26,9 @@ G="$HOME/work/swebench-grading"
 DATA="$G/SWE-bench_Lite-test-6ec7bb89b9342f664a54a6e0a6ea6501d3437cc2.json"
 (cd "$R" && sha256sum -c SHA256SUMS)
 (cd "$G" && sha256sum -c SHA256SUMS)
+(cd "$PWD/artifacts/swebench" && sha256sum -c verified-030.SHA256SUMS)
+sha256sum "$G/verified-dl/verified-test.parquet"
+# 期望值:a45b1fe4e2f0c8390b2b2938ac83e92ed5979000856808f3679c07812e9e6dcd
 ```
 
 两组校验均通过后，恢复宿主机 Python 环境。以下包包含 CPython 3.11 的原生扩展，使用与快照匹配的基础镜像。每台新实例做一次，后续终端直接激活该环境。
@@ -32,14 +41,16 @@ tar -xzf "$R/python311-packages.tar.gz" -C "$(python -c 'import sysconfig; print
 python -m pytest -q test/test_swebench.py
 ```
 
-重新评分或使用 `--docker` 生成时，在 Docker 服务就绪后恢复镜像。确认 `docker info` 可访问 daemon，且 Docker 数据盘有足够空间解压镜像。归档中的标签及镜像 ID 见 `images.txt`。
+重新评分或使用 `--docker` 生成时，在 Docker 服务就绪后恢复镜像。确认 `docker info` 可访问 daemon，且 Docker 数据盘有足够空间解压镜像。两个归档:旧 `images.tar.gz`(Lite 基线 era,标签见 `images.txt`)与 **`images-env-verified030.tar.gz`(verified-030 全套 base+env 镜像,标签见 `images-verified030.txt`,校验和见 `images-env-verified030.sha256`)**。先载旧归档再载新归档(新归档的 4 个同名 env 标签会覆盖旧版,含 git HTTP/1.1 修复,以新版为准):
 
 ```bash
-docker info >/dev/null && docker load -i "$R/images.tar.gz"
+docker info >/dev/null && docker load -i "$R/images.tar.gz" && docker load -i "$R/images-env-verified030.tar.gz"
 (while read -r tag digest; do
   [ "$(docker image inspect --format '{{.Id}}' "$tag")" = "$digest" ] || { echo "镜像校验失败 $tag" >&2; exit 1; }
-done < "$R/images.txt")
+done < "$R/images-verified030.txt")
 ```
+
+恢复后的 env 镜像(`sweb.env.x86_64.*`,20 个)可直接供 Docker 模式生成与官方评分复用,无需重新构建;eval 镜像不存档(从 env 镜像重建,单题数秒到数十分钟)。
 
 **只重评现有补丁**可直接使用之前的 predictions 和本地完整评分数据。下面重评已有镜像的五题，生成新报告，整个过程无需模型密钥。
 
@@ -50,17 +61,31 @@ python -m swebench.harness.run_evaluation \
   --cache_level instance --max_workers 2 --run_id "regrade-$(date -u +%Y%m%dT%H%M%SZ)"
 ```
 
-**重新生成预测**需要项目根目录 `.env` 中有效的 `API_KEY`、兼容 Anthropic Messages 的 `BASE_URL` 及可用的模型接口。下面按 Lite 原顺序重跑基线前 20 题。两个本地仓库入口指向云盘的历史 checkout，覆盖这 20 个 base commit。
+**重新生成预测**需要项目根目录 `.env` 中有效的 `API_KEY`、兼容 Anthropic Messages 的 `BASE_URL` 及可用的模型接口。默认跑 **verified-030** 全部 30 题。**默认使用 Docker 模式生成**（`--docker --dataset <完整数据集>`）：agent 在每题正确的 testbed 容器里工作，能看到真实测试结果；宿主机共享 Python 3.11 跑不了老 repo 的测试（缺 pkg_resources、astropy_helpers 子模块、老依赖），会产生盲改 patch。verified-030 的大多数 repo 没有现成镜像，Docker 模式需联网构建 env 镜像；`repos/` 本地 checkout 只覆盖 astropy+django，其余 repo 需网络从 GitHub 克隆（不带 `--repo-root` 即可）。
+
+```bash
+python scripts/run_swebench.py \
+  --dataset-file artifacts/swebench/verified-030.public.jsonl \
+  --dataset "$G/SWE-bench_Verified-verified030.json" \
+  --model glm-5.3-flash --model-name penguin-glm-5.3-flash \
+  --max-iterations 100 --timeout 7200 --parallel 3 \
+  --output "artifacts/swebench/verified-030-$(date -u +%Y%m%dT%H%M%SZ)" \
+  --docker
+```
+
+Lite 基线前 20 题仍可用本地 checkout 重跑（离线,timeout 建议 7200）：
 
 ```bash
 python scripts/run_swebench.py \
   --dataset-file "$R/lite-test.public.jsonl" --repo-root "$R/repos" --limit 20 \
   --model glm-5.3-flash --model-name penguin-glm-5.3-flash \
-  --max-iterations 100 --timeout 1800 --parallel 1 \
+  --max-iterations 100 --timeout 7200 --parallel 1 \
   --output "artifacts/swebench/lite-020-rerun-$(date -u +%Y%m%dT%H%M%SZ)"
 ```
 
-使用 Docker 生成时，在上述生成命令中追加 `--docker --dataset "$DATA"`。runner 用 `--dataset-file` 读取公开输入，用 `--dataset` 构造完整 test spec。现有镜像覆盖 14 个 eval 实例、6 个 dev 实例，新增题目可能需要联网构建。跑其他仓库时，添加相应的本地仓库，或移除 `--repo-root` 允许从 GitHub 克隆。
+Docker 模式说明：runner 用 `--dataset-file` 读取公开输入，用 `--dataset` 构造完整 test spec。**env 镜像跨 run 复用**（`sweb.env.x86_64.<hash>` 按 environment.yml 哈希命名）——先 `docker image ls | grep sweb.env` 查已有哪些，已构建的题秒级就绪；未构建的需联网构建，重环境（matplotlib/sklearn）单镜像可达 1–2.5 小时。容器内 `git clone github.com` 大仓库会间歇性 TLS 中断（GnuTLS -110），失败重试通常可过；宿主机 `repos/` 本地 checkout 不能注入容器，Docker 模式一律走 GitHub 克隆。
+
+**宿主机模式（不带 `--docker`）已不推荐**，仅作降级手段：agent 用宿主机共享 Python 3.11 跑测试，老 repo 无法执行测试 → 盲改 patch（2026-11-24 verified-030 首轮 60% 解决率中 sphinx 0/3、pylint 0/1 部分归因于此）。宿主机模式的 permission 沙箱（工作区边界、rm 类 CONFIRM→deny、`$()` 拦截）是宿主机唯一防线，不要放开。
 
 **续跑已有输出目录**时，按原 `run.json` 恢复参数，再加 `--resume`。原来使用 HF 数据集名的 run，可将保存的缓存复制到实例本地可写目录，保持原参数并离线加载。
 
@@ -70,7 +95,7 @@ cp -a "$G/hf-cache/datasets" "$HF_HOME/"
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1
 ```
 
-**下次归还前**，确认新 run 的 `run.json`、`predictions.jsonl`、`summary.json` 和评分报告都在 `~/work`。若更换了数据集 revision 或 Python 依赖，保存对应数据和环境。若构建了新镜像，用 `docker image ls` 核对 base/env/eval/dev 标签，将所需标签一起 `docker save` 到新归档，记录镜像 ID 和 SHA-256；完成校验后再归还。保留 `lite-020` 下被 `repos/` 引用的 checkout。
+**下次归还前**，确认新 run 的 `run.json`、`predictions.jsonl`、`summary.json` 和评分报告都在 `~/work`。verified-030 的三个文件（public.jsonl / manifest.json / SHA256SUMS）与 `$G/verified-dl/verified-test.parquet` 是评分的必备数据，缺失则重新下载并更新 `verified-030.SHA256SUMS` 与 parquet 哈希。若更换了数据集 revision 或 Python 依赖，保存对应数据和环境。若构建了新镜像，用 `docker image ls` 核对 base/env/eval/dev 标签，将所需标签一起 `docker save` 到新归档，记录镜像 ID 和 SHA-256；完成校验后再归还。保留 `lite-020` 下被 `repos/` 引用的 checkout；verified-030 各 repo 的 checkout（`verified-030-glm-*/<instance>/repo`）如磁盘允许也一并保留，可省下次克隆。
 
 ### 手动安装
 
@@ -83,13 +108,17 @@ python -m pip install -c "$R/python-versions.txt" -r requirements.txt \
 
 ## 2. 启动/续跑测评
 
+默认 Docker 模式（agent 在 testbed 容器内工作，测试结果真实）：
+
 ```bash
 python scripts/run_swebench.py \
-  --dataset princeton-nlp/SWE-bench_Lite --split test \
+  --dataset-file artifacts/swebench/verified-030.public.jsonl \
+  --dataset "$HOME/work/swebench-grading/SWE-bench_Verified-verified030.json" \
   --model <MODEL_ID> --model-name penguin-<MODEL_ID> \
-  --max-iterations 100 --timeout 3600 \
+  --max-iterations 100 --timeout 7200 \
   --parallel 3 \
-  --output artifacts/swebench/<run-name>
+  --output artifacts/swebench/<run-name> \
+  --docker
 ```
 
 - **HF 直连会被限流**。数据集拿不到时:从已有 run 的 `run.json` 导出题目公开字段(instance_id/repo/base_commit/problem_statement)为 JSONL,改用 `--dataset-file` + `--instance-ids`
@@ -122,22 +151,43 @@ worker 已暴露 `exit_loop` 工具(复用 `src/prdbench/tools.py` 的 ExitLoopT
 
 - 一轮跑完后统计 `summary.json` 非 completed 的题,导出到新 JSONL,换新输出目录重试
 - worker_error 且 0 patch:先查 `worker.log` 是否缺依赖(环境问题),修环境后该题必须重跑
+- Docker 模式下容器内 git clone 间歇 TLS 失败(容器/worker 异常退出):直接原参数重试该题,通常第二次即过;连续失败再查网络
 - timeout 带非空 patch:补丁可能有效,直接送评分判定,不必盲目重跑
 
 ## 5. 官方评分(Docker)
 
+verified-030 评分用本地保存的完整数据（离线，不依赖 HF）。`run_evaluation` 的 `--dataset_name` 接受本地文件；Verified 完整数据是 parquet，先转成 JSON 数组（与 Lite 的 `SWE-bench_Lite-test-*.json` 同格式）再传：
+
 ```bash
+python - <<'PY'
+import json, os, pandas as pd
+g = os.path.expanduser("~/work/swebench-grading")
+ids = [json.loads(l)["instance_id"] for l in open("artifacts/swebench/verified-030.public.jsonl")]
+df = pd.read_parquet(os.path.join(g, "verified-dl/verified-test.parquet"))
+sel = df[df["instance_id"].isin(ids)]
+with open(os.path.join(g, "SWE-bench_Verified-verified030.json"), "w") as f:
+    json.dump(json.loads(sel.to_json(orient="records")), f)
+print(len(sel), "instances written")
+PY
 python -m swebench.harness.run_evaluation \
-  --dataset_name princeton-nlp/SWE-bench_Lite \
+  --dataset_name "$HOME/work/swebench-grading/SWE-bench_Verified-verified030.json" \
   --predictions_path artifacts/swebench/<run>/predictions.jsonl \
-  --max_workers 2 --run_id <run-id>
+  --max_workers 2 --run_id "verified030-<run-id>"
 ```
 
-小样本加 `--instance_ids ID1 ID2`;重评分换 run_id 避免缓存;resolved 以官方判定为准,按预先选定题目总数算解决率。
+Lite 评分仍用原命令（`--dataset_name princeton-nlp/SWE-bench_Lite` 或本地 Lite JSON）。小样本加 `--instance_ids ID1 ID2`;重评分换 run_id 避免缓存;resolved 以官方判定为准,verified-030 按固定 30 题算解决率。
 
 ## 6. 现有产物
 
-- `artifacts/swebench/lite-020`:前 20 题基线(12 completed)
-- `lite-020-retry3`:11583 completed
-- `lite-020-retry7`:7 题重试(3600s + parallel 3)
+**verified-030(当前验证集合,glm-5.3-flash,官方评分已完成)**
+- **最终结果:19/30 resolved(63.3%),unresolved 11,error 0**;合并 predictions 见 `verified-030-glm-merged-predictions.jsonl`,评分报告 `logs/run_evaluation/verified030-glm-*` 与 `reports/penguin-glm-5.3-flash.verified030-*.json`(harness 聚合报告统一归档在 `reports/`)
+- `verified-030-glm-20261123T083900Z`:30 题首轮生成(宿主机模式,parallel 3,timeout 7200;因 API 5h 限额中断过)
+- `verified-030-glm-retry2-20261124T065932Z`:5 个 api_error 题重跑(全部 completed)
+- `verified-030.public.jsonl` / `manifest.json` / `SHA256SUMS`:抽样清单与公开字段
+- **env 镜像已存档**:featurize-restore 目录下 `images-env-verified030.tar.gz`(base+20 个 env,含 git HTTP/1.1 修复)+ `images-verified030.txt`(标签与 ID)+ `.sha256`;恢复后 Docker 模式生成与评分免构建
+- Lite 各题产物(历史基线):
+  - `lite-020`:前 20 题基线(12 completed)
+  - `lite-020-retry3`:11583 completed
+  - `lite-020-retry7`:7 题重试(3600s + parallel 3)
+  - `lite-021-040-20261123T061514Z`:21–40 题扩展
 - 各 run 的 `run.json` 是重建题目清单的数据源
