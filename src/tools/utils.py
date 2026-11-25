@@ -17,6 +17,14 @@ if _PRDBENCH_MODE:
     if _extra and Path(_extra).is_dir():
         ALLOWED_DIRS.append(Path(_extra))
 
+# Extra allowed directories (colon-separated), e.g. sandboxed container paths
+# like /tmp that are safe to expose to the agent.
+_EXTRA_ALLOWED = os.getenv("CODE_AGENT_EXTRA_ALLOWED_DIRS", "")
+for _dir in filter(None, _EXTRA_ALLOWED.split(":")):
+    _p = Path(_dir)
+    if _p.is_dir():
+        ALLOWED_DIRS.append(_p)
+
 
 class _ThreadSafeSet:
     """A set wrapper with a lock for safe concurrent access."""
