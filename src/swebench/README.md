@@ -112,3 +112,7 @@ python -m pytest test/test_swebench.py -q
 ```
 
 测试使用临时 Git 仓库和模拟 worker，不调用模型：验证补丁可应用、新增/删除/已提交变更、真实 index 不被污染、公开字段过滤、超时保留补丁、恢复运行及工具工作目录一致性。
+
+## 测评报告
+
+verified-030 首轮完整测评(2026-11-24,glm-5.3-flash,19/30 resolved)的结果、行为分析与经验教训见 [docs/verified-030-eval-report.md](../docs/verified-030-eval-report.md)。

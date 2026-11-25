@@ -12,6 +12,7 @@ __pycache__/
 .vscode/
 docs/*
 !docs/langfuse-integration.md
+!docs/verified-030-eval-report.md
 workspace/
 /prdbench_dev*.log
 /TEST_PLAN.md
