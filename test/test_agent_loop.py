@@ -1,5 +1,7 @@
 """Unit tests for agent_loop.py and compact.py"""
 
+from unittest.mock import Mock
+
 import pytest
 
 import src.agent_loop as agent_loop_module
@@ -286,6 +288,169 @@ class TestRepairJson:
         assert isinstance(result, dict)
         assert result.get("key") == "value"
 
-    def test_completely_broken_returns_empty(self):
-        result = _repair_json("}{][")
-        assert isinstance(result, dict)
+    def test_completely_broken_returns_none(self):
+        assert _repair_json("}{][") is None
+
+
+# --- run_agent truncation recovery ---
+
+@pytest.fixture(autouse=True)
+def reset_usage(monkeypatch):
+    monkeypatch.setattr(agent_loop_module, "usage_stats", {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "last_input_tokens": 0,
+        "pending_delta": 0,
+    })
+
+
+class TestTruncationRecovery:
+    def test_preserves_partial_output_and_closes_tool_calls(self, monkeypatch):
+        """First truncation: partial text + tool_use kept, tool_result synthesized,
+        budget escalated, and the truncated tool call is never executed."""
+        calls_seen = []
+
+        def fake_stream(client, messages, system_prompt=None, tools=None,
+                        max_tokens=16384, model_id=None):
+            calls_seen.append(max_tokens)
+            if len(calls_seen) == 1:
+                yield ("text_delta", "partial ")
+                yield ("truncated", True)
+                yield ("tool_calls", [
+                    {"id": "t0", "name": "run_command", "input": {"command": "ls"}},
+                ])
+            else:
+                yield ("text_delta", "done")
+                yield ("usage", 10)
+
+        dispatcher = Mock()
+        monkeypatch.setattr(agent_loop_module, "stream_response", fake_stream)
+
+        content, messages = agent_loop_module.agent_loop(
+            client=Mock(), user_message="Go", messages=[], tool_dispatcher=dispatcher,
+        )
+
+        # attempt 1 at the default budget, attempt 2 escalated
+        assert calls_seen == [agent_loop_module.MAX_OUTPUT_TOKENS,
+                              agent_loop_module.ESCALATED_MAX_TOKENS]
+        # messages: user, assistant(truncated), user(tool_result+continuation), assistant(done)
+        assert len(messages) == 4
+        assert messages[1]["role"] == "assistant"
+        tool_use = [b for b in messages[1]["content"] if b["type"] == "tool_use"]
+        assert tool_use and tool_use[0]["id"] == "t0"
+        assert messages[2]["role"] == "user"
+        results = [b for b in messages[2]["content"] if b.get("type") == "tool_result"]
+        assert results and results[0]["tool_use_id"] == "t0"
+        assert results[0]["is_error"] is True
+        assert "not executed" in results[0]["content"].lower()
+        # continuation hint text is present alongside the synthetic result
+        assert any(b.get("type") == "text" and "Resume" in b["text"]
+                   for b in messages[2]["content"])
+        dispatcher.dispatch.assert_not_called()
+        assert content == "done"
+
+    def test_truncation_without_tool_calls_appends_plain_continuation(self, monkeypatch):
+        def fake_stream(client, messages, **kwargs):
+            if len(messages) == 1:
+                yield ("text_delta", "half ")
+                yield ("truncated", True)
+            else:
+                yield ("text_delta", "done")
+                yield ("usage", 5)
+
+        monkeypatch.setattr(agent_loop_module, "stream_response", fake_stream)
+        content, messages = agent_loop_module.agent_loop(
+            client=Mock(), user_message="Go", messages=[], tool_dispatcher=Mock(),
+        )
+        # continuation message is plain text (no tool_result blocks needed)
+        assert isinstance(messages[2]["content"], str)
+        assert "Resume" in messages[2]["content"]
+        assert content == "done"
+
+    def test_gives_up_after_max_continuations(self, monkeypatch):
+        attempts = []
+
+        def fake_stream(client, messages, **kwargs):
+            attempts.append(len(messages))
+            yield ("text_delta", "x")
+            yield ("truncated", True)
+
+        monkeypatch.setattr(agent_loop_module, "stream_response", fake_stream)
+        content, messages = agent_loop_module.agent_loop(
+            client=Mock(), user_message="Go", messages=[], tool_dispatcher=Mock(),
+        )
+        # 1 initial + 1 escalated + MAX_RECOVERY_RETRIES continuations
+        assert len(attempts) == 2 + agent_loop_module.MAX_RECOVERY_RETRIES
+        assert content == "x"
+
+    def test_provider_rejecting_escalated_budget_reverts_to_default(self, monkeypatch):
+        import anthropic
+
+        calls_seen = []
+
+        def fake_stream(client, messages, system_prompt=None, tools=None,
+                        max_tokens=16384, model_id=None):
+            calls_seen.append(max_tokens)
+            if len(calls_seen) == 1:
+                yield ("text_delta", "p")
+                yield ("truncated", True)
+            elif len(calls_seen) == 2:
+                raise anthropic.APIStatusError(
+                    "max_tokens: 65536 > 32768, reduce the value",
+                    response=Mock(status_code=400, headers={}, request=Mock()),
+                    body=None,
+                )
+            else:
+                yield ("text_delta", "ok")
+                yield ("usage", 5)
+
+        monkeypatch.setattr(agent_loop_module, "stream_response", fake_stream)
+        content, messages = agent_loop_module.agent_loop(
+            client=Mock(), user_message="Go", messages=[], tool_dispatcher=Mock(),
+        )
+        assert calls_seen == [agent_loop_module.MAX_OUTPUT_TOKENS,
+                              agent_loop_module.ESCALATED_MAX_TOKENS,
+                              agent_loop_module.MAX_OUTPUT_TOKENS]
+        assert content == "ok"
+
+
+# --- _collect_tool_calls ---
+
+class TestCollectToolCalls:
+    @staticmethod
+    def _block(idx, name="run_command", complete=True, parse_failed=False, has_input=True):
+        block = {
+            "id": f"tool_{idx}",
+            "name": name,
+            "_partial_json": "",
+            "_complete": complete,
+        }
+        if has_input:
+            block["input"] = {}
+        if parse_failed:
+            block["_parse_failed"] = True
+        return block
+
+    def test_complete_blocks_kept_in_index_order(self):
+        blocks = {1: self._block(1, "read_file"), 0: self._block(0, "run_command")}
+        calls = _collect_tool_calls(blocks)
+        assert [c["id"] for c in calls] == ["tool_0", "tool_1"]
+
+    def test_incomplete_block_dropped(self):
+        # content_block_stop never fired (stream truncated mid-JSON):
+        # block has no "input" key at all — must not raise KeyError.
+        blocks = {0: self._block(0, complete=True), 1: self._block(1, complete=False, has_input=False)}
+        calls = _collect_tool_calls(blocks)
+        assert [c["id"] for c in calls] == ["tool_0"]
+
+    def test_parse_failed_block_dropped(self):
+        blocks = {0: self._block(0, parse_failed=True)}
+        assert _collect_tool_calls(blocks) == []
+
+    def test_missing_input_defaults_to_empty_dict(self):
+        blocks = {0: self._block(0, has_input=False, complete=True)}
+        calls = _collect_tool_calls(blocks)
+        assert calls == [{"id": "tool_0", "name": "run_command", "input": {}}]
+
+    def test_empty_blocks(self):
+        assert _collect_tool_calls({}) == []

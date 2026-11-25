@@ -819,6 +819,53 @@ class TestLlmCompactMessages:
         assert len(result) > 0
 
 
+class TestTieredCompaction:
+    """Staged L2/L3 behavior: collapse only above the L3 trigger."""
+
+    def _history(self, rounds: int = 8):
+        messages = [{"role": "user", "content": "Start"}]
+        for i in range(rounds):
+            messages.append({
+                "role": "assistant",
+                "content": [{
+                    "type": "tool_use", "id": f"t{i}",
+                    "name": "read_file", "input": {"path": f"f{i}.py"},
+                }],
+            })
+            messages.append({
+                "role": "user",
+                "content": [{
+                    "type": "tool_result", "tool_use_id": f"t{i}",
+                    "content": "x" * 5000,
+                }],
+            })
+        return messages
+
+    def test_l2_over_budget_below_l3_threshold_defers_collapse(self):
+        """L2 exhausted but below the L3 trigger: return the summary result, no collapse."""
+        client = FakeClient(summary="tiny summary")
+        messages = self._history()  # est ~10k tokens, far below 85% of 100k
+        result = llm_compact_messages(messages, client, "model-id", max_tokens=10)
+        assert any("[Conversation Summary]" in str(m.get("content")) for m in result)
+        assert all("[Context collapsed" not in str(m.get("content")) for m in result)
+
+    def test_allow_collapse_runs_l3_after_l2_exhausted(self):
+        client = FakeClient(summary="tiny summary")
+        messages = self._history()
+        result = llm_compact_messages(
+            messages, client, "model-id", max_tokens=10, allow_collapse=True
+        )
+        assert result[0]["role"] == "user"
+        assert "[Context collapsed" in result[0]["content"]
+
+    def test_auto_collapse_enabled_above_l3_threshold(self, monkeypatch):
+        monkeypatch.setattr("src.compact.MAX_CONTEXT_TOKENS", 200)
+        client = FakeClient(summary="tiny summary")
+        messages = self._history()  # est ~10k >> int(200 * 0.85)
+        result = llm_compact_messages(messages, client, "model-id", max_tokens=10)
+        assert "[Context collapsed" in result[0]["content"]
+
+
 @pytest.mark.parametrize("first_message, system_prompt, summary_index, summary_header", [
     ("Start", COMPACT_SYSTEM_PROMPT, 1, "[Conversation Summary]"),
     ("Start " * 200, COLLAPSE_SYSTEM_PROMPT, 0, "[Context collapsed - 3 turns summarized]"),
@@ -842,7 +889,7 @@ def test_repl_compact_uses_configured_client(
     monkeypatch.setattr(cli, "load_session", lambda session_id: (messages, "saved-model", {}))
     monkeypatch.setattr(cli._al, "MODEL_ID", "initial-model")
     monkeypatch.setattr(cli, "usage_stats", dict(cli.usage_stats))
-    monkeypatch.setattr(cli, "MAX_CONTEXT_TOKENS", 150)
+    monkeypatch.setattr("src.compact.MAX_CONTEXT_TOKENS", 150)
     replies = iter(["/model compact-model", "/compact", "quit"])
     monkeypatch.setattr(cli, "pt_prompt", lambda *args, **kwargs: next(replies))
 

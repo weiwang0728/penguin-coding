@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from ._constants import ALLOWED_BASE_DIR, client, MODEL_ID
-from .compact import MAX_CONTEXT_TOKENS, llm_compact_messages
+from .compact import estimate_messages_tokens, llm_compact_messages, needs_compaction
 from .observability import (
     bind_context, current_trace_fields, observation, record_response, run_context,
 )
@@ -515,10 +515,9 @@ class TeamManager:
                             "content": "<inbox>\n" + "\n".join(msg_lines) + "\n</inbox>"
                         })
 
-                    # Compact if needed
-                    messages[:] = llm_compact_messages(
-                        messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
-                    )
+                    # Compact if needed (L1+L2 above 70%, L3 collapse above 85%)
+                    if needs_compaction(estimate_messages_tokens(messages), 0):
+                        messages[:] = llm_compact_messages(messages, client, MODEL_ID)
 
                     collected_content = ""
                     has_tool_calls = False

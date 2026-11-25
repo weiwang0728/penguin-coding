@@ -11,7 +11,6 @@ import anthropic
 from dotenv import load_dotenv
 
 from .compact import (
-    MAX_CONTEXT_TOKENS,
     llm_compact_messages,
     needs_compaction,
     estimate_messages_tokens,
@@ -212,7 +211,15 @@ def stream_response(
                                 block["input"] = json.loads(raw_json)
                             except json.JSONDecodeError:
                                 logger.warning("Failed to parse tool input JSON, attempting repair")
-                                block["input"] = _repair_json(raw_json)
+                                repaired = _repair_json(raw_json)
+                                if repaired is None:
+                                    # Unrepairable (stream cut off mid-argument):
+                                    # mark the block so it gets dropped below
+                                    # instead of executing garbage input.
+                                    block["_parse_failed"] = True
+                                    block["input"] = {}
+                                else:
+                                    block["input"] = repaired
                         else:
                             block["input"] = {}
 
@@ -223,18 +230,7 @@ def stream_response(
                 generation.set_status("truncated", stop_reason="max_tokens")
                 logger.warning("Response truncated at max_tokens=%d", max_tokens)
 
-        tool_calls_list = []
-        for idx in sorted(tool_use_blocks):
-            block = tool_use_blocks[idx]
-            tool_calls_list.append(
-                {
-                    "id": block["id"],
-                    "name": block["name"],
-                    # Incomplete block (no content_block_stop, e.g. max_tokens cut
-                    # mid call): never executed, but must not raise KeyError.
-                    "input": block.get("input", {}),
-                }
-            )
+        tool_calls_list = _collect_tool_calls(tool_use_blocks)
 
         usage = getattr(final_msg, "usage", None)
         input_tokens = getattr(usage, "input_tokens", None)
@@ -272,8 +268,8 @@ def _repair_json(raw: str) -> dict[str, Any]:
                 return json.loads(repaired[:pos] + repaired[pos + 1:])
             except json.JSONDecodeError:
                 continue
-    logger.error("Could not repair JSON, falling back to empty dict: %s", raw[:100])
-    return {}
+    logger.error("Could not repair JSON, giving up: %s", raw[:100])
+    return None
 
 
 @_observed_agent("agent.subagent")
@@ -299,9 +295,7 @@ def run_subagent(
             "agent.iteration", metadata={"iteration": iteration + 1, "max_iterations": max_iterations},
         ):
             if needs_compaction(sub_last_input_tokens, sub_pending_delta):
-                messages[:] = llm_compact_messages(
-                    messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
-                )
+                messages[:] = llm_compact_messages(messages, client, MODEL_ID)
                 sub_last_input_tokens = estimate_messages_tokens(messages)
                 sub_pending_delta = 0
 
@@ -342,33 +336,41 @@ def run_subagent(
                     _set_run_status("api_error", error_type="connection")
                     return f"[Subagent error] Connection failed: {e}"
 
-            # Truncated response: tool calls were never executed, so do NOT
-            # backfill them — an assistant tool_use must be followed by a
-            # matching tool_result or the API rejects the next request.
             assistant_content: list[dict[str, Any]] = []
             if collected_content:
                 assistant_content.append({"type": "text", "text": collected_content})
-            if not was_truncated:
-                for tc in tool_calls_list:
-                    assistant_content.append({
-                        "type": "tool_use",
-                        "id": tc["id"],
-                        "name": tc["name"],
-                        "input": tc["input"],
-                    })
+            for tc in tool_calls_list:
+                assistant_content.append({
+                    "type": "tool_use",
+                    "id": tc["id"],
+                    "name": tc["name"],
+                    "input": tc["input"],
+                })
             assistant_msg = {"role": "assistant", "content": assistant_content}
             messages.append(assistant_msg)
             sub_pending_delta += estimate_messages_tokens([assistant_msg])
 
             if was_truncated:
-                if tool_calls_list:
-                    trunc_content = (
-                        "[System: Response truncated mid tool call. The call was "
-                        "NOT executed. Re-issue the complete tool call.]"
-                    )
+                # Truncated tool calls were never executed — close them with
+                # synthetic results so the tool_use/tool_result contract holds.
+                trunc_results: list[dict[str, Any]] = [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": tc["id"],
+                        "content": (
+                            "This tool call was cut off by the output token limit "
+                            "and was NOT executed. Re-issue it if still needed."
+                        ),
+                        "is_error": True,
+                    }
+                    for tc in tool_calls_list
+                ]
+                trunc_text = "[System: Response truncated. Continue from where you left off.]"
+                if trunc_results:
+                    trunc_results.append({"type": "text", "text": trunc_text})
+                    trunc_msg = {"role": "user", "content": trunc_results}
                 else:
-                    trunc_content = "[System: Response truncated. Continue from where you left off.]"
-                trunc_msg = {"role": "user", "content": trunc_content}
+                    trunc_msg = {"role": "user", "content": trunc_text}
                 messages.append(trunc_msg)
                 sub_pending_delta += estimate_messages_tokens([trunc_msg])
                 continue
@@ -416,9 +418,7 @@ def run_subagent_with_tools(
             "agent.iteration", metadata={"iteration": iteration + 1, "max_iterations": max_iterations},
         ):
             if needs_compaction(sub_last_input_tokens, sub_pending_delta):
-                messages[:] = llm_compact_messages(
-                    messages, client, MODEL_ID, max_tokens=MAX_CONTEXT_TOKENS
-                )
+                messages[:] = llm_compact_messages(messages, client, MODEL_ID)
                 sub_last_input_tokens = estimate_messages_tokens(messages)
                 sub_pending_delta = 0
 
@@ -459,33 +459,41 @@ def run_subagent_with_tools(
                     _set_run_status("api_error", error_type="connection")
                     return f"[Subagent error] Connection failed: {e}"
 
-            # Truncated response: tool calls were never executed, so do NOT
-            # backfill them — an assistant tool_use must be followed by a
-            # matching tool_result or the API rejects the next request.
             assistant_content: list[dict[str, Any]] = []
             if collected_content:
                 assistant_content.append({"type": "text", "text": collected_content})
-            if not was_truncated:
-                for tc in tool_calls_list:
-                    assistant_content.append({
-                        "type": "tool_use",
-                        "id": tc["id"],
-                        "name": tc["name"],
-                        "input": tc["input"],
-                    })
+            for tc in tool_calls_list:
+                assistant_content.append({
+                    "type": "tool_use",
+                    "id": tc["id"],
+                    "name": tc["name"],
+                    "input": tc["input"],
+                })
             assistant_msg = {"role": "assistant", "content": assistant_content}
             messages.append(assistant_msg)
             sub_pending_delta += estimate_messages_tokens([assistant_msg])
 
             if was_truncated:
-                if tool_calls_list:
-                    trunc_content = (
-                        "[System: Response truncated mid tool call. The call was "
-                        "NOT executed. Re-issue the complete tool call.]"
-                    )
+                # Truncated tool calls were never executed — close them with
+                # synthetic results so the tool_use/tool_result contract holds.
+                trunc_results: list[dict[str, Any]] = [
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": tc["id"],
+                        "content": (
+                            "This tool call was cut off by the output token limit "
+                            "and was NOT executed. Re-issue it if still needed."
+                        ),
+                        "is_error": True,
+                    }
+                    for tc in tool_calls_list
+                ]
+                trunc_text = "[System: Response truncated. Continue from where you left off.]"
+                if trunc_results:
+                    trunc_results.append({"type": "text", "text": trunc_text})
+                    trunc_msg = {"role": "user", "content": trunc_results}
                 else:
-                    trunc_content = "[System: Response truncated. Continue from where you left off.]"
-                trunc_msg = {"role": "user", "content": trunc_content}
+                    trunc_msg = {"role": "user", "content": trunc_text}
                 messages.append(trunc_msg)
                 sub_pending_delta += estimate_messages_tokens([trunc_msg])
                 continue
@@ -555,9 +563,7 @@ def agent_loop(
             if needs_compaction(
                 usage_stats["last_input_tokens"], usage_stats["pending_delta"]
             ):
-                messages[:] = llm_compact_messages(
-                    messages, client, _model_id, max_tokens=MAX_CONTEXT_TOKENS
-                )
+                messages[:] = llm_compact_messages(messages, client, _model_id)
                 usage_stats["last_input_tokens"] = estimate_messages_tokens(messages)
                 usage_stats["pending_delta"] = 0
 
@@ -577,7 +583,7 @@ def agent_loop(
                 has_tool_calls = False
                 was_truncated = False
                 tool_calls_list = []
-                prompt_too_long = False
+                retry_unchanged = False
 
                 for retry in range(MAX_API_RETRIES):
                     try:
@@ -607,13 +613,30 @@ def agent_loop(
                                     usage_stats["pending_delta"] = 0
                         break
                     except anthropic.APIStatusError as e:
+                        # Path 0: an escalated output budget can exceed the
+                        # provider's own cap (e.g. kimi caps at 32K). Revert to
+                        # the default limit and retry before anything else, so
+                        # this never gets misread as a prompt-too-long error.
+                        e_msg = (e.message or "").lower()
+                        if (
+                            e.status_code == 400
+                            and current_max_tokens > MAX_OUTPUT_TOKENS
+                            and ("max_tokens" in e_msg or "max tokens" in e_msg)
+                        ):
+                            logger.warning(
+                                "Provider rejected max_tokens=%d (%s), reverting to %d",
+                                current_max_tokens, e.message, MAX_OUTPUT_TOKENS,
+                            )
+                            current_max_tokens = MAX_OUTPUT_TOKENS
+                            retry_unchanged = True
+                            break
                         # Path 2: context too long — reactive compact
                         if _is_prompt_too_long_error(e):
                             if not recovery_state.has_attempted_reactive_compact:
                                 logger.warning("Prompt too long, triggering reactive compact")
                                 messages[:] = reactive_compact(messages)
                                 recovery_state.has_attempted_reactive_compact = True
-                                prompt_too_long = True
+                                retry_unchanged = True
                                 break
                             logger.error("Context too long even after reactive compact")
                             _set_run_status("context_limit")
@@ -638,59 +661,82 @@ def agent_loop(
                         _set_run_status("api_error", error_type=type(e).__name__)
                         return error_msg, messages
 
-                if prompt_too_long:
-                    continue  # retry after reactive compact
+                if retry_unchanged:
+                    continue  # retry the same request (reactive compact / budget revert)
 
-                # Path 1: output truncated — escalate or continuation
+                # Path 1: output truncated — preserve the partial output and
+                # continue, raising the budget on the first truncation.
                 if was_truncated:
+                    # Re-deriving tens of thousands of tokens from scratch costs
+                    # minutes of wall clock; keep whatever completed and resume.
+                    assistant_content: list[dict[str, Any]] = []
+                    if collected_content:
+                        assistant_content.append({"type": "text", "text": collected_content})
+                    for tc in tool_calls_list:
+                        assistant_content.append({
+                            "type": "tool_use",
+                            "id": tc["id"],
+                            "name": tc["name"],
+                            "input": tc["input"],
+                        })
+                    if not assistant_content:
+                        assistant_content.append({
+                            "type": "text",
+                            "text": "(response cut off by output token limit before any content)",
+                        })
+                    truncated_msg = {"role": "assistant", "content": assistant_content}
+                    messages.append(truncated_msg)
+                    usage_stats["pending_delta"] += estimate_messages_tokens([truncated_msg])
+
+                    # Truncated tool calls were never executed — close them with
+                    # synthetic results so the tool_use/tool_result contract holds.
+                    trunc_results: list[dict[str, Any]] = [
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": tc["id"],
+                            "content": (
+                                "This tool call was cut off by the output token limit "
+                                "and was NOT executed. Re-issue it if still needed."
+                            ),
+                            "is_error": True,
+                        }
+                        for tc in tool_calls_list
+                    ]
+
                     if not recovery_state.has_escalated:
                         current_max_tokens = ESCALATED_MAX_TOKENS
                         recovery_state.has_escalated = True
                         logger.warning(
-                            "Response truncated at %d tokens, escalating to %d",
+                            "Response truncated at %d tokens, escalating to %d and resuming from partial output",
                             MAX_OUTPUT_TOKENS, ESCALATED_MAX_TOKENS,
                         )
-                        continue  # messages unchanged, retry same request with more tokens
-
-                    # Already escalated: append truncated output + continuation prompt.
-                    # Tool calls are NOT backfilled: none of them were executed, and
-                    # an assistant tool_use must be followed by a matching tool_result
-                    # or the API rejects the next request. Drop them and tell the
-                    # model to re-issue; it will regenerate the full call.
-                    assistant_content: list[dict[str, Any]] = []
-                    if collected_content:
-                        assistant_content.append({"type": "text", "text": collected_content})
-                    messages.append({"role": "assistant", "content": assistant_content})
-
-                    if recovery_state.recovery_count < MAX_RECOVERY_RETRIES:
-                        if tool_calls_list:
-                            cont_content = (
-                                "Output token limit hit mid tool call. The call was "
-                                "NOT executed. Re-issue the complete tool call — no "
-                                "apology, no recap."
-                            )
-                        else:
-                            cont_content = (
-                                "Output token limit hit. Resume directly — "
-                                "no apology, no recap. Pick up mid-thought."
-                            )
-                        cont_msg = {"role": "user", "content": cont_content}
-                        messages.append(cont_msg)
+                    elif recovery_state.recovery_count >= MAX_RECOVERY_RETRIES:
+                        logger.error(
+                            "Still truncated after %d continuations, giving up",
+                            MAX_RECOVERY_RETRIES,
+                        )
+                        _set_run_status("truncated", recovery_count=recovery_state.recovery_count)
+                        return collected_content, messages
+                    else:
                         recovery_state.recovery_count += 1
                         logger.warning(
-                            "Still truncated at %d tokens, continuation %d/%d",
-                            ESCALATED_MAX_TOKENS,
+                            "Still truncated at max_tokens=%d, continuation %d/%d",
+                            current_max_tokens,
                             recovery_state.recovery_count, MAX_RECOVERY_RETRIES,
                         )
-                        continue  # retry with continuation
 
-                    # Max continuations exceeded
-                    logger.error(
-                        "Still truncated after %d continuations, giving up",
-                        MAX_RECOVERY_RETRIES,
+                    cont_text = (
+                        "Output token limit hit. Resume directly — "
+                        "no apology, no recap. Pick up mid-thought."
                     )
-                    _set_run_status("truncated", recovery_count=recovery_state.recovery_count)
-                    return collected_content, messages
+                    if trunc_results:
+                        trunc_results.append({"type": "text", "text": cont_text})
+                        cont_msg = {"role": "user", "content": trunc_results}
+                    else:
+                        cont_msg = {"role": "user", "content": cont_text}
+                    messages.append(cont_msg)
+                    usage_stats["pending_delta"] += estimate_messages_tokens([cont_msg])
+                    continue
 
                 break  # success — not truncated, exit inner loop
 

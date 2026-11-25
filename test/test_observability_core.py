@@ -291,7 +291,9 @@ def long_history():
 def test_compaction_generations_capture_each_summary_and_collapse(recorder):
     response = final_message("summary " * 100)
     client = NS(messages=NS(create=Mock(return_value=response), count_tokens=Mock()))
-    result = compact.llm_compact_messages(long_history(), client, "test-model", max_tokens=10)
+    result = compact.llm_compact_messages(
+        long_history(), client, "test-model", max_tokens=10, allow_collapse=True
+    )
 
     summaries = recorder.named("llm.compact.summarize")
     collapse = recorder.named("llm.compact.collapse")
@@ -306,7 +308,9 @@ def test_compaction_generations_capture_each_summary_and_collapse(recorder):
 def test_failed_compaction_keeps_history_and_records_failure(recorder):
     client = NS(messages=NS(create=Mock(side_effect=RuntimeError("model unavailable"))))
     messages = long_history()
-    assert compact.llm_compact_messages(messages, client, "test-model", max_tokens=10) == messages
+    assert compact.llm_compact_messages(
+        messages, client, "test-model", max_tokens=10, allow_collapse=True
+    ) == messages
     generations = [span for span in recorder.spans if span.name.startswith("llm.compact.")]
     assert len(generations) == 4
     assert all(span.status == "error" and span.closed for span in generations)

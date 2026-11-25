@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 
 from . import agent_loop as _al
 from .agent_loop import agent_loop, register_delegate_tool, usage_stats
-from .compact import llm_compact_messages, estimate_tokens, MAX_CONTEXT_TOKENS
+from .compact import llm_compact_messages, estimate_tokens
 from .tools import _changed_files
 from ._constants import ALLOWED_BASE_DIR
 from .agent import Agent
@@ -316,7 +316,7 @@ def _repl(agent: Agent, model_id: str, conversation_history: list[dict], *, clie
             with run_context("cli.compact", session_id=telemetry_session_id(),
                              metadata={"entrypoint": "cli"}):
                 compressed = llm_compact_messages(
-                    conversation_history, client=client, model_id=model_id, max_tokens=MAX_CONTEXT_TOKENS
+                    conversation_history, client=client, model_id=model_id
                 )
             conversation_history[:] = compressed
             after = estimate_tokens(str(conversation_history))

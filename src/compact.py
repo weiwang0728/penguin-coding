@@ -8,8 +8,13 @@ from .observability import observation, record_response
 
 MAX_CONTEXT_TOKENS = 100_000
 MAX_TOOL_RESULT_TOKENS = 3_000
-MAX_TEXT_BLOCK_TOKENS = 15_000
-COMPACT_THRESHOLD = 0.80
+
+# Tiered compaction thresholds (fractions of MAX_CONTEXT_TOKENS).
+# Below the L2 trigger the conversation is left completely untouched.
+L2_SUMMARIZE_THRESHOLD = 0.70  # > 70% — run L1 preprocess + L2 LLM summarization
+L3_COLLAPSE_THRESHOLD = 0.85  # > 85% — additionally allow L3 CONTEXT_COLLAPSE
+L2_TARGET_RATIO = 0.60  # summarization target: <= 60%
+L3_TARGET_RATIO = 0.50  # collapse target: <= 50%
 
 logger = logging.getLogger("penguin")
 
@@ -39,8 +44,9 @@ def needs_compaction(
     last_input_tokens: int,
     pending_delta: int,
     max_tokens: int = MAX_CONTEXT_TOKENS,
+    threshold: float = L2_SUMMARIZE_THRESHOLD,
 ) -> bool:
-    """Fast check whether to run the full compaction pipeline.
+    """Fast check whether to run the compaction pipeline.
 
     Uses the API-reported input_tokens as the exact baseline and adds
     an estimate of tokens appended since the last API call.  When no
@@ -52,11 +58,14 @@ def needs_compaction(
         pending_delta:     estimated tokens of messages added since that
                            API call (assistant turn + tool results).
         max_tokens:        context window budget.
+        threshold:         trigger ratio; defaults to the L2 summarize
+                           threshold (70%).  Pass ``L3_COLLAPSE_THRESHOLD``
+                           to test the L3 collapse trigger (85%).
     """
     if last_input_tokens <= 0:
         return True
     estimated = last_input_tokens + pending_delta
-    return estimated > max_tokens * COMPACT_THRESHOLD
+    return estimated > max_tokens * threshold
 
 
 COMPACT_SYSTEM_PROMPT = """You are a conversation compactor. Summarize the conversation history between a user and a coding assistant.
@@ -356,39 +365,64 @@ def llm_compact_messages(
     messages: list[dict[str, Any]],
     client: Any,
     model_id: str,
-    max_tokens: int = MAX_CONTEXT_TOKENS,
+    max_tokens: int | None = None,
+    collapse_target: int | None = None,
     keep_recent: int = 4,
     summary_max_tokens: int = 2000,
+    allow_collapse: bool | None = None,
 ) -> list[dict[str, Any]]:
-    """Compact messages using LLM summarization.
+    """Compact messages using tiered compaction.
 
     Flow:
-      1. Preprocess: normalize oversized blocks + strip old thinking
-      2. If within budget, return immediately
-      3. L2: LLM summarization of old messages (preserves conversation structure)
-      4. If L2 over budget, retry with fewer recent messages
-      5. L3: CONTEXT_COLLAPSE — structured archive replacing entire conversation
+      1. Preprocess (L1): normalize oversized blocks + strip old thinking
+      2. If within budget (max_tokens), return immediately
+      3. L2: LLM summarization of old messages (preserves conversation
+         structure), retrying with fewer recent messages
+      4. If L2 is still over budget:
+         - allow_collapse is False: return the best L2 result and wait
+           for the L3 trigger (85%) on a later iteration
+         - allow_collapse is True: L3 CONTEXT_COLLAPSE — structured
+           archive replacing the entire conversation
 
     Args:
         messages: The conversation messages to compact.
         client: An anthropic.Anthropic client instance.
         model_id: The model ID to use for summarization.
-        max_tokens: Maximum token budget for the compacted messages.
+        max_tokens: Token budget for the compacted messages (L2 target).
+            ``None`` (default) resolves to ``MAX_CONTEXT_TOKENS * L2_TARGET_RATIO``.
+        collapse_target: Token budget for L3 CONTEXT_COLLAPSE.  ``None``
+            (default) resolves to ``MAX_CONTEXT_TOKENS * L3_TARGET_RATIO``.
         keep_recent: Number of recent messages to preserve intact.
         summary_max_tokens: Max tokens for the LLM summary output.
+        allow_collapse: Whether L3 CONTEXT_COLLAPSE may run.  ``None``
+            (default) decides automatically: collapse is allowed only
+            when the preprocessed estimate exceeds the L3 collapse
+            threshold (85% of the context window).
     """
     if not messages:
         return messages
 
+    if max_tokens is None:
+        max_tokens = int(MAX_CONTEXT_TOKENS * L2_TARGET_RATIO)
+    if collapse_target is None:
+        collapse_target = int(MAX_CONTEXT_TOKENS * L3_TARGET_RATIO)
+
     # Step 1: Preprocess — normalize oversized blocks and strip old thinking
     normalized = [_compact_oversized_blocks(msg) for msg in messages]
     normalized = _strip_old_thinking(normalized)
+
+    if allow_collapse is None:
+        allow_collapse = (
+            estimate_messages_tokens(normalized)
+            > int(MAX_CONTEXT_TOKENS * L3_COLLAPSE_THRESHOLD)
+        )
 
     # Step 2: If already within budget, no compacting needed
     if estimate_messages_tokens(normalized) <= max_tokens:
         return normalized
 
     # Step 3: LLM summarization with progressive reduction
+    best_result: list[dict[str, Any]] | None = None
     for attempt, attempt_keep in enumerate((keep_recent, max(2, keep_recent // 2), 0), 1):
         try:
             split_idx = max(1, len(normalized) - attempt_keep)
@@ -433,6 +467,7 @@ def llm_compact_messages(
             }
 
             result = [first_msg, summary_msg, ack_msg] + recent_messages
+            best_result = result
 
             if estimate_messages_tokens(result) <= max_tokens:
                 if _verify_tokens_within_budget(result, client, model_id, max_tokens):
@@ -448,10 +483,21 @@ def llm_compact_messages(
             if attempt_keep == 0:
                 break
 
-    # Step 4: CONTEXT_COLLAPSE — structured archive (last resort)
+    # Step 4: CONTEXT_COLLAPSE — structured archive (last resort), only at
+    # or above the L3 trigger; below it we keep the lossy-but-structured L2
+    # result and wait for context growth to reach the 85% trigger.
+    if not allow_collapse:
+        if best_result is not None:
+            logger.info(
+                "L2 compaction insufficient (still over %d tokens) but below "
+                "L3 collapse threshold — deferring collapse", max_tokens,
+            )
+            return best_result
+        return normalized
+
     logger.info("L2 compaction insufficient, attempting CONTEXT_COLLAPSE")
-    collapsed = _context_collapse(normalized, client, model_id, max_tokens)
-    if estimate_messages_tokens(collapsed) <= max_tokens:
+    collapsed = _context_collapse(normalized, client, model_id, collapse_target)
+    if estimate_messages_tokens(collapsed) <= collapse_target:
         return collapsed
 
     # Even collapse didn't fit — return best effort
