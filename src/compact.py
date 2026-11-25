@@ -51,19 +51,25 @@ def needs_compaction(
     Uses the API-reported input_tokens as the exact baseline and adds
     an estimate of tokens appended since the last API call.  When no
     API data is available (new / resumed session without persisted
-    usage), falls back to a full estimate of all messages.
+    usage), falls back to evaluating the local estimate alone, so a
+    fresh session does not compact unconditionally.
 
     Args:
         last_input_tokens: input_tokens from the most recent API response.
         pending_delta:     estimated tokens of messages added since that
-                           API call (assistant turn + tool results).
+                           API call (assistant turn + tool results); when
+                           no API baseline exists this is the full local
+                           estimate of all messages.
         max_tokens:        context window budget.
         threshold:         trigger ratio; defaults to the L2 summarize
                            threshold (70%).  Pass ``L3_COLLAPSE_THRESHOLD``
                            to test the L3 collapse trigger (85%).
     """
     if last_input_tokens <= 0:
-        return True
+        # No API-reported baseline yet: trust the local estimate only.
+        # (At session start callers pass the full estimate of all
+        # messages as pending_delta, so this compares the real size.)
+        return pending_delta > max_tokens * threshold
     estimated = last_input_tokens + pending_delta
     return estimated > max_tokens * threshold
 

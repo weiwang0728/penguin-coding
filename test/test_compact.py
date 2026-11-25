@@ -4,8 +4,13 @@ from src.compact import needs_compaction, L2_SUMMARIZE_THRESHOLD, MAX_CONTEXT_TO
 
 
 class TestNeedsCompaction:
-    def test_returns_true_when_no_api_data(self):
-        assert needs_compaction(last_input_tokens=0, pending_delta=0) is True
+    def test_no_api_data_uses_local_estimate(self):
+        # No API baseline: small local estimate -> no compaction at startup
+        assert needs_compaction(last_input_tokens=0, pending_delta=0) is False
+        threshold = int(MAX_CONTEXT_TOKENS * L2_SUMMARIZE_THRESHOLD)
+        # Local estimate (fresh session passes the full estimate) over threshold -> compact
+        assert needs_compaction(last_input_tokens=0, pending_delta=threshold + 1) is True
+        assert needs_compaction(last_input_tokens=0, pending_delta=threshold - 1) is False
 
     def test_returns_true_when_approaching_threshold(self):
         threshold = int(MAX_CONTEXT_TOKENS * L2_SUMMARIZE_THRESHOLD)
