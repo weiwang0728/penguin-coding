@@ -12,7 +12,29 @@ from src.compact import (
     estimate_tokens,
     trim_messages,
 )
-from src.agent_loop import _repair_json
+from src.agent_loop import _budget_hint, _collect_tool_calls, _repair_json
+
+
+class TestBudgetHint:
+    def test_plenty_remaining_keeps_working(self):
+        assert _budget_hint(50, 100) == "Keep working — do not stop until the task is complete."
+
+    def test_finalize_zone_at_85_percent(self):
+        hint = _budget_hint(15, 100)
+        assert "Budget nearly exhausted" in hint
+        assert "call exit_loop" in hint
+        # finalize boundary: 15% of 100 = 15
+        assert _budget_hint(16, 100) == "Keep working — do not stop until the task is complete."
+
+    def test_exhausted_overrides_finalize(self):
+        hint = _budget_hint(5, 100)
+        assert "Budget exhausted" in hint
+        assert "exit_loop now" in hint
+
+    def test_small_max_iterations_still_finalizes(self):
+        # max_iterations=20: finalize at remaining <= 3, exhausted at <= 5 takes precedence
+        assert "Budget exhausted" in _budget_hint(3, 20)
+        assert "Budget nearly exhausted" in _budget_hint(6, 200)
 
 
 # --- estimate_tokens ---

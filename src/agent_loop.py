@@ -61,9 +61,28 @@ ToolResultCallback = Callable[[str, str], None]
 
 MAX_API_RETRIES = 3
 RETRY_BASE_DELAY = 1.0  # seconds
+BUDGET_FINALIZE_RATIO = 0.85  # at >85% budget used, instruct the model to converge
 KEEP_RECENT_TOOLS = 5
 PRESERVE_RESULT_TOOLS = []
 TODO = task_manager
+
+
+def _budget_hint(remaining: int, max_iterations: int) -> str:
+    """Iteration-prompt suffix for budget awareness.
+
+    Turns "budget exhausted" from a hard cut-off into an explicit converge-now
+    instruction, so the exported patch is a deliberate final state rather than
+    whatever was in flight when the wall came down.
+    """
+    if remaining <= 5:
+        return ("Budget exhausted: stop exploring. Verify once if needed, then "
+                "call exit_loop now — current working-tree changes are exported "
+                "as the final patch.")
+    if remaining <= max_iterations * (1 - BUDGET_FINALIZE_RATIO):
+        return (f"Budget nearly exhausted (~{remaining} iterations left): stop "
+                f"starting new investigation. Finalize your current best fix, "
+                f"run your verification once, and call exit_loop.")
+    return "Keep working — do not stop until the task is complete."
 
 usage_stats = {
     "prompt_tokens": 0,
@@ -611,7 +630,7 @@ def agent_loop(
             iteration_system = (
                 f"[System: Iteration {iteration + 1}/{max_iterations}. "
                 f"You have {remaining} iterations remaining. "
-                f"{'Keep working — do not stop until the task is complete.' if remaining <= 5 else ''}]"
+                f"{_budget_hint(remaining, max_iterations)}]"
             )
 
             # ── Build iteration system prompt ──
