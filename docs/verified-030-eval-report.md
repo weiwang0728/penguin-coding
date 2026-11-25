@@ -3,7 +3,7 @@
 - 测评窗口:2026-11-23 ~ 2026-11-24
 - 验证集合:verified-030(SWE-bench_Verified 分层抽样 30 题,seed=20261123)
 - 模型:glm-5.3-flash(兼容 Anthropic Messages 接口)
-- 最终成绩:**19/30 resolved(63.3%),unresolved 11,error 0**
+- 最终成绩:**19/30 resolved(63.3%),unresolved 11,error 0**;11-25 追加 Docker 重生成实验后 **20/30(66.7%)**,见 §4.5
 - 合并预测:`artifacts/swebench/verified-030-glm-merged-predictions.jsonl`
 - 评分报告:`logs/run_evaluation/verified030-glm-*` 与 `artifacts/swebench/reports/penguin-glm-5.3-flash.verified030-*.json`
 - 全程 Langfuse 全量追踪(1968 次 LLM 请求、2187 次工具调用,span 级输入输出完整落库)
@@ -180,10 +180,25 @@ edit_file 的 16 次 `old_string not found` 并非全是模型记忆偏差,**结
 | 11-24 20:00~ | Langfuse 行为分析:TTFT 87% 瓶颈、压缩 0 触发根因(缓存语义)、两级截断漏匹配、iteration_limit 空转 |
 | 11-25 | 修复落地:压缩基准(input+cache_read)、read_file offset/limit 分页、edit 锚点提示、预算感知收敛(0.85)、PATCH DISCIPLINE system prompt、docker 模式权限放开;env 镜像存档 30.7GB |
 
+## 4.5 追加实验:unresolved 11 题 Docker 模式重生成(2026-11-25)
+
+§5.2 建议的盲改 vs 真环境对照实验已完成。11 个 unresolved 题全部用 Docker 模式(agent 在 testbed 容器内看到真实测试结果)重新生成并官方评分:
+
+- **结果:1/11 resolved(pylint-4970)**,全部 patch 成功应用、零 error。合并预测 `artifacts/swebench/verified-030-glm-docker11-merged-predictions.jsonl`,评分报告 `logs/run_evaluation/docker11-20261125T112035Z` 与 `artifacts/swebench/reports/penguin-glm-5.3-flash.verified030-docker11-*.json`;全部 30 题合计 **20/30(66.7%)**
+- **通过官方 harness 后整体成绩 19→20**。上轮盲改在这 11 题上 0/11,真环境 1/11——提升真实但有限,说明这批题的瓶颈不只在"看不到测试结果"
+- **逐题细节**(F2P=FAIL_TO_PASS,P2P=PASS_TO_PASS):
+  - pylint-4970 ✅(F2P 1/1,P2P 17/17)——宿主机时代 pylint 0/1 的直接翻盘
+  - django-11400 F2P 4/6、P2P 58/58;django-11885 F2P 1/1 但 **P2P 回归 2**(修了目标却破坏现有行为)
+  - sympy-16597/20428、sklearn-25102:F2P 全挂但 **P2P 满分**——补丁方向性错误但零回归,与盲改时的"方向对但未验证"一致,真环境也只是把"没验证"变成"验证后知道没修对"
+  - matplotlib-26208 F2P 0/2、P2P 800/813;astropy-8872 全挂,根因是 **pyparsing deprecation warning 被按 error 处理导致测试收集失败**(环境脆弱性,非模型问题)
+  - sphinx-7985/8459/11510 F2P 0、P2P 0——sphinx 文档构建类测试基建在本环境仍跑不通,弱项确认
+- **流程收获**:发现并修复 runner 构建脚本 bug——`setup_repo.sh` 无条件移走 `pyproject.toml` 兼容老 astropy,但 sphinx≥7.2 无 `setup.py`、用 flit_core 构建,导致 sphinx-11510 镜像必失败;已改为按 `setup.py` 存在性分流(`scripts/run_swebench.py`)
+- **运营数据**:生成 10 题 3.5 小时(parallel 3)+ sphinx-11510 重试 68 分钟;glm 超长响应截断(16384→65536 升级续写)在 django-11885、sklearn-25102、sphinx-11510 上共 5 次,全部自愈;预算收敛(PATCH DISCIPLINE + 0.85 收敛比)下 10/11 题正常 completed 出口,仅 sphinx-11510 一次 iteration 内超长响应反复
+
 ## 5. 下一步建议
 
 1. 换模型对比时直接用 docker 模式 + 现存 env 镜像(同题环境成本为零)
-2. 对 unresolved 11 题可做一次 docker 模式重生成(让模型看到真实测试结果),评估盲改 vs 真环境的差距
-3. sphinx/pylint 弱项单独归因:读 `logs/run_evaluation/*/sphinx-doc__*/run_instance.log` 的测试输出
-4. 归还实例前按 runbook §1/§6 核对产物持久化;env 镜像已存档(`images-env-verified030.tar.gz`,30.7GB,gunzip -t 校验通过)
+2. ~~对 unresolved 11 题可做一次 docker 模式重生成~~ **已完成,见 §4.5:1/11 resolved,整体 19→20/30**;sphinx 文档构建类测试基建仍跑不通,值得单独投入(如预装 docutils/sphinx 测试依赖到 env 镜像)
+3. ~~sphinx/pylint 弱项单独归因~~ pylint 已翻盘;astropy-8872 的 pyparsing warning-as-error 收集失败可在 env 镜像中 `filterwarnings` 豁免后重评
+4. 归还实例前按 runbook §1/§6 核对产物持久化;env 镜像已存档(`images-env-verified030.tar.gz`,30.7GB,gunzip -t 校验通过);本轮新增 sweb.eval/dev 镜像与 sphinx-11510 实例镜像如需复用也应存档
 5. 下轮跑分验证 agent 改进集(最小 diff 规约、预算收敛、压缩修复)的量化效果:对比轮次分布、超长响应次数(基线 92 次 ≥10k)、重复命令数(基线 18 次)

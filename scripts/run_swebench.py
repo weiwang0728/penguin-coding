@@ -327,9 +327,16 @@ conda activate testbed
 echo "Current environment: $CONDA_DEFAULT_ENV"
 # Old repos (astropy 3.x era) need legacy build tooling: modern pip refuses
 # setup.py develop, new setuptools removed dep_util, .pyx needs Cython.
-python -m pip install "pip<23.1" "setuptools<60" "cython<3" extension_helpers wheel
-[ -f pyproject.toml ] && mv pyproject.toml pyproject.toml.bak
-python -m pip install -e . --no-build-isolation
+# pyproject-only repos (e.g. sphinx>=7.2, flit_core backend, no setup.py)
+# must NOT go through the legacy path: no pinning, no pyproject move.
+if [ -f setup.py ]; then
+  python -m pip install "pip<23.1" "setuptools<60" "cython<3" extension_helpers wheel
+  [ -f pyproject.toml ] && mv pyproject.toml pyproject.toml.bak
+  python -m pip install -e . --no-build-isolation
+else
+  python -m pip install flit_core
+  python -m pip install -e . --no-build-isolation
+fi
 """, encoding='utf-8')
     (context / 'Dockerfile').write_text(f"""FROM --platform=linux/x86_64 {spec.env_image_key}
 
