@@ -41,16 +41,18 @@ tar -xzf "$R/python311-packages.tar.gz" -C "$(python -c 'import sysconfig; print
 python -m pytest -q test/test_swebench.py
 ```
 
-重新评分或使用 `--docker` 生成时，在 Docker 服务就绪后恢复镜像。确认 `docker info` 可访问 daemon，且 Docker 数据盘有足够空间解压镜像。两个归档:旧 `images.tar.gz`(Lite 基线 era,标签见 `images.txt`)与 **`images-env-verified030.tar.gz`(verified-030 全套 base+env 镜像,标签见 `images-verified030.txt`,校验和见 `images-env-verified030.sha256`)**。先载旧归档再载新归档(新归档的 4 个同名 env 标签会覆盖旧版,含 git HTTP/1.1 修复,以新版为准):
+重新评分或使用 `--docker` 生成时，在 Docker 服务就绪后恢复镜像。确认 `docker info` 可访问 daemon，且 Docker 数据盘有足够空间解压镜像。两个归档:旧 `images.tar.gz`(Lite 基线 era,标签见 `images.txt`)与 **`images-env-verified030-v2.tar.gz`(verified-030 全套 base+env 镜像 + 4 个已修复的 eval 镜像 astropy-8872/sphinx-7985/8459/11510,标签与 ID 见 `images-verified030-v2.txt`,校验和见 `images-env-verified030-v2.sha256`)**。先载旧归档再载新归档:
 
 ```bash
-docker info >/dev/null && docker load -i "$R/images.tar.gz" && docker load -i "$R/images-env-verified030.tar.gz"
+docker info >/dev/null && docker load -i "$R/images.tar.gz" && docker load -i "$R/images-env-verified030-v2.tar.gz"
 (while read -r tag digest; do
   [ "$(docker image inspect --format '{{.Id}}' "$tag")" = "$digest" ] || { echo "镜像校验失败 $tag" >&2; exit 1; }
-done < "$R/images-verified030.txt")
+done < "$R/images-verified030-v2.txt")
 ```
 
-恢复后的 env 镜像(`sweb.env.x86_64.*`,20 个)可直接供 Docker 模式生成与官方评分复用,无需重新构建;eval 镜像不存档(从 env 镜像重建,单题数秒到数十分钟)。
+**载入后必须核对 tag 数量**:`tar -xzOf <archive> manifest.json`（或 `index.json`）的 RepoTags 须覆盖全部预期标签——11-26 发现旧归档(30.7GB,sha256 校验"通过")实际只含 `sweb.base` 一个镜像(保存当天即损坏,校验和为假阴性),sha256 不能证明归档完整。缺失时用 swebench 2.1.8 `build_env_images` 联网重建(16 个约 1.5 小时,网络抖动会致个别失败需重试)。
+
+恢复后的 env 镜像(`sweb.env.x86_64.*`)可直接供 Docker 模式生成与官方评分复用。**例外**:重建 eval 镜像会遇到 era 依赖漂移(2026-11-26 详录见 `docs/verified-030-eval-report.md` §4.6 与 memory `swebench-era-drift-pins`)——astropy-8872 的 env 镜像已注入 `PIP_CONSTRAINT=/opt/constraints.txt`+`SETUPTOOLS_USE_DISTUTILS=stdlib`,sphinx eval 镜像已补 `docutils==0.16`+`roman==3.3` 与 tox `-rA`;其余 2019–2021 era repo 重建时按 §4.6 清单钉版。sphinx-7985 的 F2P 需访问 google.com,本网络不可达,属硬限制。
 
 **只重评现有补丁**可直接使用之前的 predictions 和本地完整评分数据。下面重评已有镜像的五题，生成新报告，整个过程无需模型密钥。
 
@@ -95,7 +97,7 @@ cp -a "$G/hf-cache/datasets" "$HF_HOME/"
 export HF_HUB_OFFLINE=1 HF_DATASETS_OFFLINE=1
 ```
 
-**下次归还前**，确认新 run 的 `run.json`、`predictions.jsonl`、`summary.json` 和评分报告都在 `~/work`。verified-030 的三个文件（public.jsonl / manifest.json / SHA256SUMS）与 `$G/verified-dl/verified-test.parquet` 是评分的必备数据，缺失则重新下载并更新 `verified-030.SHA256SUMS` 与 parquet 哈希。若更换了数据集 revision 或 Python 依赖，保存对应数据和环境。若构建了新镜像，用 `docker image ls` 核对 base/env/eval/dev 标签，将所需标签一起 `docker save` 到新归档，记录镜像 ID 和 SHA-256；完成校验后再归还。保留 `lite-020` 下被 `repos/` 引用的 checkout；verified-030 各 repo 的 checkout（`verified-030-glm-*/<instance>/repo`）如磁盘允许也一并保留，可省下次克隆。
+**下次归还前**，确认新 run 的 `run.json`、`predictions.jsonl`、`summary.json` 和评分报告都在 `~/work`。verified-030 的三个文件（public.jsonl / manifest.json / SHA256SUMS）与 `$G/verified-dl/verified-test.parquet` 是评分的必备数据，缺失则重新下载并更新 `verified-030.SHA256SUMS` 与 parquet 哈希。若更换了数据集 revision 或 Python 依赖，保存对应数据和环境。若构建了新镜像，用 `docker image ls` 核对 base/env/eval/dev 标签，将所需标签一起 `docker save` 到新归档，记录镜像 ID 和 SHA-256；**归档校验必须核对 manifest RepoTags 数量（`tar -xzOf <archive> index.json`），只信 sha256 会漏检截断档（11-26 事故）**。完成校验后再归还。**Langfuse trace 数据在 Docker named volume 里,不随 `~/work` 持久化——归还前必须备份 `langfuse_clickhouse_data`/`langfuse_postgres_data` 卷到 `~/work/langfuse/backup/`,否则 token 级分析数据全丢（11-26 实际发生）**。保留 `lite-020` 下被 `repos/` 引用的 checkout；verified-030 各 repo 的 checkout（`verified-030-glm-*/<instance>/repo`）如磁盘允许也一并保留，可省下次克隆。
 
 ### 手动安装
 
@@ -193,7 +195,7 @@ Lite 评分仍用原命令（`--dataset_name princeton-nlp/SWE-bench_Lite` 或�
   - 评分:`logs/run_evaluation/docker11-20261125T112035Z` + `reports/penguin-glm-5.3-flash.verified030-docker11-20261125T112035Z.json`;结果 **1/11 resolved**,20/30 总分
   - 教训:django-11885 F2P 过但 P2P 回归 2;astropy-8872 是 pyparsing warning-as-error 环境问题(重评可豁免);sphinx 3 题测试基建仍跑不通
 - `verified-030.public.jsonl` / `manifest.json` / `SHA256SUMS`:抽样清单与公开字段
-- **env 镜像已存档**:featurize-restore 目录下 `images-env-verified030.tar.gz`(base+20 个 env,含 git HTTP/1.1 修复)+ `images-verified030.txt`(标签与 ID)+ `.sha256`;恢复后 Docker 模式生成与评分免构建;docker11 各题的 env 镜像均在此 20 个内,无需新存档(sweb.eval/dev 实例镜像为消耗品,从 env 镜像重建)
+- **env 镜像已存档(v2,2026-11-26)**:featurize-restore 目录下 `images-env-verified030-v2.tar.gz`(base+20 env[sklearn `3a59860bcd...` 缺待补]+4 个修复版 eval 镜像)+ `images-verified030-v2.txt` + `.sha256`。**旧 `images-env-verified030.tar.gz` 已损坏**(只含 base,勿再用);16 个 env 镜像系重建,4 个旧 env 镜像已补 git HTTP/1.1;astropy-8872 env 含 PIP_CONSTRAINT 钉版;sphinx eval 镜像含 roman/docutils/-rA 修复。 era 漂移处置详见 `docs/verified-030-eval-report.md` §4.6
 - Lite 各题产物(历史基线):
   - `lite-020`:前 20 题基线(12 completed)
   - `lite-020-retry3`:11583 completed
