@@ -36,6 +36,7 @@ class Agent:
         max_iterations: int = 100,
         parallel_enabled: bool = True,
         parallel_max_workers: int = 4,
+        include_skills_in_prompt: bool = False,
     ):
         from . import tools as _tools  # noqa: F401 — ensures Tool subclasses are loaded & auto-registered
         self.name = name
@@ -65,6 +66,9 @@ class Agent:
 
         # System prompt
         self._custom_system_prompt = system_prompt
+        # Skills are NOT advertised in the system prompt by default; set this
+        # to inject the active-skills block (opt-in via parameter).
+        self._include_skills_in_prompt = include_skills_in_prompt
 
     @property
     def tool_definitions(self) -> list[dict]:
@@ -81,8 +85,7 @@ class Agent:
     def _build_system_prompt(self) -> str:
         if self._custom_system_prompt:
             return self._custom_system_prompt
-        skill_descs = self.skill_loader.get_descriptions()
-        return (
+        prompt = (
             f"You are a helpful coding assistant at {ALLOWED_BASE_DIR}. "
             f"You can help users with software engineering tasks.\n\n"
             f"Core principles:\n"
@@ -91,11 +94,16 @@ class Agent:
             f"- Prefer action over exploration. Read only what you need, then start writing code immediately.\n"
             f"- Use the task tool to track progress. Break large work into sub-tasks.\n"
             f"- Batch related tool calls in a single response when possible (e.g., read multiple files at once).\n"
-            f"- If a task has multiple steps, complete ALL steps before responding to the user.\n"
-            f"- Use load_skill when a task needs specialized instructions before you act.\n\n"
-            f"Skills available:\n{skill_descs}\n\n"
+            f"- If a task has multiple steps, complete ALL steps before responding to the user.\n\n"
             f"When writing code, always provide complete and correct implementations."
         )
+        if self._include_skills_in_prompt and self.skill_loader.active_skills:
+            skill_descs = self.skill_loader.get_descriptions()
+            prompt += (
+                f"\n\nSkills available:\n{skill_descs}\n\n"
+                f"Use load_skill when a task needs specialized instructions before you act."
+            )
+        return prompt
 
     # ── Dynamic tool management ──
 
@@ -133,12 +141,12 @@ class Agent:
     # ── Dynamic skill management ──
 
     def load_skill(self, name: str) -> str:
-        """Activate a skill and update system prompt."""
+        """Activate a skill (affects system prompt only when include_skills_in_prompt is set)."""
         result = self.skill_loader.activate(name)
         return result
 
     def unload_skill(self, name: str) -> str:
-        """Deactivate a skill and update system prompt."""
+        """Deactivate a skill (affects system prompt only when include_skills_in_prompt is set)."""
         return self.skill_loader.deactivate(name)
 
     # ── Execution ──

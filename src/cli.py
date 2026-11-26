@@ -48,6 +48,8 @@ def _parse_args():
                    help="Tool names to enable (default: all)")
     p.add_argument("--skills", nargs="+", default=None,
                    help="Initial skills to activate (default: all)")
+    p.add_argument("--skills-in-prompt", action="store_true",
+                   help="Advertise active skills in the system prompt (off by default)")
     return p.parse_args()
 
 
@@ -90,6 +92,7 @@ def _main():
         tools=args.tools,
         skills=args.skills,
         permission_profile=args.permissions or "standard",
+        include_skills_in_prompt=args.skills_in_prompt,
     )
 
     # Register delegate tool on the agent's dispatcher

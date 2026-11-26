@@ -35,7 +35,7 @@ from ._constants import client
 load_dotenv()
 MODEL_ID = os.getenv("MODEL_ID")
 
-SYSTEM_PROMPT = f"""You are a helpful coding assistant at {ALLOWED_BASE_DIR}. You can help users with software engineering tasks.
+SYSTEM_PROMPT = """You are a helpful coding assistant at {base_dir}. You can help users with software engineering tasks.
 
 Core principles:
 - COMPLETE every task you start. Never stop mid-work to summarize or explain unless the user asks.
@@ -44,13 +44,28 @@ Core principles:
 - Use the task tool to track progress. Break large work into sub-tasks.
 - Batch related tool calls in a single response when possible (e.g., read multiple files at once).
 - If a task has multiple steps, complete ALL steps before responding to the user.
-- Use load_skill when a task needs specialized instructions before you act.
 - For parallel work, use team_spawn to create teammate agents. Use team_send/team_broadcast to coordinate. Use team_shutdown when done.
 
-Skills available:
-{SKILL_LOADER.get_descriptions()}
+When writing code, always provide complete and correct implementations.""".format(base_dir=ALLOWED_BASE_DIR)
 
-When writing code, always provide complete and correct implementations."""
+
+def _build_default_system_prompt(include_skills: bool) -> str:
+    """Base prompt, with the active-skills block appended only when requested.
+
+    Skills are read at call time (not import time) so newly activated skills
+    are reflected. Skill content itself always flows through the load_skill
+    tool result, never through the system prompt.
+    """
+    if not include_skills:
+        return SYSTEM_PROMPT
+    skill_descs = SKILL_LOADER.get_descriptions()
+    if not SKILL_LOADER.active_skills:
+        return SYSTEM_PROMPT
+    return (
+        f"{SYSTEM_PROMPT}\n\n"
+        f"Skills available:\n{skill_descs}\n\n"
+        f"Use load_skill when a task needs specialized instructions before you act."
+    )
 
 logger = logging.getLogger("penguin")
 
@@ -593,6 +608,7 @@ def agent_loop(
     rounds_since_todo: int = 0,
     tools: list[dict] | None = None,
     system_prompt: str | None = None,
+    include_skills_in_prompt: bool = False,
     tool_dispatcher=None,
     parallel_enabled: bool = True,
     parallel_max_workers: int = 4,
@@ -606,7 +622,7 @@ def agent_loop(
     # Use provided dispatcher or fall back to global
     _dispatcher = tool_dispatcher or dispatcher
     _tools = tools or TOOL_DEFINITIONS
-    _system_prompt = system_prompt or SYSTEM_PROMPT
+    _system_prompt = system_prompt or _build_default_system_prompt(include_skills_in_prompt)
     _dispatcher.set_confirm_callback(confirm_callback)
     user_msg = {"role": "user", "content": user_message}
     messages.append(user_msg)

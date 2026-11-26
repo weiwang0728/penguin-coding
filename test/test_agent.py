@@ -138,13 +138,36 @@ class TestAgentDynamicSkills:
         result = agent.unload_skill("nonexistent")
         assert "deactivated" in result  # idempotent
 
-    def test_system_prompt_reflects_active_skills(self):
+    def test_skills_not_in_prompt_by_default(self):
         agent = Agent(name="test", skills=["code-review"])
         prompt = agent._build_system_prompt()
+        assert "code-review" not in prompt
+        assert "Skills available" not in prompt
+        assert "load_skill" not in prompt
+
+    def test_skills_in_prompt_when_enabled(self):
+        agent = Agent(name="test", skills=["code-review"],
+                      include_skills_in_prompt=True)
+        prompt = agent._build_system_prompt()
         assert "code-review" in prompt
+        assert "Skills available" in prompt
         agent.unload_skill("code-review")
         prompt = agent._build_system_prompt()
         assert "code-review" not in prompt
+        assert "Skills available" not in prompt
+
+    def test_skills_flag_without_skills_omits_block(self):
+        agent = Agent(name="test", skills=[],
+                      include_skills_in_prompt=True)
+        prompt = agent._build_system_prompt()
+        assert "Skills available" not in prompt
+        assert "load_skill" not in prompt
+
+    def test_custom_system_prompt_ignores_skills_flag(self):
+        agent = Agent(name="test", skills=["code-review"],
+                      system_prompt="Custom.",
+                      include_skills_in_prompt=True)
+        assert agent._build_system_prompt() == "Custom."
 
 
 class TestAgentIsolation:
@@ -213,6 +236,12 @@ class TestAgentCustomSystemPrompt:
 
     def test_default_prompt_includes_workspace(self):
         agent = Agent(name="default")
+        prompt = agent._build_system_prompt()
+        assert "coding assistant" in prompt
+        assert "Skills available" not in prompt
+
+    def test_default_prompt_includes_workspace_with_skills_flag(self):
+        agent = Agent(name="default", include_skills_in_prompt=True)
         prompt = agent._build_system_prompt()
         assert "coding assistant" in prompt
         assert "Skills available" in prompt
