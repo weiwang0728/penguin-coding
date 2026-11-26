@@ -110,6 +110,12 @@ python -m pip install -c "$R/python-versions.txt" -r requirements.txt \
 
 ## 2. 启动/续跑测评
 
+**启动前先跑预检**（数据完整性、归档 RepoTags 核验、era 钉版、网络、孤儿进程;约 5–8 分钟,`--quick` 跳过深检但正式跑之前务必跑完整的）：
+
+```bash
+bash scripts/preflight_benchmark.sh        # FAIL 必须先解决;WARN 逐条确认(如 7985 依赖 google.com 不可达属已知硬限制)
+```
+
 默认 Docker 模式（agent 在 testbed 容器内工作，测试结果真实）：
 
 ```bash
