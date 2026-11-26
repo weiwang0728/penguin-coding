@@ -3,7 +3,7 @@
 - 测评窗口:2026-11-23 ~ 2026-11-24
 - 验证集合:verified-030(SWE-bench_Verified 分层抽样 30 题,seed=20261123)
 - 模型:glm-5.3-flash(兼容 Anthropic Messages 接口)
-- 最终成绩:**19/30 resolved(63.3%),unresolved 11,error 0**;11-25 追加 Docker 重生成实验后 **20/30(66.7%)**,见 §4.5
+- 最终成绩:**19/30 resolved(63.3%),unresolved 11,error 0**;11-25 追加 Docker 重生成实验后 **20/30(66.7%)**,见 §4.5;11-26 修复评测环境时代漂移后 **22/30(73.3%)**,见 §4.6
 - 合并预测:`artifacts/swebench/verified-030-glm-merged-predictions.jsonl`
 - 评分报告:`logs/run_evaluation/verified030-glm-*` 与 `artifacts/swebench/reports/penguin-glm-5.3-flash.verified030-*.json`
 - 全程 Langfuse 全量追踪(1968 次 LLM 请求、2187 次工具调用,span 级输入输出完整落库)
@@ -17,18 +17,18 @@
 | xarray | 2/2 | 效率最高(单题 ~10 分钟) |
 | flask / requests / seaborn | 3/3 | 新时代 repo,宿主机测试可跑 |
 | pytest | 2/2 | |
-| django | 4/7 | 11265/11490/12304/16901 过 |
+| django | 5/7 | 11265/11490/12304/14999/16901 过;11400/11885 未过(§4.5) |
 | sklearn | 2/3 | |
 | sympy | 2/4 | 老 sympy(py3.6 时代)宿主机无法 import |
-| astropy | 1/2 | 7166 补评过,8872 未过 |
+| astropy | 2/2 | 8872 经环境修复后翻盘(§4.6) |
 | matplotlib | 2/3 | 26208 跑满 100 轮 iteration_limit |
-| **sphinx** | **0/3** | 全军覆没,见 §3.2 |
-| **pylint** | **0/1** | 同上 |
+| sphinx | 1/3 | 8459 经 roman/docutils 修复后翻盘;7985 网络硬限制、11510 patch 质量(§4.6) |
+| pylint | 1/1 | docker11 重生成翻盘(§4.5) |
 
 ### 1.2 逐题状态
 
-- Resolved(19):astropy-7166、django-11265/11490/12304/14999/16901、matplotlib-22719/23412、seaborn-3069、flask-5014、requests-5414、xarray-4094/7233、pytest-7432/7571、sklearn-13135/15100、sympy-13878/14711
-- Unresolved(11):astropy-8872、django-11400/11885、matplotlib-26208、pylint-4970、sklearn-25102、sphinx-11510/7985/8459、sympy-16597/20428
+- Resolved(20→22,见 §4.5/§4.6):astropy-7166/**8872**、django-11265/11490/12304/14999/16901、matplotlib-22719/23412、seaborn-3069、flask-5014、requests-5414、xarray-4094/7233、pytest-7432/7571、sklearn-13135/15100、sympy-13878/14711、pylint-4970、sphinx-8459
+- Unresolved(11→8):django-11400/11885、matplotlib-26208、sklearn-25102、sphinx-11510(哨兵未剥离)/7985(google.com 不可达)、sympy-16597/20428
 - 11 个 unresolved 全部含非空 patch(493B–5713B),其中 3 题为 iteration_limit 出口;patch 均已随合并 predictions 评分判定
 
 ### 1.3 生成阶段的出口统计(30 题)
@@ -195,10 +195,55 @@ edit_file 的 16 次 `old_string not found` 并非全是模型记忆偏差,**结
 - **流程收获**:发现并修复 runner 构建脚本 bug——`setup_repo.sh` 无条件移走 `pyproject.toml` 兼容老 astropy,但 sphinx≥7.2 无 `setup.py`、用 flit_core 构建,导致 sphinx-11510 镜像必失败;已改为按 `setup.py` 存在性分流(`scripts/run_swebench.py`)
 - **运营数据**:生成 10 题 3.5 小时(parallel 3)+ sphinx-11510 重试 68 分钟;glm 超长响应截断(16384→65536 升级续写)在 django-11885、sklearn-25102、sphinx-11510 上共 5 次,全部自愈;预算收敛(PATCH DISCIPLINE + 0.85 收敛比)下 10/11 题正常 completed 出口,仅 sphinx-11510 一次 iteration 内超长响应反复
 
+## 4.6 评测环境修复:era 依赖漂移导致的三题误判(2026-11-26)
+
+重租实例恢复 eval 环境时发现,官方 harness 从 env 镜像重建 eval 镜像时 `pip install -e .` 会拉取 PyPI **最新**依赖,2019–2021 era 的题目全部暴露时代漂移。修复后重评,verified-030 从 **20/30 → 22/30(73.3%)**:
+
+- **astropy-8872 ✅ resolved**(20→21):env 镜像注入 `PIP_CONSTRAINT=/opt/constraints.txt`(钉 `pyparsing==2.4.7`,消除 `enablePackrat` DeprecationWarning 撞 warning-as-error)。连带修复并钉入:`setuptools==65.7.0`(82+ 无 pkg_resources 且 64.9.x 被 PyPI yanked、59.8 无 PEP 660)、`cython==0.29.37`、`numpy==1.21.6`(构建隔离拉 numpy 2.x 编译 4.0.dev 的 `_erfa` 必崩)、`ENV SETUPTOOLS_USE_DISTUTILS=stdlib`(setuptools≥60 distutils shim 的 DeprecationWarning);eval 镜像手动构建(宿主机 git 镜像 + `--no-build-isolation` 预装 jinja2)。评分报告 `reports/penguin-glm-5.3-flash.fix8872j-*.json`
+- **sphinx-8459 ✅ resolved**(21→22):eval 镜像补装 `docutils==0.16` + `roman==3.3`。根因:docutils 0.17+ 移除顶层 `roman.py`,而 `pip install -e .` 把 docutils 拉到 0.23(sphinx 3.4 只约束 `>=0.12`)。评分报告 `reports/penguin-glm-5.3-flash.fixsphinx2-*.json`
+- **sphinx-7985 ❌ 环境硬限制**:同款 roman 修复生效(测试从 ImportError 收集失败推进到断言层),但 F2P 是 linkcheck 测试,必须访问 `www.google.com`;本机网络(含宿主机代理 `172.16.0.13:5848`)到 google 全部 `Errno 101`/`Connection reset`/`SSLEOF`,era requests/urllib3 也无法绕过。**在本环境不可判 resolved**
+- **sphinx-11510 ❌ patch 质量(评分基建已修)**:发现 harness 对 sphinx 7.2 版本桶漏打 `-rA` sed(tox 输出无 PASSED 行 → 解析器把通过测试全部判负),已给 eval 镜像 tox.ini 补 `-rA` 后重评:7 P2P 全过、`nested_includes` F2P 过,仅 `test_include_source_read_event` 失败——docutils ≥0.18 起 include 内容尾部带 `.. end of inclusion from "..."` 两行哨兵,上游 v7.3 修复用 `include_lines[:-2]` 剥离后再发 `source-read`;模型 patch 未剥离。修复前该题被判 0/10 全挂,实际 patch 正确度 9/10
+- **运营事故**:恢复时发现 `images-env-verified030.tar.gz`(30.7GB,sha256 校验"通过")实际只含 `sweb.base` 一个镜像(OCI manifest 仅 1 个 RepoTags,保存当天即损坏,校验和为假阴性);16 个 env 镜像已用 swebench 2.1.8 `build_env_images` 重建,修复后的 env + 4 个 eval 镜像重存档为 `images-env-verified030-v2.tar.gz`(校验须核对 manifest RepoTags 数量,不能只信 sha256)
+- **流程开销**:astropy-8872 共 9 次重评迭代(2×容器内 git TLS 中断、setuptools 链条 3 连败、docker commit 继承 ENTRYPOINT 致 harness 容器秒退 409、distutils shim、numpy 2 API);env 镜像重建 16 个 1.5 小时;sklearn-25102 的 env 镜像(`3a59860bcd...`)反复构建失败(conda 下载 SSL 中断),截至 11-26 仍缺,后续需补建
+
+## 4.7 Agent 修复收益归因:宿主机轮 vs docker11 轮同题对照(2026-11-26)
+
+11-25 落地的 6 项修复(read 分页+edit 锚点、预算收敛 0.85、压缩基准、PATCH DISCIPLINE、docker 权限放开)恰夹在两轮生成之间,取 11 个共有实例做同题对照。
+
+**数据来源限制**:Langfuse 原始 trace 已随上次归还实例丢失(数据在 Docker named volume `langfuse_langfuse_clickhouse_data`,不在 `~/work` 持久化目录,归还前未备份)。token 级精确数不可复算;本节 = 报告 §2 存活期基线数据 + 本地 `events.jsonl` 重建对照。输出 token 以字符量近似,输入侧给区间估计。
+
+### 4.7.1 总账(11 个共有实例)
+
+| 指标 | 宿主机轮(修复前) | docker11 轮(修复后) | 变化 |
+|---|---|---|---|
+| 总生成时间 | 427 min(38.8/题) | 288 min(26.2/题) | **-32%** |
+| LLM 请求数 | 375(34.1/题) | 322(29.3/题) | **-14%** |
+| 输出字符量 | 57k | 62k | ≈持平 |
+| 超长响应(≥10k token 截断升级) | 92 次/30题 = 3.07/题 | 5 次/10题 = 0.5/题 | **-84%** |
+| iteration_limit 空转出口 | 3 题(75min–2.8h,全 unresolved) | 0(10/11 正常 completed) | 清零 |
+| permission_denied 浪费 | 30 次(每次 1–2 轮) | ≈0 | 清零 |
+
+### 4.7.2 逐项归因
+
+1. **read_file 分页 + edit 锚点提示**(`5dd36e5`)——最大单笔收益,机制是"消灭整文件重写":两级截断(100KB read + 10k 上下文头尾保留)使编辑目标区不可见 → 盲猜 old_string → not-found → 整文件重写 → 重写是超长响应的主要来源(§2.6)。行为证据:read 调用 33→203 次(按行号分页重读目标区)、run_command 600→491;超长响应 **-84%**,每次超长响应浪费约 5–8 万 token(16K 输出丢弃 + 64K 续写)。注意:分页并未直接省 read 字节(单次本有 100KB/10k 截断兜底),省的是输出 token 与往返轮次
+2. **预算感知收敛 0.85**(`c17876d`)——时间收益最大项:宿主机 3 题耗尽被掐断(纯空转,单题最长 2.8h),docker11 全部主动收尾,直接省约 **5 小时**空转
+3. **压缩基准修复**(`4bf8638`,usage 含缓存 token)——输入 token 隐形大头:宿主机压缩永不触发、上下文硬膨胀;docker11 压缩正常触发,是请求数 -14% 的主要来源之一(每请求上下文更小,输入侧粗估总节省 20–35%)
+4. **Docker 权限放开**(`e5bb3c0`)+ **PATCH DISCIPLINE**(`93053f1`)——消灭 30 次 permission_denied 无效往返(约 60 分钟级);0 空补丁,django-11885 F2P 全中
+
+**结论**:时间 -32%、请求 -14%、超长响应 -84%、空转清零;收益主要来自 read/edit 修复(砍重写)与预算收敛(砍空转)。输出 token 量持平——省的是"少返工",不是"说得少"。
+
+**局限**:两轮 API 时段与运行模式(docker 里测试可跑,模型行为不同)不同,归因是方向性结论而非受控实验;产出评分(20/30)未变差且 10/11 出口更干净。
+
+### 4.7.3 运营整改
+
+Langfuse 数据卷必须随实例归还前备份到 `~/work`(如 `docker run --rm --volumes-from langfuse-langfuse-clickhouse-1 -v ~/work/langfuse/backup:/backup ubuntu tar cf /backup/clickhouse_data.tar /var/lib/clickhouse`,postgres 同理)——本次丢失导致 token 级对照只能靠 events.jsonl 重建。
+
+
+
 ## 5. 下一步建议
 
 1. 换模型对比时直接用 docker 模式 + 现存 env 镜像(同题环境成本为零)
-2. ~~对 unresolved 11 题可做一次 docker 模式重生成~~ **已完成,见 §4.5:1/11 resolved,整体 19→20/30**;sphinx 文档构建类测试基建仍跑不通,值得单独投入(如预装 docutils/sphinx 测试依赖到 env 镜像)
-3. ~~sphinx/pylint 弱项单独归因~~ pylint 已翻盘;astropy-8872 的 pyparsing warning-as-error 收集失败可在 env 镜像中 `filterwarnings` 豁免后重评
-4. 归还实例前按 runbook §1/§6 核对产物持久化;env 镜像已存档(`images-env-verified030.tar.gz`,30.7GB,gunzip -t 校验通过);本轮新增 sweb.eval/dev 镜像与 sphinx-11510 实例镜像如需复用也应存档
+2. ~~对 unresolved 11 题可做一次 docker 模式重生成~~ **已完成,见 §4.5:1/11 resolved**;~~sphinx 测试基建跑不通~~ **已完成,见 §4.6:roman/docutils 与 `-rA` 解析已修,7985 为 google.com 网络硬限制,11510 实为 patch 质量(哨兵未剥离)**
+3. ~~sphinx/pylint 弱项单独归因~~ pylint、astropy-8872、sphinx-8459 已翻盘(见 §4.6);sphinx-11510 如需翻盘须重新生成(patch 需按上游 v7.3 方式剥离 `.. end of inclusion` 哨兵)
+4. 归还实例前按 runbook §1/§6 核对产物持久化;**镜像归档以 11-26 的 `images-env-verified030-v2.tar.gz` 为准**(旧归档仅含 base,已损坏);sklearn-25102 env 镜像(`3a59860bcd...`)缺,需补建后并入归档
 5. 下轮跑分验证 agent 改进集(最小 diff 规约、预算收敛、压缩修复)的量化效果:对比轮次分布、超长响应次数(基线 92 次 ≥10k)、重复命令数(基线 18 次)
