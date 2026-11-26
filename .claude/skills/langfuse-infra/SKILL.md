@@ -113,6 +113,6 @@ curl -s "http://localhost:8123/?user=clickhouse&password=$CHPASS" \
 | `check_langfuse.py` 认证失败 | 核对两个 key 与 `LANGFUSE_BASE_URL`;改完重启业务进程 |
 | 查 trace 返回"endpoint not available" | v4 events_only 正常现象,用 UI 或第 5 步 ClickHouse 查询 |
 | 有 trace 无内容 | 检查 `PENGUIN_OBSERVABILITY_CONTENT` 是否为 `metadata_only`/未知值,改后重启业务进程 |
-| 归还实例 | 栈目录与两个 `.env` 已在 `~/work`,无需导出;镜像不必归档;如需保留 trace 数据,备份卷 `langfuse_postgres_data`/`langfuse_clickhouse_data` |
+| 归还实例 | 栈目录与两个 `.env` 已在 `~/work`,无需导出;镜像不必归档;**trace 数据卷必须备份,否则全丢(11-26 已实际丢失一次)**:确认栈在跑时执行 `mkdir -p ~/work/langfuse/backup && docker run --rm --volumes-from $(docker ps --format '{{.Names}}' \| grep clickhouse) -v ~/work/langfuse/backup:/backup ubuntu tar cf /backup/clickhouse_data.tar /var/lib/clickhouse`,postgres 同理(`langfuse_postgres_data` → `/var/lib/postgresql/data`);备份后再 `compose down` 归还 |
 
 Web UI:`http://localhost:3000`(端口对外暴露),管理员 `admin@penguin.local`,密码在 `~/work/langfuse/.env` 的 `LANGFUSE_INIT_USER_PASSWORD`。
