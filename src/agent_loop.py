@@ -11,6 +11,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from .compact import (
+    MAX_CONTEXT_TOKENS,
     llm_compact_messages,
     needs_compaction,
     estimate_messages_tokens,
@@ -289,6 +290,34 @@ def stream_response(
         yield ("usage", effective_input)
 
 
+def _reconcile_usage_tokens(reported: int, messages: list[dict[str, Any]]) -> int:
+    """Guard the compaction baseline against provider misreporting.
+
+    Some gateways report input_tokens as only the un-cached delta (auto
+    prompt caching, e.g. glm), others double-count cached prefixes; either
+    way the reported prompt size can drift far enough to silently disable
+    compaction triggering.  When the reported effective input diverges more
+    than 25% from the local estimate, trust the local estimate.
+
+    Below ~5% of the context window the comparison is noise: the reported
+    value also covers the system prompt and tool definitions while the local
+    estimate only covers messages, so short conversations diverge naturally.
+    Compaction is irrelevant at that size anyway — keep the reported value.
+    """
+    if reported <= 0:
+        return reported
+    local = estimate_messages_tokens(messages)
+    if local < int(MAX_CONTEXT_TOKENS * 0.05):
+        return reported
+    if abs(reported - local) / max(reported, local) > 0.25:
+        logger.warning(
+            "Reported input tokens %d diverges >25%% from local estimate %d; "
+            "using local estimate as the compaction baseline", reported, local,
+        )
+        return local
+    return reported
+
+
 def _collect_tool_calls(tool_use_blocks: dict[int, dict[str, Any]]) -> list[dict[str, Any]]:
     """Collect completed tool_use blocks, dropping unusable ones.
 
@@ -394,7 +423,7 @@ def run_subagent(
                                 has_tool_calls = True
                                 tool_calls_list = data
                             elif event_type == "usage":
-                                sub_last_input_tokens = data
+                                sub_last_input_tokens = _reconcile_usage_tokens(data, messages)
                                 sub_pending_delta = 0
                     break
                 except anthropic.APIStatusError as e:
@@ -517,7 +546,7 @@ def run_subagent_with_tools(
                                 has_tool_calls = True
                                 tool_calls_list = data
                             elif event_type == "usage":
-                                sub_last_input_tokens = data
+                                sub_last_input_tokens = _reconcile_usage_tokens(data, messages)
                                 sub_pending_delta = 0
                     break
                 except anthropic.APIStatusError as e:
@@ -684,7 +713,7 @@ def agent_loop(
                                     has_tool_calls = True
                                     tool_calls_list = data
                                 elif event_type == "usage":
-                                    usage_stats["last_input_tokens"] = data
+                                    usage_stats["last_input_tokens"] = _reconcile_usage_tokens(data, messages)
                                     usage_stats["pending_delta"] = 0
                         break
                     except anthropic.APIStatusError as e:

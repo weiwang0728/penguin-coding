@@ -476,3 +476,46 @@ class TestCollectToolCalls:
 
     def test_empty_blocks(self):
         assert _collect_tool_calls({}) == []
+
+
+class TestReconcileUsageTokens:
+    """对账守卫: 回报值与本地估算分歧 >25% 时以本地为准。"""
+
+    def _long_messages(self):
+        # ~9000 tokens 本地估算, 远超 5% 窗口下限
+        return [{"role": "user", "content": "hello world " * 3000}]
+
+    def test_underreport_uses_local(self):
+        # glm 缓存语义场景: 回报只含未缓存增量
+        msgs = self._long_messages()
+        assert agent_loop_module._reconcile_usage_tokens(474, msgs) == estimate_messages_tokens(msgs)
+
+    def test_overreport_uses_local(self):
+        # 双重计数场景: 回报远大于真实
+        msgs = self._long_messages()
+        assert agent_loop_module._reconcile_usage_tokens(estimate_messages_tokens(msgs) * 3, msgs) \
+            == estimate_messages_tokens(msgs)
+
+    def test_close_report_kept(self):
+        msgs = self._long_messages()
+        local = estimate_messages_tokens(msgs)
+        # 漏报方向分母是 local: 漏报比例直接就是相对分歧
+        # 15% / 10% 漏报 → 保留回报值; 30% 漏报 → 修正为本地
+        assert agent_loop_module._reconcile_usage_tokens(int(local * 0.85), msgs) == int(local * 0.85)
+        assert agent_loop_module._reconcile_usage_tokens(int(local * 0.9), msgs) == int(local * 0.9)
+        assert agent_loop_module._reconcile_usage_tokens(int(local * 0.7), msgs) == local
+
+    def test_overreport_needs_larger_gap(self):
+        # 分母是 max(两侧): 多报需超过 ~33% 才触发(保守偏置)
+        msgs = self._long_messages()
+        local = estimate_messages_tokens(msgs)
+        assert agent_loop_module._reconcile_usage_tokens(int(local * 1.3), msgs) == int(local * 1.3)
+        assert agent_loop_module._reconcile_usage_tokens(int(local * 1.4), msgs) == local
+
+    def test_short_conversation_keeps_reported(self):
+        # 低于 5% 窗口: 本地估算不含 system prompt/工具定义, 分歧是自然的
+        assert agent_loop_module._reconcile_usage_tokens(474, [{"role": "user", "content": "hi"}]) == 474
+
+    def test_nonpositive_reported_kept(self):
+        msgs = self._long_messages()
+        assert agent_loop_module._reconcile_usage_tokens(0, msgs) == 0
