@@ -25,7 +25,12 @@ class TestConstants:
         assert MAX_READ_SIZE == 100 * 1024
 
     def test_max_tool_result_chars(self):
-        assert MAX_TOOL_RESULT_CHARS == 10_000
+        assert MAX_TOOL_RESULT_CHARS == 110_000
+
+    def test_wrapper_cap_covers_full_read_page(self):
+        # read_file 的整页输出（MAX_READ_SIZE + header/footer）必须能原样
+        # 通过入口层 wrapper，不被 head+tail 截断污染。
+        assert MAX_TOOL_RESULT_CHARS > MAX_READ_SIZE + 1000
 
 
 class TestTruncateOutput:
@@ -50,7 +55,7 @@ class TestTruncateForContext:
         assert _truncate_for_context("short") == "short"
 
     def test_long_text_truncated(self):
-        long_text = "y" * 20_000
+        long_text = "y" * 120_000
         result = _truncate_for_context(long_text)
         assert len(result) < len(long_text)
         assert "truncated" in result.lower()

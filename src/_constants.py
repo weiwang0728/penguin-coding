@@ -7,9 +7,15 @@ import os
 from .workspace import WORKSPACE_DIR
 ALLOWED_BASE_DIR = WORKSPACE_DIR
 
+# Tool-internal cap for raw command/search stdout — keeps a single command
+# result bounded regardless of the entry-level cap below.
 MAX_OUTPUT_LENGTH = 30_000
 MAX_READ_SIZE = 100 * 1024  # 100KB
-MAX_TOOL_RESULT_CHARS = 10_000
+# Entry-level (wrapper) cap. Must stay >= MAX_READ_SIZE (+ header/footer) so a
+# full read_file page (default 2000 lines) passes through WITHOUT head+tail
+# mangling — a mid-content marker here would corrupt content used for edits.
+# This is a catastrophic backstop only; working-level caps live in the tools.
+MAX_TOOL_RESULT_CHARS = 110_000
 TEAM_DIR = ALLOWED_BASE_DIR / ".team"
 INBOX_DIR = ALLOWED_BASE_DIR / ".inbox"
 load_dotenv()

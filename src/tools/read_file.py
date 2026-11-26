@@ -8,7 +8,7 @@ from .utils import resolve_and_validate_path
 @register_tool
 class ReadFileTool(Tool):
     name = "read_file"
-    description = "Read the contents of a file. For large files, use offset/limit to page through; the tool reports the total line count. Prefer relative paths."
+    description = "Read the contents of a file. Returns up to 2000 lines per call; use offset/limit to page through large files — the tool reports the total line count and the offset for the next page. Prefer relative paths."
     default_permission_level = "allow"
     parameters = {
         "type": "object",
@@ -23,7 +23,7 @@ class ReadFileTool(Tool):
             },
             "limit": {
                 "type": "integer",
-                "description": "Max number of lines to return (default: all)",
+                "description": "Max number of lines to return (default: 2000)",
             },
         },
         "required": ["path"],
@@ -32,7 +32,7 @@ class ReadFileTool(Tool):
     def execute(self, **kwargs) -> str:
         path = kwargs["path"]
         offset = kwargs.get("offset") or 1
-        limit = kwargs.get("limit")
+        limit = kwargs.get("limit") or 2000
         try:
             if offset < 1:
                 offset = 1

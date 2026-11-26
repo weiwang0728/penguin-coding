@@ -379,7 +379,7 @@ class TestTruncation:
         assert _truncate_for_context("short") == "short"
 
     def test_truncate_for_context_long(self):
-        long_text = "y" * 20_000
+        long_text = "y" * 120_000
         result = _truncate_for_context(long_text)
         assert len(result) < len(long_text)
         assert "truncated" in result
